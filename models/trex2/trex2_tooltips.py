@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 """
 .. module:: trex2_tooltips
    :synopsis: A useful module indeed.
