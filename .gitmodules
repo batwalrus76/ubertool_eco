@@ -1,0 +1,3 @@
+[submodule "qed_framework"]
+	path = qed_framework
+	url = https://github.com/puruckertom/qed_framework.git

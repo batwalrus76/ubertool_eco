@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os, sys
 import secret
 
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -47,12 +46,34 @@ ALLOWED_HOSTS = [
 
 APPEND_SLASH = True
 
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_ROOT, 'templates').replace('\\','/'),
-)
+
+# Get list of directories in 'models' folder as absolute paths, empty list if none
+try:
+    models_list = []
+    for dirpath in os.walk(os.path.join(PROJECT_ROOT, 'models')).next()[1]:
+        models_list.append(os.path.join(PROJECT_ROOT, 'models', dirpath, 'templates').replace('\\','/'))
+except:
+    models_list = []
+
+def template_dirs_generator(models_list):
+
+    # Add 'repo' root templates directory
+    models_list.append(os.path.join(PROJECT_ROOT, 'templates').replace('\\','/'))
+    # Add 'qed_framework' root templates directory
+    models_list.append(os.path.join(PROJECT_ROOT, 'qed_framework', 'templates').replace('\\','/'))
+
+    template_dirs_tuple = tuple(models_list)
+
+    return template_dirs_tuple
+
+TEMPLATE_DIRS = template_dirs_generator(models_list)
+# TEMPLATE_DIRS = (
+#     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+#     # Always use forward slashes, even on Windows.
+#     # Don't forget to use absolute paths, not relative paths.
+#     # os.path.join(PROJECT_ROOT, 'models', 'templates').replace('\\','/'),
+#     os.path.join(PROJECT_ROOT, 'templates').replace('\\','/'),
+# )
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -71,6 +92,7 @@ INSTALLED_APPS = (
     # 'django.contrib.messages',
     'django.contrib.staticfiles',
     #'mod_wsgi.server',
+    'models',
     'docs'
 )
 
@@ -132,6 +154,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATICFILES_DIRS = (
+    # os.path.join(PROJECT_ROOT, os.path.pardir, 'static'),     # '../static'
+    os.path.join(PROJECT_ROOT, 'qed_framework', 'static'),
     os.path.join(PROJECT_ROOT, 'static'),
 )
 
@@ -160,3 +184,5 @@ if DEBUG:
         level = logging.DEBUG,
         format = '%(asctime)s %(levelname)s %(message)s',
     )
+
+    logging.info(TEMPLATE_DIRS)

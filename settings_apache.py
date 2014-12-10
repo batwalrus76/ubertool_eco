@@ -48,17 +48,38 @@ ALLOWED_HOSTS = [
 ]
 
 ADMINS = (
-    ('Jon F.', 'funkswing@gmail.com')
+    ('ubertool Team', 'ubertool-dev@googlegroups.com')
 )
 
 APPEND_SLASH = True
 
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_ROOT, 'templates').replace('\\','/'),
-)
+
+# Get list of directories in 'models' folder as absolute paths, empty list if none
+try:
+    models_list = []
+    for dirpath in os.walk(os.path.join(PROJECT_ROOT, 'models')).next()[1]:
+        models_list.append(os.path.join(PROJECT_ROOT, 'models', dirpath, 'templates').replace('\\','/'))
+except:
+    models_list = []
+
+def template_dirs_generator(models_list):
+
+    # Add 'repo' root templates directory
+    models_list.append(os.path.join(PROJECT_ROOT, 'templates').replace('\\','/'))
+    # Add 'qed_framework' root templates directory
+    models_list.append(os.path.join(PROJECT_ROOT, 'qed_framework', 'templates').replace('\\','/'))
+
+    template_dirs_tuple = tuple(models_list)
+
+    return template_dirs_tuple
+
+TEMPLATE_DIRS = template_dirs_generator(models_list)
+# TEMPLATE_DIRS = (
+#     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+#     # Always use forward slashes, even on Windows.
+#     # Don't forget to use absolute paths, not relative paths.
+#     os.path.join(PROJECT_ROOT, 'templates').replace('\\','/'),
+# )
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -77,6 +98,7 @@ INSTALLED_APPS = (
     # 'django.contrib.messages',
     'django.contrib.staticfiles',
     'mod_wsgi.server',
+    'models',
     'docs'
 )
 
@@ -138,6 +160,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATICFILES_DIRS = (
+    # os.path.join(PROJECT_ROOT, os.path.pardir, 'static'),     # '../static'
+    os.path.join(PROJECT_ROOT, 'qed_framework', 'static'),
     os.path.join(PROJECT_ROOT, 'static'),
 )
 
@@ -159,19 +183,19 @@ DOCS_ROOT = os.path.join(PROJECT_ROOT, 'docs', '_build', 'html')
 
 DOCS_ACCESS = 'public'
 
-
-#### APACHE TESTING ####
-#print "PROJECT_PATH", os.environ['PROJECT_PATH']
-#print "__name__ =", __name__
-#print "__file__ =", __file__
-#print "os.getpid() =", os.getpid()
-#print "os.getcwd() =", os.getcwd()
-#print "os.curdir =", os.curdir
-#print "sys.path =", repr(sys.path)
-#print "sys.modules.keys() =", repr(sys.modules.keys())
-#print "sys.modules.has_key('ubertool_eco') =", sys.modules.has_key('ubertool_eco')
-
-#if sys.modules.has_key('ubertool_eco'):
-#    print "sys.modules['ubertool_eco'].__name__ =", sys.modules['ubertool_eco'].__name__
-#    print "sys.modules['ubertool_eco'].__file__ =", sys.modules['ubertool_eco'].__file__
-#    print "os.environ['DJANGO_SETTINGS_MODULE'] =", os.environ.get('DJANGO_SETTINGS_MODULE', None)
+# Python logging setup
+import logging
+if DEBUG:
+    # will output to your console
+    logging.basicConfig(
+        level = logging.DEBUG,
+        format = '%(asctime)s %(levelname)s %(message)s',
+    )
+else:
+    # will output to logging file
+    logging.basicConfig(
+        level = logging.DEBUG,
+        format = '%(asctime)s %(levelname)s %(message)s',
+        filename = '/var/www/ubertool/logs/ubertool_eco_django.log',
+        filemode = 'a'
+    )
