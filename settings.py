@@ -167,6 +167,9 @@ STATICFILES_FINDERS = (
 
 STATIC_URL = '/static/'
 
+# File path where 'collectstatic' command copies files in 'STATICFILES_DIRS' to
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'collect_static')
+
 # print 'BASE_DIR = %s' %BASE_DIR
 # print 'PROJECT_ROOT = %s' %PROJECT_ROOT
 
@@ -184,5 +187,3 @@ if DEBUG:
         level = logging.DEBUG,
         format = '%(asctime)s %(levelname)s %(message)s',
     )
-
-    logging.info(TEMPLATE_DIRS)

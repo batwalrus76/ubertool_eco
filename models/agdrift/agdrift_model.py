@@ -84,5 +84,5 @@ class agdrift(object):
         url=url_part1 + '/agdrift/' + self.jid 
         response = requests.post(url=url, data=data, headers=http_headers, timeout=60)
         output_val = json.loads(response.content)['result']
-        for key, value in output_val.items():
-            setattr(self, key, value)
+        
+        return output_val

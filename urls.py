@@ -5,7 +5,7 @@ from django.conf.urls import patterns, include, url
 
 
 # All view functions here must be in '/views/views.py'
-urlpatterns = patterns('views',
+urlpatterns = patterns('qed_framework.views',
     url(r'^docs/', include('docs.urls')),
     (r'^eco/webice/', include('models.webice.urls')),
     (r'^$', 'landing.ecoLandingPage'),

@@ -1,5 +1,5 @@
 application: pypest
-version: master
+version: jon
 runtime: python27
 api_version: 1
 threadsafe: true
@@ -53,10 +53,14 @@ skip_files:
 - ^(.*/)?.*\.SDR
 - ^(.*/)?.*\MIT-LICENSE
 - ^(.*/)?.*\LGPL-LICENSE
+- ^(static/.*)                 # ignore static files
+- ^(qed_framework/static/.*)   # ignore framework static files
 
 
 handlers:
 - url: /static
-  static_dir: static
+  static_dir: collect_static
+# - url: /static
+#   static_dir: static
 - url: /.*
   script: wsgi_local.application

@@ -40,8 +40,8 @@ class earthworm(object):
                 url=url_part1 + '/earthworm/' + self.jid 
                 response = requests.post(url=url, data=data, headers=http_headers, timeout=60)
                 output_val = json.loads(response.content)['result']
-                for key, value in output_val.items():
-                    setattr(self, key, value)
+                
+                return output_val
 
     def set_default_variables(self):
         self.k_ow = -1
