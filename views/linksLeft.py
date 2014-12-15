@@ -9,7 +9,7 @@ def linksLeft():
                 ('TerrPlant', 'terrplant'),
                 ('SIP', 'sip'),
                 ('STIR', 'stir'),
-                ('DUST', 'dust'),
+                # ('DUST', 'dust'),
                 ('T-REX', 'trex2'),
                 ('T-Herps', 'therps'),
                 ('IEC', 'iec'),
@@ -29,6 +29,7 @@ def linksLeft():
                 ('PFAM', 'pfam'),
                 ('PRZM-EXAMS', 'przm_exams'),
                 ('SAM', 'sam'),
+                # ('Web-ICE', 'webice'),
                 # ('VVWM', 'vvwm'),
                 # ('Surface Water Calculator', 'swc'),
             ])
