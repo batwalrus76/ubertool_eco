@@ -25,6 +25,7 @@ Represents a Virtual Private Cloud.
 
 from boto.ec2.ec2object import TaggedEC2Object
 
+
 class VPC(TaggedEC2Object):
 
     def __init__(self, connection=None):

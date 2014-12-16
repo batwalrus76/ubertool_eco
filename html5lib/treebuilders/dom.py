@@ -14,6 +14,7 @@ def getDomBuilder(DomImplementation):
     Dom = DomImplementation
 
     class AttrList(object):
+
         def __init__(self, element):
             self.element = element
 
@@ -43,6 +44,7 @@ def getDomBuilder(DomImplementation):
                 return self.element.hasAttribute(name)
 
     class NodeBuilder(_base.Node):
+
         def __init__(self, element):
             _base.Node.__init__(self, element.nodeName)
             self.element = element
@@ -110,8 +112,12 @@ def getDomBuilder(DomImplementation):
         nameTuple = property(getNameTuple)
 
     class TreeBuilder(_base.TreeBuilder):
+
         def documentClass(self):
-            self.dom = Dom.getDOMImplementation().createDocument(None, None, None)
+            self.dom = Dom.getDOMImplementation().createDocument(
+                None,
+                None,
+                None)
             return weakref.proxy(self)
 
         def insertDoctype(self, token):
@@ -159,7 +165,8 @@ def getDomBuilder(DomImplementation):
                 # HACK: allow text nodes as children of the document node
                 if hasattr(self.dom, '_child_node_types'):
                     if not Node.TEXT_NODE in self.dom._child_node_types:
-                        self.dom._child_node_types = list(self.dom._child_node_types)
+                        self.dom._child_node_types = list(
+                            self.dom._child_node_types)
                         self.dom._child_node_types.append(Node.TEXT_NODE)
                 self.dom.appendChild(self.dom.createTextNode(data))
 
@@ -176,10 +183,13 @@ def getDomBuilder(DomImplementation):
                     if element.publicId or element.systemId:
                         publicId = element.publicId or ""
                         systemId = element.systemId or ""
-                        rv.append("""|%s<!DOCTYPE %s "%s" "%s">""" %
-                                  (' ' * indent, element.name, publicId, systemId))
+                        rv.append(
+                            """|%s<!DOCTYPE %s "%s" "%s">""" %
+                            (' ' * indent, element.name, publicId, systemId))
                     else:
-                        rv.append("|%s<!DOCTYPE %s>" % (' ' * indent, element.name))
+                        rv.append(
+                            "|%s<!DOCTYPE %s>" %
+                            (' ' * indent, element.name))
                 else:
                     rv.append("|%s<!DOCTYPE >" % (' ' * indent,))
             elif element.nodeType == Node.DOCUMENT_NODE:
@@ -206,13 +216,15 @@ def getDomBuilder(DomImplementation):
                         value = attr.value
                         ns = attr.namespaceURI
                         if ns:
-                            name = "%s %s" % (constants.prefixes[ns], attr.localName)
+                            name = "%s %s" % (
+                                constants.prefixes[ns], attr.localName)
                         else:
                             name = attr.nodeName
                         attributes.append((name, value))
 
                     for name, value in sorted(attributes):
-                        rv.append('|%s%s="%s"' % (' ' * (indent + 2), name, value))
+                        rv.append('|%s%s="%s"' %
+                                  (' ' * (indent + 2), name, value))
             indent += 2
             for child in element.childNodes:
                 serializeElement(child, indent)

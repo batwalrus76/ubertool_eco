@@ -33,6 +33,7 @@ from boto.cloudtrail import exceptions
 
 
 class CloudTrailConnection(AWSQueryConnection):
+
     """
     AWS Cloud Trail
     This is the CloudTrail API Reference. It provides descriptions of
@@ -78,7 +79,6 @@ class CloudTrailConnection(AWSQueryConnection):
         "MaximumNumberOfTrailsExceededException": exceptions.MaximumNumberOfTrailsExceededException,
         "InsufficientS3BucketPolicyException": exceptions.InsufficientS3BucketPolicyException,
     }
-
 
     def __init__(self, **kwargs):
         region = kwargs.pop('region', None)
@@ -147,7 +147,8 @@ class CloudTrailConnection(AWSQueryConnection):
         if sns_topic_name is not None:
             params['SnsTopicName'] = sns_topic_name
         if include_global_service_events is not None:
-            params['IncludeGlobalServiceEvents'] = include_global_service_events
+            params[
+                'IncludeGlobalServiceEvents'] = include_global_service_events
         if trail is not None:
             params['trail'] = trail
         return self.make_request(action='CreateTrail',
@@ -326,7 +327,8 @@ class CloudTrailConnection(AWSQueryConnection):
         if sns_topic_name is not None:
             params['SnsTopicName'] = sns_topic_name
         if include_global_service_events is not None:
-            params['IncludeGlobalServiceEvents'] = include_global_service_events
+            params[
+                'IncludeGlobalServiceEvents'] = include_global_service_events
         if trail is not None:
             params['trail'] = trail
         return self.make_request(action='UpdateTrail',
@@ -355,4 +357,3 @@ class CloudTrailConnection(AWSQueryConnection):
             exception_class = self._faults.get(fault_name, self.ResponseError)
             raise exception_class(response.status, response.reason,
                                   body=json_body)
-

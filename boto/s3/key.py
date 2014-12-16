@@ -51,6 +51,7 @@ except ImportError:
 
 
 class Key(object):
+
     """
     Represents a key (object) in an S3 bucket.
 
@@ -86,20 +87,17 @@ class Key(object):
         <Days>%s</Days>
       </RestoreRequest>"""
 
-
     BufferSize = boto.config.getint('Boto', 'key_buffer_size', 8192)
 
     # The object metadata fields a user can set, other than custom metadata
     # fields (i.e., those beginning with a provider-specific prefix like
     # x-amz-meta).
     base_user_settable_fields = set(["cache-control", "content-disposition",
-                                    "content-encoding", "content-language",
-                                    "content-md5", "content-type"])
+                                     "content-encoding", "content-language",
+                                     "content-md5", "content-type"])
     _underscore_base_user_settable_fields = set()
     for f in base_user_settable_fields:
-      _underscore_base_user_settable_fields.add(f.replace('-', '_'))
-
-
+        _underscore_base_user_settable_fields.add(f.replace('-', '_'))
 
     def __init__(self, bucket=None, name=None):
         self.bucket = bucket
@@ -155,7 +153,7 @@ class Key(object):
     def _set_key(self, value):
         self.name = value
 
-    key = property(_get_key, _set_key);
+    key = property(_get_key, _set_key)
 
     def _get_md5(self):
         if 'md5' in self.local_hashes and self.local_hashes['md5']:
@@ -167,7 +165,7 @@ class Key(object):
         elif 'md5' in self.local_hashes:
             self.local_hashes.pop('md5', None)
 
-    md5 = property(_get_md5, _set_md5);
+    md5 = property(_get_md5, _set_md5)
 
     def _get_base64md5(self):
         if 'md5' in self.local_hashes and self.local_hashes['md5']:
@@ -179,7 +177,7 @@ class Key(object):
         elif 'md5' in self.local_hashes:
             del self.local_hashes['md5']
 
-    base64md5 = property(_get_base64md5, _set_base64md5);
+    base64md5 = property(_get_base64md5, _set_base64md5)
 
     def get_md5_from_hexdigest(self, md5_hexdigest):
         """
@@ -209,8 +207,9 @@ class Key(object):
         # overwrite the version_id in this Key object.  Comprende?
         if self.version_id is None or force:
             self.version_id = resp.getheader(provider.version_id, None)
-        self.source_version_id = resp.getheader(provider.copy_source_version_id,
-                                                None)
+        self.source_version_id = resp.getheader(
+            provider.copy_source_version_id,
+            None)
         if resp.getheader(provider.delete_marker, 'false') == 'true':
             self.delete_marker = True
         else:
@@ -279,7 +278,7 @@ class Key(object):
                 # header if one was returned. If not, use Content-Length
                 # header.
                 if (name.lower() == 'content-length' and
-                    'Content-Range' not in response_headers):
+                        'Content-Range' not in response_headers):
                     self.size = int(value)
                 elif name.lower() == 'content-range':
                     end_range = re.sub('.*/(.*)', '\\1', value)
@@ -757,9 +756,9 @@ class Key(object):
             # not to add a second host header. Similarly for accept-encoding.
             skips = {}
             if boto.utils.find_matching_headers('host', headers):
-              skips['skip_host'] = 1
+                skips['skip_host'] = 1
             if boto.utils.find_matching_headers('accept-encoding', headers):
-              skips['skip_accept_encoding'] = 1
+                skips['skip_accept_encoding'] = 1
             http_conn.putrequest(method, path, **skips)
             for key in headers:
                 http_conn.putheader(key, headers[key])
@@ -836,7 +835,7 @@ class Key(object):
 
             if chunked_transfer:
                 http_conn.send('0\r\n')
-                    # http_conn.send("Content-MD5: %s\r\n" % self.base64md5)
+                # http_conn.send("Content-MD5: %s\r\n" % self.base64md5)
                 http_conn.send('\r\n')
 
             if cb and (cb_count <= 1 or i > 0) and data_len > 0:
@@ -876,7 +875,7 @@ class Key(object):
             # type. This can be achieved by setting headers['Content-Type']
             # to None when calling this method.
             if (len(content_type_headers) == 1 and
-                headers[content_type_headers[0]] is None):
+                    headers[content_type_headers[0]] is None):
                 # Delete null Content-Type value to skip sending that header.
                 del headers[content_type_headers[0]]
             else:
@@ -893,7 +892,7 @@ class Key(object):
             headers['Content-MD5'] = self.base64md5
         if chunked_transfer:
             headers['Transfer-Encoding'] = 'chunked'
-            #if not self.base64md5:
+            # if not self.base64md5:
             #    headers['Trailer'] = "Content-MD5"
         else:
             headers['Content-Length'] = str(self.size)
@@ -902,7 +901,9 @@ class Key(object):
         # the auth mechanism (because closures). Detect if it's SigV4 & embelish
         # while we can before the auth calculations occur.
         if 'hmac-v4-s3' in self.bucket.connection._required_auth_capability():
-            headers['_sha256'] = compute_hash(fp, hash_algorithm=hashlib.sha256)[0]
+            headers['_sha256'] = compute_hash(
+                fp,
+                hash_algorithm=hashlib.sha256)[0]
         headers['Expect'] = '100-Continue'
         headers = boto.utils.merge_meta(headers, self.metadata, provider)
         resp = self.bucket.connection.make_request(
@@ -1045,12 +1046,12 @@ class Key(object):
         provider = self.bucket.connection.provider
         if not provider.supports_chunked_transfer():
             raise BotoClientError('%s does not support chunked transfer'
-                % provider.get_provider_name())
+                                  % provider.get_provider_name())
 
         # Name of the Object should be specified explicitly for Streams.
         if not self.name or self.name == '':
             raise BotoClientError('Cannot determine the destination '
-                                'object name for the given stream')
+                                  'object name for the given stream')
 
         if headers is None:
             headers = {}
@@ -1215,7 +1216,10 @@ class Key(object):
                     # twice while transferring.
                     if (re.match('^"[a-fA-F0-9]{32}"$', key.etag)):
                         etag = key.etag.strip('"')
-                        md5 = (etag, base64.b64encode(binascii.unhexlify(etag)))
+                        md5 = (
+                            etag,
+                            base64.b64encode(
+                                binascii.unhexlify(etag)))
                 if not md5:
                     # compute_md5() and also set self.size to actual
                     # size of the bytes read computing the md5.
@@ -1418,7 +1422,7 @@ class Key(object):
             headers/values that will override any headers associated
             with the stored object in the response.  See
             http://goo.gl/EWOPb for details.
-            
+
         :type version_id: str
         :param version_id: The ID of a particular version of the object.
             If this parameter is not supplied but the Key object has
@@ -1434,9 +1438,18 @@ class Key(object):
                                 hash_algs=None,
                                 query_args=None)
 
-    def _get_file_internal(self, fp, headers=None, cb=None, num_cb=10,
-                 torrent=False, version_id=None, override_num_retries=None,
-                 response_headers=None, hash_algs=None, query_args=None):
+    def _get_file_internal(
+            self,
+            fp,
+            headers=None,
+            cb=None,
+            num_cb=10,
+            torrent=False,
+            version_id=None,
+            override_num_retries=None,
+            response_headers=None,
+            hash_algs=None,
+            query_args=None):
         if headers is None:
             headers = {}
         save_debug = self.bucket.connection.debug
@@ -1477,7 +1490,8 @@ class Key(object):
                 # we'll call the cb for every 1MB of data transferred.
                 cb_count = (1024 * 1024) / self.BufferSize
             elif num_cb > 1:
-                cb_count = int(math.ceil(cb_size/self.BufferSize/(num_cb-1.0)))
+                cb_count = int(
+                    math.ceil(cb_size / self.BufferSize / (num_cb - 1.0)))
             elif num_cb < 0:
                 cb_count = -1
             else:
@@ -1497,7 +1511,7 @@ class Key(object):
                     if i == cb_count or cb_count == -1:
                         cb(data_len, cb_size)
                         i = 0
-        except IOError, e:
+        except IOError as e:
             if e.errno == errno.ENOSPC:
                 raise StorageDataError('Out of space for destination file '
                                        '%s' % fp.name)
@@ -1505,7 +1519,7 @@ class Key(object):
         if cb and (cb_count <= 1 or i > 0) and data_len > 0:
             cb(data_len, cb_size)
         for alg in digesters:
-          self.local_hashes[alg] = digesters[alg].digest()
+            self.local_hashes[alg] = digesters[alg].digest()
         if self.size is None and not torrent and "Range" not in headers:
             self.size = data_len
         self.close()
@@ -1647,7 +1661,7 @@ class Key(object):
             headers/values that will override any headers associated
             with the stored object in the response.  See
             http://goo.gl/EWOPb for details.
-            
+
         :type version_id: str
         :param version_id: The ID of a particular version of the object.
             If this parameter is not supplied but the Key object has
@@ -1658,11 +1672,15 @@ class Key(object):
         """
         try:
             with open(filename, 'wb') as fp:
-                self.get_contents_to_file(fp, headers, cb, num_cb,
-                                          torrent=torrent,
-                                          version_id=version_id,
-                                          res_download_handler=res_download_handler,
-                                          response_headers=response_headers)
+                self.get_contents_to_file(
+                    fp,
+                    headers,
+                    cb,
+                    num_cb,
+                    torrent=torrent,
+                    version_id=version_id,
+                    res_download_handler=res_download_handler,
+                    response_headers=response_headers)
         except Exception:
             os.remove(filename)
             raise
@@ -1783,7 +1801,7 @@ class Key(object):
         self.set_acl(policy, headers=headers)
 
     def _normalize_metadata(self, metadata):
-        if type(metadata) == set:
+        if isinstance(metadata, set):
             norm_metadata = set()
             for k in metadata:
                 norm_metadata.add(k.lower())
@@ -1804,7 +1822,8 @@ class Key(object):
             if hasattr(self, underscore_name):
                 value = getattr(self, underscore_name)
                 if value:
-                    # Generate HTTP field name corresponding to "_" named field.
+                    # Generate HTTP field name corresponding to "_" named
+                    # field.
                     field_name = underscore_name.replace('_', '-')
                     metadata[field_name.lower()] = value
         # self.metadata contains custom metadata, which are all user-settable.

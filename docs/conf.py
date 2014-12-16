@@ -82,7 +82,11 @@ release = 'alpha'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build', '**/leftovers', 'keys_Picloud_S3.py', 'secret.py']
+exclude_patterns = [
+    '_build',
+    '**/leftovers',
+    'keys_Picloud_S3.py',
+    'secret.py']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -197,22 +201,22 @@ htmlhelp_basename = 'ubertool_ecoDoc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    #'papersize': 'letterpaper',
 
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    #'pointsize': '10pt',
 
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    #'preamble': '',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'ubertool_eco.tex', u'übertool_eco Documentation',
-   u'EPA übertool team', 'manual'),
+    ('index', 'ubertool_eco.tex', u'übertool_eco Documentation',
+     u'EPA übertool team', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -255,9 +259,13 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'ubertool_eco', u'übertool_eco Documentation',
-   u'EPA übertool team', u'übertool', 'Web Applications for Ecological Risk Assessment.',
-   'Miscellaneous'),
+    ('index',
+     'ubertool_eco',
+     u'übertool_eco Documentation',
+     u'EPA übertool team',
+     u'übertool',
+     'Web Applications for Ecological Risk Assessment.',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.

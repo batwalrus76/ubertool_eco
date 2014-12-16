@@ -14,7 +14,7 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABIL-
 # ITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
@@ -23,11 +23,22 @@ from boto.pyami.scriptbase import ScriptBase
 
 
 class Installer(ScriptBase):
+
     """
     Abstract base class for installers
     """
 
-    def add_cron(self, name, minute, hour, mday, month, wday, who, command, env=None):
+    def add_cron(
+            self,
+            name,
+            minute,
+            hour,
+            mday,
+            month,
+            wday,
+            who,
+            command,
+            env=None):
         """
         Add an entry to the system crontab.
         """
@@ -61,4 +72,3 @@ class Installer(ScriptBase):
         Do whatever is necessary to "install" the package.
         """
         raise NotImplementedError
-

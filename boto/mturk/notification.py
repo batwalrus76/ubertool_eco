@@ -32,6 +32,7 @@ except ImportError:
 import base64
 import re
 
+
 class NotificationMessage(object):
 
     NOTIFICATION_WSDL = "http://mechanicalturk.amazonaws.com/AWSMechanicalTurk/2006-05-05/AWSMechanicalTurkRequesterNotification.wsdl"
@@ -47,16 +48,18 @@ class NotificationMessage(object):
         """
         Constructor; expects parameter d to be a dict of string parameters from a REST transport notification message
         """
-        self.signature = d['Signature'] # vH6ZbE0NhkF/hfNyxz2OgmzXYKs=
-        self.timestamp = d['Timestamp'] # 2006-05-23T23:22:30Z
-        self.version = d['Version'] # 2006-05-05
-        assert d['method'] == NotificationMessage.OPERATION_NAME, "Method should be '%s'" % NotificationMessage.OPERATION_NAME
+        self.signature = d['Signature']  # vH6ZbE0NhkF/hfNyxz2OgmzXYKs=
+        self.timestamp = d['Timestamp']  # 2006-05-23T23:22:30Z
+        self.version = d['Version']  # 2006-05-05
+        assert d[
+            'method'] == NotificationMessage.OPERATION_NAME, "Method should be '%s'" % NotificationMessage.OPERATION_NAME
 
         # Build Events
         self.events = []
         events_dict = {}
         if 'Event' in d:
-            # TurboGears surprised me by 'doing the right thing' and making { 'Event': { '1': { 'EventType': ... } } } etc.
+            # TurboGears surprised me by 'doing the right thing' and making {
+            # 'Event': { '1': { 'EventType': ... } } } etc.
             events_dict = d['Event']
         else:
             for k in d:
@@ -88,7 +91,9 @@ class NotificationMessage(object):
         signature_calc = base64.b64encode(h.digest())
         return self.signature == signature_calc
 
+
 class Event(object):
+
     def __init__(self, d):
         self.event_type = d['EventType']
         self.event_time_str = d['EventTime']
@@ -97,7 +102,8 @@ class Event(object):
         if 'AssignmentId' in d:   # Not present in all event types
             self.assignment_id = d['AssignmentId']
 
-        #TODO: build self.event_time datetime from string self.event_time_str
+        # TODO: build self.event_time datetime from string self.event_time_str
 
     def __repr__(self):
-        return "<boto.mturk.notification.Event: %s for HIT # %s>" % (self.event_type, self.hit_id)
+        return "<boto.mturk.notification.Event: %s for HIT # %s>" % (
+            self.event_type, self.hit_id)

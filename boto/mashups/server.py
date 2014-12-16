@@ -57,6 +57,7 @@ class ServerSet(list):
             results.append(fn(*args))
         return results
 
+
 class Server(Model):
 
     @property
@@ -100,7 +101,9 @@ class Server(Model):
     config_uri = StringProperty()
     ami_id = StringProperty(verbose_name="AMI ID")
     zone = StringProperty(verbose_name="Availability Zone")
-    security_group = StringProperty(verbose_name="Security Group", default="default")
+    security_group = StringProperty(
+        verbose_name="Security Group",
+        default="default")
     key_name = StringProperty(verbose_name="Key Name")
     elastic_ip = StringProperty(verbose_name="Elastic IP")
     instance_type = StringProperty(verbose_name="Instance Type")
@@ -122,7 +125,11 @@ class Server(Model):
                     self._instance = self._reservation.instances[0]
         return self._instance
 
-    instance = property(getInstance, setReadOnly, None, 'The Instance for the server')
+    instance = property(
+        getInstance,
+        setReadOnly,
+        None,
+        'The Instance for the server')
 
     def getAMI(self):
         if self.instance:
@@ -212,20 +219,30 @@ class Server(Model):
     def start(self):
         self.stop()
         ec2 = boto.connect_ec2()
-        ami = ec2.get_all_images(image_ids = [str(self.ami_id)])[0]
-        groups = ec2.get_all_security_groups(groupnames=[str(self.security_group)])
+        ami = ec2.get_all_images(image_ids=[str(self.ami_id)])[0]
+        groups = ec2.get_all_security_groups(
+            groupnames=[str(self.security_group)])
         if not self._config:
             self.load_config()
         if not self._config.has_section("Credentials"):
             self._config.add_section("Credentials")
-            self._config.set("Credentials", "aws_access_key_id", ec2.aws_access_key_id)
-            self._config.set("Credentials", "aws_secret_access_key", ec2.aws_secret_access_key)
+            self._config.set(
+                "Credentials",
+                "aws_access_key_id",
+                ec2.aws_access_key_id)
+            self._config.set(
+                "Credentials",
+                "aws_secret_access_key",
+                ec2.aws_secret_access_key)
 
         if not self._config.has_section("Pyami"):
             self._config.add_section("Pyami")
 
         if self._manager.domain:
-            self._config.set('Pyami', 'server_sdb_domain', self._manager.domain.name)
+            self._config.set(
+                'Pyami',
+                'server_sdb_domain',
+                self._manager.domain.name)
             self._config.set("Pyami", 'server_sdb_name', self.name)
 
         cfg = StringIO.StringIO()
@@ -234,10 +251,10 @@ class Server(Model):
         r = ami.run(min_count=1,
                     max_count=1,
                     key_name=self.key_name,
-                    security_groups = groups,
-                    instance_type = self.instance_type,
-                    placement = self.zone,
-                    user_data = cfg)
+                    security_groups=groups,
+                    instance_type=self.instance_type,
+                    placement=self.zone,
+                    user_data=cfg)
         i = r.instances[0]
         self.instance_id = i.id
         self.put()
@@ -262,7 +279,8 @@ class Server(Model):
             self._ssh_client = paramiko.SSHClient()
             self._ssh_client.load_system_host_keys()
             self._ssh_client.load_host_keys(os.path.expanduser(host_key_file))
-            self._ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            self._ssh_client.set_missing_host_key_policy(
+                paramiko.AutoAddPolicy())
             self._ssh_client.connect(self.instance.public_dns_name,
                                      username=uname, pkey=self._pkey)
         return self._ssh_client
@@ -336,7 +354,13 @@ class Server(Model):
         print '\t%s' % t[2].read()
         print '...complete!'
 
-    def create_image(self, bucket=None, prefix=None, key_file=None, cert_file=None, size=None):
+    def create_image(
+            self,
+            bucket=None,
+            prefix=None,
+            key_file=None,
+            cert_file=None,
+            size=None):
         iobject = IObject()
         if not bucket:
             bucket = iobject.get_string('Name of S3 bucket')
@@ -351,7 +375,9 @@ class Server(Model):
         self.bundle_image(prefix, key_file, cert_file, size)
         self.upload_bundle(bucket, prefix)
         print 'registering image...'
-        self.image_id = self.ec2.register_image('%s/%s.manifest.xml' % (bucket, prefix))
+        self.image_id = self.ec2.register_image(
+            '%s/%s.manifest.xml' %
+            (bucket, prefix))
         return self.image_id
 
     def attach_volume(self, volume, device="/dev/sdp"):
@@ -368,7 +394,10 @@ class Server(Model):
             volume_id = volume.id
         else:
             volume_id = volume
-        return self.ec2.attach_volume(volume_id=volume_id, instance_id=self.instance_id, device=device)
+        return self.ec2.attach_volume(
+            volume_id=volume_id,
+            instance_id=self.instance_id,
+            device=device)
 
     def detach_volume(self, volume):
         """
@@ -381,7 +410,9 @@ class Server(Model):
             volume_id = volume.id
         else:
             volume_id = volume
-        return self.ec2.detach_volume(volume_id=volume_id, instance_id=self.instance_id)
+        return self.ec2.detach_volume(
+            volume_id=volume_id,
+            instance_id=self.instance_id)
 
     def install_package(self, package_name):
         print 'installing %s...' % package_name

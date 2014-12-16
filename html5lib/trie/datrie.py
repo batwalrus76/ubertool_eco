@@ -7,6 +7,7 @@ from ._base import Trie as ABCTrie
 
 
 class Trie(ABCTrie):
+
     def __init__(self, data):
         chars = set()
         for key in data.keys():

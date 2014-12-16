@@ -30,6 +30,7 @@ from boto.cloudfront.logging import LoggingInfo
 from boto.cloudfront.origin import S3Origin, CustomOrigin
 from boto.s3.acl import ACL
 
+
 class DistributionConfig(object):
 
     def __init__(self, connection=None, origin=None, enabled=False,
@@ -174,17 +175,24 @@ class DistributionConfig(object):
         else:
             setattr(self, name, value)
 
+
 class StreamingDistributionConfig(DistributionConfig):
 
     def __init__(self, connection=None, origin='', enabled=False,
                  caller_reference='', cnames=None, comment='',
                  trusted_signers=None, logging=None):
-        super(StreamingDistributionConfig, self).__init__(connection=connection,
-                                    origin=origin, enabled=enabled,
-                                    caller_reference=caller_reference,
-                                    cnames=cnames, comment=comment,
-                                    trusted_signers=trusted_signers,
-                                    logging=logging)
+        super(
+            StreamingDistributionConfig,
+            self).__init__(
+            connection=connection,
+            origin=origin,
+            enabled=enabled,
+            caller_reference=caller_reference,
+            cnames=cnames,
+            comment=comment,
+            trusted_signers=trusted_signers,
+            logging=logging)
+
     def to_xml(self):
         s = '<?xml version="1.0" encoding="UTF-8"?>\n'
         s += '<StreamingDistributionConfig xmlns="http://cloudfront.amazonaws.com/doc/2010-07-15/">\n'
@@ -216,6 +224,7 @@ class StreamingDistributionConfig(DistributionConfig):
             s += '</Logging>\n'
         s += '</StreamingDistributionConfig>\n'
         return s
+
 
 class DistributionSummary(object):
 
@@ -280,10 +289,12 @@ class DistributionSummary(object):
     def get_distribution(self):
         return self.connection.get_distribution_info(self.id)
 
+
 class StreamingDistributionSummary(DistributionSummary):
 
     def get_distribution(self):
         return self.connection.get_streaming_distribution_info(self.id)
+
 
 class Distribution(object):
 
@@ -354,18 +365,25 @@ class Distribution(object):
         :param comment: The comment associated with the Distribution.
 
         """
-        new_config = DistributionConfig(self.connection, self.config.origin,
-                                        self.config.enabled, self.config.caller_reference,
-                                        self.config.cnames, self.config.comment,
-                                        self.config.trusted_signers,
-                                        self.config.default_root_object)
+        new_config = DistributionConfig(
+            self.connection,
+            self.config.origin,
+            self.config.enabled,
+            self.config.caller_reference,
+            self.config.cnames,
+            self.config.comment,
+            self.config.trusted_signers,
+            self.config.default_root_object)
         if enabled is not None:
             new_config.enabled = enabled
         if cnames is not None:
             new_config.cnames = cnames
         if comment is not None:
             new_config.comment = comment
-        self.etag = self.connection.set_distribution_config(self.id, self.etag, new_config)
+        self.etag = self.connection.set_distribution_config(
+            self.id,
+            self.etag,
+            new_config)
         self.config = new_config
         self._object_class = Object
 
@@ -562,12 +580,12 @@ class Distribution(object):
         """
         # Get the required parameters
         params = self._create_signing_params(
-                     url=url, keypair_id=keypair_id, expire_time=expire_time,
-                     valid_after_time=valid_after_time, ip_address=ip_address,
-                     policy_url=policy_url, private_key_file=private_key_file,
-                     private_key_string=private_key_string)
+            url=url, keypair_id=keypair_id, expire_time=expire_time,
+            valid_after_time=valid_after_time, ip_address=ip_address,
+            policy_url=policy_url, private_key_file=private_key_file,
+            private_key_string=private_key_string)
 
-        #combine these into a full url
+        # combine these into a full url
         if "?" in url:
             sep = "&"
         else:
@@ -581,9 +599,9 @@ class Distribution(object):
         return signed_url
 
     def _create_signing_params(self, url, keypair_id,
-                          expire_time=None, valid_after_time=None,
-                          ip_address=None, policy_url=None,
-                          private_key_file=None, private_key_string=None):
+                               expire_time=None, valid_after_time=None,
+                               ip_address=None, policy_url=None,
+                               private_key_file=None, private_key_string=None):
         """
         Creates the required URL parameters for a signed URL.
         """
@@ -605,9 +623,12 @@ class Distribution(object):
 
             encoded_policy = self._url_base64_encode(policy)
             params["Policy"] = encoded_policy
-        #sign the policy
-        signature = self._sign_string(policy, private_key_file, private_key_string)
-        #now base64 encode the signature (URL safe as well)
+        # sign the policy
+        signature = self._sign_string(
+            policy,
+            private_key_file,
+            private_key_string)
+        # now base64 encode the signature (URL safe as well)
         encoded_signature = self._url_base64_encode(signature)
         params["Signature"] = encoded_signature
         params["Key-Pair-Id"] = keypair_id
@@ -624,7 +645,11 @@ class Distribution(object):
         return policy
 
     @staticmethod
-    def _custom_policy(resource, expires=None, valid_after=None, ip_address=None):
+    def _custom_policy(
+            resource,
+            expires=None,
+            valid_after=None,
+            ip_address=None):
         """
         Creates a custom policy string based on the supplied parameters.
         """
@@ -642,8 +667,8 @@ class Distribution(object):
                 ip_address += "/32"
             condition["IpAddress"] = {"AWS:SourceIp": ip_address}
         policy = {"Statement": [{
-                     "Resource": resource,
-                     "Condition": condition}]}
+            "Resource": resource,
+            "Condition": condition}]}
         return json.dumps(policy, separators=(",", ":"))
 
     @staticmethod
@@ -660,9 +685,11 @@ class Distribution(object):
                                       "CloudFront")
         # Make sure only one of private_key_file and private_key_string is set
         if private_key_file and private_key_string:
-            raise ValueError("Only specify the private_key_file or the private_key_string not both")
+            raise ValueError(
+                "Only specify the private_key_file or the private_key_string not both")
         if not private_key_file and not private_key_string:
-            raise ValueError("You must specify one of private_key_file or private_key_string")
+            raise ValueError(
+                "You must specify one of private_key_file or private_key_string")
         # If private_key_file is a file name, open it and read it
         if private_key_string is None:
             if isinstance(private_key_file, basestring):
@@ -689,12 +716,20 @@ class Distribution(object):
         msg_base64 = msg_base64.replace('/', '~')
         return msg_base64
 
+
 class StreamingDistribution(Distribution):
 
     def __init__(self, connection=None, config=None, domain_name='',
                  id='', last_modified_time=None, status=''):
-        super(StreamingDistribution, self).__init__(connection, config,
-                              domain_name, id, last_modified_time, status)
+        super(
+            StreamingDistribution,
+            self).__init__(
+            connection,
+            config,
+            domain_name,
+            id,
+            last_modified_time,
+            status)
         self._object_class = StreamingObject
 
     def startElement(self, name, attrs, connection):
@@ -703,7 +738,7 @@ class StreamingDistribution(Distribution):
             return self.config
         else:
             return super(StreamingDistribution, self).startElement(name, attrs,
-                connection)
+                                                                   connection)
 
     def update(self, enabled=None, cnames=None, comment=None):
         """
@@ -745,13 +780,12 @@ class StreamingDistribution(Distribution):
             new_config.cnames = cnames
         if comment is not None:
             new_config.comment = comment
-        self.etag = self.connection.set_streaming_distribution_config(self.id,
-                                                                      self.etag,
-                                                                      new_config)
+        self.etag = self.connection.set_streaming_distribution_config(
+            self.id,
+            self.etag,
+            new_config)
         self.config = new_config
         self._object_class = StreamingObject
 
     def delete(self):
         self.connection.delete_streaming_distribution(self.id, self.etag)
-
-

@@ -29,6 +29,7 @@ from .dictresponse import Element, XmlHandler
 
 
 class Service(object):
+
     """
     This is a simple example service that connects to the EC2 endpoint
     and supports a single request (DescribeInstances) to show how to

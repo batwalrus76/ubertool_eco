@@ -12,10 +12,14 @@ import sam_parameters
 
 def timestamp(sam_obj="", batch_jid=""):
     if sam_obj:
-        st = datetime.datetime.strptime(sam_obj.jid, '%Y%m%d%H%M%S%f').strftime('%A, %Y-%B-%d %H:%M:%S')
+        st = datetime.datetime.strptime(
+            sam_obj.jid,
+            '%Y%m%d%H%M%S%f').strftime('%A, %Y-%B-%d %H:%M:%S')
     else:
-        st = datetime.datetime.strptime(batch_jid, '%Y%m%d%H%M%S%f').strftime('%A, %Y-%B-%d %H:%M:%S')
-    html="""
+        st = datetime.datetime.strptime(
+            batch_jid,
+            '%Y%m%d%H%M%S%f').strftime('%A, %Y-%B-%d %H:%M:%S')
+    html = """
     <div class="out_">
     <b>Spatial Aquatic Model (SAM) Beta<br>
     """
@@ -25,13 +29,16 @@ def timestamp(sam_obj="", batch_jid=""):
     </div>"""
     return html
 
+
 def getheaderpvu():
     headings = ["Parameter", "Value", "Units"]
     return headings
 
+
 def getheaderpv():
     headings = ["Parameter", "Value"]
     return headings
+
 
 def gethtmlrowsfromcols(data, headings):
     columns = [data[heading] for heading in headings]
@@ -41,14 +48,15 @@ def gethtmlrowsfromcols(data, headings):
 
     for col in columns:
         # padding the short columns with None
-        col += [None,] * (max_len - len(col))
+        col += [None, ] * (max_len - len(col))
 
     # Then rotate the structure...
     rows = [[col[i] for col in columns] for i in range(max_len)]
     return rows
 
+
 def getdjtemplate():
-    dj_template ="""
+    dj_template = """
     <table class="out_">
     {# headings #}
         <tr>
@@ -56,7 +64,7 @@ def getdjtemplate():
             <th colspan={{ th_span|default:'1' }}>{{ heading }}</th>
         {% endfor %}
         </tr>
-    
+
     {% if sub_headings %}
         <tr>
         {% for sub_heading in sub_headings %}
@@ -81,12 +89,14 @@ pvheadings = getheaderpv()
 
 djtemplate = getdjtemplate()
 tmpl = Template(djtemplate)
- 
+
 ########################
 # Table Initialization #
 ########################
+
+
 def gett1data(sam_obj):
-    
+
     if (sam_obj.scenario_selection == '1'):
         scenario = 'Atrazine - Corn'
         chemical_name = 'Atrazine'
@@ -116,13 +126,13 @@ def gett1data(sam_obj):
         scenario = 'n/a'
         chemical_name = 'n/a'
         koc = 'n/a'
-        soil_hl = 'n/a'    
+        soil_hl = 'n/a'
 
     data = {
-        "Parameter": ['Scenario', 'Chemical Name', 'Koc', 'Soil Metabolism Halflife'],
-        "Value": [scenario, chemical_name, koc, soil_hl],
-        "Units": ['', '', 'mL/g', 'days']
-    }
+        "Parameter": [
+            'Scenario', 'Chemical Name', 'Koc', 'Soil Metabolism Halflife'], "Value": [
+            scenario, chemical_name, koc, soil_hl], "Units": [
+                '', '', 'mL/g', 'days']}
     # data = {
     #     "Parameter": ['Chemical Name', 'Koc', 'Soil Metabolism Halflife'],
     #     "Value": ['%s' % sam_obj.chemical_name, sam_obj.koc, '%s' % sam_obj.soil_metabolism_hl],
@@ -130,10 +140,11 @@ def gett1data(sam_obj):
     # }
     return data
 
+
 def gett2data(sam_obj):
     # Convert tuple into dictionary
     # CROP_CHOICES = dict(sam_parameters.SamInp_app.CROP_CHOICES)
-    
+
     # try:
     #     app_method = sam_parameters.SamInp_app.APP_METH_CHOICES[int(sam_obj.app_method) - 1][1]
     # except:
@@ -195,27 +206,71 @@ def gett2data(sam_obj):
         refinements = 'n/a'
         time_win = 'n/a'
         percent_app = 'n/a'
-    
+
     if (refinements == 'Uniform Step Application over Window'):
         data = {
-            "Parameter": ['Crop(s)', 'Total Number of Crops', 'Total Number of Applications',
-                            'Application method', 'Application Rate', 'Refinements',
-                            'Time Window #1', 'Percent Applied #1', 'Time Window #2', 'Percent Applied #2' ],
-            "Value": [crop, no_of_crops, noa,
-                        app_meth, app_rate, refinements,
-                        time_win, percent_app, time_win2, percent_app2 ],
-            "Units": ['', '', '', '', 'kg/ha', '', 'days', '%', 'days', '%']
-        }
+            "Parameter": [
+                'Crop(s)',
+                'Total Number of Crops',
+                'Total Number of Applications',
+                'Application method',
+                'Application Rate',
+                'Refinements',
+                'Time Window #1',
+                'Percent Applied #1',
+                'Time Window #2',
+                'Percent Applied #2'],
+            "Value": [
+                crop,
+                no_of_crops,
+                noa,
+                app_meth,
+                app_rate,
+                refinements,
+                time_win,
+                percent_app,
+                time_win2,
+                percent_app2],
+            "Units": [
+                '',
+                '',
+                '',
+                '',
+                'kg/ha',
+                '',
+                'days',
+                '%',
+                'days',
+                '%']}
     else:
         data = {
-            "Parameter": ['Crop', 'Total Number of Crops', 'Total Number of Applications',
-                            'Application method', 'Application Rate', 'Refinements',
-                            'Time Window', 'Percent Applied' ],
-            "Value": [crop, no_of_crops, noa,
-                        app_meth, app_rate, refinements,
-                        time_win, percent_app ],
-            "Units": ['', '', '', '', 'kg/ha', '', 'days', '%']
-        }
+            "Parameter": [
+                'Crop',
+                'Total Number of Crops',
+                'Total Number of Applications',
+                'Application method',
+                'Application Rate',
+                'Refinements',
+                'Time Window',
+                'Percent Applied'],
+            "Value": [
+                crop,
+                no_of_crops,
+                noa,
+                app_meth,
+                app_rate,
+                refinements,
+                time_win,
+                percent_app],
+            "Units": [
+                '',
+                '',
+                '',
+                '',
+                'kg/ha',
+                '',
+                'days',
+                '%']}
     # data = {
     #     "Parameter": ['Crop', 'Total Number of Crops', 'Total Number of Applications',
     #                     'Application method', 'Application Rate', 'Refinements',
@@ -227,16 +282,26 @@ def gett2data(sam_obj):
     # }
     return data
 
+
 def gett3data(sam_obj):
     # try:
     #     sim_type = sam_parameters.SamInp_sim.SIM_CHOICES[int(sam_obj.sim_type) - 1][1]
     # except:
     #     sim_type = ""
-    
+
     data = {
-        "Parameter": ['Sate/Region', 'Simulation Type', 'Start Date', 'End Date', 'First Application Date'],
-        "Value": [ 'Ohio Valley', 'Eco', '01/01/1984', '12/31/2013', '04/20/1984' ]
-    }
+        "Parameter": [
+            'Sate/Region',
+            'Simulation Type',
+            'Start Date',
+            'End Date',
+            'First Application Date'],
+        "Value": [
+            'Ohio Valley',
+            'Eco',
+            '01/01/1984',
+            '12/31/2013',
+            '04/20/1984']}
 
     # data = {
     #     "Parameter": ['Sate/Region', 'Simulation Type', 'Start Date', 'End Date', 'First Application Date'],
@@ -244,6 +309,7 @@ def gett3data(sam_obj):
     #                 '%s' % sam_obj.sim_date_start, '%s' % sam_obj.sim_date_end, '%s' % sam_obj.sim_date_1stapp ]
     # }
     return data
+
 
 def gett4data(sam_obj):
     # try:
@@ -257,12 +323,22 @@ def gett4data(sam_obj):
     #     output_tox = ""
 
     data = {
-        "Parameter": ['Output Preference', '', '', '', 'Threshold Time Period', mark_safe('Threshold (&micro;g/L)'), 'Output Format'],
-        "Value": ['21-d Average Concentrations - 90th percentile',
-                    '60-d Average Concentrations - 90th percentile',
-                    'Toxicity Threshold - Average Duration of Daily Exceedances',
-                    'Toxicity Threshold - Percentage of Days with Exceedances',
-                    '30-d, Annual', '4', 'CSVs & Map'],
+        "Parameter": [
+            'Output Preference',
+            '',
+            '',
+            '',
+            'Threshold Time Period',
+            mark_safe('Threshold (&micro;g/L)'),
+            'Output Format'],
+        "Value": [
+            '21-d Average Concentrations - 90th percentile',
+            '60-d Average Concentrations - 90th percentile',
+            'Toxicity Threshold - Average Duration of Daily Exceedances',
+            'Toxicity Threshold - Percentage of Days with Exceedances',
+            '30-d, Annual',
+            '4',
+            'CSVs & Map'],
     }
 
     # data = {
@@ -277,59 +353,63 @@ def gett4data(sam_obj):
 # Table Formating #
 ###################
 def table_1(sam_obj):
-        html = """
+    html = """
         <H3 class="out_1 collapsible" id="section1"><span></span>User Inputs:</H3>
         <div class="out_">
             <H4 class="out_1 collapsible" id="section2"><span></span>Chemical Properties</H4>
                 <div class="out_ container_output">
         """
-        tdata = gett1data(sam_obj)
-        trows = gethtmlrowsfromcols(tdata,pvuheadings)
-        html = html + tmpl.render(Context(dict(data=trows, headings=pvuheadings)))
-        html = html + """
+    tdata = gett1data(sam_obj)
+    trows = gethtmlrowsfromcols(tdata, pvuheadings)
+    html = html + tmpl.render(Context(dict(data=trows, headings=pvuheadings)))
+    html = html + """
                 </div>
         """
-        return html
+    return html
+
 
 def table_2(sam_obj):
-        html = """
+    html = """
             <H4 class="out_1 collapsible" id="section2"><span></span>Application</H4>
                 <div class="out_ container_output">
         """
-        tdata = gett2data(sam_obj)
-        trows = gethtmlrowsfromcols(tdata,pvuheadings)
-        html = html + tmpl.render(Context(dict(data=trows, headings=pvuheadings)))
-        html = html + """
+    tdata = gett2data(sam_obj)
+    trows = gethtmlrowsfromcols(tdata, pvuheadings)
+    html = html + tmpl.render(Context(dict(data=trows, headings=pvuheadings)))
+    html = html + """
                 </div>
         """
-        return html
+    return html
+
 
 def table_3(sam_obj):
-        html = """
+    html = """
             <H4 class="out_1 collapsible" id="section2"><span></span>Simulation</H4>
                 <div class="out_ container_output">
         """
-        tdata = gett3data(sam_obj)
-        trows = gethtmlrowsfromcols(tdata,pvheadings)
-        html = html + tmpl.render(Context(dict(data=trows, headings=pvheadings)))
-        html = html + """
+    tdata = gett3data(sam_obj)
+    trows = gethtmlrowsfromcols(tdata, pvheadings)
+    html = html + tmpl.render(Context(dict(data=trows, headings=pvheadings)))
+    html = html + """
                 </div>
         """
-        return html
+    return html
+
 
 def table_4(sam_obj):
-        html = """
+    html = """
             <H4 class="out_1 collapsible" id="section2"><span></span>Output Settings</H4>
                 <div class="out_ container_output">
         """
-        tdata = gett4data(sam_obj)
-        trows = gethtmlrowsfromcols(tdata,pvheadings)
-        html = html + tmpl.render(Context(dict(data=trows, headings=pvheadings)))
-        html = html + """
+    tdata = gett4data(sam_obj)
+    trows = gethtmlrowsfromcols(tdata, pvheadings)
+    html = html + tmpl.render(Context(dict(data=trows, headings=pvheadings)))
+    html = html + """
                 </div>
         </div>
         """
-        return html
+    return html
+
 
 def table_all(sam_obj):
 
@@ -337,7 +417,7 @@ def table_all(sam_obj):
     html = html + table_2(sam_obj)
     html = html + table_3(sam_obj)
     html = html + table_4(sam_obj)
-    
+
     if (sam_obj.scenario_selection == '1'):
         link = 'https://s3.amazonaws.com/super_przm/postprocessed/Atrazine_corn.zip'
         scenario = 'atrazine_corn'
@@ -366,7 +446,7 @@ def table_all(sam_obj):
                 <table class="out_">
                     <tr>
                         <th scope="col">Outputs</div></th>
-                        <th scope="col">Value</div></th>                            
+                        <th scope="col">Value</div></th>
                     </tr>
                     <tr>
                         <td>Simulation is finished. Please download your file from here</td>
@@ -376,7 +456,9 @@ def table_all(sam_obj):
             </div>
     """ % link
 
-    html = html + render_to_string('sam_mapping_demo.html', {'SCENARIO' : scenario})
-    html = html + render_to_string('sam_charts_demo.html', {'SCENARIO' : scenario})
+    html = html + \
+        render_to_string('sam_mapping_demo.html', {'SCENARIO': scenario})
+    html = html + \
+        render_to_string('sam_charts_demo.html', {'SCENARIO': scenario})
 
     return html

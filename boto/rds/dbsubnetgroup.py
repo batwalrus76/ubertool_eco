@@ -23,7 +23,9 @@
 Represents an DBSubnetGroup
 """
 
+
 class DBSubnetGroup(object):
+
     """
     Represents an RDS database subnet group
 
@@ -36,7 +38,13 @@ class DBSubnetGroup(object):
     :ivar name: Name of the subnet group
     :ivar vpc_id: The ID of the VPC the subnets are inside
     """
-    def __init__(self, connection=None, name=None, description=None, subnet_ids=None):
+
+    def __init__(
+            self,
+            connection=None,
+            name=None,
+            description=None,
+            subnet_ids=None):
         self.connection = connection
         self.name = name
         self.description = description
@@ -66,4 +74,3 @@ class DBSubnetGroup(object):
             self.status = value
         else:
             setattr(self, name, value)
-

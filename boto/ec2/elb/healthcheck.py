@@ -23,11 +23,13 @@
 
 
 class HealthCheck(object):
+
     """
     Represents an EC2 Access Point Health Check. See
     :ref:`elb-configuring-a-health-check` for a walkthrough on configuring
     load balancer health checks.
     """
+
     def __init__(self, access_point=None, interval=30, target=None,
                  healthy_threshold=3, timeout=5, unhealthy_threshold=5):
         """

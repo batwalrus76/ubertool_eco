@@ -27,7 +27,9 @@ from key import Key
 from boto.file.simpleresultset import SimpleResultSet
 from boto.s3.bucketlistresultset import BucketListResultSet
 
+
 class Bucket(object):
+
     def __init__(self, name, contained_key):
         """Instantiate an anonymous file-based Bucket around a single key.
         """
@@ -69,7 +71,7 @@ class Bucket(object):
         return SimpleResultSet([key])
 
     def get_key(self, key_name, headers=None, version_id=None,
-                                            key_type=Key.KEY_REGULAR_FILE):
+                key_type=Key.KEY_REGULAR_FILE):
         """
         Check to see if a particular key exists within the bucket.
         Returns: An instance of a Key object or None

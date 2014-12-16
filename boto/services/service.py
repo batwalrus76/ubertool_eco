@@ -70,8 +70,14 @@ class Service(ScriptBase):
     def get_file(self, message):
         bucket_name = message['Bucket']
         key_name = message['InputKey']
-        file_name = os.path.join(self.working_dir, message.get('OriginalFileName', 'in_file'))
-        boto.log.info('get_file: %s/%s to %s' % (bucket_name, key_name, file_name))
+        file_name = os.path.join(
+            self.working_dir,
+            message.get(
+                'OriginalFileName',
+                'in_file'))
+        boto.log.info(
+            'get_file: %s/%s to %s' %
+            (bucket_name, key_name, file_name))
         bucket = boto.lookup('s3', bucket_name)
         key = bucket.new_key(key_name)
         key.get_contents_to_filename(os.path.join(self.working_dir, file_name))
@@ -83,7 +89,9 @@ class Service(ScriptBase):
 
     # store result file in S3
     def put_file(self, bucket_name, file_path, key_name=None):
-        boto.log.info('putting file %s as %s.%s' % (file_path, bucket_name, key_name))
+        boto.log.info(
+            'putting file %s as %s.%s' %
+            (file_path, bucket_name, key_name))
         bucket = boto.lookup('s3', bucket_name)
         key = bucket.new_key(key_name)
         key.set_contents_from_filename(file_path)
@@ -111,11 +119,17 @@ class Service(ScriptBase):
             message['Host'] = 'unknown'
         message['Instance-ID'] = self.instance_id
         if self.output_queue:
-            boto.log.info('Writing message to SQS queue: %s' % self.output_queue.id)
+            boto.log.info(
+                'Writing message to SQS queue: %s' %
+                self.output_queue.id)
             self.output_queue.write(message)
         if self.output_domain:
-            boto.log.info('Writing message to SDB domain: %s' % self.output_domain.name)
-            item_name = '/'.join([message['Service-Write'], message['Bucket'], message['InputKey']])
+            boto.log.info(
+                'Writing message to SDB domain: %s' %
+                self.output_domain.name)
+            item_name = '/'.join([message['Service-Write'],
+                                  message['Bucket'],
+                                  message['InputKey']])
             self.output_domain.put_attributes(item_name, message)
 
     # delete message from input queue
@@ -143,7 +157,9 @@ class Service(ScriptBase):
                 input_message = self.read_message()
                 if input_message:
                     empty_reads = 0
-                    output_message = ServiceMessage(None, input_message.get_body())
+                    output_message = ServiceMessage(
+                        None,
+                        input_message.get_body())
                     input_file = self.get_file(input_message)
                     results = self.process_file(input_file, output_message)
                     self.save_results(results, input_message, output_message)
@@ -158,4 +174,3 @@ class Service(ScriptBase):
                 empty_reads += 1
         self.notify('Service: %s Shutting Down' % self.name)
         self.shutdown()
-

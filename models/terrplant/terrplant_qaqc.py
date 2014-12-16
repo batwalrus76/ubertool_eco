@@ -10,17 +10,21 @@ from StringIO import StringIO
 import csv
 
 
-path = os.path.join(os.environ['PROJECT_PATH'], 'models','terrplant','terrplant_qaqc_inputs.csv')
+path = os.path.join(
+    os.environ['PROJECT_PATH'],
+    'models',
+    'terrplant',
+    'terrplant_qaqc_inputs.csv')
 data = csv.reader(open(path))
 version_terrplant = '1.2.2'
-A=[]
-I=[]
-R=[]
-D=[]
-nms=[]
-lms=[]
-nds=[]
-lds=[]
+A = []
+I = []
+R = []
+D = []
+nms = []
+lms = []
+nds = []
+lds = []
 chemical_name = []
 pc_code = []
 use = []
@@ -114,7 +118,25 @@ for row in data:
     ldsRQspray_results.append(float(row[29]))
 
 
-terrplant_obj = terrplant_model.terrplant(True,True,version_terrplant,"qaqc",A[0],I[0],R[0],D[0],nms[0],lms[0],nds[0],lds[0],chemical_name[0],pc_code[0],use[0],application_method[0],application_form[0],solubility[0])
+terrplant_obj = terrplant_model.terrplant(
+    True,
+    True,
+    version_terrplant,
+    "qaqc",
+    A[0],
+    I[0],
+    R[0],
+    D[0],
+    nms[0],
+    lms[0],
+    nds[0],
+    lds[0],
+    chemical_name[0],
+    pc_code[0],
+    use[0],
+    application_method[0],
+    application_form[0],
+    solubility[0])
 terrplant_obj.chemical_name_expected = chemical_name[0]
 terrplant_obj.pc_code_expected = pc_code[0]
 terrplant_obj.use_expected = use[0]
@@ -162,41 +184,39 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 # terrplant_obj.ldsRQsemi_results_expected = out_fun_ldsRQsemi[0]
 # terrplant_obj.ldsRQspray_results_expected = out_fun_ldsRQspray[0]
 
-
-
-    # rundry_out.append(float(row[4])) 
-    # runsemi_out.append(float(row[5]))
-    # spray_out.append(float(row[7])) 
-    # totaldry_out.append(float(row[8]))
-    # totalsemi_out.append(float(row[9]))
-    # nms.append(float(row[10]))
-    # nmsRQdry_out.append(float(row[11])) 
-    # LOCnmsdry_out.append(str(row[12]))
-    # nmsRQsemi_out.append(float(row[13]))
-    # LOCnmssemi_out.append(str(row[14])) 
-    # nmsRQspray_out.append(float(row[15]))
-    # LOCnmsspray_out.append(str(row[16]))
-    # lms.append(float(row[17]))
-    # lmsRQdry_out.append(float(row[18])) 
-    # LOClmsdry_out.append(str(row[19]))
-    # lmsRQsemi_out.append(float(row[20]))
-    # LOClmssemi_out.append(str(row[21])) 
-    # lmsRQspray_out.append(float(row[22]))
-    # LOClmsspray_out.append(str(row[23]))
-    # nds.append(float(row[24]))
-    # ndsRQdry_out.append(float(row[25])) 
-    # LOCndsdry_out.append(str(row[26]))
-    # ndsRQsemi_out.append(float(row[27]))
-    # LOCndssemi_out.append(str(row[28])) 
-    # ndsRQspray_out.append(float(row[29]))
-    # LOCndsspray_out.append(str(row[30]))
-    # lds.append(float(row[31]))
-    # ldsRQdry_out.append(float(row[32])) 
-    # LOCldsdry_out.append(str(row[33]))
-    # ldsRQsemi_out.append(float(row[34]))
-    # LOCldssemi_out.append(str(row[35])) 
-    # ldsRQspray_out.append(float(row[36]))
-    # LOCldsspray_out.append(str(row[37]))
+# rundry_out.append(float(row[4]))
+# runsemi_out.append(float(row[5]))
+# spray_out.append(float(row[7]))
+# totaldry_out.append(float(row[8]))
+# totalsemi_out.append(float(row[9]))
+# nms.append(float(row[10]))
+# nmsRQdry_out.append(float(row[11]))
+# LOCnmsdry_out.append(str(row[12]))
+# nmsRQsemi_out.append(float(row[13]))
+# LOCnmssemi_out.append(str(row[14]))
+# nmsRQspray_out.append(float(row[15]))
+# LOCnmsspray_out.append(str(row[16]))
+# lms.append(float(row[17]))
+# lmsRQdry_out.append(float(row[18]))
+# LOClmsdry_out.append(str(row[19]))
+# lmsRQsemi_out.append(float(row[20]))
+# LOClmssemi_out.append(str(row[21]))
+# lmsRQspray_out.append(float(row[22]))
+# LOClmsspray_out.append(str(row[23]))
+# nds.append(float(row[24]))
+# ndsRQdry_out.append(float(row[25]))
+# LOCndsdry_out.append(str(row[26]))
+# ndsRQsemi_out.append(float(row[27]))
+# LOCndssemi_out.append(str(row[28]))
+# ndsRQspray_out.append(float(row[29]))
+# LOCndsspray_out.append(str(row[30]))
+# lds.append(float(row[31]))
+# ldsRQdry_out.append(float(row[32]))
+# LOCldsdry_out.append(str(row[33]))
+# ldsRQsemi_out.append(float(row[34]))
+# LOCldssemi_out.append(str(row[35]))
+# ldsRQspray_out.append(float(row[36]))
+# LOCldsspray_out.append(str(row[37]))
 
 
 # I CREATED THIS
@@ -220,7 +240,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 # out_lmsRQspray_results = []
 # out_ndsRQspray_results = []
 # out_ldsRQspray_results = []
-  
+
 # out_fun_rundry = []
 # out_fun_runsemi = []
 # out_fun_spray = []
@@ -252,13 +272,10 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 # out_fun_LOCldsspray = []
 
 
-
-
-
 # def set_globals(**kwargs):
 #     for argname in kwargs:
 #         globals()['%s_in' % argname] = kwargs[argname]
-           
+
 # class TestCase_rundry_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -270,7 +287,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_rundry.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("rundry",self.rundry_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.rundry_out_in,3),testFailureMessage)
-           
+
 # class TestCase_runsemi_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -282,7 +299,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_runsemi.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("runsemi",self.runsemi_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.runsemi_out_in,3),testFailureMessage)
-           
+
 # class TestCase_spray_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -294,7 +311,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_spray.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.spray_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.spray_out_in,3),testFailureMessage)
-           
+
 # class TestCase_totaldry_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -306,7 +323,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_totaldry.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.totaldry_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.totaldry_out_in,3),testFailureMessage)
-           
+
 # class TestCase_totalsemi_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -318,7 +335,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_totalsemi.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.totalsemi_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.totalsemi_out_in,3),testFailureMessage)
-           
+
 # class TestCase_nmsRQdry_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -330,7 +347,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_nmsRQdry.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.nmsRQdry_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.nmsRQdry_out_in,3),testFailureMessage)
-           
+
 # class TestCase_LOCnmsdry_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -342,7 +359,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_LOCnmsdry.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.LOCnmsdry_out_in,fun)
 #             self.assertEqual(fun,self.LOCnmsdry_out_in,testFailureMessage)
-           
+
 # class TestCase_nmsRQsemi_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -354,7 +371,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_nmsRQsemi.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.nmsRQsemi_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.nmsRQsemi_out_in,3),testFailureMessage)
-           
+
 # class TestCase_LOCnmssemi_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -366,7 +383,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_LOCnmssemi.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.LOCnmssemi_out_in,fun)
 #             self.assertEqual(fun,self.LOCnmssemi_out_in,testFailureMessage)
-           
+
 # class TestCase_nmsRQspray_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -378,7 +395,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_nmsRQspray.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.nmsRQspray_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.nmsRQspray_out_in,3),testFailureMessage)
-           
+
 # class TestCase_LOCnmsspray_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -390,7 +407,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_LOCnmsspray.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.LOCnmsspray_out_in,fun)
 #             self.assertEqual(fun,self.LOCnmsspray_out_in,testFailureMessage)
-     
+
 # class TestCase_lmsRQdry_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -402,7 +419,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_lmsRQdry.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.lmsRQdry_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.lmsRQdry_out_in,3),testFailureMessage)
-           
+
 # class TestCase_LOClmsdry_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -414,7 +431,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_LOClmsdry.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.LOClmsdry_out_in,fun)
 #             self.assertEqual(fun,self.LOClmsdry_out_in,testFailureMessage)
-           
+
 # class TestCase_lmsRQsemi_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -426,7 +443,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_lmsRQsemi.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.lmsRQsemi_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.lmsRQsemi_out_in,3),testFailureMessage)
-           
+
 # class TestCase_LOClmssemi_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -438,7 +455,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_LOClmssemi.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.LOClmssemi_out_in,fun)
 #             self.assertEqual(fun,self.LOClmssemi_out_in,testFailureMessage)
-           
+
 # class TestCase_lmsRQspray_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -450,7 +467,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_lmsRQspray.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.lmsRQspray_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.lmsRQspray_out_in,3),testFailureMessage)
-           
+
 # class TestCase_LOClmsspray_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -462,7 +479,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_LOClmsspray.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.LOClmsspray_out_in,fun)
 #             self.assertEqual(fun,self.LOClmsspray_out_in,testFailureMessage)
-     
+
 # class TestCase_ndsRQdry_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -474,7 +491,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_ndsRQdry.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.ndsRQdry_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.ndsRQdry_out_in,3),testFailureMessage)
-           
+
 # class TestCase_LOCndsdry_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -486,7 +503,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_LOCndsdry.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.LOCndsdry_out_in,fun)
 #             self.assertEqual(fun,self.LOCndsdry_out_in,testFailureMessage)
-           
+
 # class TestCase_ndsRQsemi_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -498,7 +515,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_ndsRQsemi.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.ndsRQsemi_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.ndsRQsemi_out_in,3),testFailureMessage)
-           
+
 # class TestCase_LOCndssemi_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -510,7 +527,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_LOCndssemi.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.LOCndssemi_out_in,fun)
 #             self.assertEqual(fun,self.LOCndssemi_out_in,testFailureMessage)
-           
+
 # class TestCase_ndsRQspray_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -522,7 +539,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_ndsRQspray.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.ndsRQspray_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.ndsRQspray_out_in,3),testFailureMessage)
-           
+
 # class TestCase_LOCndsspray_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -534,7 +551,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_LOCndsspray.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.LOCndsspray_out_in,fun)
 #             self.assertEqual(fun,self.LOCndsspray_out_in,testFailureMessage)
-     
+
 # class TestCase_ldsRQdry_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -546,7 +563,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_ldsRQdry.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.ldsRQdry_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.ldsRQdry_out_in,3),testFailureMessage)
-           
+
 # class TestCase_LOCldsdry_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -558,7 +575,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_LOCldsdry.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.LOCldsdry_out_in,fun)
 #             self.assertEqual(fun,self.LOCldsdry_out_in,testFailureMessage)
-           
+
 # class TestCase_ldsRQsemi_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -570,7 +587,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_ldsRQsemi.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.ldsRQsemi_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.ldsRQsemi_out_in,3),testFailureMessage)
-           
+
 # class TestCase_LOCldssemi_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -582,7 +599,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_LOCldssemi.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.LOCldssemi_out_in,fun)
 #             self.assertEqual(fun,self.LOCldssemi_out_in,testFailureMessage)
-           
+
 # class TestCase_ldsRQspray_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########
@@ -594,7 +611,7 @@ terrplant_obj.ldsRQspray_results_expected = ldsRQspray_results[0]
 #             out_fun_ldsRQspray.append(fun)
 #             testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("spray",self.ldsRQspray_out_in,fun)
 #             self.assertEqual(round(fun,3),round(self.ldsRQspray_out_in,3),testFailureMessage)
-           
+
 # class TestCase_LOCldsspray_out(unittest.TestCase):
 #     def setUp(self):
 #         #####Pre-defined inputs########

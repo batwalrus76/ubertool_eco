@@ -69,7 +69,9 @@ from boto.sqs.attributes import Attributes
 from boto.exception import SQSDecodeError
 import boto
 
+
 class RawMessage(object):
+
     """
     Base class for SQS messages.  RawMessage does not encode the message
     in any way.  Whatever you store in the body of the message is what
@@ -137,11 +139,14 @@ class RawMessage(object):
 
     def change_visibility(self, visibility_timeout):
         if self.queue:
-            self.queue.connection.change_message_visibility(self.queue,
-                                                            self.receipt_handle,
-                                                            visibility_timeout)
+            self.queue.connection.change_message_visibility(
+                self.queue,
+                self.receipt_handle,
+                visibility_timeout)
+
 
 class Message(RawMessage):
+
     """
     The default Message class used for SQS queues.  This class automatically
     encodes/decodes the message body using Base64 encoding to avoid any
@@ -164,7 +169,9 @@ class Message(RawMessage):
             return value
         return value
 
+
 class MHMessage(Message):
+
     """
     The MHMessage class provides a message that provides RFC821-like
     headers like this:
@@ -189,7 +196,7 @@ class MHMessage(Message):
             while line:
                 delim = line.find(':')
                 key = line[0:delim]
-                value = line[delim+1:].strip()
+                value = line[delim + 1:].strip()
                 msg[key.strip()] = value.strip()
                 line = fp.readline()
         except:
@@ -234,7 +241,9 @@ class MHMessage(Message):
     def get(self, key, default=None):
         return self._body.get(key, default)
 
+
 class EncodedMHMessage(MHMessage):
+
     """
     The EncodedMHMessage class provides a message that provides RFC821-like
     headers like this:
@@ -256,4 +265,3 @@ class EncodedMHMessage(MHMessage):
     def encode(self, value):
         value = super(EncodedMHMessage, self).encode(value)
         return base64.b64encode(value)
-

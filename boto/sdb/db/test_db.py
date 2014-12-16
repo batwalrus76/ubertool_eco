@@ -19,6 +19,8 @@ _objects = {}
 # but for now it will live here.  It shows examples of each of the Property types in
 # use and tests the basic operations.
 #
+
+
 class TestBasic(Model):
 
     name = StringProperty()
@@ -26,48 +28,59 @@ class TestBasic(Model):
     foo = BooleanProperty()
     date = DateTimeProperty()
 
+
 class TestFloat(Model):
 
     name = StringProperty()
     value = FloatProperty()
 
+
 class TestRequired(Model):
 
     req = StringProperty(required=True, default='foo')
+
 
 class TestReference(Model):
 
     ref = ReferenceProperty(reference_class=TestBasic, collection_name='refs')
 
+
 class TestSubClass(TestBasic):
 
     answer = IntegerProperty()
 
+
 class TestPassword(Model):
     password = PasswordProperty()
+
 
 class TestList(Model):
 
     name = StringProperty()
     nums = ListProperty(int)
 
+
 class TestMap(Model):
 
     name = StringProperty()
     map = MapProperty()
+
 
 class TestListReference(Model):
 
     name = StringProperty()
     basics = ListProperty(TestBasic)
 
+
 class TestAutoNow(Model):
 
     create_date = DateTimeProperty(auto_now_add=True)
     modified_date = DateTimeProperty(auto_now=True)
 
+
 class TestUnique(Model):
     name = StringProperty(unique=True)
+
 
 def test_basic():
     global _objects
@@ -93,6 +106,7 @@ def test_basic():
     #assert t.date == tt.date
     return t
 
+
 def test_float():
     global _objects
     t = TestFloat()
@@ -109,13 +123,15 @@ def test_float():
     assert tt.name == t.name
     assert tt.value == t.value
     return t
-    
+
+
 def test_required():
     global _objects
     t = TestRequired()
     _objects['test_required_t'] = t
     t.put()
     return t
+
 
 def test_reference(t=None):
     global _objects
@@ -131,6 +147,7 @@ def test_reference(t=None):
     for o in t.refs:
         log.debug(o)
 
+
 def test_subclass():
     global _objects
     t = TestSubClass()
@@ -138,6 +155,7 @@ def test_subclass():
     t.name = 'a subclass'
     t.size = -489
     t.save()
+
 
 def test_password():
     global _objects
@@ -149,10 +167,11 @@ def test_password():
     # Make sure it stored ok
     tt = TestPassword.get_by_id(t.id)
     _objects['test_password_tt'] = tt
-    #Testing password equality
+    # Testing password equality
     assert tt.password == "foo"
-    #Testing password not stored as string
+    # Testing password not stored as string
     assert str(tt.password) != "foo"
+
 
 def test_list():
     global _objects
@@ -167,6 +186,7 @@ def test_list():
     for n in tt.nums:
         assert isinstance(n, int)
 
+
 def test_list_reference():
     global _objects
     t = TestBasic()
@@ -180,6 +200,7 @@ def test_list_reference():
     _objects['test_list_ref_tt'] = tt
     ttt = TestListReference.get_by_id(tt.id)
     assert ttt.basics[0].id == t.id
+
 
 def test_unique():
     global _objects
@@ -198,6 +219,7 @@ def test_unique():
     except(SDBPersistenceError):
         pass
 
+
 def test_datetime():
     global _objects
     t = TestAutoNow()
@@ -206,6 +228,7 @@ def test_datetime():
     time.sleep(5)
     tt = TestAutoNow.get_by_id(t.id)
     assert tt.create_date.timetuple() == t.create_date.timetuple()
+
 
 def test():
     log.info('test_basic')

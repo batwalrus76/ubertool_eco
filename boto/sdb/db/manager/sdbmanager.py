@@ -37,6 +37,7 @@ class TimeDecodeError(Exception):
 
 
 class SDBConverter(object):
+
     """
     Responsible for converting base Python types to format compatible
     with underlying database.  For SimpleDB, that means everything
@@ -51,6 +52,7 @@ class SDBConverter(object):
     type-specific method by searching for a method
     called"encode_<type name>" or "decode_<type name>".
     """
+
     def __init__(self, manager):
         # Do a delayed import to prevent possible circular import errors.
         from boto.sdb.db.model import Model
@@ -61,15 +63,15 @@ class SDBConverter(object):
                          long: (self.encode_long, self.decode_long),
                          float: (self.encode_float, self.decode_float),
                          self.model_class: (
-                            self.encode_reference, self.decode_reference
-                         ),
-                         Key: (self.encode_reference, self.decode_reference),
-                         datetime: (self.encode_datetime, self.decode_datetime),
-                         date: (self.encode_date, self.decode_date),
-                         time: (self.encode_time, self.decode_time),
-                         Blob: (self.encode_blob, self.decode_blob),
-                         str: (self.encode_string, self.decode_string),
-                      }
+            self.encode_reference, self.decode_reference
+        ),
+            Key: (self.encode_reference, self.decode_reference),
+            datetime: (self.encode_datetime, self.decode_datetime),
+            date: (self.encode_date, self.decode_date),
+            time: (self.encode_time, self.decode_time),
+            Blob: (self.encode_blob, self.decode_blob),
+            str: (self.encode_string, self.decode_string),
+        }
 
     def encode(self, item_type, value):
         try:
@@ -203,7 +205,7 @@ class SDBConverter(object):
         return value
 
     def encode_bool(self, value):
-        if value == True or str(value).lower() in ("true", "yes"):
+        if value or str(value).lower() in ("true", "yes"):
             return 'true'
         else:
             return 'false'
@@ -278,14 +280,17 @@ class SDBConverter(object):
         try:
             if "T" in value:
                 if "." in value:
-                    # Handle true "isoformat()" dates, which may have a microsecond on at the end of them
-                    return datetime.strptime(value.split(".")[0], "%Y-%m-%dT%H:%M:%S")
+                    # Handle true "isoformat()" dates, which may have a
+                    # microsecond on at the end of them
+                    return datetime.strptime(
+                        value.split(".")[0],
+                        "%Y-%m-%dT%H:%M:%S")
                 else:
                     return datetime.strptime(value, ISO8601)
             else:
                 value = value.split("-")
                 return date(int(value[0]), int(value[1]), int(value[2]))
-        except Exception, e:
+        except Exception as e:
             return None
 
     def encode_date(self, value):
@@ -312,7 +317,9 @@ class SDBConverter(object):
         """
         if '-' in value or '+' in value:
             # TODO: Handle tzinfo
-            raise TimeDecodeError("Can't handle timezone aware objects: %r" % value)
+            raise TimeDecodeError(
+                "Can't handle timezone aware objects: %r" %
+                value)
         tmp = value.split('.')
         arg = map(int, tmp[0].split(':'))
         if len(tmp) == 2:
@@ -364,14 +371,16 @@ class SDBConverter(object):
             bucket = s3.get_bucket(match.group(1), validate=False)
             try:
                 key = bucket.get_key(match.group(2))
-            except S3ResponseError, e:
+            except S3ResponseError as e:
                 if e.reason != "Forbidden":
                     raise
                 return None
         else:
             return None
         if key:
-            return Blob(file=key, id="s3://%s/%s" % (key.bucket.name, key.name))
+            return Blob(
+                file=key, id="s3://%s/%s" %
+                (key.bucket.name, key.name))
         else:
             return None
 
@@ -436,7 +445,8 @@ class SDBManager(object):
                     aws_secret_access_key=self.db_passwd,
                     is_secure=self.enable_ssl)
         try:
-            region = [x for x in boto.sdb.regions() if x.endpoint == self.db_host][0]
+            region = [
+                x for x in boto.sdb.regions() if x.endpoint == self.db_host][0]
             args['region'] = region
         except IndexError:
             pass
@@ -482,7 +492,9 @@ class SDBManager(object):
 
     def load_object(self, obj):
         if not obj._loaded:
-            a = self.domain.get_attributes(obj.id, consistent_read=self.consistent)
+            a = self.domain.get_attributes(
+                obj.id,
+                consistent_read=self.consistent)
             if '__type__' in a:
                 for prop in obj.properties(hidden=False):
                     if prop.name in a:
@@ -490,7 +502,7 @@ class SDBManager(object):
                         value = prop.make_value_from_datastore(value)
                         try:
                             setattr(obj, prop.name, value)
-                        except Exception, e:
+                        except Exception as e:
                             boto.log.exception(e)
             obj._loaded = True
 
@@ -511,7 +523,8 @@ class SDBManager(object):
                 obj = cls(id, **params)
                 obj._loaded = True
             else:
-                s = '(%s) class %s.%s not found' % (id, a['__module__'], a['__type__'])
+                s = '(%s) class %s.%s not found' % (
+                    id, a['__module__'], a['__type__'])
                 boto.log.info('sdbmanager: %s' % s)
         return obj
 
@@ -519,10 +532,18 @@ class SDBManager(object):
         return self.get_object(None, id)
 
     def query(self, query):
-        query_str = "select * from `%s` %s" % (self.domain.name, self._build_filter_part(query.model_class, query.filters, query.sort_by, query.select))
+        query_str = "select * from `%s` %s" % (self.domain.name,
+                                               self._build_filter_part(
+                                                   query.model_class,
+                                                   query.filters,
+                                                   query.sort_by,
+                                                   query.select))
         if query.limit:
             query_str += " limit %s" % query.limit
-        rs = self.domain.select(query_str, max_items=query.limit, next_token = query.next_token)
+        rs = self.domain.select(
+            query_str,
+            max_items=query.limit,
+            next_token=query.next_token)
         query.rs = rs
         return self._object_lister(query.model_class, rs)
 
@@ -531,7 +552,12 @@ class SDBManager(object):
         Get the number of results that would
         be returned in this query
         """
-        query = "select count(*) from `%s` %s" % (self.domain.name, self._build_filter_part(cls, filters, sort_by, select))
+        query = "select count(*) from `%s` %s" % (self.domain.name,
+                                                  self._build_filter_part(
+                                                      cls,
+                                                      filters,
+                                                      sort_by,
+                                                      select))
         count = 0
         for row in self.domain.select(query):
             count += int(row['Count'])
@@ -606,19 +632,40 @@ class SDBManager(object):
                         val = self.encode_value(property, val)
                         if isinstance(val, list):
                             for v in val:
-                                filter_parts_sub.append(self._build_filter(property, name, op, v))
+                                filter_parts_sub.append(
+                                    self._build_filter(
+                                        property,
+                                        name,
+                                        op,
+                                        v))
                         else:
-                            filter_parts_sub.append(self._build_filter(property, name, op, val))
-                    filter_parts.append("(%s)" % (" OR ".join(filter_parts_sub)))
+                            filter_parts_sub.append(
+                                self._build_filter(
+                                    property,
+                                    name,
+                                    op,
+                                    val))
+                    filter_parts.append(
+                        "(%s)" %
+                        (" OR ".join(filter_parts_sub)))
                 else:
                     val = self.encode_value(property, value)
                     if isinstance(val, list):
                         for v in val:
-                            filter_parts.append(self._build_filter(property, name, op, v))
+                            filter_parts.append(
+                                self._build_filter(
+                                    property,
+                                    name,
+                                    op,
+                                    v))
                     else:
-                        filter_parts.append(self._build_filter(property, name, op, val))
+                        filter_parts.append(
+                            self._build_filter(
+                                property,
+                                name,
+                                op,
+                                val))
             query_parts.append("(%s)" % (" or ".join(filter_parts)))
-
 
         type_query = "(`__type__` = '%s'" % cls.__name__
         for subclass in self._get_all_decendents(cls).keys():
@@ -634,13 +681,13 @@ class SDBManager(object):
             if order_by in ["__id__", "itemName()"]:
                 order_by_query = " ORDER BY itemName() %s" % order_by_method
             else:
-                order_by_query = " ORDER BY `%s` %s" % (order_by, order_by_method)
+                order_by_query = " ORDER BY `%s` %s" % (
+                    order_by, order_by_method)
 
         if len(query_parts) > 0:
             return "WHERE %s %s" % (" AND ".join(query_parts), order_by_query)
         else:
             return ""
-
 
     def _get_all_decendents(self, cls):
         """Get all decendents for a given class"""
@@ -676,7 +723,9 @@ class SDBManager(object):
                     args = {property.name: value}
                     obj2 = obj.find(**args).next()
                     if obj2.id != obj.id:
-                        raise SDBPersistenceError("Error: %s must be unique!" % property.name)
+                        raise SDBPersistenceError(
+                            "Error: %s must be unique!" %
+                            property.name)
                 except(StopIteration):
                     pass
         # Convert the Expected value to SDB format
@@ -686,7 +735,11 @@ class SDBManager(object):
             if v is not None and not isinstance(v, bool):
                 v = self.encode_value(prop, v)
             expected_value[1] = v
-        self.domain.put_attributes(obj.id, attrs, replace=True, expected_value=expected_value)
+        self.domain.put_attributes(
+            obj.id,
+            attrs,
+            replace=True,
+            expected_value=expected_value)
         if len(del_attrs) > 0:
             self.domain.delete_attributes(obj.id, del_attrs)
         return obj
@@ -703,7 +756,9 @@ class SDBManager(object):
                 args = {prop.name: value}
                 obj2 = obj.find(**args).next()
                 if obj2.id != obj.id:
-                    raise SDBPersistenceError("Error: %s must be unique!" % prop.name)
+                    raise SDBPersistenceError(
+                        "Error: %s must be unique!" %
+                        prop.name)
             except(StopIteration):
                 pass
         self.domain.put_attributes(obj.id, {name: value}, replace=True)
@@ -726,7 +781,10 @@ class SDBManager(object):
         self.domain.delete_attributes(obj.id, name)
 
     def get_key_value(self, obj, name):
-        a = self.domain.get_attributes(obj.id, name, consistent_read=self.consistent)
+        a = self.domain.get_attributes(
+            obj.id,
+            name,
+            consistent_read=self.consistent)
         if name in a:
             return a[name]
         else:

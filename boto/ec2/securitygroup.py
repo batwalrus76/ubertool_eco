@@ -45,7 +45,7 @@ class SecurityGroup(TaggedEC2Object):
 
     def startElement(self, name, attrs, connection):
         retval = super(SecurityGroup, self).startElement(name, attrs,
-            connection)
+                                                         connection)
         if retval is not None:
             return retval
         if name == 'ipPermissions':
@@ -284,8 +284,12 @@ class SecurityGroup(TaggedEC2Object):
                         sg.authorize(None, None, None, None, grant,
                                      dry_run=dry_run)
                 else:
-                    sg.authorize(rule.ip_protocol, rule.from_port, rule.to_port,
-                                 grant.cidr_ip, dry_run=dry_run)
+                    sg.authorize(
+                        rule.ip_protocol,
+                        rule.from_port,
+                        rule.to_port,
+                        grant.cidr_ip,
+                        dry_run=dry_run)
         return sg
 
     def instances(self, dry_run=False):

@@ -33,6 +33,7 @@ from boto.directconnect import exceptions
 
 
 class DirectConnectConnection(AWSQueryConnection):
+
     """
     AWS Direct Connect makes it easy to establish a dedicated network
     connection from your premises to Amazon Web Services (AWS). Using
@@ -68,7 +69,6 @@ class DirectConnectConnection(AWSQueryConnection):
         "DirectConnectClientException": exceptions.DirectConnectClientException,
         "DirectConnectServerException": exceptions.DirectConnectServerException,
     }
-
 
     def __init__(self, **kwargs):
         region = kwargs.pop('region', None)
@@ -137,9 +137,11 @@ class DirectConnectConnection(AWSQueryConnection):
         return self.make_request(action='AllocateConnectionOnInterconnect',
                                  body=json.dumps(params))
 
-    def allocate_private_virtual_interface(self, connection_id,
-                                           owner_account,
-                                           new_private_virtual_interface_allocation):
+    def allocate_private_virtual_interface(
+            self,
+            connection_id,
+            owner_account,
+            new_private_virtual_interface_allocation):
         """
         Provisions a private virtual interface to be owned by a
         different customer.
@@ -178,8 +180,11 @@ class DirectConnectConnection(AWSQueryConnection):
         return self.make_request(action='AllocatePrivateVirtualInterface',
                                  body=json.dumps(params))
 
-    def allocate_public_virtual_interface(self, connection_id, owner_account,
-                                          new_public_virtual_interface_allocation):
+    def allocate_public_virtual_interface(
+            self,
+            connection_id,
+            owner_account,
+            new_public_virtual_interface_allocation):
         """
         Provisions a public virtual interface to be owned by a
         different customer.
@@ -630,4 +635,3 @@ class DirectConnectConnection(AWSQueryConnection):
             exception_class = self._faults.get(fault_name, self.ResponseError)
             raise exception_class(response.status, response.reason,
                                   body=json_body)
-

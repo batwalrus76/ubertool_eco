@@ -27,6 +27,7 @@ from boto.elastictranscoder import exceptions
 
 
 class ElasticTranscoderConnection(AWSAuthConnection):
+
     """
     AWS Elastic Transcoder Service
     The AWS Elastic Transcoder Service.
@@ -45,7 +46,6 @@ class ElasticTranscoderConnection(AWSAuthConnection):
         "InternalServiceException": exceptions.InternalServiceException,
         "ValidationException": exceptions.ValidationException,
     }
-
 
     def __init__(self, **kwargs):
         region = kwargs.get('region')

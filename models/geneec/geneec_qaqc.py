@@ -27,7 +27,13 @@ import csv
 from REST import rest_funcs
 
 
-data = csv.reader(open(os.path.join(os.environ['PROJECT_PATH'], 'models','geneec','geneec_qaqc.csv')))
+data = csv.reader(
+    open(
+        os.path.join(
+            os.environ['PROJECT_PATH'],
+            'models',
+            'geneec',
+            'geneec_qaqc.csv')))
 chem_name = []
 application_target = []
 application_rate = []
@@ -83,11 +89,31 @@ for row in data:
     GEEC_60avg.append(float(row[22]))
     GEEC_90avg.append(float(row[23]))
 
-geneec_obj = geneec_model.geneec("qaqc", chem_name[0], application_target[0], application_rate[0], number_of_applications[0], interval_between_applications[0], Koc[0], aerobic_soil_metabolism[0], wet_in[0], application_method[0], application_method_label, aerial_size_dist[0], ground_spray_type[0], airblast_type[0], spray_quality[0], no_spray_drift[0], incorporation_depth[0], solubility[0], aerobic_aquatic_metabolism[0], hydrolysis[0], photolysis_aquatic_half_life[0])
+geneec_obj = geneec_model.geneec(
+    "qaqc",
+    chem_name[0],
+    application_target[0],
+    application_rate[0],
+    number_of_applications[0],
+    interval_between_applications[0],
+    Koc[0],
+    aerobic_soil_metabolism[0],
+    wet_in[0],
+    application_method[0],
+    application_method_label,
+    aerial_size_dist[0],
+    ground_spray_type[0],
+    airblast_type[0],
+    spray_quality[0],
+    no_spray_drift[0],
+    incorporation_depth[0],
+    solubility[0],
+    aerobic_aquatic_metabolism[0],
+    hydrolysis[0],
+    photolysis_aquatic_half_life[0])
 geneec_obj.chem_name_exp = chem_name[0]
 geneec_obj.GEEC_peak_exp = GEEC_peak[0]
 geneec_obj.GEEC_4avg_exp = GEEC_4avg[0]
 geneec_obj.GEEC_21avg_exp = GEEC_21avg[0]
 geneec_obj.GEEC_60avg_exp = GEEC_60avg[0]
 geneec_obj.GEEC_90avg_exp = GEEC_90avg[0]
-

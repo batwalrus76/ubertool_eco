@@ -1,8 +1,9 @@
-#Copyright ReportLab Europe Ltd. 2000-2012
-#see license.txt for license details
-#history http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/platypus/paraparser.py
-__version__=''' $Id$ '''
-__doc__='''The parser used to process markup within paragraphs'''
+# Copyright ReportLab Europe Ltd. 2000-2012
+# see license.txt for license details
+# history
+# http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/platypus/paraparser.py
+__version__ = ''' $Id$ '''
+__doc__ = '''The parser used to process markup within paragraphs'''
 import string
 import re
 import sys
@@ -23,7 +24,7 @@ from reportlab.lib.utils import ImageReader, isPy3, annotateException, encode_la
 from reportlab.lib.colors import toColor, white, black, red, Color
 from reportlab.lib.fonts import tt2ps, ps2tt
 from reportlab.lib.enums import TA_LEFT, TA_RIGHT, TA_CENTER, TA_JUSTIFY
-from reportlab.lib.units import inch,mm,cm,pica
+from reportlab.lib.units import inch, mm, cm, pica
 if isPy3:
     from html.parser import HTMLParser
     from html.entities import name2codepoint
@@ -35,21 +36,24 @@ _re_para = re.compile(r'^\s*<\s*para(?:\s+|>|/>)')
 
 sizeDelta = 2       # amount to reduce font size by for super and sub script
 subFraction = 0.5   # fraction of font size that a sub script should be lowered
-superFraction = 0.5 # fraction of font size that a super script should be raised
+# fraction of font size that a super script should be raised
+superFraction = 0.5
 
-DEFAULT_INDEX_NAME='_indexAdd'
+DEFAULT_INDEX_NAME = '_indexAdd'
+
 
 def _convnum(s, unit=1, allowRelative=True):
-    if s[0] in ('+','-') and allowRelative:
+    if s[0] in ('+', '-') and allowRelative:
         try:
-            return ('relative',int(s)*unit)
+            return ('relative', int(s) * unit)
         except ValueError:
-            return ('relative',float(s)*unit)
+            return ('relative', float(s) * unit)
     else:
         try:
-            return int(s)*unit
+            return int(s) * unit
         except ValueError:
-            return float(s)*unit
+            return float(s) * unit
+
 
 def _num(s, unit=1, allowRelative=True):
     """Convert a string like '10cm' to an int or float (in points).
@@ -57,66 +61,85 @@ def _num(s, unit=1, allowRelative=True):
        default units like mm.
     """
     if s.endswith('cm'):
-        unit=cm
+        unit = cm
         s = s[:-2]
     if s.endswith('in'):
-        unit=inch
+        unit = inch
         s = s[:-2]
     if s.endswith('pt'):
-        unit=1
+        unit = 1
         s = s[:-2]
     if s.endswith('i'):
-        unit=inch
+        unit = inch
         s = s[:-1]
     if s.endswith('mm'):
-        unit=mm
+        unit = mm
         s = s[:-2]
     if s.endswith('pica'):
-        unit=pica
+        unit = pica
         s = s[:-4]
-    return _convnum(s,unit,allowRelative)
+    return _convnum(s, unit, allowRelative)
 
-def _numpct(s,unit=1,allowRelative=False):
+
+def _numpct(s, unit=1, allowRelative=False):
     if s.endswith('%'):
-        return _PCT(_convnum(s[:-1],allowRelative=allowRelative))
+        return _PCT(_convnum(s[:-1], allowRelative=allowRelative))
     else:
-        return _num(s,unit,allowRelative)
+        return _num(s, unit, allowRelative)
+
 
 class _PCT:
-    def __init__(self,v):
-        self._value = v*0.01
 
-    def normalizedValue(self,normalizer):
-        normalizer = normalizer or getattr(self,'_normalizer')
-        return normalizer*self._value
+    def __init__(self, v):
+        self._value = v * 0.01
+
+    def normalizedValue(self, normalizer):
+        normalizer = normalizer or getattr(self, '_normalizer')
+        return normalizer * self._value
+
 
 def _valignpc(s):
     s = s.lower()
-    if s in ('baseline','sub','super','top','text-top','middle','bottom','text-bottom'):
+    if s in (
+            'baseline',
+            'sub',
+            'super',
+            'top',
+            'text-top',
+            'middle',
+            'bottom',
+            'text-bottom'):
         return s
     if s.endswith('%'):
         n = _convnum(s[:-1])
-        if isinstance(n,tuple):
+        if isinstance(n, tuple):
             n = n[1]
         return _PCT(n)
     n = _num(s)
-    if isinstance(n,tuple):
+    if isinstance(n, tuple):
         n = n[1]
     return n
 
+
 def _autoLeading(x):
     x = x.lower()
-    if x in ('','min','max','off'):
+    if x in ('', 'min', 'max', 'off'):
         return x
-    raise ValueError('Invalid autoLeading=%r' % x )
+    raise ValueError('Invalid autoLeading=%r' % x)
+
 
 def _align(s):
     s = s.lower()
-    if s=='left': return TA_LEFT
-    elif s=='right': return TA_RIGHT
-    elif s=='justify': return TA_JUSTIFY
-    elif s in ('centre','center'): return TA_CENTER
-    else: raise ValueError
+    if s == 'left':
+        return TA_LEFT
+    elif s == 'right':
+        return TA_RIGHT
+    elif s == 'justify':
+        return TA_JUSTIFY
+    elif s in ('centre', 'center'):
+        return TA_CENTER
+    else:
+        raise ValueError
 
 _paraAttrMap = {'font': ('fontName', None),
                 'face': ('fontName', None),
@@ -131,89 +154,92 @@ _paraAttrMap = {'font': ('fontName', None),
                 'spaceb': ('spaceBefore', _num),
                 'spacea': ('spaceAfter', _num),
                 'bfont': ('bulletFontName', None),
-                'bfontsize': ('bulletFontSize',_num),
-                'boffsety': ('bulletOffsetY',_num),
-                'bindent': ('bulletIndent',_num),
-                'bcolor': ('bulletColor',toColor),
-                'color':('textColor',toColor),
-                'backcolor':('backColor',toColor),
-                'bgcolor':('backColor',toColor),
-                'bg':('backColor',toColor),
-                'fg': ('textColor',toColor),
+                'bfontsize': ('bulletFontSize', _num),
+                'boffsety': ('bulletOffsetY', _num),
+                'bindent': ('bulletIndent', _num),
+                'bcolor': ('bulletColor', toColor),
+                'color': ('textColor', toColor),
+                'backcolor': ('backColor', toColor),
+                'bgcolor': ('backColor', toColor),
+                'bg': ('backColor', toColor),
+                'fg': ('textColor', toColor),
                 }
 
 _bulletAttrMap = {
-                'font': ('bulletFontName', None),
-                'face': ('bulletFontName', None),
-                'size': ('bulletFontSize',_num),
-                'fontsize': ('bulletFontSize',_num),
-                'offsety': ('bulletOffsetY',_num),
-                'indent': ('bulletIndent',_num),
-                'color': ('bulletColor',toColor),
-                'fg': ('bulletColor',toColor),
-                }
+    'font': ('bulletFontName', None),
+    'face': ('bulletFontName', None),
+    'size': ('bulletFontSize', _num),
+    'fontsize': ('bulletFontSize', _num),
+    'offsety': ('bulletOffsetY', _num),
+    'indent': ('bulletIndent', _num),
+    'color': ('bulletColor', toColor),
+    'fg': ('bulletColor', toColor),
+}
 
-#things which are valid font attributes
+# things which are valid font attributes
 _fontAttrMap = {'size': ('fontSize', _num),
                 'face': ('fontName', None),
                 'name': ('fontName', None),
-                'fg':   ('textColor', toColor),
-                'color':('textColor', toColor),
-                'backcolor':('backColor',toColor),
-                'bgcolor':('backColor',toColor),
+                'fg': ('textColor', toColor),
+                'color': ('textColor', toColor),
+                'backcolor': ('backColor', toColor),
+                'bgcolor': ('backColor', toColor),
                 }
-#things which are valid span attributes
+# things which are valid span attributes
 _spanAttrMap = {'size': ('fontSize', _num),
                 'face': ('fontName', None),
                 'name': ('fontName', None),
-                'fg':   ('textColor', toColor),
-                'color':('textColor', toColor),
-                'backcolor':('backColor',toColor),
-                'bgcolor':('backColor',toColor),
-                'style': ('style',None),
+                'fg': ('textColor', toColor),
+                'color': ('textColor', toColor),
+                'backcolor': ('backColor', toColor),
+                'bgcolor': ('backColor', toColor),
+                'style': ('style', None),
                 }
-#things which are valid font attributes
+# things which are valid font attributes
 _linkAttrMap = {'size': ('fontSize', _num),
                 'face': ('fontName', None),
                 'name': ('fontName', None),
-                'fg':   ('textColor', toColor),
-                'color':('textColor', toColor),
-                'backcolor':('backColor',toColor),
-                'bgcolor':('backColor',toColor),
+                'fg': ('textColor', toColor),
+                'color': ('textColor', toColor),
+                'backcolor': ('backColor', toColor),
+                'bgcolor': ('backColor', toColor),
                 'dest': ('link', None),
                 'destination': ('link', None),
                 'target': ('link', None),
                 'href': ('link', None),
                 }
 _anchorAttrMap = {'fontSize': ('fontSize', _num),
-                'fontName': ('fontName', None),
-                'name': ('name', None),
-                'fg':   ('textColor', toColor),
-                'color':('textColor', toColor),
-                'backcolor':('backColor',toColor),
-                'bgcolor':('backColor',toColor),
-                'href': ('href', None),
-                }
+                  'fontName': ('fontName', None),
+                  'name': ('name', None),
+                  'fg': ('textColor', toColor),
+                  'color': ('textColor', toColor),
+                  'backcolor': ('backColor', toColor),
+                  'bgcolor': ('backColor', toColor),
+                  'href': ('href', None),
+                  }
 _imgAttrMap = {
-                'src': ('src', None),
-                'width': ('width',_numpct),
-                'height':('height',_numpct),
-                'valign':('valign',_valignpc),
-                }
+    'src': ('src', None),
+    'width': ('width', _numpct),
+    'height': ('height', _numpct),
+    'valign': ('valign', _valignpc),
+}
 _indexAttrMap = {
-                'name': ('name',None),
-                'item': ('item',None),
-                'offset': ('offset',None),
-                'format': ('format',None),
-                }
+    'name': ('name', None),
+    'item': ('item', None),
+    'offset': ('offset', None),
+    'format': ('format', None),
+}
+
 
 def _addAttributeNames(m):
     K = list(m.keys())
     for k in K:
         n = m[k][0]
-        if n not in m: m[n] = m[k]
+        if n not in m:
+            m[n] = m[k]
         n = n.lower()
-        if n not in m: m[n] = m[k]
+        if n not in m:
+            m[n] = m[k]
 
 _addAttributeNames(_paraAttrMap)
 _addAttributeNames(_fontAttrMap)
@@ -222,18 +248,19 @@ _addAttributeNames(_bulletAttrMap)
 _addAttributeNames(_anchorAttrMap)
 _addAttributeNames(_linkAttrMap)
 
+
 def _applyAttributes(obj, attr):
     for k, v in attr.items():
-        if isinstance(v,(list,tuple)) and v[0]=='relative':
+        if isinstance(v, (list, tuple)) and v[0] == 'relative':
             if hasattr(obj, k):
-                v = v[1]+getattr(obj,k)
+                v = v[1] + getattr(obj, k)
             else:
                 v = v[1]
-        setattr(obj,k,v)
+        setattr(obj, k, v)
 
-#Named character entities intended to be supported from the special font
-#with additions suggested by Christoph Zwerschke who also suggested the
-#numeric entity names that follow.
+# Named character entities intended to be supported from the special font
+# with additions suggested by Christoph Zwerschke who also suggested the
+# numeric entity names that follow.
 greeks = {
     'Aacute': u'\xc1',
     'aacute': u'\xe1',
@@ -487,9 +514,9 @@ greeks = {
     'zeta': u'\u03b6',
     'zwj': u'\u200d',
     'zwnj': u'\u200c',
-    }
+}
 
-known_entities = dict([(k,uniChr(v)) for k,v in name2codepoint.items()])
+known_entities = dict([(k, uniChr(v)) for k, v in name2codepoint.items()])
 for k in greeks:
     if k not in known_entities:
         known_entities[k] = greeks[k]
@@ -500,25 +527,30 @@ for k in K:
 del k, f, K
 
 #------------------------------------------------------------------------
+
+
 class ParaFrag(ABag):
+
     """class ParaFrag contains the intermediate representation of string
     segments as they are being parsed by the ParaParser.
     fontname, fontSize, rise, textColor, cbDefn
     """
 
-_greek2Utf8=None
+_greek2Utf8 = None
+
+
 def _greekConvert(data):
     global _greek2Utf8
     if not _greek2Utf8:
         from reportlab.pdfbase.rl_codecs import RL_Codecs
         import codecs
-        #our decoding map
-        dm = codecs.make_identity_dict(range(32,256))
-        for k in range(0,32):
+        # our decoding map
+        dm = codecs.make_identity_dict(range(32, 256))
+        for k in range(0, 32):
             dm[k] = None
         dm.update(RL_Codecs._RL_Codecs__rl_codecs_data['symbol'][0])
         _greek2Utf8 = {}
-        for k,v in dm.items():
+        for k, v in dm.items():
             if not v:
                 u = '\0'
             else:
@@ -527,7 +559,7 @@ def _greekConvert(data):
                 else:
                     u = unichr(v).encode('utf8')
             _greek2Utf8[chr(k)] = u
-    return ''.join(map(_greek2Utf8.__getitem__,data))
+    return ''.join(map(_greek2Utf8.__getitem__, data))
 
 #------------------------------------------------------------------
 # !!! NOTE !!! THIS TEXT IS NOW REPLICATED IN PARAGRAPH.PY !!!
@@ -546,14 +578,14 @@ def _greekConvert(data):
 #       <onDraw name=callable label="a label"/>
 #       <index [name="callablecanvasattribute"] label="a label"/>
 #       <link>link text</link>
-#           attributes of links 
+#           attributes of links
 #               size/fontSize=num
 #               name/face/fontName=name
 #               fg/textColor/color=color
 #               backcolor/backColor/bgcolor=color
 #               dest/destination/target/href/link=target
 #       <a>anchor text</a>
-#           attributes of anchors 
+#           attributes of anchors
 #               fontSize=num
 #               fontName=name
 #               fg/textColor/color=color
@@ -571,6 +603,8 @@ def _greekConvert(data):
 #
 # It will also be able to handle any MathML specified Greek characters.
 #------------------------------------------------------------------
+
+
 class ParaParser(HTMLParser):
 
     #----------------------------------------------------------
@@ -587,84 +621,86 @@ class ParaParser(HTMLParser):
     # for that data will be aparent by the current settings.
     #----------------------------------------------------------
 
-    def __getattr__( self, attrName ):
+    def __getattr__(self, attrName):
         """This way we can handle <TAG> the same way as <tag> (ignoring case)."""
-        if attrName!=attrName.lower() and attrName!="caseSensitive" and not self.caseSensitive and \
-            (attrName.startswith("start_") or attrName.startswith("end_")):
-                return getattr(self,attrName.lower())
+        if attrName != attrName.lower() and attrName != "caseSensitive" and not self.caseSensitive and \
+                (attrName.startswith("start_") or attrName.startswith("end_")):
+            return getattr(self, attrName.lower())
         raise AttributeError(attrName)
 
-    #### bold
-    def start_b( self, attributes ):
-        self._push('b',bold=1)
+    # bold
+    def start_b(self, attributes):
+        self._push('b', bold=1)
 
-    def end_b( self ):
+    def end_b(self):
         self._pop('b')
 
-    def start_strong( self, attributes ):
-        self._push('strong',bold=1)
+    def start_strong(self, attributes):
+        self._push('strong', bold=1)
 
-    def end_strong( self ):
+    def end_strong(self):
         self._pop('strong')
 
-    #### italics
-    def start_i( self, attributes ):
-        self._push('i',italic=1)
+    # italics
+    def start_i(self, attributes):
+        self._push('i', italic=1)
 
-    def end_i( self ):
+    def end_i(self):
         self._pop('i')
 
-    def start_em( self, attributes ):
+    def start_em(self, attributes):
         self._push('em', italic=1)
 
-    def end_em( self ):
+    def end_em(self):
         self._pop('em')
 
-    #### underline
-    def start_u( self, attributes ):
-        self._push('u',underline=1)
+    # underline
+    def start_u(self, attributes):
+        self._push('u', underline=1)
 
-    def end_u( self ):
+    def end_u(self):
         self._pop('u')
 
-    #### strike
-    def start_strike( self, attributes ):
-        self._push('strike',strike=1)
+    # strike
+    def start_strike(self, attributes):
+        self._push('strike', strike=1)
 
-    def end_strike( self ):
+    def end_strike(self):
         self._pop('strike')
 
-    #### link
+    # link
     def start_link(self, attributes):
-        self._push('link',**self.getAttributes(attributes,_linkAttrMap))
+        self._push('link', **self.getAttributes(attributes, _linkAttrMap))
 
     def end_link(self):
         if self._pop('link').link is None:
             raise ValueError('<link> has no target or href')
 
-    #### anchor
+    # anchor
     def start_a(self, attributes):
-        A = self.getAttributes(attributes,_anchorAttrMap)
-        name = A.get('name',None)
+        A = self.getAttributes(attributes, _anchorAttrMap)
+        name = A.get('name', None)
         if name is not None:
             name = name.strip()
             if not name:
-                self._syntax_error('<a name="..."/> anchor variant requires non-blank name')
-            if len(A)>1:
-                self._syntax_error('<a name="..."/> anchor variant only allows name attribute')
+                self._syntax_error(
+                    '<a name="..."/> anchor variant requires non-blank name')
+            if len(A) > 1:
+                self._syntax_error(
+                    '<a name="..."/> anchor variant only allows name attribute')
                 A = dict(name=A['name'])
             A['_selfClosingTag'] = 'anchor'
         else:
-            href = A.get('href','').strip()
-            A['link'] = href    #convert to our link form
-            A.pop('href',None)
-        self._push('a',**A)
+            href = A.get('href', '').strip()
+            A['link'] = href  # convert to our link form
+            A.pop('href', None)
+        self._push('a', **A)
 
     def end_a(self):
         frag = self._stack[-1]
-        sct = getattr(frag,'_selfClosingTag','')
+        sct = getattr(frag, '_selfClosingTag', '')
         if sct:
-            if not (sct=='anchor' and frag.name):
+            if not (sct == 'anchor' and frag.name):
                 raise ValueError('Parser failure in <a/>')
             defn = frag.cbDefn = ABag()
             defn.label = defn.kind = 'anchor'
@@ -676,71 +712,73 @@ class ParaParser(HTMLParser):
             if self._pop('a').link is None:
                 raise ValueError('<link> has no href')
 
-    def start_img(self,attributes):
-        A = self.getAttributes(attributes,_imgAttrMap)
+    def start_img(self, attributes):
+        A = self.getAttributes(attributes, _imgAttrMap)
         if not A.get('src'):
             self._syntax_error('<img> needs src attribute')
         A['_selfClosingTag'] = 'img'
-        self._push('img',**A)
+        self._push('img', **A)
 
     def end_img(self):
         frag = self._stack[-1]
-        if not getattr(frag,'_selfClosingTag',''):
+        if not getattr(frag, '_selfClosingTag', ''):
             raise ValueError('Parser failure in <img/>')
         defn = frag.cbDefn = ABag()
         defn.kind = 'img'
-        defn.src = getattr(frag,'src',None)
+        defn.src = getattr(frag, 'src', None)
         defn.image = ImageReader(defn.src)
         size = defn.image.getSize()
-        defn.width = getattr(frag,'width',size[0])
-        defn.height = getattr(frag,'height',size[1])
-        defn.valign = getattr(frag,'valign','bottom')
+        defn.width = getattr(frag, 'width', size[0])
+        defn.height = getattr(frag, 'height', size[1])
+        defn.valign = getattr(frag, 'valign', 'bottom')
         del frag._selfClosingTag
         self.handle_data('')
         self._pop('img')
 
-    #### super script
-    def start_super( self, attributes ):
-        self._push('super',super=1)
+    # super script
+    def start_super(self, attributes):
+        self._push('super', super=1)
 
-    def end_super( self ):
+    def end_super(self):
         self._pop('super')
 
-    def start_sup( self, attributes ):
-        self._push('sup',super=1)
+    def start_sup(self, attributes):
+        self._push('sup', super=1)
 
-    def end_sup( self ):
+    def end_sup(self):
         self._pop('sup')
 
-    #### sub script
-    def start_sub( self, attributes ):
-        self._push('sub',sub=1)
+    # sub script
+    def start_sub(self, attributes):
+        self._push('sub', sub=1)
 
-    def end_sub( self ):
+    def end_sub(self):
         self._pop('sub')
 
-    #### greek script
-    #### add symbol encoding
+    # greek script
+    # add symbol encoding
     def handle_charref(self, name):
         try:
-            if name[0]=='x':
-                n = int(name[1:],16)
+            if name[0] == 'x':
+                n = int(name[1:], 16)
             else:
                 n = int(name)
         except ValueError:
             self.unknown_charref(name)
             return
-        self.handle_data(uniChr(n))   #.encode('utf8'))
+        self.handle_data(uniChr(n))  # .encode('utf8'))
 
-    def syntax_error(self,lineno,message):
+    def syntax_error(self, lineno, message):
         self._syntax_error(message)
 
-    def _syntax_error(self,message):
-        if message[:10]=="attribute " and message[-17:]==" value not quoted": return
+    def _syntax_error(self, message):
+        if message[
+                :10] == "attribute " and message[-17:] == " value not quoted":
+            return
         self.errors.append(message)
 
     def start_greek(self, attr):
-        self._push('greek',greek=1)
+        self._push('greek', greek=1)
 
     def end_greek(self):
         self._pop('greek')
@@ -748,70 +786,81 @@ class ParaParser(HTMLParser):
     def start_unichar(self, attr):
         if 'name' in attr:
             if 'code' in attr:
-                self._syntax_error('<unichar/> invalid with both name and code attributes')
+                self._syntax_error(
+                    '<unichar/> invalid with both name and code attributes')
             try:
                 v = unicodedata.lookup(attr['name'])
             except KeyError:
-                self._syntax_error('<unichar/> invalid name attribute\n"%s"' % ascii(attr['name']))
+                self._syntax_error(
+                    '<unichar/> invalid name attribute\n"%s"' %
+                    ascii(
+                        attr['name']))
                 v = '\0'
         elif 'code' in attr:
             try:
                 v = int(eval(attr['code']))
                 v = chr(v) if isPy3 else unichr(v)
             except:
-                self._syntax_error('<unichar/> invalid code attribute %s' % ascii(attr['code']))
+                self._syntax_error(
+                    '<unichar/> invalid code attribute %s' %
+                    ascii(
+                        attr['code']))
                 v = '\0'
         else:
             v = None
             if attr:
-                self._syntax_error('<unichar/> invalid attribute %s' % list(attr.keys())[0])
+                self._syntax_error(
+                    '<unichar/> invalid attribute %s' %
+                    list(
+                        attr.keys())[0])
 
         if v is not None:
             self.handle_data(v)
-        self._push('unichar',_selfClosingTag='unichar')
+        self._push('unichar', _selfClosingTag='unichar')
 
     def end_unichar(self):
         self._pop('unichar')
 
-    def start_font(self,attr):
-        self._push('font',**self.getAttributes(attr,_fontAttrMap))
+    def start_font(self, attr):
+        self._push('font', **self.getAttributes(attr, _fontAttrMap))
 
     def end_font(self):
         self._pop('font')
 
-    def start_span(self,attr):
-        A = self.getAttributes(attr,_spanAttrMap)
+    def start_span(self, attr):
+        A = self.getAttributes(attr, _spanAttrMap)
         if 'style' in A:
             style = self.findSpanStyle(A.pop('style'))
             D = {}
             for k in 'fontName fontSize textColor backColor'.split():
-                v = getattr(style,k,self)
-                if v is self: continue
+                v = getattr(style, k, self)
+                if v is self:
+                    continue
                 D[k] = v
             D.update(A)
             A = D
-        self._push('span',**A)
+        self._push('span', **A)
 
     def end_span(self):
         self._pop('span')
 
     def start_br(self, attr):
-        self._push('br',_selfClosingTag='br',lineBreak=True,text='')
-        
+        self._push('br', _selfClosingTag='br', lineBreak=True, text='')
+
     def end_br(self):
         #print('\nend_br called, %d frags in list' % len(self.fragList))
         frag = self._stack[-1]
-        if not (frag._selfClosingTag=='br' and frag.lineBreak):
-                raise ValueError('Parser failure in <br/>')
+        if not (frag._selfClosingTag == 'br' and frag.lineBreak):
+            raise ValueError('Parser failure in <br/>')
         del frag._selfClosingTag
         self.handle_data('')
         self._pop('br')
 
-    def _initial_frag(self,attr,attrMap,bullet=0):
+    def _initial_frag(self, attr, attrMap, bullet=0):
         style = self._style
-        if attr!={}:
+        if attr != {}:
             style = copy.deepcopy(style)
-            _applyAttributes(style,self.getAttributes(attr,attrMap))
+            _applyAttributes(style, self.getAttributes(attr, attrMap))
             self._style = style
 
         # initialize semantic values
@@ -826,26 +875,28 @@ class ParaParser(HTMLParser):
         if bullet:
             frag.fontName, frag.bold, frag.italic = ps2tt(style.bulletFontName)
             frag.fontSize = style.bulletFontSize
-            frag.textColor = hasattr(style,'bulletColor') and style.bulletColor or style.textColor
+            frag.textColor = hasattr(
+                style,
+                'bulletColor') and style.bulletColor or style.textColor
         else:
             frag.fontName, frag.bold, frag.italic = ps2tt(style.fontName)
             frag.fontSize = style.fontSize
             frag.textColor = style.textColor
         return frag
 
-    def start_para(self,attr):
-        frag = self._initial_frag(attr,_paraAttrMap)
+    def start_para(self, attr):
+        frag = self._initial_frag(attr, _paraAttrMap)
         frag.__tag__ = 'para'
         self._stack = [frag]
 
     def end_para(self):
         self._pop('para')
 
-    def start_bullet(self,attr):
-        if hasattr(self,'bFragList'):
+    def start_bullet(self, attr):
+        if hasattr(self, 'bFragList'):
             self._syntax_error('only one <bullet> tag allowed')
         self.bFragList = []
-        frag = self._initial_frag(attr,_bulletAttrMap,1)
+        frag = self._initial_frag(attr, _bulletAttrMap, 1)
         frag.isBullet = 1
         frag.__tag__ = 'bullet'
         self._stack.append(frag)
@@ -872,7 +923,7 @@ class ParaParser(HTMLParser):
         try:
             base = int(attr['base'])
         except:
-            base=0
+            base = 0
         self._seq.reset(id, base)
 
     def end_seqreset(self):
@@ -885,7 +936,7 @@ class ParaParser(HTMLParser):
             order = ''
         order = order.split()
         seq = self._seq
-        for p,c in zip(order[:-1],order[1:]):
+        for p, c in zip(order[:-1], order[1:]):
             seq.chain(p, c)
     end_seqchain = end_seqreset
 
@@ -898,7 +949,7 @@ class ParaParser(HTMLParser):
             value = attr['value']
         except KeyError:
             value = '1'
-        self._seq.setFormat(id,value)
+        self._seq.setFormat(id, value)
     end_seqformat = end_seqreset
 
     # AR hacking in aliases to allow the proper casing for RML.
@@ -913,8 +964,8 @@ class ParaParser(HTMLParser):
     end_seqFormat = end_seqformat
 
     def start_seq(self, attr):
-        #if it has a template, use that; otherwise try for id;
-        #otherwise take default sequence
+        # if it has a template, use that; otherwise try for id;
+        # otherwise take default sequence
         if 'template' in attr:
             templ = attr['template']
             self.handle_data(templ % self._seq)
@@ -927,8 +978,8 @@ class ParaParser(HTMLParser):
         if not increment:
             output = self._seq.nextf(id)
         else:
-            #accepts "no" for do not increment, or an integer.
-            #thus, 0 and 1 increment by the right amounts.
+            # accepts "no" for do not increment, or an integer.
+            # thus, 0 and 1 increment by the right amounts.
             if increment.lower() == 'no':
                 output = self._seq.thisf(id)
             else:
@@ -940,21 +991,24 @@ class ParaParser(HTMLParser):
     def end_seq(self):
         pass
 
-    def start_ondraw(self,attr):
+    def start_ondraw(self, attr):
         defn = ABag()
-        if 'name' in attr: defn.name = attr['name']
-        else: self._syntax_error('<onDraw> needs at least a name attribute')
+        if 'name' in attr:
+            defn.name = attr['name']
+        else:
+            self._syntax_error('<onDraw> needs at least a name attribute')
 
-        if 'label' in attr: defn.label = attr['label']
-        defn.kind='onDraw'
-        self._push('ondraw',cbDefn=defn)
+        if 'label' in attr:
+            defn.label = attr['label']
+        defn.kind = 'onDraw'
+        self._push('ondraw', cbDefn=defn)
         self.handle_data('')
         self._pop('ondraw')
-    start_onDraw=start_ondraw 
-    end_onDraw=end_ondraw=end_seq
+    start_onDraw = start_ondraw
+    end_onDraw = end_ondraw = end_seq
 
-    def start_index(self,attr):
-        attr=self.getAttributes(attr,_indexAttrMap)
+    def start_index(self, attr):
+        attr = self.getAttributes(attr, _indexAttrMap)
         defn = ABag()
         if 'item' in attr:
             label = attr['item']
@@ -964,40 +1018,50 @@ class ParaParser(HTMLParser):
             name = attr['name']
         else:
             name = DEFAULT_INDEX_NAME
-        format = attr.get('format',None)
-        if format is not None and format not in ('123','I','i','ABC','abc'):
-            raise ValueError('index tag format is %r not valid 123 I i ABC or abc' % offset)
-        offset = attr.get('offset',None)
+        format = attr.get('format', None)
+        if format is not None and format not in (
+                '123',
+                'I',
+                'i',
+                'ABC',
+                'abc'):
+            raise ValueError(
+                'index tag format is %r not valid 123 I i ABC or abc' %
+                offset)
+        offset = attr.get('offset', None)
         if offset is not None:
             try:
                 offset = int(offset)
             except:
                 raise ValueError('index tag offset is %r not an int' % offset)
-        defn.label = encode_label((label,format,offset))
+        defn.label = encode_label((label, format, offset))
         defn.name = name
-        defn.kind='index'
-        self._push('index',cbDefn=defn)
+        defn.kind = 'index'
+        self._push('index', cbDefn=defn)
         self.handle_data('')
         self._pop('index',)
-    end_index=end_seq
+    end_index = end_seq
 
-    def start_unknown(self,attr):
+    def start_unknown(self, attr):
         pass
-    end_unknown=end_seq
+    end_unknown = end_seq
 
     #---------------------------------------------------------------
-    def _push(self,tag,**attr):
+    def _push(self, tag, **attr):
         frag = copy.copy(self._stack[-1])
         frag.__tag__ = tag
-        _applyAttributes(frag,attr)
+        _applyAttributes(frag, attr)
         self._stack.append(frag)
 
-    def _pop(self,tag):
+    def _pop(self, tag):
         frag = self._stack.pop()
-        if tag==frag.__tag__: return frag
-        raise ValueError('Parse error: saw </%s> instead of expected </%s>' % (tag,frag.__tag__))
+        if tag == frag.__tag__:
+            return frag
+        raise ValueError(
+            'Parse error: saw </%s> instead of expected </%s>' %
+            (tag, frag.__tag__))
 
-    def getAttributes(self,attr,attrMap):
+    def getAttributes(self, attr, attrMap):
         A = {}
         for k, v in attr.items():
             if not self.caseSensitive:
@@ -1008,25 +1072,27 @@ class ParaParser(HTMLParser):
                 try:
                     A[j[0]] = v if func is None else func(v)
                 except:
-                    self._syntax_error('%s: invalid value %s'%(k,v))
+                    self._syntax_error('%s: invalid value %s' % (k, v))
             else:
-                self._syntax_error('invalid attribute name %s'%k)
+                self._syntax_error('invalid attribute name %s' % k)
         return A
 
     #----------------------------------------------------------------
 
-    def __init__(self,verbose=0, caseSensitive=0, ignoreUnknownTags=1):
-        HTMLParser.__init__(self,
-            **(dict(convert_charrefs=False) if sys.version_info>=(3,4) else {}))
+    def __init__(self, verbose=0, caseSensitive=0, ignoreUnknownTags=1):
+        HTMLParser.__init__(
+            self, **(dict(convert_charrefs=False) if sys.version_info >= (3, 4) else {}))
         self.verbose = verbose
-        #HTMLParser is case insenstive anyway, but the rml interface still needs this
-        #all start/end_ methods should have a lower case version for HMTMParser
+        # HTMLParser is case insenstive anyway, but the rml interface still needs this
+        # all start/end_ methods should have a lower case version for
+        # HMTMParser
         self.caseSensitive = caseSensitive
         self.ignoreUnknownTags = ignoreUnknownTags
 
     def _iReset(self):
         self.fragList = []
-        if hasattr(self, 'bFragList'): delattr(self,'bFragList')
+        if hasattr(self, 'bFragList'):
+            delattr(self, 'bFragList')
 
     def _reset(self, style):
         '''reset the parser'''
@@ -1038,21 +1104,25 @@ class ParaParser(HTMLParser):
         self._iReset()
 
     #----------------------------------------------------------------
-    def handle_data(self,data):
+    def handle_data(self, data):
         "Creates an intermediate representation of string segments."
 
-        #The old parser would only 'see' a string after all entities had
-        #been processed.  Thus, 'Hello &trade; World' would emerge as one
-        #fragment.    HTMLParser processes these separately.  We want to ensure
-        #that successive calls like this are concatenated, to prevent too many
-        #fragments being created.
+        # The old parser would only 'see' a string after all entities had
+        # been processed.  Thus, 'Hello &trade; World' would emerge as one
+        # fragment.    HTMLParser processes these separately.  We want to ensure
+        # that successive calls like this are concatenated, to prevent too many
+        # fragments being created.
 
         frag = copy.copy(self._stack[-1])
-        if hasattr(frag,'cbDefn'):
+        if hasattr(frag, 'cbDefn'):
             kind = frag.cbDefn.kind
-            if data: self._syntax_error('Only empty <%s> tag allowed' % kind)
-        elif hasattr(frag,'_selfClosingTag'):
-            if data!='': self._syntax_error('No content allowed in %s tag' % frag._selfClosingTag)
+            if data:
+                self._syntax_error('Only empty <%s> tag allowed' % kind)
+        elif hasattr(frag, '_selfClosingTag'):
+            if data != '':
+                self._syntax_error(
+                    'No content allowed in %s tag' %
+                    frag._selfClosingTag)
             return
         else:
             # if sub and super are both on they will cancel each other out
@@ -1061,32 +1131,32 @@ class ParaParser(HTMLParser):
                 frag.super = 0
 
             if frag.sub:
-                frag.rise = -frag.fontSize*subFraction
-                frag.fontSize = max(frag.fontSize-sizeDelta,3)
+                frag.rise = -frag.fontSize * subFraction
+                frag.fontSize = max(frag.fontSize - sizeDelta, 3)
             elif frag.super:
-                frag.rise = frag.fontSize*superFraction
-                frag.fontSize = max(frag.fontSize-sizeDelta,3)
+                frag.rise = frag.fontSize * superFraction
+                frag.fontSize = max(frag.fontSize - sizeDelta, 3)
 
             if frag.greek:
                 frag.fontName = 'symbol'
                 data = _greekConvert(data)
 
         # bold, italic, and underline
-        frag.fontName = tt2ps(frag.fontName,frag.bold,frag.italic)
+        frag.fontName = tt2ps(frag.fontName, frag.bold, frag.italic)
 
-        #save our data
+        # save our data
         frag.text = data
 
-        if hasattr(frag,'isBullet'):
-            delattr(frag,'isBullet')
+        if hasattr(frag, 'isBullet'):
+            delattr(frag, 'isBullet')
             self.bFragList.append(frag)
         else:
             self.fragList.append(frag)
 
-    def handle_cdata(self,data):
+    def handle_cdata(self, data):
         self.handle_data(data)
 
-    def _setup_for_parse(self,style):
+    def _setup_for_parse(self, style):
         self._seq = reportlab.lib.sequencer.getSequencer()
         self._reset(style)  # reinitialise the parser
 
@@ -1095,101 +1165,105 @@ class ParaParser(HTMLParser):
         del self._seq
         style = self._style
         del self._style
-        if len(self.errors)==0:
+        if len(self.errors) == 0:
             fragList = self.fragList
-            bFragList = hasattr(self,'bFragList') and self.bFragList or None
+            bFragList = hasattr(self, 'bFragList') and self.bFragList or None
             self._iReset()
         else:
             fragList = bFragList = None
 
         return style, fragList, bFragList
 
-    def _tt_handle(self,tt):
+    def _tt_handle(self, tt):
         "Iterate through a pre-parsed tuple tree (e.g. from pyRXP)"
         #import pprint
-        #pprint.pprint(tt)
-        #find the corresponding start_tagname and end_tagname methods.
-        #These must be defined.
+        # pprint.pprint(tt)
+        # find the corresponding start_tagname and end_tagname methods.
+        # These must be defined.
         tag = tt[0]
         try:
-            start = getattr(self,'start_'+tag)
-            end = getattr(self,'end_'+tag)
+            start = getattr(self, 'start_' + tag)
+            end = getattr(self, 'end_' + tag)
         except AttributeError:
             if not self.ignoreUnknownTags:
                 raise ValueError('Invalid tag "%s"' % tag)
             start = self.start_unknown
             end = self.end_unknown
 
-        #call the start_tagname method
+        # call the start_tagname method
         start(tt[1] or {})
-        #if tree node has any children, they will either be further nodes,
-        #or text.  Accordingly, call either this function, or handle_data.
+        # if tree node has any children, they will either be further nodes,
+        # or text.  Accordingly, call either this function, or handle_data.
         C = tt[2]
         if C:
             M = self._tt_handlers
             for c in C:
-                M[isinstance(c,(list,tuple))](c)
+                M[isinstance(c, (list, tuple))](c)
 
-        #call the end_tagname method
+        # call the end_tagname method
         end()
 
-    def _tt_start(self,tt):
-        self._tt_handlers = self.handle_data,self._tt_handle
+    def _tt_start(self, tt):
+        self._tt_handlers = self.handle_data, self._tt_handle
         self._tt_handle(tt)
 
-    def tt_parse(self,tt,style):
+    def tt_parse(self, tt, style):
         '''parse from tupletree form'''
         self._setup_for_parse(style)
         self._tt_start(tt)
         return self._complete_parse()
 
-    def findSpanStyle(self,style):
+    def findSpanStyle(self, style):
         raise ValueError('findSpanStyle not implemented in this parser')
 
-    #HTMLParser interface
+    # HTMLParser interface
     def parse(self, text, style):
         "attempt replacement for parse"
         self._setup_for_parse(style)
         text = asUnicode(text)
-        if not(len(text)>=6 and text[0]=='<' and _re_para.match(text)):
-            text = u"<para>"+text+u"</para>"
+        if not(len(text) >= 6 and text[0] == '<' and _re_para.match(text)):
+            text = u"<para>" + text + u"</para>"
         try:
             self.feed(text)
         except:
-            annotateException('\nparagraph text %s caused exception' % ascii(text))
+            annotateException(
+                '\nparagraph text %s caused exception' %
+                ascii(text))
         return self._complete_parse()
 
     def handle_starttag(self, tag, attrs):
         "Called by HTMLParser when a tag starts"
 
-        #tuple tree parser used to expect a dict.  HTML parser
-        #gives list of two-element tuples
+        # tuple tree parser used to expect a dict.  HTML parser
+        # gives list of two-element tuples
         if isinstance(attrs, list):
             d = {}
-            for (k,  v) in attrs:
+            for (k, v) in attrs:
                 d[k] = v
             attrs = d
-        if not self.caseSensitive: tag = tag.lower()
+        if not self.caseSensitive:
+            tag = tag.lower()
         try:
-            start = getattr(self,'start_'+tag)
+            start = getattr(self, 'start_' + tag)
         except AttributeError:
             if not self.ignoreUnknownTags:
                 raise ValueError('Invalid tag "%s"' % tag)
             start = self.start_unknown
-        #call it
+        # call it
         start(attrs or {})
-        
+
     def handle_endtag(self, tag):
         "Called by HTMLParser when a tag ends"
-        #find the existing end_tagname method
-        if not self.caseSensitive: tag = tag.lower()
+        # find the existing end_tagname method
+        if not self.caseSensitive:
+            tag = tag.lower()
         try:
-            end = getattr(self,'end_'+tag)
+            end = getattr(self, 'end_' + tag)
         except AttributeError:
             if not self.ignoreUnknownTags:
                 raise ValueError('Invalid tag "%s"' % tag)
             end = self.end_unknown
-        #call it
+        # call it
         end()
 
     def handle_entityref(self, name):
@@ -1200,34 +1274,47 @@ class ParaParser(HTMLParser):
             v = u'&%s;' % name
         self.handle_data(v)
 
-if __name__=='__main__':
+if __name__ == '__main__':
     from reportlab.platypus import cleanBlockQuotedText
     from reportlab.lib.styles import _baseFontName
-    _parser=ParaParser()
-    def check_text(text,p=_parser):
+    _parser = ParaParser()
+
+    def check_text(text, p=_parser):
         print('##########')
         text = cleanBlockQuotedText(text)
-        l,rv,bv = p.parse(text,style)
+        l, rv, bv = p.parse(text, style)
         if rv is None:
             for l in _parser.errors:
                 print(l)
         else:
-            print('ParaStyle', l.fontName,l.fontSize,l.textColor)
+            print('ParaStyle', l.fontName, l.fontSize, l.textColor)
             for l in rv:
-                sys.stdout.write(l.fontName,l.fontSize,l.textColor,l.bold, l.rise, '|%s|'%l.text[:25])
-                if hasattr(l,'cbDefn'):
-                    print('cbDefn',getattr(l.cbDefn,'name',''),getattr(l.cbDefn,'label',''),l.cbDefn.kind)
-                else: print()
+                sys.stdout.write(
+                    l.fontName,
+                    l.fontSize,
+                    l.textColor,
+                    l.bold,
+                    l.rise,
+                    '|%s|' %
+                    l.text[
+                        :25])
+                if hasattr(l, 'cbDefn'):
+                    print(
+                        'cbDefn', getattr(
+                            l.cbDefn, 'name', ''), getattr(
+                            l.cbDefn, 'label', ''), l.cbDefn.kind)
+                else:
+                    print()
 
-    style=ParaFrag()
-    style.fontName=_baseFontName
+    style = ParaFrag()
+    style.fontName = _baseFontName
     style.fontSize = 12
     style.textColor = black
     style.bulletFontName = black
-    style.bulletFontName=_baseFontName
-    style.bulletFontSize=12
+    style.bulletFontName = _baseFontName
+    style.bulletFontSize = 12
 
-    text='''
+    text = '''
     <b><i><greek>a</greek>D</i></b>&beta;<unichr value="0x394"/>
     <font name="helvetica" size="15" color=green>
     Tell me, O muse, of that ingenious hero who travelled far and wide
@@ -1242,7 +1329,9 @@ if __name__=='__main__':
     '''
     check_text(text)
     check_text('<para> </para>')
-    check_text('<para font="%s" size=24 leading=28.8 spaceAfter=72>ReportLab -- Reporting for the Internet Age</para>'%_baseFontName)
+    check_text(
+        '<para font="%s" size=24 leading=28.8 spaceAfter=72>ReportLab -- Reporting for the Internet Age</para>' %
+        _baseFontName)
     check_text('''
     <font color=red>&tau;</font>Tell me, O muse, of that ingenious hero who travelled far and wide
     after he had sacked the famous town of Troy. Many cities did he visit,
@@ -1325,12 +1414,18 @@ There was a bard also to sing to them and play
 his lyre, while two tumblers went about performing in the midst of
 them when the man struck up with his tune.]''')
     check_text('''<onDraw name="myFunc" label="aaa   bbb">A paragraph''')
-    check_text('''<para><onDraw name="myFunc" label="aaa   bbb">B paragraph</para>''')
+    check_text(
+        '''<para><onDraw name="myFunc" label="aaa   bbb">B paragraph</para>''')
     # HVB, 30.05.2003: Test for new features
-    _parser.caseSensitive=0
-    check_text('''Here comes <FONT FACE="Helvetica" SIZE="14pt">Helvetica 14</FONT> with <STRONG>strong</STRONG> <EM>emphasis</EM>.''')
-    check_text('''Here comes <font face="Helvetica" size="14pt">Helvetica 14</font> with <Strong>strong</Strong> <em>emphasis</em>.''')
-    check_text('''Here comes <font face="Courier" size="3cm">Courier 3cm</font> and normal again.''')
-    check_text('''Before the break <br/>the middle line <br/> and the last line.''')
-    check_text('''This should be an inline image <img src='../../../docs/images/testimg.gif'/>!''')
+    _parser.caseSensitive = 0
+    check_text(
+        '''Here comes <FONT FACE="Helvetica" SIZE="14pt">Helvetica 14</FONT> with <STRONG>strong</STRONG> <EM>emphasis</EM>.''')
+    check_text(
+        '''Here comes <font face="Helvetica" size="14pt">Helvetica 14</font> with <Strong>strong</Strong> <em>emphasis</em>.''')
+    check_text(
+        '''Here comes <font face="Courier" size="3cm">Courier 3cm</font> and normal again.''')
+    check_text(
+        '''Before the break <br/>the middle line <br/> and the last line.''')
+    check_text(
+        '''This should be an inline image <img src='../../../docs/images/testimg.gif'/>!''')
     check_text('''aaa&nbsp;bbbb <u>underline&#32;</u> cccc''')

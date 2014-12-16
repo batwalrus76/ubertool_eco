@@ -23,7 +23,8 @@ def superuser_required(view_func):
             # The user is valid. Continue to the admin page.
             return view_func(request, *args, **kwargs)
 
-        assert hasattr(request, 'session'), "The Django admin requires session middleware to be installed. Edit your MIDDLEWARE_CLASSES setting to insert 'django.contrib.sessions.middleware.SessionMiddleware'."
+        assert hasattr(
+            request, 'session'), "The Django admin requires session middleware to be installed. Edit your MIDDLEWARE_CLASSES setting to insert 'django.contrib.sessions.middleware.SessionMiddleware'."
         defaults = {
             'template_name': 'admin/login.html',
             'authentication_form': AdminAuthenticationForm,
@@ -31,10 +32,11 @@ def superuser_required(view_func):
                 'title': _('Log in'),
                 'app_path': request.get_full_path(),
                 REDIRECT_FIELD_NAME: request.get_full_path(),
-                },
-            }
+            },
+        }
         return login(request, **defaults)
     return _checklogin
+
 
 def public(function=None):
     """
@@ -75,18 +77,19 @@ else:
 @decorator
 def serve_docs(request, path, **kwargs):
     if DOCS_ACCESS not in DOCS_ACCESS_CHOICES:
-        raise DocsAccessSettingError('DOCS_ACCESS setting value is incorrect: %s (choises are: %s)' % (
-            DOCS_ACCESS,
-            DOCS_ACCESS_CHOICES
-        ))
+        raise DocsAccessSettingError(
+            'DOCS_ACCESS setting value is incorrect: %s (choises are: %s)' %
+            (DOCS_ACCESS, DOCS_ACCESS_CHOICES))
     if 'document_root' not in kwargs and not DOCS_ROOT:
-        raise DocsRootSettingError('DOCS_ROOT setting value is incorrect: %s (must be a valid path)' % DOCS_ROOT)
+        raise DocsRootSettingError(
+            'DOCS_ROOT setting value is incorrect: %s (must be a valid path)' %
+            DOCS_ROOT)
     if 'document_root' not in kwargs and DOCS_ROOT:
         kwargs['document_root'] = DOCS_ROOT
     return serve(request, path, **kwargs)
 
 
 class DocsRootView(RedirectView):
+
     def get_redirect_url(self, **kwargs):
         return reverse('docs_files', kwargs={'path': 'index.html'})
-

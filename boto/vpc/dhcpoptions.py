@@ -25,6 +25,7 @@ Represents a DHCP Options set
 
 from boto.ec2.ec2object import TaggedEC2Object
 
+
 class DhcpValueSet(list):
 
     def startElement(self, name, attrs, connection):
@@ -33,6 +34,7 @@ class DhcpValueSet(list):
     def endElement(self, name, value, connection):
         if name == 'value':
             self.append(value)
+
 
 class DhcpConfigSet(dict):
 
@@ -45,6 +47,7 @@ class DhcpConfigSet(dict):
     def endElement(self, name, value, connection):
         if name == 'key':
             self._name = value
+
 
 class DhcpOptions(TaggedEC2Object):
 
@@ -69,4 +72,3 @@ class DhcpOptions(TaggedEC2Object):
             self.id = value
         else:
             setattr(self, name, value)
-

@@ -5,22 +5,24 @@
 
 from django.views.decorators.http import require_POST
 from StringIO import StringIO
-import przm_model, przm_tables
+import przm_model
+import przm_tables
 import csv
 from threading import Thread
 import Queue
 from collections import OrderedDict
 import logging
 import przm_batchmodel
-import datetime, time
+import datetime
+import time
 
 
 def generate_batch_jid():
     ts = datetime.datetime.now()
     if(time.daylight):
-        ts1 = datetime.timedelta(hours=-4)+ts
+        ts1 = datetime.timedelta(hours=-4) + ts
     else:
-        ts1 = datetime.timedelta(hours=-5)+ts
+        ts1 = datetime.timedelta(hours=-5) + ts
     batch_jid = ts1.strftime('%Y%m%d%H%M%S%f')
     return batch_jid
 
@@ -30,7 +32,7 @@ def przmBatchOutputPage(request):
     thefile = request.FILES['upfile']
     batch_jid = generate_batch_jid()
     iter_html = przm_batchmodel.loop_html(thefile, batch_jid)
-    
+
     logging.info(iter_html)
     # return iter_html, trex2_obj_all, batch_jid
 

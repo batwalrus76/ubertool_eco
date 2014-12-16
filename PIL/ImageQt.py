@@ -27,6 +27,7 @@ except:
 ##
 # (Internal) Turns an RGB color into a Qt compatible color integer.
 
+
 def rgb(r, g, b, a=255):
     # use qRgb to pack the colors, and then turn the resulting long
     # into a negative integer with the same bitpattern.
@@ -38,6 +39,7 @@ def rgb(r, g, b, a=255):
 #
 # @param im A PIL Image object, or a file name (given either as Python
 #     string or a PyQt string object).
+
 
 class ImageQt(QImage):
 
@@ -65,7 +67,7 @@ class ImageQt(QImage):
             colortable = []
             palette = im.getpalette()
             for i in range(0, len(palette), 3):
-                colortable.append(rgb(*palette[i:i+3]))
+                colortable.append(rgb(*palette[i:i + 3]))
         elif im.mode == "RGB":
             data = im.tobytes("raw", "BGRX")
             format = QImage.Format_RGB32

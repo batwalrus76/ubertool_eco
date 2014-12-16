@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
+
 def bucket_lister(bucket, prefix='', delimiter='', marker='', headers=None,
                   encoding_type=None):
     """
@@ -34,9 +35,11 @@ def bucket_lister(bucket, prefix='', delimiter='', marker='', headers=None,
             yield k
         if k:
             marker = rs.next_marker or k.name
-        more_results= rs.is_truncated
+        more_results = rs.is_truncated
+
 
 class BucketListResultSet(object):
+
     """
     A resultset for listing keys within a bucket.  Uses the bucket_lister
     generator function and implements the iterator interface.  This
@@ -60,6 +63,7 @@ class BucketListResultSet(object):
                              headers=self.headers,
                              encoding_type=self.encoding_type)
 
+
 def versioned_bucket_lister(bucket, prefix='', delimiter='',
                             key_marker='', version_id_marker='', headers=None,
                             encoding_type=None):
@@ -77,9 +81,11 @@ def versioned_bucket_lister(bucket, prefix='', delimiter='',
             yield k
         key_marker = rs.next_key_marker
         version_id_marker = rs.next_version_id_marker
-        more_results= rs.is_truncated
+        more_results = rs.is_truncated
+
 
 class VersionedBucketListResultSet(object):
+
     """
     A resultset for listing versions within a bucket.  Uses the bucket_lister
     generator function and implements the iterator interface.  This
@@ -99,12 +105,15 @@ class VersionedBucketListResultSet(object):
         self.encoding_type = encoding_type
 
     def __iter__(self):
-        return versioned_bucket_lister(self.bucket, prefix=self.prefix,
-                                       delimiter=self.delimiter,
-                                       key_marker=self.key_marker,
-                                       version_id_marker=self.version_id_marker,
-                                       headers=self.headers,
-                                       encoding_type=self.encoding_type)
+        return versioned_bucket_lister(
+            self.bucket,
+            prefix=self.prefix,
+            delimiter=self.delimiter,
+            key_marker=self.key_marker,
+            version_id_marker=self.version_id_marker,
+            headers=self.headers,
+            encoding_type=self.encoding_type)
+
 
 def multipart_upload_lister(bucket, key_marker='',
                             upload_id_marker='',
@@ -115,17 +124,20 @@ def multipart_upload_lister(bucket, key_marker='',
     more_results = True
     k = None
     while more_results:
-        rs = bucket.get_all_multipart_uploads(key_marker=key_marker,
-                                              upload_id_marker=upload_id_marker,
-                                              headers=headers,
-                                              encoding_type=encoding_type)
+        rs = bucket.get_all_multipart_uploads(
+            key_marker=key_marker,
+            upload_id_marker=upload_id_marker,
+            headers=headers,
+            encoding_type=encoding_type)
         for k in rs:
             yield k
         key_marker = rs.next_key_marker
         upload_id_marker = rs.next_upload_id_marker
-        more_results= rs.is_truncated
+        more_results = rs.is_truncated
+
 
 class MultiPartUploadListResultSet(object):
+
     """
     A resultset for listing multipart uploads within a bucket.
     Uses the multipart_upload_lister generator function and
@@ -134,6 +146,7 @@ class MultiPartUploadListResultSet(object):
     many thousands of uploads within the bucket you can iterate over all
     keys in a reasonably efficient manner.
     """
+
     def __init__(self, bucket=None, key_marker='',
                  upload_id_marker='', headers=None, encoding_type=None):
         self.bucket = bucket

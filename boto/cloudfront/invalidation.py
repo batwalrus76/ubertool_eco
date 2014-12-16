@@ -14,7 +14,7 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABIL-
 # ITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
@@ -26,11 +26,17 @@ from boto.resultset import ResultSet
 
 
 class InvalidationBatch(object):
+
     """A simple invalidation request.
         :see: http://docs.amazonwebservices.com/AmazonCloudFront/2010-08-01/APIReference/index.html?InvalidationBatchDatatype.html
     """
 
-    def __init__(self, paths=None, connection=None, distribution=None, caller_reference=''):
+    def __init__(
+            self,
+            paths=None,
+            connection=None,
+            distribution=None,
+            caller_reference=''):
         """Create a new invalidation request:
             :paths: An array of paths to invalidate
         """
@@ -104,6 +110,7 @@ class InvalidationBatch(object):
 
 
 class InvalidationListResultSet(object):
+
     """
     A resultset for listing invalidations on a given CloudFront distribution.
     Implements the iterator interface and transparently handles paging results
@@ -111,6 +118,7 @@ class InvalidationListResultSet(object):
     distribution you can iterate over all invalidations in a reasonably
     efficient manner.
     """
+
     def __init__(self, markers=None, connection=None, distribution_id=None,
                  invalidations=None, marker='', next_marker=None,
                  max_items=None, is_truncated=False):
@@ -137,9 +145,10 @@ class InvalidationListResultSet(object):
         if not self.auto_paginate:
             return
         while result_set.is_truncated:
-            result_set = conn.get_invalidation_requests(distribution_id,
-                                                        marker=result_set.next_marker,
-                                                        max_items=result_set.max_items)
+            result_set = conn.get_invalidation_requests(
+                distribution_id,
+                marker=result_set.next_marker,
+                max_items=result_set.max_items)
             for i in result_set._inval_cache:
                 yield i
 
@@ -166,11 +175,14 @@ class InvalidationListResultSet(object):
         else:
             return False
 
+
 class InvalidationSummary(object):
+
     """
     Represents InvalidationSummary complex type in CloudFront API that lists
     the id and status of a given invalidation request.
     """
+
     def __init__(self, connection=None, distribution_id=None, id='',
                  status=''):
         self.connection = connection

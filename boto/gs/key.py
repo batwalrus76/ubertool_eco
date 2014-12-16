@@ -30,7 +30,9 @@ from boto.s3.keyfile import KeyFile
 from boto.utils import compute_hash
 from boto.utils import get_utf8_value
 
+
 class Key(S3Key):
+
     """
     Represents a key (object) in a GS bucket.
 
@@ -397,10 +399,19 @@ class Key(S3Key):
         acl.add_group_grant(permission, group_id)
         self.set_acl(acl)
 
-    def set_contents_from_file(self, fp, headers=None, replace=True,
-                               cb=None, num_cb=10, policy=None, md5=None,
-                               res_upload_handler=None, size=None, rewind=False,
-                               if_generation=None):
+    def set_contents_from_file(
+            self,
+            fp,
+            headers=None,
+            replace=True,
+            cb=None,
+            num_cb=10,
+            policy=None,
+            md5=None,
+            res_upload_handler=None,
+            size=None,
+            rewind=False,
+            if_generation=None):
         """
         Store an object in GS using the name of the Key object as the
         key in GS and the contents of the file pointed to by 'fp' as the
@@ -465,7 +476,7 @@ class Key(S3Key):
                    multipart uploads.
 
         :type rewind: bool
-        :param rewind: (optional) If True, the file pointer (fp) will be 
+        :param rewind: (optional) If True, the file pointer (fp) will be
                        rewound to the start before any bytes are read from
                        it. The default behaviour is False which reads from
                        the current position of the file pointer (fp).
@@ -692,7 +703,8 @@ class Key(S3Key):
             if it doesn't already exist.
         """
 
-        # Clear out any previously computed md5 hashes, since we are setting the content.
+        # Clear out any previously computed md5 hashes, since we are setting
+        # the content.
         self.md5 = None
         self.base64md5 = None
 
@@ -768,7 +780,7 @@ class Key(S3Key):
         super(Key, self).set_contents_from_stream(*args, **kwargs)
 
     def set_acl(self, acl_or_str, headers=None, generation=None,
-                 if_generation=None, if_metageneration=None):
+                if_generation=None, if_metageneration=None):
         """Sets the ACL for this object.
 
         :type acl_or_str: string or :class:`boto.gs.acl.ACL`
@@ -829,7 +841,7 @@ class Key(S3Key):
                                            generation=generation)
 
     def set_xml_acl(self, acl_str, headers=None, generation=None,
-                     if_generation=None, if_metageneration=None):
+                    if_generation=None, if_metageneration=None):
         """Sets this objects's ACL to an XML string.
 
         :type acl_str: string
@@ -920,7 +932,7 @@ class Key(S3Key):
             compose_req.append('<Component><Name>%s</Name>%s</Component>' %
                                (key.name, generation_tag))
         compose_req_xml = ('<ComposeRequest>%s</ComposeRequest>' %
-                         ''.join(compose_req))
+                           ''.join(compose_req))
         headers = headers or {}
         if content_type:
             headers['Content-Type'] = content_type

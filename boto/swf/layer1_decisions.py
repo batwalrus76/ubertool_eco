@@ -4,12 +4,14 @@ Helper class for creating decision responses.
 
 
 class Layer1Decisions(object):
+
     """
     Use this object to build a list of decisions for a decision response.
     Each method call will add append a new decision.  Retrieve the list
     of decisions from the _data attribute.
 
     """
+
     def __init__(self):
         self._data = []
 
@@ -140,14 +142,15 @@ class Layer1Decisions(object):
             attrs['details'] = details
         self._data.append(o)
 
-    def continue_as_new_workflow_execution(self,
-                                           child_policy=None,
-                                           execution_start_to_close_timeout=None,
-                                           input=None,
-                                           tag_list=None,
-                                           task_list=None,
-                                           start_to_close_timeout=None,
-                                           workflow_type_version=None):
+    def continue_as_new_workflow_execution(
+            self,
+            child_policy=None,
+            execution_start_to_close_timeout=None,
+            input=None,
+            tag_list=None,
+            task_list=None,
+            start_to_close_timeout=None,
+            workflow_type_version=None):
         """
         Closes the workflow execution and starts a new workflow execution of
         the same type using the same workflow id and a unique run Id. A
@@ -159,7 +162,8 @@ class Layer1Decisions(object):
         if child_policy is not None:
             attrs['childPolicy'] = child_policy
         if execution_start_to_close_timeout is not None:
-            attrs['executionStartToCloseTimeout'] = execution_start_to_close_timeout
+            attrs[
+                'executionStartToCloseTimeout'] = execution_start_to_close_timeout
         if input is not None:
             attrs['input'] = input
         if tag_list is not None:
@@ -237,7 +241,8 @@ class Layer1Decisions(object):
         """
         o = {}
         o['decisionType'] = 'RequestCancelExternalWorkflowExecution'
-        attrs = o['requestCancelExternalWorkflowExecutionDecisionAttributes'] = {}
+        attrs = o[
+            'requestCancelExternalWorkflowExecutionDecisionAttributes'] = {}
         attrs['workflowId'] = workflow_id
         if control is not None:
             attrs['control'] = control
@@ -275,7 +280,8 @@ class Layer1Decisions(object):
         if control is not None:
             attrs['control'] = control
         if execution_start_to_close_timeout is not None:
-            attrs['executionStartToCloseTimeout'] = execution_start_to_close_timeout
+            attrs[
+                'executionStartToCloseTimeout'] = execution_start_to_close_timeout
         if input is not None:
             attrs['input'] = input
         if tag_list is not None:

@@ -13,6 +13,7 @@ __all__ = ["default_etree", "MethodDispatcher", "isSurrogatePair",
 
 
 class MethodDispatcher(dict):
+
     """Dict with 2 special properties:
 
     On initiation, keys that are lists, sets or tuples are converted to

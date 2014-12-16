@@ -27,6 +27,7 @@ from boto.compat import json
 import requests
 import boto
 
+
 class SearchServiceException(Exception):
     pass
 
@@ -34,7 +35,9 @@ class SearchServiceException(Exception):
 class CommitMismatchError(Exception):
     pass
 
+
 class EncodingError(Exception):
+
     """
     Content sent for Cloud Search indexing was incorrectly encoded.
 
@@ -43,7 +46,9 @@ class EncodingError(Exception):
     """
     pass
 
+
 class ContentTooLongError(Exception):
+
     """
     Content sent for Cloud Search indexing was too long
 
@@ -53,7 +58,9 @@ class ContentTooLongError(Exception):
     """
     pass
 
+
 class DocumentServiceConnection(object):
+
     """
     A CloudSearch document service.
 
@@ -110,7 +117,7 @@ class DocumentServiceConnection(object):
         """
 
         d = {'type': 'add', 'id': _id, 'version': version, 'lang': lang,
-            'fields': fields}
+             'fields': fields}
         self.documents_batch.append(d)
 
     def delete(self, _id, version):
@@ -180,7 +187,8 @@ class DocumentServiceConnection(object):
         sdf = self.get_sdf()
 
         if ': null' in sdf:
-            boto.log.error('null value in sdf detected.  This will probably raise '
+            boto.log.error(
+                'null value in sdf detected.  This will probably raise '
                 '500 error.')
             index = sdf.index(': null')
             boto.log.error(sdf[index - 100:index + 100])
@@ -196,12 +204,17 @@ class DocumentServiceConnection(object):
         )
         session.mount('http://', adapter)
         session.mount('https://', adapter)
-        r = session.post(url, data=sdf, headers={'Content-Type': 'application/json'})
+        r = session.post(
+            url,
+            data=sdf,
+            headers={
+                'Content-Type': 'application/json'})
 
         return CommitResponse(r, self, sdf)
 
 
 class CommitResponse(object):
+
     """Wrapper for response to Cloudsearch document batch commit.
 
     :type response: :class:`requests.models.Response`
@@ -216,6 +229,7 @@ class CommitResponse(object):
     :raises: :class:`boto.cloudsearch.document.EncodingError`
     :raises: :class:`boto.cloudsearch.document.ContentTooLongError`
     """
+
     def __init__(self, response, doc_service, sdf):
         self.response = response
         self.doc_service = doc_service
@@ -224,18 +238,22 @@ class CommitResponse(object):
         try:
             self.content = json.loads(response.content)
         except:
-            boto.log.error('Error indexing documents.\nResponse Content:\n{0}\n\n'
-                'SDF:\n{1}'.format(response.content, self.sdf))
+            boto.log.error(
+                'Error indexing documents.\nResponse Content:\n{0}\n\n'
+                'SDF:\n{1}'.format(
+                    response.content,
+                    self.sdf))
             raise boto.exception.BotoServerError(self.response.status_code, '',
-                body=response.content)
+                                                 body=response.content)
 
         self.status = self.content['status']
         if self.status == 'error':
             self.errors = [e.get('message') for e in self.content.get('errors',
-                [])]
+                                                                      [])]
             for e in self.errors:
                 if "Illegal Unicode character" in e:
-                    raise EncodingError("Illegal Unicode character in document")
+                    raise EncodingError(
+                        "Illegal Unicode character in document")
                 elif e == "The Content-Length is too long":
                     raise ContentTooLongError("Content was too long")
         else:
@@ -258,9 +276,9 @@ class CommitResponse(object):
         :raises: :class:`boto.cloudsearch.document.CommitMismatchError`
         """
         commit_num = len([d for d in self.doc_service.documents_batch
-            if d['type'] == type_])
+                          if d['type'] == type_])
 
         if response_num != commit_num:
             raise CommitMismatchError(
-                'Incorrect number of {0}s returned. Commit: {1} Response: {2}'\
+                'Incorrect number of {0}s returned. Commit: {1} Response: {2}'
                 .format(type_, commit_num, response_num))

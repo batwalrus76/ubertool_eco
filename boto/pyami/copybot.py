@@ -21,7 +21,9 @@
 #
 import boto
 from boto.pyami.scriptbase import ScriptBase
-import os, StringIO
+import os
+import StringIO
+
 
 class CopyBot(ScriptBase):
 
@@ -38,9 +40,15 @@ class CopyBot(ScriptBase):
         self.src = s3.lookup(self.src_name)
         if not self.src:
             boto.log.error('Source bucket does not exist: %s' % self.src_name)
-        dest_access_key = boto.config.get(self.name, 'dest_aws_access_key_id', None)
+        dest_access_key = boto.config.get(
+            self.name,
+            'dest_aws_access_key_id',
+            None)
         if dest_access_key:
-            dest_secret_key = boto.config.get(self.name, 'dest_aws_secret_access_key', None)
+            dest_secret_key = boto.config.get(
+                self.name,
+                'dest_aws_secret_access_key',
+                None)
             s3 = boto.connect(dest_access_key, dest_secret_key)
         self.dst = s3.lookup(self.dst_name)
         if not self.dst:
@@ -64,9 +72,13 @@ class CopyBot(ScriptBase):
                 if not self.replace:
                     exists = self.dst.lookup(key.name)
                     if exists:
-                        boto.log.info('key=%s already exists in %s, skipping' % (key.name, self.dst.name))
+                        boto.log.info(
+                            'key=%s already exists in %s, skipping' %
+                            (key.name, self.dst.name))
                         continue
-                boto.log.info('copying %d bytes from key=%s' % (key.size, key.name))
+                boto.log.info(
+                    'copying %d bytes from key=%s' %
+                    (key.size, key.name))
                 prefix, base = os.path.split(key.name)
                 path = os.path.join(self.wdir, base)
                 key.get_contents_to_filename(path)
@@ -84,7 +96,9 @@ class CopyBot(ScriptBase):
     def main(self):
         fp = StringIO.StringIO()
         boto.config.dump_safe(fp)
-        self.notify('%s (%s) Starting' % (self.name, self.instance_id), fp.getvalue())
+        self.notify(
+            '%s (%s) Starting' %
+            (self.name, self.instance_id), fp.getvalue())
         if self.src and self.dst:
             self.copy_keys()
         if self.dst:
@@ -94,4 +108,3 @@ class CopyBot(ScriptBase):
         if boto.config.getbool(self.name, 'exit_on_completion', True):
             ec2 = boto.connect_ec2()
             ec2.terminate_instances([self.instance_id])
-

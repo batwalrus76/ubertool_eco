@@ -6,10 +6,11 @@
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 
+
 @require_POST
 def samOutputPage(request):
     import sam_model
-    
+
     # chemical_name = request.POST.get('chemical_name')
     # koc = request.POST.get('koc')
     # soil_metabolism_hl = request.POST.get('soil_metabolism_hl')

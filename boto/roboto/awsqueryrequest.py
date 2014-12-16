@@ -35,6 +35,7 @@ try:
 except ImportError:
     import pdb as debugger
 
+
 def boto_except_hook(debugger_flag, debug_flag):
     def excepthook(typ, value, tb):
         if typ is bdb.BdbQuit:
@@ -55,6 +56,7 @@ def boto_except_hook(debugger_flag, debug_flag):
 
     return excepthook
 
+
 class Line(object):
 
     def __init__(self, fmt, data, label):
@@ -72,6 +74,7 @@ class Line(object):
             print self.line
             self.printed = True
 
+
 class RequiredParamError(boto.exception.BotoClientError):
 
     def __init__(self, required):
@@ -79,11 +82,13 @@ class RequiredParamError(boto.exception.BotoClientError):
         s = 'Required parameters are missing: %s' % self.required
         super(RequiredParamError, self).__init__(s)
 
+
 class EncoderError(boto.exception.BotoClientError):
 
     def __init__(self, error_msg):
         s = 'Error encoding value (%s)' % error_msg
         super(EncoderError, self).__init__(s)
+
 
 class FilterError(boto.exception.BotoClientError):
 
@@ -92,6 +97,7 @@ class FilterError(boto.exception.BotoClientError):
         s = 'Unknown filters: %s' % self.filters
         super(FilterError, self).__init__(s)
 
+
 class Encoder(object):
 
     @classmethod
@@ -99,7 +105,7 @@ class Encoder(object):
         if p.name.startswith('_'):
             return
         try:
-            mthd = getattr(cls, 'encode_'+p.ptype)
+            mthd = getattr(cls, 'encode_' + p.ptype)
             mthd(p, rp, v, label)
         except AttributeError:
             raise EncoderError('Unknown type: %s' % p.ptype)
@@ -152,7 +158,8 @@ class Encoder(object):
             label = p.name
         label = label + '.%d'
         for i, value in enumerate(v):
-            rp[label%(i+1)] = value
+            rp[label % (i + 1)] = value
+
 
 class AWSQueryRequest(object):
 
@@ -164,14 +171,14 @@ class AWSQueryRequest(object):
     Filters = []
     Response = {}
 
-    CLITypeMap = {'string' : 'string',
-                  'integer' : 'int',
-                  'int' : 'int',
-                  'enum' : 'choice',
-                  'datetime' : 'string',
-                  'dateTime' : 'string',
-                  'file' : 'string',
-                  'boolean' : None}
+    CLITypeMap = {'string': 'string',
+                  'integer': 'int',
+                  'int': 'int',
+                  'enum': 'choice',
+                  'datetime': 'string',
+                  'dateTime': 'string',
+                  'file': 'string',
+                  'boolean': None}
 
     @classmethod
     def name(cls):
@@ -227,10 +234,10 @@ class AWSQueryRequest(object):
         for i, filter in enumerate(self.Filters):
             name = filter['name']
             if name in filters:
-                self.request_params['Filter.%d.Name' % (i+1)] = name
+                self.request_params['Filter.%d.Name' % (i + 1)] = name
                 for j, value in enumerate(boto.utils.mklist(filters[name])):
                     Encoder.encode(filter, self.request_params, value,
-                                   'Filter.%d.Value.%d' % (i+1, j+1))
+                                   'Filter.%d.Value.%d' % (i + 1, j + 1))
 
     def process_args(self, **args):
         """
@@ -247,8 +254,8 @@ class AWSQueryRequest(object):
         self.connection_args = copy.copy(self.args)
         if 'debug' in self.args and self.args['debug'] >= 2:
             boto.set_stream_logger(self.name())
-        required = [p.name for p in self.Params+self.Args if not p.optional]
-        for param in self.Params+self.Args:
+        required = [p.name for p in self.Params + self.Args if not p.optional]
+        for param in self.Params + self.Args:
             if param.long_name:
                 python_name = param.long_name.replace('-', '_')
             else:
@@ -270,7 +277,7 @@ class AWSQueryRequest(object):
                 del self.connection_args[python_name]
         if required:
             l = []
-            for p in self.Params+self.Args:
+            for p in self.Params + self.Args:
                 if p.name in required:
                     if p.short_name and p.long_name:
                         l.append('(%s, %s)' % (p.optparse_short_name,
@@ -301,8 +308,9 @@ class AWSQueryRequest(object):
         self.body = self.http_response.read()
         boto.log.debug(self.body)
         if self.http_response.status == 200:
-            self.aws_response = boto.jsonresponse.Element(list_marker=self.list_markers,
-                                                          item_marker=self.item_markers)
+            self.aws_response = boto.jsonresponse.Element(
+                list_marker=self.list_markers,
+                item_marker=self.item_markers)
             h = boto.jsonresponse.XmlHandler(self.aws_response, self)
             h.parse(self.body)
             return self.aws_response
@@ -334,10 +342,10 @@ class AWSQueryRequest(object):
                          help='Display version string')
         if self.Filters:
             self.group.add_option('--help-filters', action='store_true',
-                                   help='Display list of available filters')
+                                  help='Display list of available filters')
             self.group.add_option('--filter', action='append',
-                                   metavar=' name=value',
-                                   help='A filter for limiting the results')
+                                  metavar=' name=value',
+                                  help='A filter for limiting the results')
         self.parser.add_option_group(group)
 
     def process_standard_options(self, options, args, d):
@@ -365,7 +373,7 @@ class AWSQueryRequest(object):
 
     def get_usage(self):
         s = 'usage: %prog [options] '
-        l = [ a.long_name for a in self.Args ]
+        l = [a.long_name for a in self.Args]
         s += ' '.join(l)
         for a in self.Args:
             if a.doc:
@@ -452,16 +460,16 @@ class AWSQueryRequest(object):
         try:
             response = self.main()
             self.cli_formatter(response)
-        except RequiredParamError, e:
+        except RequiredParamError as e:
             print e
             sys.exit(1)
-        except self.ServiceClass.ResponseError, err:
+        except self.ServiceClass.ResponseError as err:
             print 'Error(%s): %s' % (err.error_code, err.error_message)
             sys.exit(1)
-        except boto.roboto.awsqueryservice.NoCredentialsError, err:
+        except boto.roboto.awsqueryservice.NoCredentialsError as err:
             print 'Unable to find credentials.'
             sys.exit(1)
-        except Exception, e:
+        except Exception as e:
             print e
             sys.exit(1)
 
@@ -500,5 +508,3 @@ class AWSQueryRequest(object):
         """
         if data:
             self._generic_cli_formatter(self.Response, data)
-
-

@@ -22,6 +22,7 @@
 
 
 class TagSet(dict):
+
     """
     A TagSet is used to collect the tags associated with a particular
     EC2 resource.  Not all resources can be tagged but for those that
@@ -50,6 +51,7 @@ class TagSet(dict):
 
 
 class Tag(object):
+
     """
     A Tag is used when creating or listing all tags related to
     an AWS account.  It records not only the key and value but

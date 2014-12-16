@@ -19,7 +19,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
+
 class SimpleResultSet(list):
+
     """
     ResultSet facade built from a simple list, rather than via XML parsing.
     """

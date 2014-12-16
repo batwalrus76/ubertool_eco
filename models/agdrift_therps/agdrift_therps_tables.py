@@ -5,9 +5,12 @@
 
 import datetime
 
+
 def timestamp(agdrift_therps_obj):
-    st = datetime.datetime.strptime(agdrift_therps_obj.jid, '%Y%m%d%H%M%S%f').strftime('%A, %Y-%B-%d %H:%M:%S')
-    html="""
+    st = datetime.datetime.strptime(
+        agdrift_therps_obj.jid,
+        '%Y%m%d%H%M%S%f').strftime('%A, %Y-%B-%d %H:%M:%S')
+    html = """
     <div class="out_">
     <b>Agdrift-Therps<br>
     """
@@ -16,4 +19,3 @@ def timestamp(agdrift_therps_obj):
     html = html + """
     </div>"""
     return html
-

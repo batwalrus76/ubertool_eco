@@ -56,11 +56,13 @@ package where all these provider-independent files go.
 
 
 class ByteTranslatingCallbackHandler(object):
+
     """
     Proxy class that translates progress callbacks made by
     boto.s3.Key.get_file(), taking into account that we're resuming
     a download.
     """
+
     def __init__(self, proxied_cb, download_start_point):
         self.proxied_cb = proxied_cb
         self.download_start_point = download_start_point
@@ -87,6 +89,7 @@ def get_cur_file_size(fp, position_to_eof=False):
 
 
 class ResumableDownloadHandler(object):
+
     """
     Handler for resumable downloads.
     """
@@ -135,7 +138,7 @@ class ResumableDownloadHandler(object):
             if len(self.etag_value_for_current_download) < self.MIN_ETAG_LEN:
                 print('Couldn\'t read etag in tracker file (%s). Restarting '
                       'download from scratch.' % self.tracker_file_name)
-        except IOError, e:
+        except IOError as e:
             # Ignore non-existent file (happens first time a download
             # is attempted on an object), but warn user for other errors.
             if e.errno != errno.ENOENT:
@@ -156,7 +159,7 @@ class ResumableDownloadHandler(object):
         try:
             f = open(self.tracker_file_name, 'w')
             f.write('%s\n' % self.etag_value_for_current_download)
-        except IOError, e:
+        except IOError as e:
             raise ResumableDownloadException(
                 'Couldn\'t write tracker file (%s): %s.\nThis can happen'
                 'if you\'re using an incorrectly configured download tool\n'
@@ -170,8 +173,8 @@ class ResumableDownloadHandler(object):
 
     def _remove_tracker_file(self):
         if (self.tracker_file_name and
-            os.path.exists(self.tracker_file_name)):
-                os.unlink(self.tracker_file_name)
+                os.path.exists(self.tracker_file_name)):
+            os.unlink(self.tracker_file_name)
 
     def _attempt_resumable_download(self, key, fp, headers, cb, num_cb,
                                     torrent, version_id, hash_algs):
@@ -182,16 +185,16 @@ class ResumableDownloadHandler(object):
         """
         cur_file_size = get_cur_file_size(fp, position_to_eof=True)
 
-        if (cur_file_size and 
-            self.etag_value_for_current_download and
-            self.etag_value_for_current_download == key.etag.strip('"\'')):
+        if (cur_file_size and
+                self.etag_value_for_current_download and
+                self.etag_value_for_current_download == key.etag.strip('"\'')):
             # Try to resume existing transfer.
             if cur_file_size > key.size:
-              raise ResumableDownloadException(
-                  '%s is larger (%d) than %s (%d).\nDeleting tracker file, so '
-                  'if you re-try this download it will start from scratch' %
-                  (fp.name, cur_file_size, str(storage_uri_for_key(key)),
-                   key.size), ResumableTransferDisposition.ABORT)
+                raise ResumableDownloadException(
+                    '%s is larger (%d) than %s (%d).\nDeleting tracker file, so '
+                    'if you re-try this download it will start from scratch' %
+                    (fp.name, cur_file_size, str(
+                        storage_uri_for_key(key)), key.size), ResumableTransferDisposition.ABORT)
             elif cur_file_size == key.size:
                 if key.bucket.connection.debug >= 1:
                     print 'Download complete.'
@@ -214,11 +217,11 @@ class ResumableDownloadHandler(object):
         # Disable AWSAuthConnection-level retry behavior, since that would
         # cause downloads to restart from scratch.
         if isinstance(key, GSKey):
-          key.get_file(fp, headers, cb, num_cb, torrent, version_id,
-                       override_num_retries=0, hash_algs=hash_algs)
+            key.get_file(fp, headers, cb, num_cb, torrent, version_id,
+                         override_num_retries=0, hash_algs=hash_algs)
         else:
-          key.get_file(fp, headers, cb, num_cb, torrent, version_id,
-                       override_num_retries=0)
+            key.get_file(fp, headers, cb, num_cb, torrent, version_id,
+                         override_num_retries=0)
         fp.flush()
 
     def get_file(self, key, fp, headers, cb=None, num_cb=10, torrent=False,
@@ -227,13 +230,13 @@ class ResumableDownloadHandler(object):
         Retrieves a file from a Key
         :type key: :class:`boto.s3.key.Key` or subclass
         :param key: The Key object from which upload is to be downloaded
-        
+
         :type fp: file
         :param fp: File pointer into which data should be downloaded
-        
+
         :type headers: string
         :param: headers to send when retrieving the files
-        
+
         :type cb: function
         :param cb: (optional) a callback function that will be called to report
              progress on the download.  The callback should accept two integer
@@ -241,13 +244,13 @@ class ResumableDownloadHandler(object):
              been successfully transmitted from the storage service and
              the second representing the total number of bytes that need
              to be transmitted.
-        
+
         :type num_cb: int
         :param num_cb: (optional) If a callback is specified with the cb
              parameter this parameter determines the granularity of the callback
              by defining the maximum number of times the callback will be
              called during the file transfer.
-             
+
         :type torrent: bool
         :param torrent: Flag for whether to get a torrent for the file
 
@@ -276,18 +279,25 @@ class ResumableDownloadHandler(object):
         while True:  # Retry as long as we're making progress.
             had_file_bytes_before_attempt = get_cur_file_size(fp)
             try:
-                self._attempt_resumable_download(key, fp, headers, cb, num_cb,
-                                                 torrent, version_id, hash_algs)
+                self._attempt_resumable_download(
+                    key,
+                    fp,
+                    headers,
+                    cb,
+                    num_cb,
+                    torrent,
+                    version_id,
+                    hash_algs)
                 # Download succceded, so remove the tracker file (if have one).
                 self._remove_tracker_file()
-                # Previously, check_final_md5() was called here to validate 
+                # Previously, check_final_md5() was called here to validate
                 # downloaded file's checksum, however, to be consistent with
                 # non-resumable downloads, this call was removed. Checksum
                 # validation of file contents should be done by the caller.
                 if debug >= 1:
                     print 'Resumable download complete.'
                 return
-            except self.RETRYABLE_EXCEPTIONS, e:
+            except self.RETRYABLE_EXCEPTIONS as e:
                 if debug >= 1:
                     print('Caught exception (%s)' % e.__repr__())
                 if isinstance(e, IOError) and e.errno == errno.EPIPE:
@@ -296,24 +306,40 @@ class ResumableDownloadHandler(object):
                     # so we need to close and reopen the key before resuming
                     # the download.
                     if isinstance(key, GSKey):
-                      key.get_file(fp, headers, cb, num_cb, torrent, version_id,
-                                   override_num_retries=0, hash_algs=hash_algs)
+                        key.get_file(
+                            fp,
+                            headers,
+                            cb,
+                            num_cb,
+                            torrent,
+                            version_id,
+                            override_num_retries=0,
+                            hash_algs=hash_algs)
                     else:
-                      key.get_file(fp, headers, cb, num_cb, torrent, version_id,
-                                   override_num_retries=0)
-            except ResumableDownloadException, e:
+                        key.get_file(
+                            fp,
+                            headers,
+                            cb,
+                            num_cb,
+                            torrent,
+                            version_id,
+                            override_num_retries=0)
+            except ResumableDownloadException as e:
                 if (e.disposition ==
-                    ResumableTransferDisposition.ABORT_CUR_PROCESS):
+                        ResumableTransferDisposition.ABORT_CUR_PROCESS):
                     if debug >= 1:
-                        print('Caught non-retryable ResumableDownloadException '
-                              '(%s)' % e.message)
+                        print(
+                            'Caught non-retryable ResumableDownloadException '
+                            '(%s)' %
+                            e.message)
                     raise
                 elif (e.disposition ==
-                    ResumableTransferDisposition.ABORT):
+                      ResumableTransferDisposition.ABORT):
                     if debug >= 1:
-                        print('Caught non-retryable ResumableDownloadException '
-                              '(%s); aborting and removing tracker file' %
-                              e.message)
+                        print(
+                            'Caught non-retryable ResumableDownloadException '
+                            '(%s); aborting and removing tracker file' %
+                            e.message)
                     self._remove_tracker_file()
                     raise
                 else:
@@ -345,7 +371,7 @@ class ResumableDownloadHandler(object):
             except httplib.IncompleteRead:
                 pass
 
-            sleep_time_secs = 2**progress_less_iterations
+            sleep_time_secs = 2 ** progress_less_iterations
             if debug >= 1:
                 print('Got retryable failure (%d progress-less in a row).\n'
                       'Sleeping %d seconds before re-trying' %

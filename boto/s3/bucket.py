@@ -175,7 +175,7 @@ class Bucket(object):
         if validate is False:
             if headers or version_id or response_headers:
                 raise BotoClientError(
-                    "When providing 'validate=False', no other params " + \
+                    "When providing 'validate=False', no other params " +
                     "are allowed."
                 )
 
@@ -384,7 +384,7 @@ class Bucket(object):
                 pairs.append('%s=%s' % (
                     urllib.quote(key),
                     urllib.quote(str(value)
-                )))
+                                 )))
 
         return '&'.join(pairs)
 
@@ -530,8 +530,8 @@ class Bucket(object):
         :param params: Parameters to validate.
         """
         self.validate_kwarg_names(
-                params, ['maxkeys', 'max_keys', 'prefix', 'key_marker',
-                         'version_id_marker', 'delimiter', 'encoding_type'])
+            params, ['maxkeys', 'max_keys', 'prefix', 'key_marker',
+                     'version_id_marker', 'delimiter', 'encoding_type'])
 
     def get_all_multipart_uploads(self, headers=None, **params):
         """
@@ -624,11 +624,14 @@ class Bucket(object):
     def generate_url(self, expires_in, method='GET', headers=None,
                      force_http=False, response_headers=None,
                      expires_in_absolute=False):
-        return self.connection.generate_url(expires_in, method, self.name,
-                                            headers=headers,
-                                            force_http=force_http,
-                                            response_headers=response_headers,
-                                            expires_in_absolute=expires_in_absolute)
+        return self.connection.generate_url(
+            expires_in,
+            method,
+            self.name,
+            headers=headers,
+            force_http=force_http,
+            response_headers=response_headers,
+            expires_in_absolute=expires_in_absolute)
 
     def delete_keys(self, keys, quiet=False, mfa_token=None, headers=None):
         """
@@ -693,7 +696,8 @@ class Bucket(object):
                     result.errors.append(error)
                     continue
                 count += 1
-                data += u"<Object><Key>%s</Key>" % xml.sax.saxutils.escape(key_name)
+                data += u"<Object><Key>%s</Key>" % xml.sax.saxutils.escape(
+                    key_name)
                 if version_id:
                     data += u"<VersionId>%s</VersionId>" % version_id
                 data += u"</Object>"
@@ -894,8 +898,12 @@ class Bucket(object):
         query_args = 'acl'
         if version_id:
             query_args += '&versionId=%s' % version_id
-        response = self.connection.make_request('PUT', self.name, key_name,
-                headers=headers, query_args=query_args)
+        response = self.connection.make_request(
+            'PUT',
+            self.name,
+            key_name,
+            headers=headers,
+            query_args=query_args)
         body = response.read()
         if response.status != 200:
             raise self.connection.provider.storage_response_error(
@@ -1144,8 +1152,12 @@ class Bucket(object):
         :return: True if ok or raises an exception.
         """
         body = logging_str.encode('utf-8')
-        response = self.connection.make_request('PUT', self.name, data=body,
-                query_args='logging', headers=headers)
+        response = self.connection.make_request(
+            'PUT',
+            self.name,
+            data=body,
+            query_args='logging',
+            headers=headers)
         body = response.read()
         if response.status == 200:
             return True
@@ -1195,8 +1207,11 @@ class Bucket(object):
         :rtype: :class:`boto.s3.bucketlogging.BucketLogging`
         :return: A BucketLogging object for this bucket.
         """
-        response = self.connection.make_request('GET', self.name,
-                query_args='logging', headers=headers)
+        response = self.connection.make_request(
+            'GET',
+            self.name,
+            query_args='logging',
+            headers=headers)
         body = response.read()
         if response.status == 200:
             blogging = BucketLogging()
@@ -1220,8 +1235,11 @@ class Bucket(object):
         self.set_acl(policy, headers=headers)
 
     def get_request_payment(self, headers=None):
-        response = self.connection.make_request('GET', self.name,
-                query_args='requestPayment', headers=headers)
+        response = self.connection.make_request(
+            'GET',
+            self.name,
+            query_args='requestPayment',
+            headers=headers)
         body = response.read()
         if response.status == 200:
             return body
@@ -1231,8 +1249,12 @@ class Bucket(object):
 
     def set_request_payment(self, payer='BucketOwner', headers=None):
         body = self.BucketPaymentBody % payer
-        response = self.connection.make_request('PUT', self.name, data=body,
-                query_args='requestPayment', headers=headers)
+        response = self.connection.make_request(
+            'PUT',
+            self.name,
+            data=body,
+            query_args='requestPayment',
+            headers=headers)
         body = response.read()
         if response.status == 200:
             return True
@@ -1279,8 +1301,12 @@ class Bucket(object):
                 headers = {}
             provider = self.connection.provider
             headers[provider.mfa_header] = ' '.join(mfa_token)
-        response = self.connection.make_request('PUT', self.name, data=body,
-                query_args='versioning', headers=headers)
+        response = self.connection.make_request(
+            'PUT',
+            self.name,
+            data=body,
+            query_args='versioning',
+            headers=headers)
         body = response.read()
         if response.status == 200:
             return True
@@ -1300,8 +1326,11 @@ class Bucket(object):
             'MFADelete' which will have a value of either Enabled or
             Suspended.
         """
-        response = self.connection.make_request('GET', self.name,
-                query_args='versioning', headers=headers)
+        response = self.connection.make_request(
+            'GET',
+            self.name,
+            query_args='versioning',
+            headers=headers)
         body = response.read()
         boto.log.debug(body)
         if response.status == 200:
@@ -1352,8 +1381,11 @@ class Bucket(object):
         :returns: A LifecycleConfig object that describes all current
             lifecycle rules in effect for the bucket.
         """
-        response = self.connection.make_request('GET', self.name,
-                query_args='lifecycle', headers=headers)
+        response = self.connection.make_request(
+            'GET',
+            self.name,
+            query_args='lifecycle',
+            headers=headers)
         body = response.read()
         boto.log.debug(body)
         if response.status == 200:
@@ -1412,8 +1444,8 @@ class Bucket(object):
 
         """
         config = website.WebsiteConfiguration(
-                suffix, error_key, redirect_all_requests_to,
-                routing_rules)
+            suffix, error_key, redirect_all_requests_to,
+            routing_rules)
         return self.set_website_configuration(config, headers=headers)
 
     def set_website_configuration(self, config, headers=None):
@@ -1422,8 +1454,7 @@ class Bucket(object):
         :param config: Configuration data
         """
         return self.set_website_configuration_xml(config.to_xml(),
-          headers=headers)
-
+                                                  headers=headers)
 
     def set_website_configuration_xml(self, xml, headers=None):
         """Upload xml website configuration"""
@@ -1503,8 +1534,11 @@ class Bucket(object):
 
     def get_website_configuration_xml(self, headers=None):
         """Get raw website configuration xml"""
-        response = self.connection.make_request('GET', self.name,
-                query_args='website', headers=headers)
+        response = self.connection.make_request(
+            'GET',
+            self.name,
+            query_args='website',
+            headers=headers)
         body = response.read()
         boto.log.debug(body)
 
@@ -1517,8 +1551,11 @@ class Bucket(object):
         """
         Removes all website configuration from the bucket.
         """
-        response = self.connection.make_request('DELETE', self.name,
-                query_args='website', headers=headers)
+        response = self.connection.make_request(
+            'DELETE',
+            self.name,
+            query_args='website',
+            headers=headers)
         body = response.read()
         boto.log.debug(body)
         if response.status == 204:
@@ -1534,7 +1571,9 @@ class Bucket(object):
         been correctly configured as a website or not.
         """
         l = [self.name]
-        l.append(S3WebsiteEndpointTranslate.translate_region(self.get_location()))
+        l.append(
+            S3WebsiteEndpointTranslate.translate_region(
+                self.get_location()))
         l.append('.'.join(self.connection.host.split('.')[-2:]))
         return '.'.join(l)
 
@@ -1543,8 +1582,11 @@ class Bucket(object):
         Returns the JSON policy associated with the bucket.  The policy
         is returned as an uninterpreted JSON string.
         """
-        response = self.connection.make_request('GET', self.name,
-                query_args='policy', headers=headers)
+        response = self.connection.make_request(
+            'GET',
+            self.name,
+            query_args='policy',
+            headers=headers)
         body = response.read()
         if response.status == 200:
             return body
@@ -1624,8 +1666,11 @@ class Bucket(object):
         Returns the current CORS configuration on the bucket as an
         XML document.
         """
-        response = self.connection.make_request('GET', self.name,
-                query_args='cors', headers=headers)
+        response = self.connection.make_request(
+            'GET',
+            self.name,
+            query_args='cors',
+            headers=headers)
         body = response.read()
         boto.log.debug(body)
         if response.status == 200:
@@ -1726,7 +1771,7 @@ class Bucket(object):
             metadata = {}
 
         headers = boto.utils.merge_meta(headers, metadata,
-                self.connection.provider)
+                                        self.connection.provider)
         response = self.connection.make_request('POST', self.name, key_name,
                                                 query_args=query_args,
                                                 headers=headers)

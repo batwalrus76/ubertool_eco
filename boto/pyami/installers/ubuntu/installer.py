@@ -14,7 +14,7 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABIL-
 # ITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
@@ -27,11 +27,24 @@ import boto
 import random
 from pwd import getpwnam
 
+
 class Installer(boto.pyami.installers.Installer):
+
     """
     Base Installer class for Ubuntu-based AMI's
     """
-    def add_cron(self, name, command, minute="*", hour="*", mday="*", month="*", wday="*", who="root", env=None):
+
+    def add_cron(
+            self,
+            name,
+            command,
+            minute="*",
+            hour="*",
+            mday="*",
+            month="*",
+            wday="*",
+            who="root",
+            env=None):
         """
         Write a file to /etc/cron.d to schedule a command
             env is a dict containing environment variables you want to set in the file
@@ -45,7 +58,9 @@ class Installer(boto.pyami.installers.Installer):
         if env:
             for key, value in env.items():
                 fp.write('%s=%s\n' % (key, value))
-        fp.write('%s %s %s %s %s %s %s\n' % (minute, hour, mday, month, wday, who, command))
+        fp.write(
+            '%s %s %s %s %s %s %s\n' %
+            (minute, hour, mday, month, wday, who, command))
         fp.close()
 
     def add_init_script(self, file, name):
@@ -56,7 +71,7 @@ class Installer(boto.pyami.installers.Installer):
         f = open(f_path, "w")
         f.write(file)
         f.close()
-        os.chmod(f_path, stat.S_IREAD| stat.S_IWRITE | stat.S_IEXEC)
+        os.chmod(f_path, stat.S_IREAD | stat.S_IWRITE | stat.S_IEXEC)
         self.run("/usr/sbin/update-rc.d %s defaults" % name)
 
     def add_env(self, key, value):
@@ -67,7 +82,10 @@ class Installer(boto.pyami.installers.Installer):
         """
         boto.log.info('Adding env variable: %s=%s' % (key, value))
         if not os.path.exists("/etc/environment.orig"):
-            self.run('cp /etc/environment /etc/environment.orig', notify=False, exit_on_error=False)
+            self.run(
+                'cp /etc/environment /etc/environment.orig',
+                notify=False,
+                exit_on_error=False)
         fp = open('/etc/environment', 'a')
         fp.write('\n%s="%s"' % (key, value))
         fp.close()
@@ -84,13 +102,11 @@ class Installer(boto.pyami.installers.Installer):
         Create a user on the local system
         """
         self.run("useradd -m %s" % user)
-        usr =  getpwnam(user)
+        usr = getpwnam(user)
         return usr
-
 
     def install(self):
         """
         This is the only method you need to override
         """
         raise NotImplementedError
-

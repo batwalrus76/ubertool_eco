@@ -3,23 +3,32 @@
    :synopsis: A useful module indeed.
 """
 from django.template.loader import render_to_string
- 
+
 
 def pfamInputPage(request, model='', header='', formData=None):
 
     import pfam_parameters
- 
-    html = render_to_string('04uberinput_jquery.html', { 'model': model })
+
+    html = render_to_string('04uberinput_jquery.html', {'model': model})
     html = html + render_to_string('04uberinput_jquery_qtip.html', {})
     html = html + render_to_string('04uberinput_start_tabbed.html', {
-            'model':model,
-            'model_attributes': header+' Inputs'})
-    html = html + render_to_string('04uberinput_tabbed_nav.html', {
-            'nav_dict': {
-                'class_name': ['Chemical', 'Application', 'Location', "Floods", "Crop", "Physical", "Output"],
-                'tab_label': ['Chemical', 'Application', 'Location', "Floods", "Crop", "Physical", "Output"]
-                }
-            })
+        'model': model,
+        'model_attributes': header + ' Inputs'})
+    html = html + render_to_string('04uberinput_tabbed_nav.html',
+                                   {'nav_dict': {'class_name': ['Chemical',
+                                                                'Application',
+                                                                'Location',
+                                                                "Floods",
+                                                                "Crop",
+                                                                "Physical",
+                                                                "Output"],
+                                                 'tab_label': ['Chemical',
+                                                               'Application',
+                                                               'Location',
+                                                               "Floods",
+                                                               "Crop",
+                                                               "Physical",
+                                                               "Output"]}})
     html = html + """<br><table class="input_table tab tab_Chemical">"""
     html = html + str(pfam_parameters.PFAMInp_chem(formData))
     html = html + """</table><table class="input_table tab tab_Application" style="display:none">
@@ -57,9 +66,10 @@ def pfamInputPage(request, model='', header='', formData=None):
                                         <option value="29">29</option>
                                         <option value="30">30</option>
                                     </td>
-                                </tr>"""        
-            
-    html = html + """</table><table class="input_table tab tab_Location" style="display:none">"""    
+                                </tr>"""
+
+    html = html + \
+        """</table><table class="input_table tab tab_Location" style="display:none">"""
     html = html + str(pfam_parameters.PFAMInp_loc(formData))
     html = html + """</table><table class="input_table tab tab_Floods" style="display:none">
                                 <tr><th></th><th colspan="2" scope="col"><label for="id_nof">Number of Floods Events:</label></th>
@@ -79,16 +89,20 @@ def pfamInputPage(request, model='', header='', formData=None):
                                 </tr>
                                 <tr><th></th><th colspan="2"><label for="id_date_f1">Date for Event 1:</label></th>
                                     <td colspan="2"><input type="text" name="date_f1" value="MM/DD" id="id_date_f1" /></td>
-                                </tr>"""    
+                                </tr>"""
 
-    html = html + """</table><table class="input_table tab tab_Crop" style="display:none">"""      
-    html = html + str(pfam_parameters.PFAMInp_cro(formData))                
-    html = html + """</table><table class="input_table tab tab_Physical" style="display:none">"""      
+    html = html + \
+        """</table><table class="input_table tab tab_Crop" style="display:none">"""
+    html = html + str(pfam_parameters.PFAMInp_cro(formData))
+    html = html + \
+        """</table><table class="input_table tab tab_Physical" style="display:none">"""
     html = html + str(pfam_parameters.PFAMInp_phy(formData))
-    html = html + """</table><table class="input_table tab tab_Output" style="display:none">"""    
-    html = html + str(pfam_parameters.PFAMInp_out(formData))     
-                
-    html = html + render_to_string('04uberinput_tabbed_end.html', {'sub_title': 'Submit'})
+    html = html + \
+        """</table><table class="input_table tab tab_Output" style="display:none">"""
+    html = html + str(pfam_parameters.PFAMInp_out(formData))
+
+    html = html + \
+        render_to_string('04uberinput_tabbed_end.html', {'sub_title': 'Submit'})
     # Check if tooltips dictionary exists
     try:
         import pfam_tooltips
@@ -96,6 +110,7 @@ def pfamInputPage(request, model='', header='', formData=None):
         tooltips = pfam_tooltips.tooltips
     except:
         tooltips = {}
-    html = html + render_to_string('05ubertext_tooltips_right.html', {'tooltips':tooltips})
+    html = html + \
+        render_to_string('05ubertext_tooltips_right.html', {'tooltips': tooltips})
 
     return html

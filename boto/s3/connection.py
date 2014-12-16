@@ -56,8 +56,9 @@ def check_lowercase_bucketname(n):
     True
     """
     if not (n + 'a').islower():
-        raise BotoClientError("Bucket names cannot contain upper-case " \
-            "characters when using either the sub-domain or virtual " \
+        raise BotoClientError(
+            "Bucket names cannot contain upper-case "
+            "characters when using either the sub-domain or virtual "
             "hosting calling format.")
     return True
 
@@ -161,7 +162,10 @@ class HostRequiredError(BotoClientError):
 class S3Connection(AWSAuthConnection):
 
     DefaultHost = boto.config.get('s3', 'host', 's3.amazonaws.com')
-    DefaultCallingFormat = boto.config.get('s3', 'calling_format', 'boto.s3.connection.SubdomainCallingFormat')
+    DefaultCallingFormat = boto.config.get(
+        's3',
+        'calling_format',
+        'boto.s3.connection.SubdomainCallingFormat')
     QueryString = 'Signature=%s&Expires=%d&AWSAccessKeyId=%s'
 
     def __init__(self, aws_access_key_id=None, aws_secret_access_key=None,
@@ -177,17 +181,30 @@ class S3Connection(AWSAuthConnection):
             no_host_provided = True
             host = self.DefaultHost
         if isinstance(calling_format, basestring):
-            calling_format=boto.utils.find_class(calling_format)()
+            calling_format = boto.utils.find_class(calling_format)()
         self.calling_format = calling_format
         self.bucket_class = bucket_class
         self.anon = anon
-        super(S3Connection, self).__init__(host,
-                aws_access_key_id, aws_secret_access_key,
-                is_secure, port, proxy, proxy_port, proxy_user, proxy_pass,
-                debug=debug, https_connection_factory=https_connection_factory,
-                path=path, provider=provider, security_token=security_token,
-                suppress_consec_slashes=suppress_consec_slashes,
-                validate_certs=validate_certs, profile_name=profile_name)
+        super(
+            S3Connection,
+            self).__init__(
+            host,
+            aws_access_key_id,
+            aws_secret_access_key,
+            is_secure,
+            port,
+            proxy,
+            proxy_port,
+            proxy_user,
+            proxy_pass,
+            debug=debug,
+            https_connection_factory=https_connection_factory,
+            path=path,
+            provider=provider,
+            security_token=security_token,
+            suppress_consec_slashes=suppress_consec_slashes,
+            validate_certs=validate_certs,
+            profile_name=profile_name)
         # We need to delay until after the call to ``super`` before checking
         # to see if SigV4 is in use.
         if no_host_provided:
@@ -230,8 +247,10 @@ class S3Connection(AWSAuthConnection):
 
         # Convert conditions object mappings to condition statements
 
-        return '{"expiration": "%s",\n"conditions": [%s]}' % \
-            (time.strftime(boto.utils.ISO8601, expiration_time), ",".join(conditions))
+        return '{"expiration": "%s",\n"conditions": [%s]}' % (time.strftime(
+            boto.utils.ISO8601,
+            expiration_time),
+            ",".join(conditions))
 
     def build_post_form_args(self, bucket_name, key, expires_in=6000,
                              acl=None, success_action_redirect=None,
@@ -300,22 +319,30 @@ class S3Connection(AWSAuthConnection):
         # Generate policy document
         conditions.append('{"bucket": "%s"}' % bucket_name)
         if key.endswith("${filename}"):
-            conditions.append('["starts-with", "$key", "%s"]' % key[:-len("${filename}")])
+            conditions.append(
+                '["starts-with", "$key", "%s"]' % key[:-len("${filename}")])
         else:
             conditions.append('{"key": "%s"}' % key)
         if acl:
             conditions.append('{"acl": "%s"}' % acl)
             fields.append({"name": "acl", "value": acl})
         if success_action_redirect:
-            conditions.append('{"success_action_redirect": "%s"}' % success_action_redirect)
-            fields.append({"name": "success_action_redirect", "value": success_action_redirect})
+            conditions.append(
+                '{"success_action_redirect": "%s"}' %
+                success_action_redirect)
+            fields.append(
+                {"name": "success_action_redirect", "value": success_action_redirect})
         if max_content_length:
-            conditions.append('["content-length-range", 0, %i]' % max_content_length)
+            conditions.append(
+                '["content-length-range", 0, %i]' %
+                max_content_length)
 
         if self.provider.security_token:
             fields.append({'name': 'x-amz-security-token',
                            'value': self.provider.security_token})
-            conditions.append('{"x-amz-security-token": "%s"}' % self.provider.security_token)
+            conditions.append(
+                '{"x-amz-security-token": "%s"}' %
+                self.provider.security_token)
 
         if storage_class:
             fields.append({'name': 'x-amz-storage-class',
@@ -325,7 +352,9 @@ class S3Connection(AWSAuthConnection):
         if server_side_encryption:
             fields.append({'name': 'x-amz-server-side-encryption',
                            'value': server_side_encryption})
-            conditions.append('{"x-amz-server-side-encryption": "%s"}' % server_side_encryption)
+            conditions.append(
+                '{"x-amz-server-side-encryption": "%s"}' %
+                server_side_encryption)
 
         policy = self.build_post_policy(expiration, conditions)
 
@@ -576,9 +605,9 @@ class S3Connection(AWSAuthConnection):
             data = ''
         else:
             data = '<CreateBucketConfiguration><LocationConstraint>' + \
-                    location + '</LocationConstraint></CreateBucketConfiguration>'
+                location + '</LocationConstraint></CreateBucketConfiguration>'
         response = self.make_request('PUT', bucket_name, headers=headers,
-                data=data)
+                                     data=data)
         body = response.read()
         if response.status == 409:
             raise self.provider.storage_create_error(

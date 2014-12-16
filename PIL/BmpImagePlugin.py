@@ -51,18 +51,20 @@ BIT2MODE = {
     32: ("RGB", "BGRX")
 }
 
+
 def _accept(prefix):
     return prefix[:2] == b"BM"
 
 ##
 # Image plugin for the Windows BMP format.
 
+
 class BmpImageFile(ImageFile.ImageFile):
 
     format = "BMP"
     format_description = "Windows Bitmap"
 
-    def _bitmap(self, header = 0, offset = 0):
+    def _bitmap(self, header=0, offset=0):
 
         if header:
             self.fp.seek(header)
@@ -71,7 +73,7 @@ class BmpImageFile(ImageFile.ImageFile):
 
         # CORE/INFO
         s = read(4)
-        s = s + ImageFile._safe_read(self.fp, i32(s)-4)
+        s = s + ImageFile._safe_read(self.fp, i32(s) - 4)
 
         if len(s) == 12:
 
@@ -95,15 +97,16 @@ class BmpImageFile(ImageFile.ImageFile):
             direction = -1
             if i8(s[11]) == 0xff:
                 # upside-down storage
-                self.size = self.size[0], 2**32 - self.size[1]
+                self.size = self.size[0], 2 ** 32 - self.size[1]
                 direction = 0
-            
-            self.info["dpi"] = tuple(map(lambda x: math.ceil(x / 39.3701), pxperm))
+
+            self.info["dpi"] = tuple(
+                map(lambda x: math.ceil(x / 39.3701), pxperm))
 
         else:
             raise IOError("Unsupported BMP header type (%d)" % len(s))
 
-        if (self.size[0]*self.size[1]) > 2**31:
+        if (self.size[0] * self.size[1]) > 2 ** 31:
             # Prevent DOS for > 2gb images
             raise IOError("Unsupported BMP Size: (%dx%d)" % self.size)
 
@@ -137,13 +140,13 @@ class BmpImageFile(ImageFile.ImageFile):
             greyscale = 1
             if colors == 2:
                 indices = (0, 255)
-            elif colors > 2**16 or colors <=0: #We're reading a i32. 
+            elif colors > 2 ** 16 or colors <= 0:  # We're reading a i32.
                 raise IOError("Unsupported BMP Palette size (%d)" % colors)
             else:
                 indices = list(range(colors))
             for i in indices:
                 rgb = read(lutsize)[:3]
-                if rgb != o8(i)*3:
+                if rgb != o8(i) * 3:
                     greyscale = 0
                 palette.append(rgb)
             if greyscale:
@@ -155,15 +158,23 @@ class BmpImageFile(ImageFile.ImageFile):
                 self.mode = "P"
                 self.palette = ImagePalette.raw(
                     "BGR", b"".join(palette)
-                    )
+                )
 
         if not offset:
             offset = self.fp.tell()
 
-        self.tile = [("raw",
-                     (0, 0) + self.size,
-                     offset,
-                     (rawmode, ((self.size[0]*bits+31)>>3)&(~3), direction))]
+        self.tile = [
+            ("raw",
+             (0,
+              0) +
+                self.size,
+                offset,
+                (rawmode,
+                 ((self.size[0] *
+                   bits +
+                   31) >> 3) & (
+                     ~3),
+                 direction))]
 
         self.info["compression"] = compression
 
@@ -197,6 +208,7 @@ SAVE = {
     "RGB": ("BGR", 24, 0),
 }
 
+
 def _save(im, fp, filename, check=0):
 
     try:
@@ -214,14 +226,14 @@ def _save(im, fp, filename, check=0):
     # 1 meter == 39.3701 inches
     ppm = tuple(map(lambda x: int(x * 39.3701), dpi))
 
-    stride = ((im.size[0]*bits+7)//8+3)&(~3)
-    header = 40 # or 64 for OS/2 version 2
+    stride = ((im.size[0] * bits + 7) // 8 + 3) & (~3)
+    header = 40  # or 64 for OS/2 version 2
     offset = 14 + header + colors * 4
-    image  = stride * im.size[1]
+    image = stride * im.size[1]
 
     # bitmap header
     fp.write(b"BM" +                      # file type (magic)
-             o32(offset+image) +          # file size
+             o32(offset + image) +          # file size
              o32(0) +                     # reserved
              o32(offset))                 # image data offset
 
@@ -248,7 +260,9 @@ def _save(im, fp, filename, check=0):
     elif im.mode == "P":
         fp.write(im.im.getpalette("RGB", "BGRX"))
 
-    ImageFile._save(im, fp, [("raw", (0,0)+im.size, 0, (rawmode, stride, -1))])
+    ImageFile._save(
+        im, fp, [
+            ("raw", (0, 0) + im.size, 0, (rawmode, stride, -1))])
 
 #
 # --------------------------------------------------------------------

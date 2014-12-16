@@ -29,6 +29,7 @@ import time
 
 
 class TableBatchGenerator(object):
+
     """
     A low-level generator used to page through results from
     batch_get_item operations.
@@ -70,7 +71,8 @@ class TableBatchGenerator(object):
             # parse the results
             if not self.table.name in res[u'Responses']:
                 continue
-            self.consumed_units += res[u'Responses'][self.table.name][u'ConsumedCapacityUnits']
+            self.consumed_units += res[u'Responses'][
+                self.table.name][u'ConsumedCapacityUnits']
             for elem in res[u'Responses'][self.table.name][u'Items']:
                 yield elem
 
@@ -80,6 +82,7 @@ class TableBatchGenerator(object):
 
 
 class Table(object):
+
     """
     An Amazon DynamoDB table.
 

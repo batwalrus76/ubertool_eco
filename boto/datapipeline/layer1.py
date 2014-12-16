@@ -29,6 +29,7 @@ from boto.datapipeline import exceptions
 
 
 class DataPipelineConnection(AWSQueryConnection):
+
     """
     This is the AWS Data Pipeline API Reference . This guide provides
     descriptions and samples of the AWS Data Pipeline API.
@@ -82,7 +83,6 @@ class DataPipelineConnection(AWSQueryConnection):
         "PipelineNotFoundException": exceptions.PipelineNotFoundException,
         "InternalServiceError": exceptions.InternalServiceError,
     }
-
 
     def __init__(self, **kwargs):
         region = kwargs.get('region')
@@ -638,4 +638,3 @@ class DataPipelineConnection(AWSQueryConnection):
             exception_class = self._faults.get(fault_name, self.ResponseError)
             raise exception_class(response.status, response.reason,
                                   body=json_body)
-

@@ -14,8 +14,32 @@ import requests
 http_headers = auth_s3.setHTTPHeaders()
 url_part1 = os.environ['UBERTOOL_REST_SERVER']
 
+
 class geneec(object):
-    def __init__(self, run_type, chem_name, application_target, application_rate, number_of_applications, interval_between_applications, Koc, aerobic_soil_metabolism, wet_in, application_method, application_method_label, aerial_size_dist, ground_spray_type, airblast_type, spray_quality, no_spray_drift, incorporation_depth, solubility, aerobic_aquatic_metabolism, hydrolysis, photolysis_aquatic_half_life):
+
+    def __init__(
+            self,
+            run_type,
+            chem_name,
+            application_target,
+            application_rate,
+            number_of_applications,
+            interval_between_applications,
+            Koc,
+            aerobic_soil_metabolism,
+            wet_in,
+            application_method,
+            application_method_label,
+            aerial_size_dist,
+            ground_spray_type,
+            airblast_type,
+            spray_quality,
+            no_spray_drift,
+            incorporation_depth,
+            solubility,
+            aerobic_aquatic_metabolism,
+            hydrolysis,
+            photolysis_aquatic_half_life):
         self.run_type = run_type
         self.chem_name = chem_name
         self.application_target = application_target
@@ -55,7 +79,6 @@ class geneec(object):
         self.hydrolysis = hydrolysis
         self.photolysis_aquatic_half_life = photolysis_aquatic_half_life
 
-
         APPRAT = self.application_rate
         APPNUM = self.number_of_applications
         APSPAC = self.interval_between_applications
@@ -74,31 +97,46 @@ class geneec(object):
         HYDHAP = self.hydrolysis
         FOTHAP = self.photolysis_aquatic_half_life
 
-
-        all_dic = {"APPRAT":APPRAT, "APPNUM":APPNUM, "APSPAC":APSPAC, "KOC":KOC, "METHAF":METHAF, "WETTED":WETTED,
-                   "METHOD":METHOD, "AIRFLG":AIRFLG, "YLOCEN":YLOCEN, "GRNFLG":GRNFLG, "GRSIZE":GRSIZE,
-                   "ORCFLG":ORCFLG, "INCORP":INCORP, "SOL":SOL, "METHAP":METHAP, "HYDHAP":HYDHAP, "FOTHAP":FOTHAP}
+        all_dic = {
+            "APPRAT": APPRAT,
+            "APPNUM": APPNUM,
+            "APSPAC": APSPAC,
+            "KOC": KOC,
+            "METHAF": METHAF,
+            "WETTED": WETTED,
+            "METHOD": METHOD,
+            "AIRFLG": AIRFLG,
+            "YLOCEN": YLOCEN,
+            "GRNFLG": GRNFLG,
+            "GRSIZE": GRSIZE,
+            "ORCFLG": ORCFLG,
+            "INCORP": INCORP,
+            "SOL": SOL,
+            "METHAP": METHAP,
+            "HYDHAP": HYDHAP,
+            "FOTHAP": FOTHAP}
         data = json.dumps(all_dic)
 
-
         self.jid = rest_funcs.gen_jid()
-        url=url_part1 + '/geneec/' + self.jid 
-
+        url = url_part1 + '/geneec/' + self.jid
 
         if run_type == "single" or "qaqc":
-            # response = urlfetch.fetch(url=url, payload=data, method=urlfetch.POST, headers=http_headers, deadline=60)   
-            response = requests.post(url=url, data=data, headers=http_headers, timeout=60)
+            # response = urlfetch.fetch(url=url, payload=data, method=urlfetch.POST, headers=http_headers, deadline=60)
+            response = requests.post(
+                url=url,
+                data=data,
+                headers=http_headers,
+                timeout=60)
 
             self.output_val = json.loads(response.content)['result']
-
 
         if run_type == "batch":
             response = ""
-            while response =="":
-                # response = urlfetch.fetch(url=url, payload=data, method=urlfetch.POST, headers=http_headers, deadline=60)   
-                response = requests.post(url=url, data=data, headers=http_headers, timeout=60)
+            while response == "":
+                # response = urlfetch.fetch(url=url, payload=data, method=urlfetch.POST, headers=http_headers, deadline=60)
+                response = requests.post(
+                    url=url,
+                    data=data,
+                    headers=http_headers,
+                    timeout=60)
             self.output_val = json.loads(response.content)['result']
-
-
-
-

@@ -20,7 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
+
 class Group(object):
+
     def __init__(self, parent=None):
         self.id = None
         self.name = None
@@ -35,4 +37,3 @@ class Group(object):
             self.name = value
         else:
             setattr(self, name, value)
-

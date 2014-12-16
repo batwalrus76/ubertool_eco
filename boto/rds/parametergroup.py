@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
+
 class ParameterGroup(dict):
 
     def __init__(self, connection=None):
@@ -68,14 +69,16 @@ class ParameterGroup(dict):
         param.apply_method = apply_method
         self.params.append(param)
 
+
 class Parameter(object):
+
     """
     Represents a RDS Parameter
     """
 
-    ValidTypes = {'integer' : int,
-                  'string' : str,
-                  'boolean' : bool}
+    ValidTypes = {'integer': int,
+                  'string': str,
+                  'boolean': bool}
     ValidSources = ['user', 'system', 'engine-default']
     ValidApplyTypes = ['static', 'dynamic']
     ValidApplyMethods = ['immediate', 'pending-reboot']
@@ -126,11 +129,11 @@ class Parameter(object):
     def merge(self, d, i):
         prefix = 'Parameters.member.%d.' % i
         if self.name:
-            d[prefix+'ParameterName'] = self.name
+            d[prefix + 'ParameterName'] = self.name
         if self._value is not None:
-            d[prefix+'ParameterValue'] = self._value
+            d[prefix + 'ParameterValue'] = self._value
         if self.apply_type:
-            d[prefix+'ApplyMethod'] = self.apply_method
+            d[prefix + 'ApplyMethod'] = self.apply_method
 
     def _set_string_value(self, value):
         if not isinstance(value, basestring):
@@ -180,7 +183,11 @@ class Parameter(object):
         if self.type == 'string':
             return self._value
         elif self.type == 'integer':
-            if not isinstance(self._value, int) and not isinstance(self._value, long):
+            if not isinstance(
+                    self._value,
+                    int) and not isinstance(
+                    self._value,
+                    long):
                 self._set_integer_value(self._value)
             return self._value
         elif self.type == 'boolean':
@@ -198,4 +205,3 @@ class Parameter(object):
         else:
             self.apply_method = 'pending-reboot'
         self.group.connection.modify_parameter_group(self.group.name, [self])
-

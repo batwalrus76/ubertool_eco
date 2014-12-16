@@ -26,6 +26,7 @@ Represents a Route Table
 from boto.ec2.ec2object import TaggedEC2Object
 from boto.resultset import ResultSet
 
+
 class RouteTable(TaggedEC2Object):
 
     def __init__(self, connection=None):
@@ -62,7 +63,9 @@ class RouteTable(TaggedEC2Object):
         else:
             setattr(self, name, value)
 
+
 class Route(object):
+
     def __init__(self, connection=None):
         self.destination_cidr_block = None
         self.gateway_id = None
@@ -85,7 +88,9 @@ class Route(object):
         elif name == 'state':
             self.state = value
 
+
 class RouteAssociation(object):
+
     def __init__(self, connection=None):
         self.id = None
         self.route_table_id = None

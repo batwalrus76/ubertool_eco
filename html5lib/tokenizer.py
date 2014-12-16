@@ -1,7 +1,7 @@
 from __future__ import absolute_import, division, unicode_literals
 
 try:
-    chr = unichr # flake8: noqa
+    chr = unichr  # flake8: noqa
 except NameError:
     pass
 
@@ -22,6 +22,7 @@ entitiesTrie = Trie(entities)
 
 
 class HTMLTokenizer(object):
+
     """ This class takes care of tokenizing HTML.
 
     * self.currentToken
@@ -34,8 +35,15 @@ class HTMLTokenizer(object):
       Points to HTMLInputStream object.
     """
 
-    def __init__(self, stream, encoding=None, parseMeta=True, useChardet=True,
-                 lowercaseElementName=True, lowercaseAttrName=True, parser=None):
+    def __init__(
+            self,
+            stream,
+            encoding=None,
+            parseMeta=True,
+            useChardet=True,
+            lowercaseElementName=True,
+            lowercaseAttrName=True,
+            parser=None):
 
         self.stream = HTMLInputStream(stream, encoding, parseMeta, useChardet)
         self.parser = parser
@@ -107,7 +115,8 @@ class HTMLTokenizer(object):
                                     "illegal-codepoint-for-numeric-entity",
                                     "datavars": {"charAsInt": charAsInt}})
         else:
-            # Should speed up this check somehow (e.g. move the set to a constant)
+            # Should speed up this check somehow (e.g. move the set to a
+            # constant)
             if ((0x0001 <= charAsInt <= 0x0008) or
                 (0x000E <= charAsInt <= 0x001F) or
                 (0x007F <= charAsInt <= 0x009F) or
@@ -188,15 +197,19 @@ class HTMLTokenizer(object):
             # Try to find the longest entity the string will match to take care
             # of &noti for instance.
             try:
-                entityName = entitiesTrie.longest_prefix("".join(charStack[:-1]))
+                entityName = entitiesTrie.longest_prefix(
+                    "".join(
+                        charStack[
+                            :-
+                            1]))
                 entityLength = len(entityName)
             except KeyError:
                 entityName = None
 
             if entityName is not None:
                 if entityName[-1] != ";":
-                    self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
-                                            "named-entity-without-semicolon"})
+                    self.tokenQueue.append(
+                        {"type": tokenTypes["ParseError"], "data": "named-entity-without-semicolon"})
                 if (entityName[-1] != ";" and fromAttribute and
                     (charStack[entityLength] in asciiLetters or
                      charStack[entityLength] in digits or
@@ -208,8 +221,8 @@ class HTMLTokenizer(object):
                     self.stream.unget(charStack.pop())
                     output += "".join(charStack[entityLength:])
             else:
-                self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
-                                        "expected-named-entity"})
+                self.tokenQueue.append(
+                    {"type": tokenTypes["ParseError"], "data": "expected-named-entity"})
                 self.stream.unget(charStack.pop())
                 output = "&" + "".join(charStack)
 
@@ -220,7 +233,8 @@ class HTMLTokenizer(object):
                 tokenType = "SpaceCharacters"
             else:
                 tokenType = "Characters"
-            self.tokenQueue.append({"type": tokenTypes[tokenType], "data": output})
+            self.tokenQueue.append(
+                {"type": tokenTypes[tokenType], "data": output})
 
     def processEntityInAttribute(self, allowedChar):
         """This method replaces the need for "entityInAttributeValueState".
@@ -242,8 +256,8 @@ class HTMLTokenizer(object):
                     self.tokenQueue.append({"type": tokenTypes["ParseError"],
                                             "data": "attributes-in-end-tag"})
                 if token["selfClosing"]:
-                    self.tokenQueue.append({"type": tokenTypes["ParseError"],
-                                            "data": "self-closing-flag-on-end-tag"})
+                    self.tokenQueue.append(
+                        {"type": tokenTypes["ParseError"], "data": "self-closing-flag-on-end-tag"})
         self.tokenQueue.append(token)
         self.state = self.dataState
 
@@ -266,8 +280,13 @@ class HTMLTokenizer(object):
             # Directly after emitting a token you switch back to the "data
             # state". At that point spaceCharacters are important so they are
             # emitted separately.
-            self.tokenQueue.append({"type": tokenTypes["SpaceCharacters"], "data":
-                                    data + self.stream.charsUntil(spaceCharacters, True)})
+            self.tokenQueue.append(
+                {
+                    "type": tokenTypes["SpaceCharacters"],
+                    "data": data +
+                    self.stream.charsUntil(
+                        spaceCharacters,
+                        True)})
             # No need to update lastFourChars here, since the first space will
             # have already been appended to lastFourChars and will have broken
             # any <!-- or --> sequences
@@ -300,8 +319,13 @@ class HTMLTokenizer(object):
             # Directly after emitting a token you switch back to the "data
             # state". At that point spaceCharacters are important so they are
             # emitted separately.
-            self.tokenQueue.append({"type": tokenTypes["SpaceCharacters"], "data":
-                                    data + self.stream.charsUntil(spaceCharacters, True)})
+            self.tokenQueue.append(
+                {
+                    "type": tokenTypes["SpaceCharacters"],
+                    "data": data +
+                    self.stream.charsUntil(
+                        spaceCharacters,
+                        True)})
             # No need to update lastFourChars here, since the first space will
             # have already been appended to lastFourChars and will have broken
             # any <!-- or --> sequences
@@ -384,7 +408,8 @@ class HTMLTokenizer(object):
             # do we really care?
             self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
                                     "expected-tag-name-but-got-right-bracket"})
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "<>"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "<>"})
             self.state = self.dataState
         elif data == "?":
             # XXX In theory it could be something besides a tag name. But
@@ -397,7 +422,8 @@ class HTMLTokenizer(object):
             # XXX
             self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
                                     "expected-tag-name"})
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "<"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "<"})
             self.stream.unget(data)
             self.state = self.dataState
         return True
@@ -409,13 +435,14 @@ class HTMLTokenizer(object):
                                  "data": [], "selfClosing": False}
             self.state = self.tagNameState
         elif data == ">":
-            self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
-                                    "expected-closing-tag-but-got-right-bracket"})
+            self.tokenQueue.append({"type": tokenTypes[
+                                   "ParseError"], "data": "expected-closing-tag-but-got-right-bracket"})
             self.state = self.dataState
         elif data is EOF:
             self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
                                     "expected-closing-tag-but-got-eof"})
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "</"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "</"})
             self.state = self.dataState
         else:
             # XXX data can be _'_...
@@ -454,7 +481,8 @@ class HTMLTokenizer(object):
             self.temporaryBuffer = ""
             self.state = self.rcdataEndTagOpenState
         else:
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "<"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "<"})
             self.stream.unget(data)
             self.state = self.rcdataState
         return True
@@ -465,13 +493,15 @@ class HTMLTokenizer(object):
             self.temporaryBuffer += data
             self.state = self.rcdataEndTagNameState
         else:
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "</"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "</"})
             self.stream.unget(data)
             self.state = self.rcdataState
         return True
 
     def rcdataEndTagNameState(self):
-        appropriate = self.currentToken and self.currentToken["name"].lower() == self.temporaryBuffer.lower()
+        appropriate = self.currentToken and self.currentToken[
+            "name"].lower() == self.temporaryBuffer.lower()
         data = self.stream.char()
         if data in spaceCharacters and appropriate:
             self.currentToken = {"type": tokenTypes["EndTag"],
@@ -504,7 +534,8 @@ class HTMLTokenizer(object):
             self.temporaryBuffer = ""
             self.state = self.rawtextEndTagOpenState
         else:
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "<"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "<"})
             self.stream.unget(data)
             self.state = self.rawtextState
         return True
@@ -515,13 +546,15 @@ class HTMLTokenizer(object):
             self.temporaryBuffer += data
             self.state = self.rawtextEndTagNameState
         else:
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "</"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "</"})
             self.stream.unget(data)
             self.state = self.rawtextState
         return True
 
     def rawtextEndTagNameState(self):
-        appropriate = self.currentToken and self.currentToken["name"].lower() == self.temporaryBuffer.lower()
+        appropriate = self.currentToken and self.currentToken[
+            "name"].lower() == self.temporaryBuffer.lower()
         data = self.stream.char()
         if data in spaceCharacters and appropriate:
             self.currentToken = {"type": tokenTypes["EndTag"],
@@ -554,10 +587,12 @@ class HTMLTokenizer(object):
             self.temporaryBuffer = ""
             self.state = self.scriptDataEndTagOpenState
         elif data == "!":
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "<!"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "<!"})
             self.state = self.scriptDataEscapeStartState
         else:
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "<"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "<"})
             self.stream.unget(data)
             self.state = self.scriptDataState
         return True
@@ -568,13 +603,15 @@ class HTMLTokenizer(object):
             self.temporaryBuffer += data
             self.state = self.scriptDataEndTagNameState
         else:
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "</"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "</"})
             self.stream.unget(data)
             self.state = self.scriptDataState
         return True
 
     def scriptDataEndTagNameState(self):
-        appropriate = self.currentToken and self.currentToken["name"].lower() == self.temporaryBuffer.lower()
+        appropriate = self.currentToken and self.currentToken[
+            "name"].lower() == self.temporaryBuffer.lower()
         data = self.stream.char()
         if data in spaceCharacters and appropriate:
             self.currentToken = {"type": tokenTypes["EndTag"],
@@ -604,7 +641,8 @@ class HTMLTokenizer(object):
     def scriptDataEscapeStartState(self):
         data = self.stream.char()
         if data == "-":
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "-"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "-"})
             self.state = self.scriptDataEscapeStartDashState
         else:
             self.stream.unget(data)
@@ -614,7 +652,8 @@ class HTMLTokenizer(object):
     def scriptDataEscapeStartDashState(self):
         data = self.stream.char()
         if data == "-":
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "-"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "-"})
             self.state = self.scriptDataEscapedDashDashState
         else:
             self.stream.unget(data)
@@ -624,7 +663,8 @@ class HTMLTokenizer(object):
     def scriptDataEscapedState(self):
         data = self.stream.char()
         if data == "-":
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "-"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "-"})
             self.state = self.scriptDataEscapedDashState
         elif data == "<":
             self.state = self.scriptDataEscapedLessThanSignState
@@ -644,7 +684,8 @@ class HTMLTokenizer(object):
     def scriptDataEscapedDashState(self):
         data = self.stream.char()
         if data == "-":
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "-"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "-"})
             self.state = self.scriptDataEscapedDashDashState
         elif data == "<":
             self.state = self.scriptDataEscapedLessThanSignState
@@ -657,18 +698,21 @@ class HTMLTokenizer(object):
         elif data == EOF:
             self.state = self.dataState
         else:
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": data})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": data})
             self.state = self.scriptDataEscapedState
         return True
 
     def scriptDataEscapedDashDashState(self):
         data = self.stream.char()
         if data == "-":
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "-"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "-"})
         elif data == "<":
             self.state = self.scriptDataEscapedLessThanSignState
         elif data == ">":
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": ">"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": ">"})
             self.state = self.scriptDataState
         elif data == "\u0000":
             self.tokenQueue.append({"type": tokenTypes["ParseError"],
@@ -679,7 +723,8 @@ class HTMLTokenizer(object):
         elif data == EOF:
             self.state = self.dataState
         else:
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": data})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": data})
             self.state = self.scriptDataEscapedState
         return True
 
@@ -689,11 +734,13 @@ class HTMLTokenizer(object):
             self.temporaryBuffer = ""
             self.state = self.scriptDataEscapedEndTagOpenState
         elif data in asciiLetters:
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "<" + data})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "<" + data})
             self.temporaryBuffer = data
             self.state = self.scriptDataDoubleEscapeStartState
         else:
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "<"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "<"})
             self.stream.unget(data)
             self.state = self.scriptDataEscapedState
         return True
@@ -704,13 +751,15 @@ class HTMLTokenizer(object):
             self.temporaryBuffer = data
             self.state = self.scriptDataEscapedEndTagNameState
         else:
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "</"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "</"})
             self.stream.unget(data)
             self.state = self.scriptDataEscapedState
         return True
 
     def scriptDataEscapedEndTagNameState(self):
-        appropriate = self.currentToken and self.currentToken["name"].lower() == self.temporaryBuffer.lower()
+        appropriate = self.currentToken and self.currentToken[
+            "name"].lower() == self.temporaryBuffer.lower()
         data = self.stream.char()
         if data in spaceCharacters and appropriate:
             self.currentToken = {"type": tokenTypes["EndTag"],
@@ -740,13 +789,15 @@ class HTMLTokenizer(object):
     def scriptDataDoubleEscapeStartState(self):
         data = self.stream.char()
         if data in (spaceCharacters | frozenset(("/", ">"))):
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": data})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": data})
             if self.temporaryBuffer.lower() == "script":
                 self.state = self.scriptDataDoubleEscapedState
             else:
                 self.state = self.scriptDataEscapedState
         elif data in asciiLetters:
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": data})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": data})
             self.temporaryBuffer += data
         else:
             self.stream.unget(data)
@@ -756,10 +807,12 @@ class HTMLTokenizer(object):
     def scriptDataDoubleEscapedState(self):
         data = self.stream.char()
         if data == "-":
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "-"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "-"})
             self.state = self.scriptDataDoubleEscapedDashState
         elif data == "<":
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "<"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "<"})
             self.state = self.scriptDataDoubleEscapedLessThanSignState
         elif data == "\u0000":
             self.tokenQueue.append({"type": tokenTypes["ParseError"],
@@ -771,16 +824,19 @@ class HTMLTokenizer(object):
                                     "eof-in-script-in-script"})
             self.state = self.dataState
         else:
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": data})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": data})
         return True
 
     def scriptDataDoubleEscapedDashState(self):
         data = self.stream.char()
         if data == "-":
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "-"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "-"})
             self.state = self.scriptDataDoubleEscapedDashDashState
         elif data == "<":
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "<"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "<"})
             self.state = self.scriptDataDoubleEscapedLessThanSignState
         elif data == "\u0000":
             self.tokenQueue.append({"type": tokenTypes["ParseError"],
@@ -793,19 +849,23 @@ class HTMLTokenizer(object):
                                     "eof-in-script-in-script"})
             self.state = self.dataState
         else:
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": data})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": data})
             self.state = self.scriptDataDoubleEscapedState
         return True
 
     def scriptDataDoubleEscapedDashDashState(self):
         data = self.stream.char()
         if data == "-":
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "-"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "-"})
         elif data == "<":
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "<"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "<"})
             self.state = self.scriptDataDoubleEscapedLessThanSignState
         elif data == ">":
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": ">"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": ">"})
             self.state = self.scriptDataState
         elif data == "\u0000":
             self.tokenQueue.append({"type": tokenTypes["ParseError"],
@@ -818,14 +878,16 @@ class HTMLTokenizer(object):
                                     "eof-in-script-in-script"})
             self.state = self.dataState
         else:
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": data})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": data})
             self.state = self.scriptDataDoubleEscapedState
         return True
 
     def scriptDataDoubleEscapedLessThanSignState(self):
         data = self.stream.char()
         if data == "/":
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": "/"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": "/"})
             self.temporaryBuffer = ""
             self.state = self.scriptDataDoubleEscapeEndState
         else:
@@ -836,13 +898,15 @@ class HTMLTokenizer(object):
     def scriptDataDoubleEscapeEndState(self):
         data = self.stream.char()
         if data in (spaceCharacters | frozenset(("/", ">"))):
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": data})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": data})
             if self.temporaryBuffer.lower() == "script":
                 self.state = self.scriptDataEscapedState
             else:
                 self.state = self.scriptDataDoubleEscapedState
         elif data in asciiLetters:
-            self.tokenQueue.append({"type": tokenTypes["Characters"], "data": data})
+            self.tokenQueue.append(
+                {"type": tokenTypes["Characters"], "data": data})
             self.temporaryBuffer += data
         else:
             self.stream.unget(data)
@@ -922,12 +986,13 @@ class HTMLTokenizer(object):
             # start tag token is emitted so values can still be safely appended
             # to attributes, but we do want to report the parse error in time.
             if self.lowercaseAttrName:
-                self.currentToken["data"][-1][0] = (
-                    self.currentToken["data"][-1][0].translate(asciiUpper2Lower))
+                self.currentToken["data"][-
+                                          1][0] = (self.currentToken["data"][-
+                                                                             1][0].translate(asciiUpper2Lower))
             for name, value in self.currentToken["data"][:-1]:
                 if self.currentToken["data"][-1][0] == name:
-                    self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
-                                            "duplicate-attribute"})
+                    self.tokenQueue.append(
+                        {"type": tokenTypes["ParseError"], "data": "duplicate-attribute"})
                     break
             # XXX Fix for above XXX
             if emitToken:
@@ -978,8 +1043,8 @@ class HTMLTokenizer(object):
         elif data == "'":
             self.state = self.attributeValueSingleQuotedState
         elif data == ">":
-            self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
-                                    "expected-attribute-value-but-got-right-bracket"})
+            self.tokenQueue.append({"type": tokenTypes[
+                                   "ParseError"], "data": "expected-attribute-value-but-got-right-bracket"})
             self.emitCurrentToken()
         elif data == "\u0000":
             self.tokenQueue.append({"type": tokenTypes["ParseError"],
@@ -1047,8 +1112,8 @@ class HTMLTokenizer(object):
         elif data == ">":
             self.emitCurrentToken()
         elif data in ('"', "'", "=", "<", "`"):
-            self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
-                                    "unexpected-character-in-unquoted-attribute-value"})
+            self.tokenQueue.append({"type": tokenTypes[
+                                   "ParseError"], "data": "unexpected-character-in-unquoted-attribute-value"})
             self.currentToken["data"][-1][1] += data
         elif data == "\u0000":
             self.tokenQueue.append({"type": tokenTypes["ParseError"],
@@ -1077,8 +1142,8 @@ class HTMLTokenizer(object):
             self.stream.unget(data)
             self.state = self.dataState
         else:
-            self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
-                                    "unexpected-character-after-attribute-value"})
+            self.tokenQueue.append({"type": tokenTypes[
+                                   "ParseError"], "data": "unexpected-character-after-attribute-value"})
             self.stream.unget(data)
             self.state = self.beforeAttributeNameState
         return True
@@ -1095,8 +1160,8 @@ class HTMLTokenizer(object):
             self.stream.unget(data)
             self.state = self.dataState
         else:
-            self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
-                                    "unexpected-character-after-solidus-in-tag"})
+            self.tokenQueue.append(
+                {"type": tokenTypes["ParseError"], "data": "unexpected-character-after-solidus-in-tag"})
             self.stream.unget(data)
             self.state = self.beforeAttributeNameState
         return True
@@ -1255,12 +1320,12 @@ class HTMLTokenizer(object):
             self.currentToken["data"] += "--\uFFFD"
             self.state = self.commentState
         elif data == "!":
-            self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
-                                    "unexpected-bang-after-double-dash-in-comment"})
+            self.tokenQueue.append({"type": tokenTypes[
+                                   "ParseError"], "data": "unexpected-bang-after-double-dash-in-comment"})
             self.state = self.commentEndBangState
         elif data == "-":
-            self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
-                                    "unexpected-dash-after-double-dash-in-comment"})
+            self.tokenQueue.append({"type": tokenTypes[
+                                   "ParseError"], "data": "unexpected-dash-after-double-dash-in-comment"})
             self.currentToken["data"] += data
         elif data is EOF:
             self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
@@ -1320,8 +1385,8 @@ class HTMLTokenizer(object):
         if data in spaceCharacters:
             pass
         elif data == ">":
-            self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
-                                    "expected-doctype-name-but-got-right-bracket"})
+            self.tokenQueue.append({"type": tokenTypes[
+                                   "ParseError"], "data": "expected-doctype-name-but-got-right-bracket"})
             self.currentToken["correct"] = False
             self.tokenQueue.append(self.currentToken)
             self.state = self.dataState
@@ -1344,10 +1409,12 @@ class HTMLTokenizer(object):
     def doctypeNameState(self):
         data = self.stream.char()
         if data in spaceCharacters:
-            self.currentToken["name"] = self.currentToken["name"].translate(asciiUpper2Lower)
+            self.currentToken["name"] = self.currentToken[
+                "name"].translate(asciiUpper2Lower)
             self.state = self.afterDoctypeNameState
         elif data == ">":
-            self.currentToken["name"] = self.currentToken["name"].translate(asciiUpper2Lower)
+            self.currentToken["name"] = self.currentToken[
+                "name"].translate(asciiUpper2Lower)
             self.tokenQueue.append(self.currentToken)
             self.state = self.dataState
         elif data == "\u0000":
@@ -1359,7 +1426,8 @@ class HTMLTokenizer(object):
             self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
                                     "eof-in-doctype-name"})
             self.currentToken["correct"] = False
-            self.currentToken["name"] = self.currentToken["name"].translate(asciiUpper2Lower)
+            self.currentToken["name"] = self.currentToken[
+                "name"].translate(asciiUpper2Lower)
             self.tokenQueue.append(self.currentToken)
             self.state = self.dataState
         else:
@@ -1409,9 +1477,12 @@ class HTMLTokenizer(object):
             # discarded; only the latest character might be '>' or EOF
             # and needs to be ungetted
             self.stream.unget(data)
-            self.tokenQueue.append({"type": tokenTypes["ParseError"], "data":
-                                    "expected-space-or-right-bracket-in-doctype", "datavars":
-                                    {"data": data}})
+            self.tokenQueue.append(
+                {
+                    "type": tokenTypes["ParseError"],
+                    "data": "expected-space-or-right-bracket-in-doctype",
+                    "datavars": {
+                        "data": data}})
             self.currentToken["correct"] = False
             self.state = self.bogusDoctypeState
 

@@ -9,6 +9,7 @@ from ..constants import voidElements
 
 
 class TreeWalker(_base.TreeWalker):
+
     def __iter__(self):
         ignore_until = None
         previous = None
@@ -26,7 +27,8 @@ class TreeWalker(_base.TreeWalker):
             for token in self.tokens(previous, None):
                 yield token
         elif ignore_until is not None:
-            raise ValueError("Illformed DOM event stream: void element without END_ELEMENT")
+            raise ValueError(
+                "Illformed DOM event stream: void element without END_ELEMENT")
 
     def tokens(self, event, next):
         type, node = event

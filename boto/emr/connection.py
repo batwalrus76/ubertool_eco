@@ -29,11 +29,11 @@ import boto
 import boto.utils
 from boto.ec2.regioninfo import RegionInfo
 from boto.emr.emrobject import AddInstanceGroupsResponse, BootstrapActionList, \
-                               Cluster, ClusterSummaryList, HadoopStep, \
-                               InstanceGroupList, InstanceList, JobFlow, \
-                               JobFlowStepList, \
-                               ModifyInstanceGroupsResponse, \
-                               RunJobFlowResponse, StepSummaryList
+    Cluster, ClusterSummaryList, HadoopStep, \
+    InstanceGroupList, InstanceList, JobFlow, \
+    JobFlowStepList, \
+    ModifyInstanceGroupsResponse, \
+    RunJobFlowResponse, StepSummaryList
 from boto.emr.step import JarStep
 from boto.connection import AWSQueryConnection
 from boto.exception import EmrResponseError
@@ -43,8 +43,10 @@ class EmrConnection(AWSQueryConnection):
 
     APIVersion = boto.config.get('Boto', 'emr_version', '2009-03-31')
     DefaultRegionName = boto.config.get('Boto', 'emr_region_name', 'us-east-1')
-    DefaultRegionEndpoint = boto.config.get('Boto', 'emr_region_endpoint',
-                                            'elasticmapreduce.us-east-1.amazonaws.com')
+    DefaultRegionEndpoint = boto.config.get(
+        'Boto',
+        'emr_region_endpoint',
+        'elasticmapreduce.us-east-1.amazonaws.com')
     ResponseError = EmrResponseError
 
     # Constants for AWS Console debugging
@@ -61,14 +63,14 @@ class EmrConnection(AWSQueryConnection):
                                 self.DefaultRegionEndpoint)
         self.region = region
         super(EmrConnection, self).__init__(aws_access_key_id,
-                                    aws_secret_access_key,
-                                    is_secure, port, proxy, proxy_port,
-                                    proxy_user, proxy_pass,
-                                    self.region.endpoint, debug,
-                                    https_connection_factory, path,
-                                    security_token,
-                                    validate_certs=validate_certs,
-                                    profile_name=profile_name)
+                                            aws_secret_access_key,
+                                            is_secure, port, proxy, proxy_port,
+                                            proxy_user, proxy_pass,
+                                            self.region.endpoint, debug,
+                                            https_connection_factory, path,
+                                            security_token,
+                                            validate_certs=validate_certs,
+                                            profile_name=profile_name)
         # Many of the EMR hostnames are of the form:
         #     <region>.<service_name>.amazonaws.com
         # rather than the more common:
@@ -105,7 +107,7 @@ class EmrConnection(AWSQueryConnection):
             return jobflows[0]
 
     def describe_jobflows(self, states=None, jobflow_ids=None,
-                           created_after=None, created_before=None):
+                          created_after=None, created_before=None):
         """
         Retrieve all the Elastic MapReduce job flows on your account
 
@@ -167,7 +169,10 @@ class EmrConnection(AWSQueryConnection):
         if marker:
             params['Marker'] = marker
 
-        return self.get_object('ListBootstrapActions', params, BootstrapActionList)
+        return self.get_object(
+            'ListBootstrapActions',
+            params,
+            BootstrapActionList)
 
     def list_clusters(self, created_after=None, created_before=None,
                       cluster_states=None, marker=None):
@@ -194,7 +199,10 @@ class EmrConnection(AWSQueryConnection):
             params['Marker'] = marker
 
         if cluster_states:
-            self.build_list_params(params, cluster_states, 'ClusterStates.member')
+            self.build_list_params(
+                params,
+                cluster_states,
+                'ClusterStates.member')
 
         return self.get_object('ListClusters', params, ClusterSummaryList)
 
@@ -389,8 +397,10 @@ class EmrConnection(AWSQueryConnection):
             # could be wrong - the example amazon gives uses
             # InstanceRequestCount, while the api documentation
             # says InstanceCount
-            params['InstanceGroups.member.%d.InstanceGroupId' % (k+1) ] = ig[0]
-            params['InstanceGroups.member.%d.InstanceCount' % (k+1) ] = ig[1]
+            params[
+                'InstanceGroups.member.%d.InstanceGroupId' %
+                (k + 1)] = ig[0]
+            params['InstanceGroups.member.%d.InstanceCount' % (k + 1)] = ig[1]
 
         return self.get_object('ModifyInstanceGroups', params,
                                ModifyInstanceGroupsResponse, verb='POST')
@@ -516,16 +526,17 @@ class EmrConnection(AWSQueryConnection):
         if not instance_groups:
             # Instance args (the common case)
             instance_params = self._build_instance_count_and_type_args(
-                                                        master_instance_type,
-                                                        slave_instance_type,
-                                                        num_instances)
+                master_instance_type,
+                slave_instance_type,
+                num_instances)
             params.update(instance_params)
         else:
-            # Instance group args (for spot instances or a heterogenous cluster)
+            # Instance group args (for spot instances or a heterogenous
+            # cluster)
             list_args = self._build_instance_group_list_args(instance_groups)
             instance_params = dict(
                 ('Instances.%s' % k, v) for k, v in list_args.iteritems()
-                )
+            )
             params.update(instance_params)
 
         # Debugging step from EMR API docs
@@ -543,8 +554,10 @@ class EmrConnection(AWSQueryConnection):
             params.update(self._build_step_list(step_args))
 
         if bootstrap_actions:
-            bootstrap_action_args = [self._build_bootstrap_action_args(bootstrap_action) for bootstrap_action in bootstrap_actions]
-            params.update(self._build_bootstrap_action_list(bootstrap_action_args))
+            bootstrap_action_args = [self._build_bootstrap_action_args(
+                bootstrap_action) for bootstrap_action in bootstrap_actions]
+            params.update(
+                self._build_bootstrap_action_list(bootstrap_action_args))
 
         if ami_version:
             params['AmiVersion'] = ami_version
@@ -586,7 +599,8 @@ class EmrConnection(AWSQueryConnection):
         assert termination_protection_status in (True, False)
 
         params = {}
-        params['TerminationProtected'] = (termination_protection_status and "true") or "false"
+        params['TerminationProtected'] = (
+            termination_protection_status and "true") or "false"
         self.build_list_params(params, [jobflow_id], 'JobFlowIds.member')
 
         return self.get_status('SetTerminationProtection', params, verb='POST')
@@ -611,7 +625,8 @@ class EmrConnection(AWSQueryConnection):
 
     def _build_bootstrap_action_args(self, bootstrap_action):
         bootstrap_action_params = {}
-        bootstrap_action_params['ScriptBootstrapAction.Path'] = bootstrap_action.path
+        bootstrap_action_params[
+            'ScriptBootstrapAction.Path'] = bootstrap_action.path
 
         try:
             bootstrap_action_params['Name'] = bootstrap_action.name
@@ -620,7 +635,10 @@ class EmrConnection(AWSQueryConnection):
 
         args = bootstrap_action.args()
         if args:
-            self.build_list_params(bootstrap_action_params, args, 'ScriptBootstrapAction.Args.member')
+            self.build_list_params(
+                bootstrap_action_params,
+                args,
+                'ScriptBootstrapAction.Args.member')
 
         return bootstrap_action_params
 
@@ -635,7 +653,10 @@ class EmrConnection(AWSQueryConnection):
 
         args = step.args()
         if args:
-            self.build_list_params(step_params, args, 'HadoopJarStep.Args.member')
+            self.build_list_params(
+                step_params,
+                args,
+                'HadoopJarStep.Args.member')
 
         step_params['Name'] = step.name
         return step_params
@@ -657,7 +678,7 @@ class EmrConnection(AWSQueryConnection):
         params = {}
         for i, step in enumerate(steps):
             for key, value in step.iteritems():
-                params['Steps.member.%s.%s' % (i+1, key)] = value
+                params['Steps.member.%s.%s' % (i + 1, key)] = value
         return params
 
     def _build_string_list(self, field, items):
@@ -701,8 +722,11 @@ class EmrConnection(AWSQueryConnection):
 
         return params
 
-    def _build_instance_count_and_type_args(self, master_instance_type,
-                                            slave_instance_type, num_instances):
+    def _build_instance_count_and_type_args(
+            self,
+            master_instance_type,
+            slave_instance_type,
+            num_instances):
         """
         Takes a master instance type (string), a slave instance type
         (string), and a number of instances. Returns a comparable dict
@@ -741,5 +765,5 @@ class EmrConnection(AWSQueryConnection):
         for i, instance_group in enumerate(instance_groups):
             ig_dict = self._build_instance_group_args(instance_group)
             for key, value in ig_dict.iteritems():
-                params['InstanceGroups.member.%d.%s' % (i+1, key)] = value
+                params['InstanceGroups.member.%d.%s' % (i + 1, key)] = value
         return params

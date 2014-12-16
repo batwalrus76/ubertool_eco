@@ -35,6 +35,7 @@ _ONE_MEGABYTE = 1024 * 1024
 
 
 class _Partitioner(object):
+
     """Convert variable-size writes into part-sized writes
 
     Call write(data) with variable sized data as needed to write all data. Call
@@ -46,6 +47,7 @@ class _Partitioner(object):
     call.
 
     """
+
     def __init__(self, part_size, send_fn):
         self.part_size = part_size
         self.send_fn = send_fn
@@ -80,12 +82,14 @@ class _Partitioner(object):
 
 
 class _Uploader(object):
+
     """Upload to a Glacier upload_id.
 
     Call upload_part for each part (in any order) and then close to complete
     the upload.
 
     """
+
     def __init__(self, vault, upload_id, part_size, chunk_size=_ONE_MEGABYTE):
         self.vault = vault
         self.upload_id = upload_id
@@ -203,10 +207,12 @@ def resume_file_upload(vault, upload_id, part_size, fobj, part_hash_map,
 
 
 class Writer(object):
+
     """
     Presents a file-like object for writing to a Amazon Glacier
     Archive. The data is written using the multi-part upload API.
     """
+
     def __init__(self, vault, upload_id, part_size, chunk_size=_ONE_MEGABYTE):
         self.uploader = _Uploader(vault, upload_id, part_size, chunk_size)
         self.partitioner = _Partitioner(part_size, self._upload_part)

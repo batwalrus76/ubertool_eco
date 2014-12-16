@@ -151,6 +151,7 @@ def tree_hash_from_str(str_as_bytes):
 
 
 class ResettingFileSender(object):
+
     def __init__(self, archive):
         self._archive = archive
         self._starting_offset = archive.tell()

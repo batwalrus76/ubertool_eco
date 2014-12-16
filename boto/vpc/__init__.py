@@ -306,7 +306,7 @@ class VPCConnection(EC2Connection):
         return self.get_status('DeleteRouteTable', params)
 
     def _replace_route_table_association(self, association_id,
-                                        route_table_id, dry_run=False):
+                                         route_table_id, dry_run=False):
         """
         Helper function for replace_route_table_association and
         replace_route_table_association_with_assoc. Should not be used directly.
@@ -503,7 +503,7 @@ class VPCConnection(EC2Connection):
             params['DryRun'] = 'true'
         return self.get_status('DeleteRoute', params)
 
-    #Network ACLs
+    # Network ACLs
 
     def get_all_network_acls(self, network_acl_ids=None, filters=None):
         """
@@ -545,15 +545,21 @@ class VPCConnection(EC2Connection):
         :return: The ID of the association created
         """
 
-        acl = self.get_all_network_acls(filters=[('association.subnet-id', subnet_id)])[0]
-        association = [ association for association in acl.associations if association.subnet_id == subnet_id ][0]
+        acl = self.get_all_network_acls(
+            filters=[
+                ('association.subnet-id', subnet_id)])[0]
+        association = [
+            association for association in acl.associations if association.subnet_id == subnet_id][0]
 
         params = {
             'AssociationId': association.id,
             'NetworkAclId': network_acl_id
         }
 
-        result = self.get_object('ReplaceNetworkAclAssociation', params, ResultSet)
+        result = self.get_object(
+            'ReplaceNetworkAclAssociation',
+            params,
+            ResultSet)
         return result.newAssociationId
 
     def disassociate_network_acl(self, subnet_id, vpc_id=None):
@@ -572,7 +578,9 @@ class VPCConnection(EC2Connection):
         """
         if not vpc_id:
             vpc_id = self.get_all_subnets([subnet_id])[0].vpc_id
-        acls = self.get_all_network_acls(filters=[('vpc-id', vpc_id), ('default', 'true')])
+        acls = self.get_all_network_acls(
+            filters=[
+                ('vpc-id', vpc_id), ('default', 'true')])
         default_acl_id = acls[0].id
 
         return self.associate_network_acl(default_acl_id, subnet_id)
@@ -603,9 +611,18 @@ class VPCConnection(EC2Connection):
         params = {'NetworkAclId': network_acl_id}
         return self.get_status('DeleteNetworkAcl', params)
 
-    def create_network_acl_entry(self, network_acl_id, rule_number, protocol, rule_action,
-                                 cidr_block, egress=None, icmp_code=None, icmp_type=None,
-                                 port_range_from=None, port_range_to=None):
+    def create_network_acl_entry(
+            self,
+            network_acl_id,
+            rule_number,
+            protocol,
+            rule_action,
+            cidr_block,
+            egress=None,
+            icmp_code=None,
+            icmp_type=None,
+            port_range_from=None,
+            port_range_to=None):
         """
         Creates a new network ACL entry in a network ACL within a VPC.
 
@@ -671,9 +688,18 @@ class VPCConnection(EC2Connection):
 
         return self.get_status('CreateNetworkAclEntry', params)
 
-    def replace_network_acl_entry(self, network_acl_id, rule_number, protocol, rule_action,
-                                  cidr_block, egress=None, icmp_code=None, icmp_type=None,
-                                  port_range_from=None, port_range_to=None):
+    def replace_network_acl_entry(
+            self,
+            network_acl_id,
+            rule_number,
+            protocol,
+            rule_action,
+            cidr_block,
+            egress=None,
+            icmp_code=None,
+            icmp_type=None,
+            port_range_from=None,
+            port_range_to=None):
         """
         Creates a new network ACL entry in a network ACL within a VPC.
 
@@ -739,7 +765,11 @@ class VPCConnection(EC2Connection):
 
         return self.get_status('ReplaceNetworkAclEntry', params)
 
-    def delete_network_acl_entry(self, network_acl_id, rule_number, egress=None):
+    def delete_network_acl_entry(
+            self,
+            network_acl_id,
+            rule_number,
+            egress=None):
         """
         Deletes a network ACL entry from a network ACL within a VPC.
 
@@ -812,7 +842,10 @@ class VPCConnection(EC2Connection):
         params = {}
         if dry_run:
             params['DryRun'] = 'true'
-        return self.get_object('CreateInternetGateway', params, InternetGateway)
+        return self.get_object(
+            'CreateInternetGateway',
+            params,
+            InternetGateway)
 
     def delete_internet_gateway(self, internet_gateway_id, dry_run=False):
         """
@@ -926,7 +959,12 @@ class VPCConnection(EC2Connection):
         return self.get_list('DescribeCustomerGateways', params,
                              [('item', CustomerGateway)])
 
-    def create_customer_gateway(self, type, ip_address, bgp_asn, dry_run=False):
+    def create_customer_gateway(
+            self,
+            type,
+            ip_address,
+            bgp_asn,
+            dry_run=False):
         """
         Create a new Customer Gateway
 
@@ -952,7 +990,10 @@ class VPCConnection(EC2Connection):
                   'BgpAsn': bgp_asn}
         if dry_run:
             params['DryRun'] = 'true'
-        return self.get_object('CreateCustomerGateway', params, CustomerGateway)
+        return self.get_object(
+            'CreateCustomerGateway',
+            params,
+            CustomerGateway)
 
     def delete_customer_gateway(self, customer_gateway_id, dry_run=False):
         """
@@ -1185,7 +1226,11 @@ class VPCConnection(EC2Connection):
 
     # DHCP Options
 
-    def get_all_dhcp_options(self, dhcp_options_ids=None, filters=None, dry_run=False):
+    def get_all_dhcp_options(
+            self,
+            dhcp_options_ids=None,
+            filters=None,
+            dry_run=False):
         """
         Retrieve information about your DhcpOptions.
 
@@ -1270,14 +1315,18 @@ class VPCConnection(EC2Connection):
             key_counter = insert_option(params,
                                         'domain-name', domain_name)
         if domain_name_servers:
-            key_counter = insert_option(params,
-                                        'domain-name-servers', domain_name_servers)
+            key_counter = insert_option(
+                params,
+                'domain-name-servers',
+                domain_name_servers)
         if ntp_servers:
             key_counter = insert_option(params,
                                         'ntp-servers', ntp_servers)
         if netbios_name_servers:
-            key_counter = insert_option(params,
-                                        'netbios-name-servers', netbios_name_servers)
+            key_counter = insert_option(
+                params,
+                'netbios-name-servers',
+                netbios_name_servers)
         if netbios_node_type:
             key_counter = insert_option(params,
                                         'netbios-node-type', netbios_node_type)

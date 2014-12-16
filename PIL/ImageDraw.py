@@ -46,6 +46,7 @@ except ImportError:
 # Application code should use the <b>Draw</b> factory, instead of
 # directly.
 
+
 class ImageDraw:
 
     ##
@@ -61,7 +62,7 @@ class ImageDraw:
     def __init__(self, im, mode=None):
         im.load()
         if im.readonly:
-            im._copy() # make it writable
+            im._copy()  # make it writable
         blend = 0
         if mode is None:
             mode = im.mode
@@ -85,7 +86,7 @@ class ImageDraw:
             # FIXME: fix Fill2 to properly support matte for I+F images
             self.fontmode = "1"
         else:
-            self.fontmode = "L" # aliasing is okay for other modes
+            self.fontmode = "L"  # aliasing is okay for other modes
         self.fill = 0
         self.font = None
 
@@ -98,7 +99,7 @@ class ImageDraw:
             warnings.warn(
                 "'setink' is deprecated; use keyword arguments instead",
                 DeprecationWarning, stacklevel=2
-                )
+            )
         if isStringType(ink):
             ink = ImageColor.getcolor(ink, self.mode)
         if self.palette and not isinstance(ink, numbers.Number):
@@ -114,7 +115,7 @@ class ImageDraw:
             warnings.warn(
                 "'setfill' is deprecated; use keyword arguments instead",
                 DeprecationWarning, stacklevel=2
-                )
+            )
         self.fill = onoff
 
     ##
@@ -290,6 +291,7 @@ class ImageDraw:
 #    must be the same as the image mode.  If omitted, the mode
 #    defaults to the mode of the image.
 
+
 def Draw(im, mode=None):
     try:
         return im.getdraw(mode)
@@ -309,6 +311,7 @@ except:
 # @param im The image to draw in.
 # @param hints An optional list of hints.
 # @return A (drawing context, drawing resource factory) tuple.
+
 
 def getdraw(im=None, hints=None):
     # FIXME: this needs more work!
@@ -336,6 +339,7 @@ def getdraw(im=None, hints=None):
 #     the region consists of pixels having the same color as the seed
 #     pixel.
 
+
 def floodfill(image, xy, value, border=None):
     "Fill bounded region."
     # based on an implementation by Eric S. Raymond
@@ -344,16 +348,16 @@ def floodfill(image, xy, value, border=None):
     try:
         background = pixel[x, y]
         if background == value:
-            return # seed point already has fill color
+            return  # seed point already has fill color
         pixel[x, y] = value
     except IndexError:
-        return # seed point outside image
+        return  # seed point outside image
     edge = [(x, y)]
     if border is None:
         while edge:
             newedge = []
             for (x, y) in edge:
-                for (s, t) in ((x+1, y), (x-1, y), (x, y+1), (x, y-1)):
+                for (s, t) in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
                     try:
                         p = pixel[s, t]
                     except IndexError:
@@ -367,7 +371,7 @@ def floodfill(image, xy, value, border=None):
         while edge:
             newedge = []
             for (x, y) in edge:
-                for (s, t) in ((x+1, y), (x-1, y), (x, y+1), (x, y-1)):
+                for (s, t) in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
                     try:
                         p = pixel[s, t]
                     except IndexError:

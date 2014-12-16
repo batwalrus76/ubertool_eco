@@ -6,6 +6,7 @@ from boto.exception import DynamoDBResponseError
 
 
 class DynamoDBExpiredTokenError(BotoServerError):
+
     """
     Raised when a DynamoDB security token expires. This is generally boto's
     (or the user's) notice to renew their DynamoDB security tokens.
@@ -14,6 +15,7 @@ class DynamoDBExpiredTokenError(BotoServerError):
 
 
 class DynamoDBKeyNotFoundError(BotoClientError):
+
     """
     Raised when attempting to retrieve or interact with an item whose key
     can't be found.
@@ -22,6 +24,7 @@ class DynamoDBKeyNotFoundError(BotoClientError):
 
 
 class DynamoDBItemError(BotoClientError):
+
     """
     Raised when invalid parameters are passed when creating a
     new Item in DynamoDB.
@@ -30,6 +33,7 @@ class DynamoDBItemError(BotoClientError):
 
 
 class DynamoDBNumberError(BotoClientError):
+
     """
     Raised in the event of incompatible numeric type casting.
     """
@@ -37,6 +41,7 @@ class DynamoDBNumberError(BotoClientError):
 
 
 class DynamoDBConditionalCheckFailedError(DynamoDBResponseError):
+
     """
     Raised when a ConditionalCheckFailedException response is received.
     This happens when a conditional check, expressed via the expected_value
@@ -46,6 +51,7 @@ class DynamoDBConditionalCheckFailedError(DynamoDBResponseError):
 
 
 class DynamoDBValidationError(DynamoDBResponseError):
+
     """
     Raised when a ValidationException response is received. This happens
     when one or more required parameter values are missing, or if the item
@@ -55,6 +61,7 @@ class DynamoDBValidationError(DynamoDBResponseError):
 
 
 class DynamoDBThroughputExceededError(DynamoDBResponseError):
+
     """
     Raised when the provisioned throughput has been exceeded.
     Normally, when provisioned throughput is exceeded the operation

@@ -23,6 +23,7 @@
 
 
 class CORSRule(object):
+
     """
     CORS rule for a bucket.
 
@@ -118,6 +119,7 @@ class CORSRule(object):
 
 
 class CORSConfiguration(list):
+
     """
     A container for the rules associated with a CORS configuration.
     """

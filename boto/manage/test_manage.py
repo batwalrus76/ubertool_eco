@@ -31,4 +31,3 @@ print status[1]
 print '--> Do an "ls -al" on the new filesystem'
 status = server.run('ls -al %s' % volume.mount_point)
 print status[1]
-

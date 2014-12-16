@@ -12,6 +12,7 @@ from boto.exception import JSONResponseError
 
 
 class Table(object):
+
     """
     Interacts & models the behavior of a DynamoDB table.
 
@@ -275,7 +276,7 @@ class Table(object):
             else:
                 raise exceptions.UnknownIndexFieldError(
                     "%s was seen, but is unknown. Please report this at "
-                    "https://github.com/boto/boto/issues." % \
+                    "https://github.com/boto/boto/issues." %
                     field['Projection']['ProjectionType']
                 )
 
@@ -489,7 +490,9 @@ class Table(object):
             consistent_read=consistent
         )
         if 'Item' not in item_data:
-            raise exceptions.ItemNotFound("Item %s couldn't be found." % kwargs)
+            raise exceptions.ItemNotFound(
+                "Item %s couldn't be found." %
+                kwargs)
         item = Item(self)
         item.load(item_data)
         return item
@@ -632,7 +635,11 @@ class Table(object):
         if expects is not None:
             kwargs['expected'] = expects
 
-        self.connection.update_item(self.table_name, raw_key, item_data, **kwargs)
+        self.connection.update_item(
+            self.table_name,
+            raw_key,
+            item_data,
+            **kwargs)
         return True
 
     def delete_item(self, **kwargs):
@@ -785,7 +792,8 @@ class Table(object):
             # Special-case the ``IN`` case
             elif field_bits[-1] == 'in':
                 for val in value:
-                    lookup['AttributeValueList'].append(self._dynamizer.encode(val))
+                    lookup['AttributeValueList'].append(
+                        self._dynamizer.encode(val))
             else:
                 # Fix up the value for encoding, because it was built to only work
                 # with ``set``s.
@@ -1177,7 +1185,9 @@ class Table(object):
         """
         # We pass the keys to the constructor instead, so it can maintain it's
         # own internal state as to what keys have been processed.
-        results = BatchGetResultSet(keys=keys, max_batch_get=self.max_batch_get)
+        results = BatchGetResultSet(
+            keys=keys,
+            max_batch_get=self.max_batch_get)
         results.to_call(self._batch_get, consistent=False)
         return results
 
@@ -1251,11 +1261,13 @@ class Table(object):
 
 
 class BatchTable(object):
+
     """
     Used by ``Table`` as the context manager for batch writes.
 
     You likely don't want to try to use this object directly.
     """
+
     def __init__(self, table):
         self.table = table
         self._to_put = []

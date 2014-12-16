@@ -6,6 +6,7 @@
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 
+
 @require_POST
 def sipOutputPage(request):
     import sip_model
@@ -36,6 +37,28 @@ def sipOutputPage(request):
     b_species = request.POST.get('b_species')
     m_species = request.POST.get('m_species')
 
-    sip_obj = sip_model.sip(True,True,'single',chemical_name, b_species, m_species, bw_quail, bw_duck, bwb_other, bw_rat, bwm_other, sol, ld50_a, ld50_m, aw_bird, mineau, aw_mamm, noaec_d, noaec_q, noaec_o, Species_of_the_bird_NOAEC_CHOICES, noael)
+    sip_obj = sip_model.sip(
+        True,
+        True,
+        'single',
+        chemical_name,
+        b_species,
+        m_species,
+        bw_quail,
+        bw_duck,
+        bwb_other,
+        bw_rat,
+        bwm_other,
+        sol,
+        ld50_a,
+        ld50_m,
+        aw_bird,
+        mineau,
+        aw_mamm,
+        noaec_d,
+        noaec_q,
+        noaec_o,
+        Species_of_the_bird_NOAEC_CHOICES,
+        noael)
 
     return sip_obj

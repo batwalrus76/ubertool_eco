@@ -35,11 +35,13 @@ i32 = _binary.i32le
 
 _MAGIC = b"\0\0\1\0"
 
+
 def _accept(prefix):
     return prefix[:4] == _MAGIC
 
 
 class IcoFile:
+
     def __init__(self, buf):
         """
         Parse image from file-like object containing ico file data
@@ -63,7 +65,8 @@ class IcoFile:
             icon_header = {
                 'width': i8(s[0]),
                 'height': i8(s[1]),
-                'nb_color': i8(s[2]), # Number of colors in image (0 if >=8bpp)
+                # Number of colors in image (0 if >=8bpp)
+                'nb_color': i8(s[2]),
                 'reserved': i8(s[3]),
                 'planes': i16(s[4:]),
                 'bpp': i16(s[6:]),
@@ -78,10 +81,12 @@ class IcoFile:
 
             # See Wikipedia notes about color depth.
             # We need this just to differ images with equal sizes
-            icon_header['color_depth'] = (icon_header['bpp'] or (icon_header['nb_color'] != 0 and ceil(log(icon_header['nb_color'],2))) or 256)
+            icon_header['color_depth'] = (icon_header['bpp'] or (
+                icon_header['nb_color'] != 0 and ceil(log(icon_header['nb_color'], 2))) or 256)
 
             icon_header['dim'] = (icon_header['width'], icon_header['height'])
-            icon_header['square'] = icon_header['width'] * icon_header['height']
+            icon_header['square'] = icon_header[
+                'width'] * icon_header['height']
 
             self.entry.append(icon_header)
 
@@ -127,7 +132,7 @@ class IcoFile:
             # change tile dimension to only encompass XOR image
             im.size = (im.size[0], int(im.size[1] / 2))
             d, e, o, a = im.tile[0]
-            im.tile[0] = d, (0,0) + im.size, o, a
+            im.tile[0] = d, (0, 0) + im.size, o, a
 
             # figure out where AND mask image starts
             mode = a[0]
@@ -140,7 +145,8 @@ class IcoFile:
             if 32 == bpp:
                 # 32-bit color depth icon image allows semitransparent areas
                 # PIL's DIB format ignores transparency bits, recover them
-                # The DIB is packed in BGRX byte order where X is the alpha channel
+                # The DIB is packed in BGRX byte order where X is the alpha
+                # channel
 
                 # Back up to start of bmp data
                 self.buf.seek(o)
@@ -162,9 +168,11 @@ class IcoFile:
                     # bitmap row data is aligned to word boundaries
                     w += 32 - (im.size[0] % 32)
 
-                # the total mask data is padded row size * height / bits per char
+                # the total mask data is padded row size * height / bits per
+                # char
 
-                and_mask_offset = o + int(im.size[0] * im.size[1] * (bpp / 8.0))
+                and_mask_offset = o + \
+                    int(im.size[0] * im.size[1] * (bpp / 8.0))
                 total_bytes = int((w * im.size[1]) / 8)
 
                 self.buf.seek(and_mask_offset)
@@ -176,7 +184,7 @@ class IcoFile:
                     im.size,        # (w, h)
                     maskData,       # source chars
                     'raw',          # raw decoder
-                    ('1;I', int(w/8), -1)  # 1bpp inverted, padded, reversed
+                    ('1;I', int(w / 8), -1)  # 1bpp inverted, padded, reversed
                 )
 
                 # now we have two images, im is XOR image and mask is AND image
@@ -190,7 +198,9 @@ class IcoFile:
 ##
 # Image plugin for Windows Icon files.
 
+
 class IcoImageFile(ImageFile.ImageFile):
+
     """
     PIL read-only image support for Microsoft Windows .ico files.
 
@@ -222,9 +232,9 @@ class IcoImageFile(ImageFile.ImageFile):
         self.mode = im.mode
         self.size = im.size
 
-
     def load_seek(self):
-        # Flage the ImageFile.Parser so that it just does all the decode at the end.
+        # Flage the ImageFile.Parser so that it just does all the decode at the
+        # end.
         pass
 #
 # --------------------------------------------------------------------

@@ -69,7 +69,8 @@ def get_manager(cls):
         enable_ssl = boto.config.getint(db_section, 'enable_ssl', enable_ssl)
         debug = boto.config.getint(db_section, 'debug', debug)
     elif hasattr(cls, "_db_name") and cls._db_name is not None:
-        # More specific then the generic DB config is any _db_name class property
+        # More specific then the generic DB config is any _db_name class
+        # property
         db_name = cls._db_name
     elif hasattr(cls.__bases__[0], "_manager"):
         return cls.__bases__[0]._manager

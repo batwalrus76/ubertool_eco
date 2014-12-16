@@ -157,6 +157,7 @@ class Snapshot(TaggedEC2Object):
 
 
 class SnapshotAttribute(object):
+
     def __init__(self, parent=None):
         self.snapshot_id = None
         self.attrs = {}
@@ -181,6 +182,3 @@ class SnapshotAttribute(object):
             self.snapshot_id = value
         else:
             setattr(self, name, value)
-
-
-

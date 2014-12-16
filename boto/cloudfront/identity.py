@@ -21,7 +21,9 @@
 
 import uuid
 
+
 class OriginAccessIdentity(object):
+
     def __init__(self, connection=None, config=None, id='',
                  s3_user_id='', comment=''):
         self.connection = connection
@@ -54,17 +56,23 @@ class OriginAccessIdentity(object):
                                                 self.config.comment)
         if comment is not None:
             new_config.comment = comment
-        self.etag = self.connection.set_origin_identity_config(self.id, self.etag, new_config)
+        self.etag = self.connection.set_origin_identity_config(
+            self.id,
+            self.etag,
+            new_config)
         self.config = new_config
 
     def delete(self):
-        return self.connection.delete_origin_access_identity(self.id, self.etag)
+        return self.connection.delete_origin_access_identity(
+            self.id,
+            self.etag)
 
     def uri(self):
         return 'origin-access-identity/cloudfront/%s' % self.id
 
 
 class OriginAccessIdentityConfig(object):
+
     def __init__(self, connection=None, caller_reference='', comment=''):
         self.connection = connection
         if caller_reference:
@@ -95,6 +103,7 @@ class OriginAccessIdentityConfig(object):
 
 
 class OriginAccessIdentitySummary(object):
+
     def __init__(self, connection=None, id='',
                  s3_user_id='', comment=''):
         self.connection = connection
@@ -118,4 +127,3 @@ class OriginAccessIdentitySummary(object):
 
     def get_origin_access_identity(self):
         return self.connection.get_origin_access_identity_info(self.id)
-

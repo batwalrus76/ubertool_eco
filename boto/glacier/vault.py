@@ -85,7 +85,9 @@ class Vault(object):
         :return: The archive id of the newly created archive
         """
         if os.path.getsize(filename) > self.SingleOperationThreshold:
-            return self.create_archive_from_file(filename, description=description)
+            return self.create_archive_from_file(
+                filename,
+                description=description)
         return self._upload_archive_single_operation(filename, description)
 
     def _upload_archive_single_operation(self, filename, description):

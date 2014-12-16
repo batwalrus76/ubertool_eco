@@ -31,6 +31,7 @@ comment_type = etree.Comment("asd").tag
 
 
 class DocumentType(object):
+
     def __init__(self, name, publicId, systemId):
         self.name = name
         self.publicId = publicId
@@ -38,6 +39,7 @@ class DocumentType(object):
 
 
 class Document(object):
+
     def __init__(self):
         self._elementTree = None
         self._childNodes = []
@@ -193,12 +195,15 @@ class TreeBuilder(_base.TreeBuilder):
         self.namespaceHTMLElements = namespaceHTMLElements
 
         class Attributes(dict):
+
             def __init__(self, element, value={}):
                 self._element = element
                 dict.__init__(self, value)
                 for key, value in self.items():
                     if isinstance(key, tuple):
-                        name = "{%s}%s" % (key[2], infosetFilter.coerceAttribute(key[1]))
+                        name = "{%s}%s" % (key[2],
+                                           infosetFilter.coerceAttribute(
+                            key[1]))
                     else:
                         name = infosetFilter.coerceAttribute(key)
                     self._element._element.attrib[name] = value
@@ -206,12 +211,15 @@ class TreeBuilder(_base.TreeBuilder):
             def __setitem__(self, key, value):
                 dict.__setitem__(self, key, value)
                 if isinstance(key, tuple):
-                    name = "{%s}%s" % (key[2], infosetFilter.coerceAttribute(key[1]))
+                    name = "{%s}%s" % (key[2],
+                                       infosetFilter.coerceAttribute(
+                        key[1]))
                 else:
                     name = infosetFilter.coerceAttribute(key)
                 self._element._element.attrib[name] = value
 
         class Element(builder.Element):
+
             def __init__(self, name, namespace):
                 name = infosetFilter.coerceElement(name)
                 builder.Element.__init__(self, name, namespace=namespace)
@@ -243,6 +251,7 @@ class TreeBuilder(_base.TreeBuilder):
                 builder.Element.appendChild(self, child)
 
         class Comment(builder.Comment):
+
             def __init__(self, data):
                 data = infosetFilter.coerceComment(data)
                 builder.Comment.__init__(self, data)
@@ -292,12 +301,16 @@ class TreeBuilder(_base.TreeBuilder):
         systemId = token["systemId"]
 
         if not name:
-            warnings.warn("lxml cannot represent empty doctype", DataLossWarning)
+            warnings.warn(
+                "lxml cannot represent empty doctype",
+                DataLossWarning)
             self.doctype = None
         else:
             coercedName = self.infosetFilter.coerceElement(name)
             if coercedName != name:
-                warnings.warn("lxml cannot represent non-xml doctype", DataLossWarning)
+                warnings.warn(
+                    "lxml cannot represent non-xml doctype",
+                    DataLossWarning)
 
             doctype = self.doctypeClass(coercedName, publicId, systemId)
             self.doctype = doctype
@@ -308,7 +321,9 @@ class TreeBuilder(_base.TreeBuilder):
     def insertCommentMain(self, data, parent=None):
         if (parent == self.document and
                 self.document._elementTree.getroot()[-1].tag == comment_type):
-                warnings.warn("lxml cannot represent adjacent comments beyond the root elements", DataLossWarning)
+            warnings.warn(
+                "lxml cannot represent adjacent comments beyond the root elements",
+                DataLossWarning)
         super(TreeBuilder, self).insertComment(data, parent)
 
     def insertRoot(self, token):
@@ -328,7 +343,9 @@ class TreeBuilder(_base.TreeBuilder):
                 if self.doctype.systemId:
                     sysid = self.doctype.systemId
                     if sysid.find("'") >= 0 and sysid.find('"') >= 0:
-                        warnings.warn("DOCTYPE system cannot contain single and double quotes", DataLossWarning)
+                        warnings.warn(
+                            "DOCTYPE system cannot contain single and double quotes",
+                            DataLossWarning)
                         sysid = sysid.replace("'", 'U00027')
                     if sysid.find("'") >= 0:
                         docStr += '"%s"' % sysid
@@ -338,7 +355,9 @@ class TreeBuilder(_base.TreeBuilder):
                     docStr += "''"
             docStr += ">"
             if self.doctype.name != token["name"]:
-                warnings.warn("lxml cannot represent doctype with a different name to the root element", DataLossWarning)
+                warnings.warn(
+                    "lxml cannot represent doctype with a different name to the root element",
+                    DataLossWarning)
         docStr += "<THIS_SHOULD_NEVER_APPEAR_PUBLICLY/>"
         root = etree.fromstring(docStr)
 

@@ -25,6 +25,7 @@ from datetime import datetime, timedelta
 from boto.utils import parse_ts
 import boto
 
+
 class ResultProcessor(object):
 
     LogFileName = 'log.csv'
@@ -61,7 +62,7 @@ class ResultProcessor(object):
         if not self.log_fp:
             self.log_fp = open(os.path.join(path, self.LogFileName), 'a')
             line = ','.join(keys)
-            self.log_fp.write(line+'\n')
+            self.log_fp.write(line + '\n')
         values = []
         for key in keys:
             value = msg[key]
@@ -69,7 +70,7 @@ class ResultProcessor(object):
                 value = '"%s"' % value
             values.append(value)
         line = ','.join(values)
-        self.log_fp.write(line+'\n')
+        self.log_fp.write(line + '\n')
 
     def process_record(self, record, path, get_file=True):
         self.log_message(record, path)
@@ -125,12 +126,11 @@ class ResultProcessor(object):
             self.log_fp.close()
         print '%d results successfully retrieved.' % self.num_files
         if self.num_files > 0:
-            self.avg_time = float(self.total_time)/self.num_files
+            self.avg_time = float(self.total_time) / self.num_files
             print 'Minimum Processing Time: %d' % self.min_time.seconds
             print 'Maximum Processing Time: %d' % self.max_time.seconds
             print 'Average Processing Time: %f' % self.avg_time
-            self.elapsed_time = self.latest_time-self.earliest_time
+            self.elapsed_time = self.latest_time - self.earliest_time
             print 'Elapsed Time: %d' % self.elapsed_time.seconds
-            tput = 1.0 / ((self.elapsed_time.seconds/60.0) / self.num_files)
+            tput = 1.0 / ((self.elapsed_time.seconds / 60.0) / self.num_files)
             print 'Throughput: %f transactions / minute' % tput
-

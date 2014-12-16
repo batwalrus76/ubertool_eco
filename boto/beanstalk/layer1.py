@@ -46,12 +46,12 @@ class Layer1(AWSQueryConnection):
                                 self.DefaultRegionEndpoint)
         self.region = region
         super(Layer1, self).__init__(aws_access_key_id,
-                                    aws_secret_access_key,
-                                    is_secure, port, proxy, proxy_port,
-                                    proxy_user, proxy_pass,
-                                    self.region.endpoint, debug,
-                                    https_connection_factory, path,
-                                    security_token, profile_name=profile_name)
+                                     aws_secret_access_key,
+                                     is_secure, port, proxy, proxy_port,
+                                     proxy_user, proxy_pass,
+                                     self.region.endpoint, debug,
+                                     https_connection_factory, path,
+                                     security_token, profile_name=profile_name)
 
     def _required_auth_capability(self):
         return ['hmac-v4']
@@ -155,12 +155,16 @@ class Layer1(AWSQueryConnection):
                 auto_create_application)
         return self._get_response('CreateApplicationVersion', params)
 
-    def create_configuration_template(self, application_name, template_name,
-                                      solution_stack_name=None,
-                                      source_configuration_application_name=None,
-                                      source_configuration_template_name=None,
-                                      environment_id=None, description=None,
-                                      option_settings=None):
+    def create_configuration_template(
+            self,
+            application_name,
+            template_name,
+            solution_stack_name=None,
+            source_configuration_application_name=None,
+            source_configuration_template_name=None,
+            environment_id=None,
+            description=None,
+            option_settings=None):
         """Creates a configuration template.
 
         Templates are associated with a specific application and are used to
@@ -220,17 +224,19 @@ class Layer1(AWSQueryConnection):
         if solution_stack_name:
             params['SolutionStackName'] = solution_stack_name
         if source_configuration_application_name:
-            params['SourceConfiguration.ApplicationName'] = source_configuration_application_name
+            params[
+                'SourceConfiguration.ApplicationName'] = source_configuration_application_name
         if source_configuration_template_name:
-            params['SourceConfiguration.TemplateName'] = source_configuration_template_name
+            params[
+                'SourceConfiguration.TemplateName'] = source_configuration_template_name
         if environment_id:
             params['EnvironmentId'] = environment_id
         if description:
             params['Description'] = description
         if option_settings:
             self._build_list_params(params, option_settings,
-                                   'OptionSettings.member',
-                                   ('Namespace', 'OptionName', 'Value'))
+                                    'OptionSettings.member',
+                                    ('Namespace', 'OptionName', 'Value'))
         return self._get_response('CreateConfigurationTemplate', params)
 
     def create_environment(self, application_name, environment_name,
@@ -345,8 +351,8 @@ class Layer1(AWSQueryConnection):
             params['Description'] = description
         if option_settings:
             self._build_list_params(params, option_settings,
-                                   'OptionSettings.member',
-                                   ('Namespace', 'OptionName', 'Value'))
+                                    'OptionSettings.member',
+                                    ('Namespace', 'OptionName', 'Value'))
         if options_to_remove:
             self.build_list_params(params, options_to_remove,
                                    'OptionsToRemove.member')
@@ -1035,8 +1041,8 @@ class Layer1(AWSQueryConnection):
             params['Description'] = description
         if option_settings:
             self._build_list_params(params, option_settings,
-                                   'OptionSettings.member',
-                                   ('Namespace', 'OptionName', 'Value'))
+                                    'OptionSettings.member',
+                                    ('Namespace', 'OptionName', 'Value'))
         if options_to_remove:
             self.build_list_params(params, options_to_remove,
                                    'OptionsToRemove.member')
@@ -1132,8 +1138,8 @@ class Layer1(AWSQueryConnection):
             params['Description'] = description
         if option_settings:
             self._build_list_params(params, option_settings,
-                                   'OptionSettings.member',
-                                   ('Namespace', 'OptionName', 'Value'))
+                                    'OptionSettings.member',
+                                    ('Namespace', 'OptionName', 'Value'))
         if options_to_remove:
             self.build_list_params(params, options_to_remove,
                                    'OptionsToRemove.member')
@@ -1175,8 +1181,8 @@ class Layer1(AWSQueryConnection):
         """
         params = {'ApplicationName': application_name}
         self._build_list_params(params, option_settings,
-                               'OptionSettings.member',
-                               ('Namespace', 'OptionName', 'Value'))
+                                'OptionSettings.member',
+                                ('Namespace', 'OptionName', 'Value'))
         if template_name:
             params['TemplateName'] = template_name
         if environment_name:

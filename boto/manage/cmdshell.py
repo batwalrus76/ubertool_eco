@@ -56,7 +56,8 @@ class SSHClient(object):
                                          pkey=self._pkey,
                                          timeout=self._timeout)
                 return
-            except socket.error, (value, message):
+            except socket.error as xxx_todo_changeme:
+                (value, message) = xxx_todo_changeme.args
                 if value in (51, 61, 111):
                     print 'SSH Connection refused, will retry in 5 seconds'
                     time.sleep(5)
@@ -152,6 +153,7 @@ class SSHClient(object):
         transport.close()
         self.server.reset_cmdshell()
 
+
 class LocalClient(object):
 
     def __init__(self, server, host_key_file=None, uname='root'):
@@ -180,8 +182,12 @@ class LocalClient(object):
     def run(self):
         boto.log.info('running:%s' % self.command)
         log_fp = StringIO.StringIO()
-        process = subprocess.Popen(self.command, shell=True, stdin=subprocess.PIPE,
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen(
+            self.command,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
         while process.poll() is None:
             time.sleep(1)
             t = process.communicate()
@@ -194,17 +200,21 @@ class LocalClient(object):
     def close(self):
         pass
 
+
 class FakeServer(object):
+
     """
     A little class to fake out SSHClient (which is expecting a
     :class`boto.manage.server.Server` instance.  This allows us
     to
     """
+
     def __init__(self, instance, ssh_key_file):
         self.instance = instance
         self.ssh_key_file = ssh_key_file
         self.hostname = instance.dns_name
         self.instance_id = self.instance.id
+
 
 def start(server):
     instance_id = boto.config.get('Instance', 'instance-id', None)
@@ -212,6 +222,7 @@ def start(server):
         return LocalClient(server)
     else:
         return SSHClient(server)
+
 
 def sshclient_from_instance(instance, ssh_key_file,
                             host_key_file='~/.ssh/known_hosts',

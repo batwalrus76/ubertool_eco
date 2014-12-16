@@ -10,7 +10,13 @@ from StringIO import StringIO
 import csv
 
 
-data = csv.reader(open(os.path.join(os.environ['PROJECT_PATH'], 'models','trex2','trex2_qaqc.csv')))
+data = csv.reader(
+    open(
+        os.path.join(
+            os.environ['PROJECT_PATH'],
+            'models',
+            'trex2',
+            'trex2_qaqc.csv')))
 
 chem_name = []
 use = []
@@ -55,165 +61,165 @@ tw_mamm = []
 
 
 ######Pre-defined outputs########
-EEC_diet_SG_BL_out_exp=[]
-EEC_diet_TG_BL_out_exp=[]
-EEC_diet_BP_BL_out_exp=[]
-EEC_diet_FR_BL_out_exp=[]
-EEC_diet_AR_BL_out_exp=[]
+EEC_diet_SG_BL_out_exp = []
+EEC_diet_TG_BL_out_exp = []
+EEC_diet_BP_BL_out_exp = []
+EEC_diet_FR_BL_out_exp = []
+EEC_diet_AR_BL_out_exp = []
 
-EEC_dose_bird_SG_BL_sm_out_exp=[]
-EEC_dose_bird_SG_BL_md_out_exp=[]
-EEC_dose_bird_SG_BL_lg_out_exp=[]
-EEC_dose_bird_TG_BL_sm_out_exp=[]
-EEC_dose_bird_TG_BL_md_out_exp=[]
-EEC_dose_bird_TG_BL_lg_out_exp=[]
-EEC_dose_bird_BP_BL_sm_out_exp=[]
-EEC_dose_bird_BP_BL_md_out_exp=[]
-EEC_dose_bird_BP_BL_lg_out_exp=[]
-EEC_dose_bird_FP_BL_sm_out_exp=[]
-EEC_dose_bird_FP_BL_md_out_exp=[]
-EEC_dose_bird_FP_BL_lg_out_exp=[]
-EEC_dose_bird_AR_BL_sm_out_exp=[]
-EEC_dose_bird_AR_BL_md_out_exp=[]
-EEC_dose_bird_AR_BL_lg_out_exp=[]
-EEC_dose_bird_SE_BL_sm_out_exp=[]
-EEC_dose_bird_SE_BL_md_out_exp=[]
-EEC_dose_bird_SE_BL_lg_out_exp=[]
+EEC_dose_bird_SG_BL_sm_out_exp = []
+EEC_dose_bird_SG_BL_md_out_exp = []
+EEC_dose_bird_SG_BL_lg_out_exp = []
+EEC_dose_bird_TG_BL_sm_out_exp = []
+EEC_dose_bird_TG_BL_md_out_exp = []
+EEC_dose_bird_TG_BL_lg_out_exp = []
+EEC_dose_bird_BP_BL_sm_out_exp = []
+EEC_dose_bird_BP_BL_md_out_exp = []
+EEC_dose_bird_BP_BL_lg_out_exp = []
+EEC_dose_bird_FP_BL_sm_out_exp = []
+EEC_dose_bird_FP_BL_md_out_exp = []
+EEC_dose_bird_FP_BL_lg_out_exp = []
+EEC_dose_bird_AR_BL_sm_out_exp = []
+EEC_dose_bird_AR_BL_md_out_exp = []
+EEC_dose_bird_AR_BL_lg_out_exp = []
+EEC_dose_bird_SE_BL_sm_out_exp = []
+EEC_dose_bird_SE_BL_md_out_exp = []
+EEC_dose_bird_SE_BL_lg_out_exp = []
 
-ARQ_bird_SG_BL_sm_out_exp=[]
-ARQ_bird_SG_BL_md_out_exp=[]
-ARQ_bird_SG_BL_lg_out_exp=[]
-ARQ_bird_TG_BL_sm_out_exp=[]
-ARQ_bird_TG_BL_md_out_exp=[]
-ARQ_bird_TG_BL_lg_out_exp=[]
-ARQ_bird_BP_BL_sm_out_exp=[]
-ARQ_bird_BP_BL_md_out_exp=[]
-ARQ_bird_BP_BL_lg_out_exp=[]
-ARQ_bird_FP_BL_sm_out_exp=[]
-ARQ_bird_FP_BL_md_out_exp=[]
-ARQ_bird_FP_BL_lg_out_exp=[]
-ARQ_bird_AR_BL_sm_out_exp=[]
-ARQ_bird_AR_BL_md_out_exp=[]
-ARQ_bird_AR_BL_lg_out_exp=[]
-ARQ_bird_SE_BL_sm_out_exp=[]
-ARQ_bird_SE_BL_md_out_exp=[]
-ARQ_bird_SE_BL_lg_out_exp=[]
+ARQ_bird_SG_BL_sm_out_exp = []
+ARQ_bird_SG_BL_md_out_exp = []
+ARQ_bird_SG_BL_lg_out_exp = []
+ARQ_bird_TG_BL_sm_out_exp = []
+ARQ_bird_TG_BL_md_out_exp = []
+ARQ_bird_TG_BL_lg_out_exp = []
+ARQ_bird_BP_BL_sm_out_exp = []
+ARQ_bird_BP_BL_md_out_exp = []
+ARQ_bird_BP_BL_lg_out_exp = []
+ARQ_bird_FP_BL_sm_out_exp = []
+ARQ_bird_FP_BL_md_out_exp = []
+ARQ_bird_FP_BL_lg_out_exp = []
+ARQ_bird_AR_BL_sm_out_exp = []
+ARQ_bird_AR_BL_md_out_exp = []
+ARQ_bird_AR_BL_lg_out_exp = []
+ARQ_bird_SE_BL_sm_out_exp = []
+ARQ_bird_SE_BL_md_out_exp = []
+ARQ_bird_SE_BL_lg_out_exp = []
 
-ARQ_diet_bird_SG_A_BL_out_exp=[]
-ARQ_diet_bird_SG_C_BL_out_exp=[]
-ARQ_diet_bird_TG_A_BL_out_exp=[]
-ARQ_diet_bird_TG_C_BL_out_exp=[]
-ARQ_diet_bird_BP_A_BL_out_exp=[]
-ARQ_diet_bird_BP_C_BL_out_exp=[]
-ARQ_diet_bird_FP_A_BL_out_exp=[]
-ARQ_diet_bird_FP_C_BL_out_exp=[]
-ARQ_diet_bird_AR_A_BL_out_exp=[]
-ARQ_diet_bird_AR_C_BL_out_exp=[]
+ARQ_diet_bird_SG_A_BL_out_exp = []
+ARQ_diet_bird_SG_C_BL_out_exp = []
+ARQ_diet_bird_TG_A_BL_out_exp = []
+ARQ_diet_bird_TG_C_BL_out_exp = []
+ARQ_diet_bird_BP_A_BL_out_exp = []
+ARQ_diet_bird_BP_C_BL_out_exp = []
+ARQ_diet_bird_FP_A_BL_out_exp = []
+ARQ_diet_bird_FP_C_BL_out_exp = []
+ARQ_diet_bird_AR_A_BL_out_exp = []
+ARQ_diet_bird_AR_C_BL_out_exp = []
 
-EEC_dose_mamm_SG_sm_BL_out_exp=[]
-EEC_dose_mamm_SG_md_BL_out_exp=[]
-EEC_dose_mamm_SG_lg_BL_out_exp=[]
-EEC_dose_mamm_TG_sm_BL_out_exp=[]
-EEC_dose_mamm_TG_md_BL_out_exp=[]
-EEC_dose_mamm_TG_lg_BL_out_exp=[]
-EEC_dose_mamm_BP_sm_BL_out_exp=[]
-EEC_dose_mamm_BP_md_BL_out_exp=[]
-EEC_dose_mamm_BP_lg_BL_out_exp=[]
-EEC_dose_mamm_FP_sm_BL_out_exp=[]
-EEC_dose_mamm_FP_md_BL_out_exp=[]
-EEC_dose_mamm_FP_lg_BL_out_exp=[]
-EEC_dose_mamm_AR_sm_BL_out_exp=[]
-EEC_dose_mamm_AR_md_BL_out_exp=[]
-EEC_dose_mamm_AR_lg_BL_out_exp=[]
-EEC_dose_mamm_SE_sm_BL_out_exp=[]
-EEC_dose_mamm_SE_md_BL_out_exp=[]
-EEC_dose_mamm_SE_lg_BL_out_exp=[]
+EEC_dose_mamm_SG_sm_BL_out_exp = []
+EEC_dose_mamm_SG_md_BL_out_exp = []
+EEC_dose_mamm_SG_lg_BL_out_exp = []
+EEC_dose_mamm_TG_sm_BL_out_exp = []
+EEC_dose_mamm_TG_md_BL_out_exp = []
+EEC_dose_mamm_TG_lg_BL_out_exp = []
+EEC_dose_mamm_BP_sm_BL_out_exp = []
+EEC_dose_mamm_BP_md_BL_out_exp = []
+EEC_dose_mamm_BP_lg_BL_out_exp = []
+EEC_dose_mamm_FP_sm_BL_out_exp = []
+EEC_dose_mamm_FP_md_BL_out_exp = []
+EEC_dose_mamm_FP_lg_BL_out_exp = []
+EEC_dose_mamm_AR_sm_BL_out_exp = []
+EEC_dose_mamm_AR_md_BL_out_exp = []
+EEC_dose_mamm_AR_lg_BL_out_exp = []
+EEC_dose_mamm_SE_sm_BL_out_exp = []
+EEC_dose_mamm_SE_md_BL_out_exp = []
+EEC_dose_mamm_SE_lg_BL_out_exp = []
 
-ARQ_dose_mamm_SG_sm_BL_out_exp=[]
-CRQ_dose_mamm_SG_sm_BL_out_exp=[]
-ARQ_dose_mamm_SG_md_BL_out_exp=[]
-CRQ_dose_mamm_SG_md_BL_out_exp=[]
-ARQ_dose_mamm_SG_lg_BL_out_exp=[]
-CRQ_dose_mamm_SG_lg_BL_out_exp=[]
-ARQ_dose_mamm_TG_sm_BL_out_exp=[]
-CRQ_dose_mamm_TG_sm_BL_out_exp=[]
-ARQ_dose_mamm_TG_md_BL_out_exp=[]
-CRQ_dose_mamm_TG_md_BL_out_exp=[]
-ARQ_dose_mamm_TG_lg_BL_out_exp=[]
-CRQ_dose_mamm_TG_lg_BL_out_exp=[]
-ARQ_dose_mamm_BP_sm_BL_out_exp=[]
-CRQ_dose_mamm_BP_sm_BL_out_exp=[]
-ARQ_dose_mamm_BP_md_BL_out_exp=[]
-CRQ_dose_mamm_BP_md_BL_out_exp=[]
-ARQ_dose_mamm_BP_lg_BL_out_exp=[]
-CRQ_dose_mamm_BP_lg_BL_out_exp=[]
-ARQ_dose_mamm_FP_sm_BL_out_exp=[]
-CRQ_dose_mamm_FP_sm_BL_out_exp=[]
-ARQ_dose_mamm_FP_md_BL_out_exp=[]
-CRQ_dose_mamm_FP_md_BL_out_exp=[]
-ARQ_dose_mamm_FP_lg_BL_out_exp=[]
-CRQ_dose_mamm_FP_lg_BL_out_exp=[]
-ARQ_dose_mamm_AR_sm_BL_out_exp=[]
-CRQ_dose_mamm_AR_sm_BL_out_exp=[]
-ARQ_dose_mamm_AR_md_BL_out_exp=[]
-CRQ_dose_mamm_AR_md_BL_out_exp=[]
-ARQ_dose_mamm_AR_lg_BL_out_exp=[]
-CRQ_dose_mamm_AR_lg_BL_out_exp=[]
-ARQ_dose_mamm_SE_sm_BL_out_exp=[]
-CRQ_dose_mamm_SE_sm_BL_out_exp=[]
-ARQ_dose_mamm_SE_md_BL_out_exp=[]
-CRQ_dose_mamm_SE_md_BL_out_exp=[]
-ARQ_dose_mamm_SE_lg_BL_out_exp=[]
-CRQ_dose_mamm_SE_lg_BL_out_exp=[]
+ARQ_dose_mamm_SG_sm_BL_out_exp = []
+CRQ_dose_mamm_SG_sm_BL_out_exp = []
+ARQ_dose_mamm_SG_md_BL_out_exp = []
+CRQ_dose_mamm_SG_md_BL_out_exp = []
+ARQ_dose_mamm_SG_lg_BL_out_exp = []
+CRQ_dose_mamm_SG_lg_BL_out_exp = []
+ARQ_dose_mamm_TG_sm_BL_out_exp = []
+CRQ_dose_mamm_TG_sm_BL_out_exp = []
+ARQ_dose_mamm_TG_md_BL_out_exp = []
+CRQ_dose_mamm_TG_md_BL_out_exp = []
+ARQ_dose_mamm_TG_lg_BL_out_exp = []
+CRQ_dose_mamm_TG_lg_BL_out_exp = []
+ARQ_dose_mamm_BP_sm_BL_out_exp = []
+CRQ_dose_mamm_BP_sm_BL_out_exp = []
+ARQ_dose_mamm_BP_md_BL_out_exp = []
+CRQ_dose_mamm_BP_md_BL_out_exp = []
+ARQ_dose_mamm_BP_lg_BL_out_exp = []
+CRQ_dose_mamm_BP_lg_BL_out_exp = []
+ARQ_dose_mamm_FP_sm_BL_out_exp = []
+CRQ_dose_mamm_FP_sm_BL_out_exp = []
+ARQ_dose_mamm_FP_md_BL_out_exp = []
+CRQ_dose_mamm_FP_md_BL_out_exp = []
+ARQ_dose_mamm_FP_lg_BL_out_exp = []
+CRQ_dose_mamm_FP_lg_BL_out_exp = []
+ARQ_dose_mamm_AR_sm_BL_out_exp = []
+CRQ_dose_mamm_AR_sm_BL_out_exp = []
+ARQ_dose_mamm_AR_md_BL_out_exp = []
+CRQ_dose_mamm_AR_md_BL_out_exp = []
+ARQ_dose_mamm_AR_lg_BL_out_exp = []
+CRQ_dose_mamm_AR_lg_BL_out_exp = []
+ARQ_dose_mamm_SE_sm_BL_out_exp = []
+CRQ_dose_mamm_SE_sm_BL_out_exp = []
+ARQ_dose_mamm_SE_md_BL_out_exp = []
+CRQ_dose_mamm_SE_md_BL_out_exp = []
+ARQ_dose_mamm_SE_lg_BL_out_exp = []
+CRQ_dose_mamm_SE_lg_BL_out_exp = []
 
-ARQ_diet_mamm_SG_BL_out_exp=[]
-CRQ_diet_mamm_SG_BL_out_exp=[]
-ARQ_diet_mamm_TG_BL_out_exp=[]
-CRQ_diet_mamm_TG_BL_out_exp=[]
-ARQ_diet_mamm_BP_BL_out_exp=[]
-CRQ_diet_mamm_BP_BL_out_exp=[]
-ARQ_diet_mamm_FP_BL_out_exp=[]
-CRQ_diet_mamm_FP_BL_out_exp=[]
-ARQ_diet_mamm_AR_BL_out_exp=[]
-CRQ_diet_mamm_AR_BL_out_exp=[]
+ARQ_diet_mamm_SG_BL_out_exp = []
+CRQ_diet_mamm_SG_BL_out_exp = []
+ARQ_diet_mamm_TG_BL_out_exp = []
+CRQ_diet_mamm_TG_BL_out_exp = []
+ARQ_diet_mamm_BP_BL_out_exp = []
+CRQ_diet_mamm_BP_BL_out_exp = []
+ARQ_diet_mamm_FP_BL_out_exp = []
+CRQ_diet_mamm_FP_BL_out_exp = []
+ARQ_diet_mamm_AR_BL_out_exp = []
+CRQ_diet_mamm_AR_BL_out_exp = []
 
-LD50_bl_bird_sm_out_exp=[]
-LD50_bl_mamm_sm_out_exp=[]
-LD50_bl_bird_md_out_exp=[]
-LD50_bl_mamm_md_out_exp=[]
-LD50_bl_bird_lg_out_exp=[]
-LD50_bl_mamm_lg_out_exp=[]
+LD50_bl_bird_sm_out_exp = []
+LD50_bl_mamm_sm_out_exp = []
+LD50_bl_bird_md_out_exp = []
+LD50_bl_mamm_md_out_exp = []
+LD50_bl_bird_lg_out_exp = []
+LD50_bl_mamm_lg_out_exp = []
 
-sa_bird_1_s_out_exp=[]
-sa_bird_2_s_out_exp=[]
-sc_bird_s_out_exp=[]
-sa_mamm_1_s_out_exp=[]
-sa_mamm_2_s_out_exp=[]
-sc_mamm_s_out_exp=[]
-sa_bird_1_m_out_exp=[]
-sa_bird_2_m_out_exp=[]
-sc_bird_m_out_exp=[]
-sa_mamm_1_m_out_exp=[]
-sa_mamm_2_m_out_exp=[]
-sc_mamm_m_out_exp=[]
-sa_bird_1_l_out_exp=[]
-sa_bird_2_l_out_exp=[]
-sc_bird_l_out_exp=[]
-sa_mamm_1_l_out_exp=[]
-sa_mamm_2_l_out_exp=[]
-sc_mamm_l_out_exp=[]
+sa_bird_1_s_out_exp = []
+sa_bird_2_s_out_exp = []
+sc_bird_s_out_exp = []
+sa_mamm_1_s_out_exp = []
+sa_mamm_2_s_out_exp = []
+sc_mamm_s_out_exp = []
+sa_bird_1_m_out_exp = []
+sa_bird_2_m_out_exp = []
+sc_bird_m_out_exp = []
+sa_mamm_1_m_out_exp = []
+sa_mamm_2_m_out_exp = []
+sc_mamm_m_out_exp = []
+sa_bird_1_l_out_exp = []
+sa_bird_2_l_out_exp = []
+sc_bird_l_out_exp = []
+sa_mamm_1_l_out_exp = []
+sa_mamm_2_l_out_exp = []
+sc_mamm_l_out_exp = []
 
-html_qaqc=""
+html_qaqc = ""
 data.next()
 for row_inp in data:
-###Inputs###########
+    ###Inputs###########
     chem_name_temp = str(row_inp[0])
     chem_name.append(chem_name_temp)
     use_temp = str(row_inp[1])
     use.append(use_temp)
     formu_name_temp = str(row_inp[2])
     formu_name.append(formu_name_temp)
-    a_i_temp = float(row_inp[3])/100
+    a_i_temp = float(row_inp[3]) / 100
     a_i.append(a_i_temp)
     Application_type_temp = str(row_inp[4])
     Application_type.append(Application_type_temp)
@@ -228,7 +234,7 @@ for row_inp in data:
     b_w_temp = float(row_inp[9])
     b_w.append(b_w_temp)
     try:
-        p_i_temp = float(row_inp[10])/100
+        p_i_temp = float(row_inp[10]) / 100
     except:
         p_i_temp = 'N/A'
     p_i.append(p_i_temp)
@@ -239,29 +245,32 @@ for row_inp in data:
     n_a_temp = float(row_inp[13])
     n_a.append(n_a_temp)
     rate_out_temp = row_inp[14]
-    rate_out_temp=rate_out_temp.split(',')
-    rate_out_temp=[float(i) for i in rate_out_temp]
+    rate_out_temp = rate_out_temp.split(',')
+    rate_out_temp = [float(i) for i in rate_out_temp]
     rate_out.append(rate_out_temp)
     day_out_temp = str(row_inp[15])
-    day_out_temp=day_out_temp.split(',')
-    day_out_temp=[float(i) for i in day_out_temp]
+    day_out_temp = day_out_temp.split(',')
+    day_out_temp = [float(i) for i in day_out_temp]
     day_out.append(day_out_temp)
     ld50_bird_temp = float(row_inp[16])
     ld50_bird.append(ld50_bird_temp)
     Species_of_the_tested_bird_avian_ld50_temp = str(row_inp[17])
-    Species_of_the_tested_bird_avian_ld50.append(Species_of_the_tested_bird_avian_ld50_temp)
+    Species_of_the_tested_bird_avian_ld50.append(
+        Species_of_the_tested_bird_avian_ld50_temp)
     tw_bird_ld50_temp = float(row_inp[18])
     tw_bird_ld50.append(tw_bird_ld50_temp)
     lc50_bird_temp = float(row_inp[19])
     lc50_bird.append(lc50_bird_temp)
     Species_of_the_tested_bird_avian_lc50_temp = str(row_inp[20])
-    Species_of_the_tested_bird_avian_lc50.append(Species_of_the_tested_bird_avian_lc50_temp)
+    Species_of_the_tested_bird_avian_lc50.append(
+        Species_of_the_tested_bird_avian_lc50_temp)
     tw_bird_lc50_temp = float(row_inp[21])
     tw_bird_lc50.append(tw_bird_lc50_temp)
     NOAEC_bird_temp = float(row_inp[22])
     NOAEC_bird.append(NOAEC_bird_temp)
     Species_of_the_tested_bird_avian_NOAEC_temp = str(row_inp[23])
-    Species_of_the_tested_bird_avian_NOAEC.append(Species_of_the_tested_bird_avian_NOAEC_temp)
+    Species_of_the_tested_bird_avian_NOAEC.append(
+        Species_of_the_tested_bird_avian_NOAEC_temp)
     tw_bird_NOAEC_temp = float(row_inp[24])
     tw_bird_NOAEC.append(tw_bird_NOAEC_temp)
     try:
@@ -270,7 +279,8 @@ for row_inp in data:
         NOAEL_bird_temp = 'N/A'
     NOAEL_bird.append(NOAEL_bird_temp)
     Species_of_the_tested_bird_avian_NOAEL_temp = str(row_inp[26])
-    Species_of_the_tested_bird_avian_NOAEL.append(Species_of_the_tested_bird_avian_NOAEL_temp)
+    Species_of_the_tested_bird_avian_NOAEL.append(
+        Species_of_the_tested_bird_avian_NOAEL_temp)
     tw_bird_NOAEL_temp = float(row_inp[27])
     tw_bird_NOAEL.append(tw_bird_NOAEL_temp)
     aw_bird_sm_temp = float(row_inp[28])
@@ -301,12 +311,49 @@ for row_inp in data:
     tw_mamm_temp = float(row_inp[39])
     tw_mamm.append(tw_mamm_temp)
 
-    trex2_obj = trex2_model.trex2("qaqc", chem_name_temp, use_temp, formu_name_temp, a_i_temp, Application_type_temp, seed_treatment_name_temp, m_s_r_p_temp, crop_use_temp, r_s_temp, b_w_temp, p_i_temp, den_temp, h_l_temp, n_a_temp, rate_out_temp, day_out_temp,
-                    ld50_bird_temp, lc50_bird_temp, NOAEC_bird_temp, NOAEL_bird_temp, aw_bird_sm_temp, aw_bird_md_temp, aw_bird_lg_temp, 
-                    Species_of_the_tested_bird_avian_ld50_temp, Species_of_the_tested_bird_avian_lc50_temp, Species_of_the_tested_bird_avian_NOAEC_temp, Species_of_the_tested_bird_avian_NOAEL_temp,
-                    tw_bird_ld50_temp, tw_bird_lc50_temp, tw_bird_NOAEC_temp, tw_bird_NOAEL_temp,
-                    x_temp, ld50_mamm_temp, lc50_mamm_temp, NOAEC_mamm_temp, NOAEL_mamm_temp, aw_mamm_sm_temp, aw_mamm_md_temp, aw_mamm_lg_temp, tw_mamm_temp,
-                    m_s_r_p_temp)
+    trex2_obj = trex2_model.trex2(
+        "qaqc",
+        chem_name_temp,
+        use_temp,
+        formu_name_temp,
+        a_i_temp,
+        Application_type_temp,
+        seed_treatment_name_temp,
+        m_s_r_p_temp,
+        crop_use_temp,
+        r_s_temp,
+        b_w_temp,
+        p_i_temp,
+        den_temp,
+        h_l_temp,
+        n_a_temp,
+        rate_out_temp,
+        day_out_temp,
+        ld50_bird_temp,
+        lc50_bird_temp,
+        NOAEC_bird_temp,
+        NOAEL_bird_temp,
+        aw_bird_sm_temp,
+        aw_bird_md_temp,
+        aw_bird_lg_temp,
+        Species_of_the_tested_bird_avian_ld50_temp,
+        Species_of_the_tested_bird_avian_lc50_temp,
+        Species_of_the_tested_bird_avian_NOAEC_temp,
+        Species_of_the_tested_bird_avian_NOAEL_temp,
+        tw_bird_ld50_temp,
+        tw_bird_lc50_temp,
+        tw_bird_NOAEC_temp,
+        tw_bird_NOAEL_temp,
+        x_temp,
+        ld50_mamm_temp,
+        lc50_mamm_temp,
+        NOAEC_mamm_temp,
+        NOAEL_mamm_temp,
+        aw_mamm_sm_temp,
+        aw_mamm_md_temp,
+        aw_mamm_lg_temp,
+        tw_mamm_temp,
+        m_s_r_p_temp)
 
     if Application_type_temp != 'Seed Treatment':
         EEC_diet_SG_BL_out_exp.append(float(row_inp[40]))
@@ -438,134 +485,216 @@ for row_inp in data:
         LD50_bl_bird_lg_out_exp.append(float(row_inp[159]))
         LD50_bl_mamm_lg_out_exp.append(float(row_inp[160]))
 
-        trex2_obj.EEC_diet_SG_BL_out_exp=EEC_diet_SG_BL_out_exp[0]
-        trex2_obj.EEC_diet_TG_BL_out_exp=EEC_diet_TG_BL_out_exp[0]
-        trex2_obj.EEC_diet_BP_BL_out_exp=EEC_diet_BP_BL_out_exp[0]
-        trex2_obj.EEC_diet_FR_BL_out_exp=EEC_diet_FR_BL_out_exp[0]
-        trex2_obj.EEC_diet_AR_BL_out_exp=EEC_diet_AR_BL_out_exp[0]
+        trex2_obj.EEC_diet_SG_BL_out_exp = EEC_diet_SG_BL_out_exp[0]
+        trex2_obj.EEC_diet_TG_BL_out_exp = EEC_diet_TG_BL_out_exp[0]
+        trex2_obj.EEC_diet_BP_BL_out_exp = EEC_diet_BP_BL_out_exp[0]
+        trex2_obj.EEC_diet_FR_BL_out_exp = EEC_diet_FR_BL_out_exp[0]
+        trex2_obj.EEC_diet_AR_BL_out_exp = EEC_diet_AR_BL_out_exp[0]
 
-        trex2_obj.EEC_dose_bird_SG_BL_sm_out_exp=EEC_dose_bird_SG_BL_sm_out_exp[0]
-        trex2_obj.EEC_dose_bird_SG_BL_md_out_exp=EEC_dose_bird_SG_BL_md_out_exp[0]
-        trex2_obj.EEC_dose_bird_SG_BL_lg_out_exp=EEC_dose_bird_SG_BL_lg_out_exp[0]
-        trex2_obj.EEC_dose_bird_TG_BL_sm_out_exp=EEC_dose_bird_TG_BL_sm_out_exp[0]
-        trex2_obj.EEC_dose_bird_TG_BL_md_out_exp=EEC_dose_bird_TG_BL_md_out_exp[0]
-        trex2_obj.EEC_dose_bird_TG_BL_lg_out_exp=EEC_dose_bird_TG_BL_lg_out_exp[0]
-        trex2_obj.EEC_dose_bird_BP_BL_sm_out_exp=EEC_dose_bird_BP_BL_sm_out_exp[0]
-        trex2_obj.EEC_dose_bird_BP_BL_md_out_exp=EEC_dose_bird_BP_BL_md_out_exp[0]
-        trex2_obj.EEC_dose_bird_BP_BL_lg_out_exp=EEC_dose_bird_BP_BL_lg_out_exp[0]
-        trex2_obj.EEC_dose_bird_FP_BL_sm_out_exp=EEC_dose_bird_FP_BL_sm_out_exp[0]
-        trex2_obj.EEC_dose_bird_FP_BL_md_out_exp=EEC_dose_bird_FP_BL_md_out_exp[0]
-        trex2_obj.EEC_dose_bird_FP_BL_lg_out_exp=EEC_dose_bird_FP_BL_lg_out_exp[0]
-        trex2_obj.EEC_dose_bird_AR_BL_sm_out_exp=EEC_dose_bird_AR_BL_sm_out_exp[0]
-        trex2_obj.EEC_dose_bird_AR_BL_md_out_exp=EEC_dose_bird_AR_BL_md_out_exp[0]
-        trex2_obj.EEC_dose_bird_AR_BL_lg_out_exp=EEC_dose_bird_AR_BL_lg_out_exp[0]
-        trex2_obj.EEC_dose_bird_SE_BL_sm_out_exp=EEC_dose_bird_SE_BL_sm_out_exp[0]
-        trex2_obj.EEC_dose_bird_SE_BL_md_out_exp=EEC_dose_bird_SE_BL_md_out_exp[0]
-        trex2_obj.EEC_dose_bird_SE_BL_lg_out_exp=EEC_dose_bird_SE_BL_lg_out_exp[0]
+        trex2_obj.EEC_dose_bird_SG_BL_sm_out_exp = EEC_dose_bird_SG_BL_sm_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_SG_BL_md_out_exp = EEC_dose_bird_SG_BL_md_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_SG_BL_lg_out_exp = EEC_dose_bird_SG_BL_lg_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_TG_BL_sm_out_exp = EEC_dose_bird_TG_BL_sm_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_TG_BL_md_out_exp = EEC_dose_bird_TG_BL_md_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_TG_BL_lg_out_exp = EEC_dose_bird_TG_BL_lg_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_BP_BL_sm_out_exp = EEC_dose_bird_BP_BL_sm_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_BP_BL_md_out_exp = EEC_dose_bird_BP_BL_md_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_BP_BL_lg_out_exp = EEC_dose_bird_BP_BL_lg_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_FP_BL_sm_out_exp = EEC_dose_bird_FP_BL_sm_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_FP_BL_md_out_exp = EEC_dose_bird_FP_BL_md_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_FP_BL_lg_out_exp = EEC_dose_bird_FP_BL_lg_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_AR_BL_sm_out_exp = EEC_dose_bird_AR_BL_sm_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_AR_BL_md_out_exp = EEC_dose_bird_AR_BL_md_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_AR_BL_lg_out_exp = EEC_dose_bird_AR_BL_lg_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_SE_BL_sm_out_exp = EEC_dose_bird_SE_BL_sm_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_SE_BL_md_out_exp = EEC_dose_bird_SE_BL_md_out_exp[
+            0]
+        trex2_obj.EEC_dose_bird_SE_BL_lg_out_exp = EEC_dose_bird_SE_BL_lg_out_exp[
+            0]
 
-        trex2_obj.ARQ_bird_SG_BL_sm_out_exp=ARQ_bird_SG_BL_sm_out_exp[0]
-        trex2_obj.ARQ_bird_SG_BL_md_out_exp=ARQ_bird_SG_BL_md_out_exp[0]
-        trex2_obj.ARQ_bird_SG_BL_lg_out_exp=ARQ_bird_SG_BL_lg_out_exp[0]
-        trex2_obj.ARQ_bird_TG_BL_sm_out_exp=ARQ_bird_TG_BL_sm_out_exp[0]
-        trex2_obj.ARQ_bird_TG_BL_md_out_exp=ARQ_bird_TG_BL_md_out_exp[0]
-        trex2_obj.ARQ_bird_TG_BL_lg_out_exp=ARQ_bird_TG_BL_lg_out_exp[0]
-        trex2_obj.ARQ_bird_BP_BL_sm_out_exp=ARQ_bird_BP_BL_sm_out_exp[0]
-        trex2_obj.ARQ_bird_BP_BL_md_out_exp=ARQ_bird_BP_BL_md_out_exp[0]
-        trex2_obj.ARQ_bird_BP_BL_lg_out_exp=ARQ_bird_BP_BL_lg_out_exp[0]
-        trex2_obj.ARQ_bird_FP_BL_sm_out_exp=ARQ_bird_FP_BL_sm_out_exp[0]
-        trex2_obj.ARQ_bird_FP_BL_md_out_exp=ARQ_bird_FP_BL_md_out_exp[0]
-        trex2_obj.ARQ_bird_FP_BL_lg_out_exp=ARQ_bird_FP_BL_lg_out_exp[0]
-        trex2_obj.ARQ_bird_AR_BL_sm_out_exp=ARQ_bird_AR_BL_sm_out_exp[0]
-        trex2_obj.ARQ_bird_AR_BL_md_out_exp=ARQ_bird_AR_BL_md_out_exp[0]
-        trex2_obj.ARQ_bird_AR_BL_lg_out_exp=ARQ_bird_AR_BL_lg_out_exp[0]
-        trex2_obj.ARQ_bird_SE_BL_sm_out_exp=ARQ_bird_SE_BL_sm_out_exp[0]
-        trex2_obj.ARQ_bird_SE_BL_md_out_exp=ARQ_bird_SE_BL_md_out_exp[0]
-        trex2_obj.ARQ_bird_SE_BL_lg_out_exp=ARQ_bird_SE_BL_lg_out_exp[0]
+        trex2_obj.ARQ_bird_SG_BL_sm_out_exp = ARQ_bird_SG_BL_sm_out_exp[0]
+        trex2_obj.ARQ_bird_SG_BL_md_out_exp = ARQ_bird_SG_BL_md_out_exp[0]
+        trex2_obj.ARQ_bird_SG_BL_lg_out_exp = ARQ_bird_SG_BL_lg_out_exp[0]
+        trex2_obj.ARQ_bird_TG_BL_sm_out_exp = ARQ_bird_TG_BL_sm_out_exp[0]
+        trex2_obj.ARQ_bird_TG_BL_md_out_exp = ARQ_bird_TG_BL_md_out_exp[0]
+        trex2_obj.ARQ_bird_TG_BL_lg_out_exp = ARQ_bird_TG_BL_lg_out_exp[0]
+        trex2_obj.ARQ_bird_BP_BL_sm_out_exp = ARQ_bird_BP_BL_sm_out_exp[0]
+        trex2_obj.ARQ_bird_BP_BL_md_out_exp = ARQ_bird_BP_BL_md_out_exp[0]
+        trex2_obj.ARQ_bird_BP_BL_lg_out_exp = ARQ_bird_BP_BL_lg_out_exp[0]
+        trex2_obj.ARQ_bird_FP_BL_sm_out_exp = ARQ_bird_FP_BL_sm_out_exp[0]
+        trex2_obj.ARQ_bird_FP_BL_md_out_exp = ARQ_bird_FP_BL_md_out_exp[0]
+        trex2_obj.ARQ_bird_FP_BL_lg_out_exp = ARQ_bird_FP_BL_lg_out_exp[0]
+        trex2_obj.ARQ_bird_AR_BL_sm_out_exp = ARQ_bird_AR_BL_sm_out_exp[0]
+        trex2_obj.ARQ_bird_AR_BL_md_out_exp = ARQ_bird_AR_BL_md_out_exp[0]
+        trex2_obj.ARQ_bird_AR_BL_lg_out_exp = ARQ_bird_AR_BL_lg_out_exp[0]
+        trex2_obj.ARQ_bird_SE_BL_sm_out_exp = ARQ_bird_SE_BL_sm_out_exp[0]
+        trex2_obj.ARQ_bird_SE_BL_md_out_exp = ARQ_bird_SE_BL_md_out_exp[0]
+        trex2_obj.ARQ_bird_SE_BL_lg_out_exp = ARQ_bird_SE_BL_lg_out_exp[0]
 
-        trex2_obj.ARQ_diet_bird_SG_A_BL_out_exp=ARQ_diet_bird_SG_A_BL_out_exp[0]
-        trex2_obj.ARQ_diet_bird_SG_C_BL_out_exp=ARQ_diet_bird_SG_C_BL_out_exp[0]
-        trex2_obj.ARQ_diet_bird_TG_A_BL_out_exp=ARQ_diet_bird_TG_A_BL_out_exp[0]
-        trex2_obj.ARQ_diet_bird_TG_C_BL_out_exp=ARQ_diet_bird_TG_C_BL_out_exp[0]
-        trex2_obj.ARQ_diet_bird_BP_A_BL_out_exp=ARQ_diet_bird_BP_A_BL_out_exp[0]
-        trex2_obj.ARQ_diet_bird_BP_C_BL_out_exp=ARQ_diet_bird_BP_C_BL_out_exp[0]
-        trex2_obj.ARQ_diet_bird_FP_A_BL_out_exp=ARQ_diet_bird_FP_A_BL_out_exp[0]
-        trex2_obj.ARQ_diet_bird_FP_C_BL_out_exp=ARQ_diet_bird_FP_C_BL_out_exp[0]
-        trex2_obj.ARQ_diet_bird_AR_A_BL_out_exp=ARQ_diet_bird_AR_A_BL_out_exp[0]
-        trex2_obj.ARQ_diet_bird_AR_C_BL_out_exp=ARQ_diet_bird_AR_C_BL_out_exp[0]
+        trex2_obj.ARQ_diet_bird_SG_A_BL_out_exp = ARQ_diet_bird_SG_A_BL_out_exp[
+            0]
+        trex2_obj.ARQ_diet_bird_SG_C_BL_out_exp = ARQ_diet_bird_SG_C_BL_out_exp[
+            0]
+        trex2_obj.ARQ_diet_bird_TG_A_BL_out_exp = ARQ_diet_bird_TG_A_BL_out_exp[
+            0]
+        trex2_obj.ARQ_diet_bird_TG_C_BL_out_exp = ARQ_diet_bird_TG_C_BL_out_exp[
+            0]
+        trex2_obj.ARQ_diet_bird_BP_A_BL_out_exp = ARQ_diet_bird_BP_A_BL_out_exp[
+            0]
+        trex2_obj.ARQ_diet_bird_BP_C_BL_out_exp = ARQ_diet_bird_BP_C_BL_out_exp[
+            0]
+        trex2_obj.ARQ_diet_bird_FP_A_BL_out_exp = ARQ_diet_bird_FP_A_BL_out_exp[
+            0]
+        trex2_obj.ARQ_diet_bird_FP_C_BL_out_exp = ARQ_diet_bird_FP_C_BL_out_exp[
+            0]
+        trex2_obj.ARQ_diet_bird_AR_A_BL_out_exp = ARQ_diet_bird_AR_A_BL_out_exp[
+            0]
+        trex2_obj.ARQ_diet_bird_AR_C_BL_out_exp = ARQ_diet_bird_AR_C_BL_out_exp[
+            0]
 
-        trex2_obj.EEC_dose_mamm_SG_sm_BL_out_exp=EEC_dose_mamm_SG_sm_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_SG_md_BL_out_exp=EEC_dose_mamm_SG_md_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_SG_lg_BL_out_exp=EEC_dose_mamm_SG_lg_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_TG_sm_BL_out_exp=EEC_dose_mamm_TG_sm_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_TG_md_BL_out_exp=EEC_dose_mamm_TG_md_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_TG_lg_BL_out_exp=EEC_dose_mamm_TG_lg_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_BP_sm_BL_out_exp=EEC_dose_mamm_BP_sm_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_BP_md_BL_out_exp=EEC_dose_mamm_BP_md_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_BP_lg_BL_out_exp=EEC_dose_mamm_BP_lg_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_FP_sm_BL_out_exp=EEC_dose_mamm_FP_sm_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_FP_md_BL_out_exp=EEC_dose_mamm_FP_md_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_FP_lg_BL_out_exp=EEC_dose_mamm_FP_lg_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_AR_sm_BL_out_exp=EEC_dose_mamm_AR_sm_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_AR_md_BL_out_exp=EEC_dose_mamm_AR_md_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_AR_lg_BL_out_exp=EEC_dose_mamm_AR_lg_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_SE_sm_BL_out_exp=EEC_dose_mamm_SE_sm_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_SE_md_BL_out_exp=EEC_dose_mamm_SE_md_BL_out_exp[0]
-        trex2_obj.EEC_dose_mamm_SE_lg_BL_out_exp=EEC_dose_mamm_SE_lg_BL_out_exp[0]
+        trex2_obj.EEC_dose_mamm_SG_sm_BL_out_exp = EEC_dose_mamm_SG_sm_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_SG_md_BL_out_exp = EEC_dose_mamm_SG_md_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_SG_lg_BL_out_exp = EEC_dose_mamm_SG_lg_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_TG_sm_BL_out_exp = EEC_dose_mamm_TG_sm_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_TG_md_BL_out_exp = EEC_dose_mamm_TG_md_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_TG_lg_BL_out_exp = EEC_dose_mamm_TG_lg_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_BP_sm_BL_out_exp = EEC_dose_mamm_BP_sm_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_BP_md_BL_out_exp = EEC_dose_mamm_BP_md_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_BP_lg_BL_out_exp = EEC_dose_mamm_BP_lg_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_FP_sm_BL_out_exp = EEC_dose_mamm_FP_sm_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_FP_md_BL_out_exp = EEC_dose_mamm_FP_md_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_FP_lg_BL_out_exp = EEC_dose_mamm_FP_lg_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_AR_sm_BL_out_exp = EEC_dose_mamm_AR_sm_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_AR_md_BL_out_exp = EEC_dose_mamm_AR_md_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_AR_lg_BL_out_exp = EEC_dose_mamm_AR_lg_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_SE_sm_BL_out_exp = EEC_dose_mamm_SE_sm_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_SE_md_BL_out_exp = EEC_dose_mamm_SE_md_BL_out_exp[
+            0]
+        trex2_obj.EEC_dose_mamm_SE_lg_BL_out_exp = EEC_dose_mamm_SE_lg_BL_out_exp[
+            0]
 
-        trex2_obj.ARQ_dose_mamm_SG_sm_BL_out_exp=ARQ_dose_mamm_SG_sm_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_SG_sm_BL_out_exp=CRQ_dose_mamm_SG_sm_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_SG_md_BL_out_exp=ARQ_dose_mamm_SG_md_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_SG_md_BL_out_exp=CRQ_dose_mamm_SG_md_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_SG_lg_BL_out_exp=ARQ_dose_mamm_SG_lg_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_SG_lg_BL_out_exp=CRQ_dose_mamm_SG_lg_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_TG_sm_BL_out_exp=ARQ_dose_mamm_TG_sm_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_TG_sm_BL_out_exp=CRQ_dose_mamm_TG_sm_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_TG_md_BL_out_exp=ARQ_dose_mamm_TG_md_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_TG_md_BL_out_exp=CRQ_dose_mamm_TG_md_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_TG_lg_BL_out_exp=ARQ_dose_mamm_TG_lg_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_TG_lg_BL_out_exp=CRQ_dose_mamm_TG_lg_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_BP_sm_BL_out_exp=ARQ_dose_mamm_BP_sm_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_BP_sm_BL_out_exp=CRQ_dose_mamm_BP_sm_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_BP_md_BL_out_exp=ARQ_dose_mamm_BP_md_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_BP_md_BL_out_exp=CRQ_dose_mamm_BP_md_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_BP_lg_BL_out_exp=ARQ_dose_mamm_BP_lg_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_BP_lg_BL_out_exp=CRQ_dose_mamm_BP_lg_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_FP_sm_BL_out_exp=ARQ_dose_mamm_FP_sm_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_FP_sm_BL_out_exp=CRQ_dose_mamm_FP_sm_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_FP_md_BL_out_exp=ARQ_dose_mamm_FP_md_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_FP_md_BL_out_exp=CRQ_dose_mamm_FP_md_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_FP_lg_BL_out_exp=ARQ_dose_mamm_FP_lg_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_FP_lg_BL_out_exp=CRQ_dose_mamm_FP_lg_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_AR_sm_BL_out_exp=ARQ_dose_mamm_AR_sm_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_AR_sm_BL_out_exp=CRQ_dose_mamm_AR_sm_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_AR_md_BL_out_exp=ARQ_dose_mamm_AR_md_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_AR_md_BL_out_exp=CRQ_dose_mamm_AR_md_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_AR_lg_BL_out_exp=ARQ_dose_mamm_AR_lg_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_AR_lg_BL_out_exp=CRQ_dose_mamm_AR_lg_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_SE_sm_BL_out_exp=ARQ_dose_mamm_SE_sm_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_SE_sm_BL_out_exp=CRQ_dose_mamm_SE_sm_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_SE_md_BL_out_exp=ARQ_dose_mamm_SE_md_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_SE_md_BL_out_exp=CRQ_dose_mamm_SE_md_BL_out_exp[0]
-        trex2_obj.ARQ_dose_mamm_SE_lg_BL_out_exp=ARQ_dose_mamm_SE_lg_BL_out_exp[0]
-        trex2_obj.CRQ_dose_mamm_SE_lg_BL_out_exp=CRQ_dose_mamm_SE_lg_BL_out_exp[0]
+        trex2_obj.ARQ_dose_mamm_SG_sm_BL_out_exp = ARQ_dose_mamm_SG_sm_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_SG_sm_BL_out_exp = CRQ_dose_mamm_SG_sm_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_SG_md_BL_out_exp = ARQ_dose_mamm_SG_md_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_SG_md_BL_out_exp = CRQ_dose_mamm_SG_md_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_SG_lg_BL_out_exp = ARQ_dose_mamm_SG_lg_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_SG_lg_BL_out_exp = CRQ_dose_mamm_SG_lg_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_TG_sm_BL_out_exp = ARQ_dose_mamm_TG_sm_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_TG_sm_BL_out_exp = CRQ_dose_mamm_TG_sm_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_TG_md_BL_out_exp = ARQ_dose_mamm_TG_md_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_TG_md_BL_out_exp = CRQ_dose_mamm_TG_md_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_TG_lg_BL_out_exp = ARQ_dose_mamm_TG_lg_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_TG_lg_BL_out_exp = CRQ_dose_mamm_TG_lg_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_BP_sm_BL_out_exp = ARQ_dose_mamm_BP_sm_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_BP_sm_BL_out_exp = CRQ_dose_mamm_BP_sm_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_BP_md_BL_out_exp = ARQ_dose_mamm_BP_md_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_BP_md_BL_out_exp = CRQ_dose_mamm_BP_md_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_BP_lg_BL_out_exp = ARQ_dose_mamm_BP_lg_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_BP_lg_BL_out_exp = CRQ_dose_mamm_BP_lg_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_FP_sm_BL_out_exp = ARQ_dose_mamm_FP_sm_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_FP_sm_BL_out_exp = CRQ_dose_mamm_FP_sm_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_FP_md_BL_out_exp = ARQ_dose_mamm_FP_md_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_FP_md_BL_out_exp = CRQ_dose_mamm_FP_md_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_FP_lg_BL_out_exp = ARQ_dose_mamm_FP_lg_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_FP_lg_BL_out_exp = CRQ_dose_mamm_FP_lg_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_AR_sm_BL_out_exp = ARQ_dose_mamm_AR_sm_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_AR_sm_BL_out_exp = CRQ_dose_mamm_AR_sm_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_AR_md_BL_out_exp = ARQ_dose_mamm_AR_md_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_AR_md_BL_out_exp = CRQ_dose_mamm_AR_md_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_AR_lg_BL_out_exp = ARQ_dose_mamm_AR_lg_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_AR_lg_BL_out_exp = CRQ_dose_mamm_AR_lg_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_SE_sm_BL_out_exp = ARQ_dose_mamm_SE_sm_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_SE_sm_BL_out_exp = CRQ_dose_mamm_SE_sm_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_SE_md_BL_out_exp = ARQ_dose_mamm_SE_md_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_SE_md_BL_out_exp = CRQ_dose_mamm_SE_md_BL_out_exp[
+            0]
+        trex2_obj.ARQ_dose_mamm_SE_lg_BL_out_exp = ARQ_dose_mamm_SE_lg_BL_out_exp[
+            0]
+        trex2_obj.CRQ_dose_mamm_SE_lg_BL_out_exp = CRQ_dose_mamm_SE_lg_BL_out_exp[
+            0]
 
-        trex2_obj.ARQ_diet_mamm_SG_BL_out_exp=ARQ_diet_mamm_SG_BL_out_exp[0]
-        trex2_obj.CRQ_diet_mamm_SG_BL_out_exp=CRQ_diet_mamm_SG_BL_out_exp[0]
-        trex2_obj.ARQ_diet_mamm_TG_BL_out_exp=ARQ_diet_mamm_TG_BL_out_exp[0]
-        trex2_obj.CRQ_diet_mamm_TG_BL_out_exp=CRQ_diet_mamm_TG_BL_out_exp[0]
-        trex2_obj.ARQ_diet_mamm_BP_BL_out_exp=ARQ_diet_mamm_BP_BL_out_exp[0]
-        trex2_obj.CRQ_diet_mamm_BP_BL_out_exp=CRQ_diet_mamm_BP_BL_out_exp[0]
-        trex2_obj.ARQ_diet_mamm_FP_BL_out_exp=ARQ_diet_mamm_FP_BL_out_exp[0]
-        trex2_obj.CRQ_diet_mamm_FP_BL_out_exp=CRQ_diet_mamm_FP_BL_out_exp[0]
-        trex2_obj.ARQ_diet_mamm_AR_BL_out_exp=ARQ_diet_mamm_AR_BL_out_exp[0]
-        trex2_obj.CRQ_diet_mamm_AR_BL_out_exp=CRQ_diet_mamm_AR_BL_out_exp[0]
+        trex2_obj.ARQ_diet_mamm_SG_BL_out_exp = ARQ_diet_mamm_SG_BL_out_exp[0]
+        trex2_obj.CRQ_diet_mamm_SG_BL_out_exp = CRQ_diet_mamm_SG_BL_out_exp[0]
+        trex2_obj.ARQ_diet_mamm_TG_BL_out_exp = ARQ_diet_mamm_TG_BL_out_exp[0]
+        trex2_obj.CRQ_diet_mamm_TG_BL_out_exp = CRQ_diet_mamm_TG_BL_out_exp[0]
+        trex2_obj.ARQ_diet_mamm_BP_BL_out_exp = ARQ_diet_mamm_BP_BL_out_exp[0]
+        trex2_obj.CRQ_diet_mamm_BP_BL_out_exp = CRQ_diet_mamm_BP_BL_out_exp[0]
+        trex2_obj.ARQ_diet_mamm_FP_BL_out_exp = ARQ_diet_mamm_FP_BL_out_exp[0]
+        trex2_obj.CRQ_diet_mamm_FP_BL_out_exp = CRQ_diet_mamm_FP_BL_out_exp[0]
+        trex2_obj.ARQ_diet_mamm_AR_BL_out_exp = ARQ_diet_mamm_AR_BL_out_exp[0]
+        trex2_obj.CRQ_diet_mamm_AR_BL_out_exp = CRQ_diet_mamm_AR_BL_out_exp[0]
 
-        trex2_obj.LD50_bl_bird_sm_out_exp=LD50_bl_bird_sm_out_exp[0]
-        trex2_obj.LD50_bl_mamm_sm_out_exp=LD50_bl_mamm_sm_out_exp[0]
-        trex2_obj.LD50_bl_bird_md_out_exp=LD50_bl_bird_md_out_exp[0]
-        trex2_obj.LD50_bl_mamm_md_out_exp=LD50_bl_mamm_md_out_exp[0]
-        trex2_obj.LD50_bl_bird_lg_out_exp=LD50_bl_bird_lg_out_exp[0]
-        trex2_obj.LD50_bl_mamm_lg_out_exp=LD50_bl_mamm_lg_out_exp[0]
+        trex2_obj.LD50_bl_bird_sm_out_exp = LD50_bl_bird_sm_out_exp[0]
+        trex2_obj.LD50_bl_mamm_sm_out_exp = LD50_bl_mamm_sm_out_exp[0]
+        trex2_obj.LD50_bl_bird_md_out_exp = LD50_bl_bird_md_out_exp[0]
+        trex2_obj.LD50_bl_mamm_md_out_exp = LD50_bl_mamm_md_out_exp[0]
+        trex2_obj.LD50_bl_bird_lg_out_exp = LD50_bl_bird_lg_out_exp[0]
+        trex2_obj.LD50_bl_mamm_lg_out_exp = LD50_bl_mamm_lg_out_exp[0]
 
     else:
         sa_bird_1_s_out_exp.append(float(row_inp[161]))
@@ -587,21 +716,21 @@ for row_inp in data:
         sa_mamm_2_l_out_exp.append(float(row_inp[177]))
         sc_mamm_l_out_exp.append(float(row_inp[178]))
 
-        trex2_obj.sa_bird_1_s_out_exp=sa_bird_1_s_out_exp[0]
-        trex2_obj.sa_bird_2_s_out_exp=sa_bird_2_s_out_exp[0]
-        trex2_obj.sc_bird_s_out_exp=sc_bird_s_out_exp[0]
-        trex2_obj.sa_mamm_1_s_out_exp=sa_mamm_1_s_out_exp[0]
-        trex2_obj.sa_mamm_2_s_out_exp=sa_mamm_2_s_out_exp[0]
-        trex2_obj.sc_mamm_s_out_exp=sc_mamm_s_out_exp[0]
-        trex2_obj.sa_bird_1_m_out_exp=sa_bird_1_m_out_exp[0]
-        trex2_obj.sa_bird_2_m_out_exp=sa_bird_2_m_out_exp[0]
-        trex2_obj.sc_bird_m_out_exp=sc_bird_m_out_exp[0]
-        trex2_obj.sa_mamm_1_m_out_exp=sa_mamm_1_m_out_exp[0]
-        trex2_obj.sa_mamm_2_m_out_exp=sa_mamm_2_m_out_exp[0]
-        trex2_obj.sc_mamm_m_out_exp=sc_mamm_m_out_exp[0]
-        trex2_obj.sa_bird_1_l_out_exp=sa_bird_1_l_out_exp[0]
-        trex2_obj.sa_bird_2_l_out_exp=sa_bird_2_l_out_exp[0]
-        trex2_obj.sc_bird_l_out_exp=sc_bird_l_out_exp[0]
-        trex2_obj.sa_mamm_1_l_out_exp=sa_mamm_1_l_out_exp[0]
-        trex2_obj.sa_mamm_2_l_out_exp=sa_mamm_2_l_out_exp[0]
-        trex2_obj.sc_mamm_l_out_exp=sc_mamm_l_out_exp[0]
+        trex2_obj.sa_bird_1_s_out_exp = sa_bird_1_s_out_exp[0]
+        trex2_obj.sa_bird_2_s_out_exp = sa_bird_2_s_out_exp[0]
+        trex2_obj.sc_bird_s_out_exp = sc_bird_s_out_exp[0]
+        trex2_obj.sa_mamm_1_s_out_exp = sa_mamm_1_s_out_exp[0]
+        trex2_obj.sa_mamm_2_s_out_exp = sa_mamm_2_s_out_exp[0]
+        trex2_obj.sc_mamm_s_out_exp = sc_mamm_s_out_exp[0]
+        trex2_obj.sa_bird_1_m_out_exp = sa_bird_1_m_out_exp[0]
+        trex2_obj.sa_bird_2_m_out_exp = sa_bird_2_m_out_exp[0]
+        trex2_obj.sc_bird_m_out_exp = sc_bird_m_out_exp[0]
+        trex2_obj.sa_mamm_1_m_out_exp = sa_mamm_1_m_out_exp[0]
+        trex2_obj.sa_mamm_2_m_out_exp = sa_mamm_2_m_out_exp[0]
+        trex2_obj.sc_mamm_m_out_exp = sc_mamm_m_out_exp[0]
+        trex2_obj.sa_bird_1_l_out_exp = sa_bird_1_l_out_exp[0]
+        trex2_obj.sa_bird_2_l_out_exp = sa_bird_2_l_out_exp[0]
+        trex2_obj.sc_bird_l_out_exp = sc_bird_l_out_exp[0]
+        trex2_obj.sa_mamm_1_l_out_exp = sa_mamm_1_l_out_exp[0]
+        trex2_obj.sa_mamm_2_l_out_exp = sa_mamm_2_l_out_exp[0]
+        trex2_obj.sc_mamm_l_out_exp = sc_mamm_l_out_exp[0]

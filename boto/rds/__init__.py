@@ -24,7 +24,7 @@ import urllib
 from boto.connection import AWSQueryConnection
 from boto.rds.dbinstance import DBInstance
 from boto.rds.dbsecuritygroup import DBSecurityGroup
-from boto.rds.optiongroup  import OptionGroup, OptionGroupOption
+from boto.rds.optiongroup import OptionGroup, OptionGroupOption
 from boto.rds.parametergroup import ParameterGroup
 from boto.rds.dbsnapshot import DBSnapshot
 from boto.rds.event import Event
@@ -68,7 +68,7 @@ def connect_to_region(region_name, **kw_params):
             return region.connect(**kw_params)
     return None
 
-#boto.set_stream_logger('rds')
+# boto.set_stream_logger('rds')
 
 
 class RDSConnection(AWSQueryConnection):
@@ -88,14 +88,14 @@ class RDSConnection(AWSQueryConnection):
                                    self.DefaultRegionEndpoint)
         self.region = region
         super(RDSConnection, self).__init__(aws_access_key_id,
-                                    aws_secret_access_key,
-                                    is_secure, port, proxy, proxy_port,
-                                    proxy_user, proxy_pass,
-                                    self.region.endpoint, debug,
-                                    https_connection_factory, path,
-                                    security_token,
-                                    validate_certs=validate_certs,
-                                    profile_name=profile_name)
+                                            aws_secret_access_key,
+                                            is_secure, port, proxy, proxy_port,
+                                            proxy_user, proxy_pass,
+                                            self.region.endpoint, debug,
+                                            https_connection_factory, path,
+                                            security_token,
+                                            validate_certs=validate_certs,
+                                            profile_name=profile_name)
 
     def _required_auth_capability(self):
         return ['hmac-v4']
@@ -153,10 +153,10 @@ class RDSConnection(AWSQueryConnection):
                           multi_az=False,
                           engine_version=None,
                           auto_minor_version_upgrade=True,
-                          character_set_name = None,
-                          db_subnet_group_name = None,
-                          license_model = None,
-                          option_group_name = None,
+                          character_set_name=None,
+                          db_subnet_group_name=None,
+                          license_model=None,
+                          option_group_name=None,
                           iops=None,
                           vpc_security_groups=None,
                           ):
@@ -408,30 +408,31 @@ class RDSConnection(AWSQueryConnection):
         # preferred_maintenance_window => PreferredMaintenanceWindow
         # vpc_security_groups => VpcSecurityGroupIds.member.N
         params = {
-                  'AllocatedStorage': allocated_storage,
-                  'AutoMinorVersionUpgrade': str(auto_minor_version_upgrade).lower() if auto_minor_version_upgrade else None,
-                  'AvailabilityZone': availability_zone,
-                  'BackupRetentionPeriod': backup_retention_period,
-                  'CharacterSetName': character_set_name,
-                  'DBInstanceClass': instance_class,
-                  'DBInstanceIdentifier': id,
-                  'DBName': db_name,
-                  'DBParameterGroupName': (param_group.name
-                                           if isinstance(param_group, ParameterGroup)
-                                           else param_group),
-                  'DBSubnetGroupName': db_subnet_group_name,
-                  'Engine': engine,
-                  'EngineVersion': engine_version,
-                  'Iops': iops,
-                  'LicenseModel': license_model,
-                  'MasterUsername': master_username,
-                  'MasterUserPassword': master_password,
-                  'MultiAZ': str(multi_az).lower() if multi_az else None,
-                  'OptionGroupName': option_group_name,
-                  'Port': port,
-                  'PreferredBackupWindow': preferred_backup_window,
-                  'PreferredMaintenanceWindow': preferred_maintenance_window,
-                  }
+            'AllocatedStorage': allocated_storage,
+            'AutoMinorVersionUpgrade': str(auto_minor_version_upgrade).lower() if auto_minor_version_upgrade else None,
+            'AvailabilityZone': availability_zone,
+            'BackupRetentionPeriod': backup_retention_period,
+            'CharacterSetName': character_set_name,
+            'DBInstanceClass': instance_class,
+            'DBInstanceIdentifier': id,
+            'DBName': db_name,
+            'DBParameterGroupName': (
+                param_group.name if isinstance(
+                    param_group,
+                    ParameterGroup) else param_group),
+            'DBSubnetGroupName': db_subnet_group_name,
+            'Engine': engine,
+            'EngineVersion': engine_version,
+            'Iops': iops,
+            'LicenseModel': license_model,
+            'MasterUsername': master_username,
+            'MasterUserPassword': master_password,
+            'MultiAZ': str(multi_az).lower() if multi_az else None,
+            'OptionGroupName': option_group_name,
+            'Port': port,
+            'PreferredBackupWindow': preferred_backup_window,
+            'PreferredMaintenanceWindow': preferred_maintenance_window,
+        }
         if security_groups:
             l = []
             for group in security_groups:
@@ -452,7 +453,8 @@ class RDSConnection(AWSQueryConnection):
 
         # Remove any params set to None
         for k, v in params.items():
-          if v is None: del(params[k])
+            if v is None:
+                del(params[k])
 
         return self.get_object('CreateDBInstance', params, DBInstance)
 
@@ -525,10 +527,9 @@ class RDSConnection(AWSQueryConnection):
         return self.get_object('CreateDBInstanceReadReplica',
                                params, DBInstance)
 
-
     def promote_read_replica(self, id,
-                          backup_retention_period=None,
-                          preferred_backup_window=None):
+                             backup_retention_period=None,
+                             preferred_backup_window=None):
         """
         Promote a Read Replica to a standalone DB Instance.
 
@@ -559,7 +560,6 @@ class RDSConnection(AWSQueryConnection):
             params['PreferredBackupWindow'] = preferred_backup_window
 
         return self.get_object('PromoteReadReplica', params, DBInstance)
-
 
     def modify_dbinstance(self, id, param_group=None, security_groups=None,
                           preferred_maintenance_window=None,
@@ -660,9 +660,10 @@ class RDSConnection(AWSQueryConnection):
         """
         params = {'DBInstanceIdentifier': id}
         if param_group:
-            params['DBParameterGroupName'] = (param_group.name
-                                              if isinstance(param_group, ParameterGroup)
-                                              else param_group)
+            params['DBParameterGroupName'] = (
+                param_group.name if isinstance(
+                    param_group,
+                    ParameterGroup) else param_group)
         if security_groups:
             l = []
             for group in security_groups:
@@ -748,7 +749,7 @@ class RDSConnection(AWSQueryConnection):
     # DBParameterGroup methods
 
     def get_all_dbparameter_groups(self, groupname=None, max_records=None,
-                                  marker=None):
+                                   marker=None):
         """
         Get all parameter groups associated with your account in a region.
 
@@ -833,7 +834,10 @@ class RDSConnection(AWSQueryConnection):
         params = {'DBParameterGroupName': name,
                   'DBParameterGroupFamily': engine,
                   'Description': description}
-        return self.get_object('CreateDBParameterGroup', params, ParameterGroup)
+        return self.get_object(
+            'CreateDBParameterGroup',
+            params,
+            ParameterGroup)
 
     def modify_parameter_group(self, name, parameters=None):
         """
@@ -851,7 +855,7 @@ class RDSConnection(AWSQueryConnection):
         params = {'DBParameterGroupName': name}
         for i in range(0, len(parameters)):
             parameter = parameters[i]
-            parameter.merge(params, i+1)
+            parameter.merge(params, i + 1)
         return self.get_list('ModifyDBParameterGroup', params,
                              ParameterGroup, verb='POST')
 
@@ -875,7 +879,7 @@ class RDSConnection(AWSQueryConnection):
             params['ResetAllParameters'] = 'false'
             for i in range(0, len(parameters)):
                 parameter = parameters[i]
-                parameter.merge(params, i+1)
+                parameter.merge(params, i + 1)
         return self.get_status('ResetDBParameterGroup', params)
 
     def delete_parameter_group(self, name):
@@ -994,8 +998,12 @@ class RDSConnection(AWSQueryConnection):
         return self.get_object('AuthorizeDBSecurityGroupIngress', params,
                                DBSecurityGroup)
 
-    def revoke_dbsecurity_group(self, group_name, ec2_security_group_name=None,
-                                ec2_security_group_owner_id=None, cidr_ip=None):
+    def revoke_dbsecurity_group(
+            self,
+            group_name,
+            ec2_security_group_name=None,
+            ec2_security_group_owner_id=None,
+            cidr_ip=None):
         """
         Remove an existing rule from an existing security group.
         You need to pass in either ec2_security_group_name and
@@ -1091,11 +1099,11 @@ class RDSConnection(AWSQueryConnection):
         """
         params = {}
         if dbinstance_id:
-           params['DBInstanceIdentifier'] = dbinstance_id
+            params['DBInstanceIdentifier'] = dbinstance_id
         params['MaxRecords'] = 26
 
         return self.get_list('DescribeDBLogFiles', params,
-                             [('DescribeDBLogFilesDetails',LogFile)])
+                             [('DescribeDBLogFilesDetails', LogFile)])
 
     def create_dbsnapshot(self, snapshot_id, dbinstance_id):
         """
@@ -1202,7 +1210,8 @@ class RDSConnection(AWSQueryConnection):
         if multi_az is not None:
             params['MultiAZ'] = str(multi_az).lower()
         if auto_minor_version_upgrade is not None:
-            params['AutoMinorVersionUpgrade'] = str(auto_minor_version_upgrade).lower()
+            params['AutoMinorVersionUpgrade'] = str(
+                auto_minor_version_upgrade).lower()
         if db_subnet_group_name is not None:
             params['DBSubnetGroupName'] = db_subnet_group_name
         return self.get_object('RestoreDBInstanceFromDBSnapshot',
@@ -1216,7 +1225,6 @@ class RDSConnection(AWSQueryConnection):
                                               port=None,
                                               availability_zone=None,
                                               db_subnet_group_name=None):
-
         """
         Create a new DBInstance from a point in time.
 
@@ -1371,8 +1379,11 @@ class RDSConnection(AWSQueryConnection):
 
         return self.get_object('DeleteDBSubnetGroup', params, DBSubnetGroup)
 
-
-    def get_all_db_subnet_groups(self, name=None, max_records=None, marker=None):
+    def get_all_db_subnet_groups(
+            self,
+            name=None,
+            max_records=None,
+            marker=None):
         """
         Retrieve all the DBSubnetGroups in your account.
 
@@ -1401,7 +1412,9 @@ class RDSConnection(AWSQueryConnection):
         if marker is not None:
             params['Marker'] = marker
 
-        return self.get_list('DescribeDBSubnetGroups', params, [('DBSubnetGroup',DBSubnetGroup)])
+        return self.get_list(
+            'DescribeDBSubnetGroups', params, [
+                ('DBSubnetGroup', DBSubnetGroup)])
 
     def modify_db_subnet_group(self, name, description=None, subnet_ids=None):
         """
@@ -1518,9 +1531,12 @@ class RDSConnection(AWSQueryConnection):
             ('OptionGroup', OptionGroup)
         ])
 
-    def describe_option_group_options(self, engine_name=None,
-                               major_engine_version=None, max_records=100,
-                               marker=None):
+    def describe_option_group_options(
+            self,
+            engine_name=None,
+            major_engine_version=None,
+            max_records=100,
+            marker=None):
         """
         Describes the available option group options.
 

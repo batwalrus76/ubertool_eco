@@ -31,88 +31,95 @@
 #
 
 __version__ = '0.9'
-__doc__='''Popular barcodes available as reusable widgets'''
+__doc__ = '''Popular barcodes available as reusable widgets'''
+
 
 def getCodes():
     """Returns a dict mapping code names to widgets"""
 
     from reportlab.graphics.barcode.widgets import BarcodeI2of5, BarcodeCode128, BarcodeStandard93,\
-                        BarcodeExtended93, BarcodeStandard39, BarcodeExtended39,\
-                        BarcodeMSI, BarcodeCodabar, BarcodeCode11, BarcodeFIM,\
-                        BarcodePOSTNET, BarcodeUSPS_4State
+        BarcodeExtended93, BarcodeStandard39, BarcodeExtended39,\
+        BarcodeMSI, BarcodeCodabar, BarcodeCode11, BarcodeFIM,\
+        BarcodePOSTNET, BarcodeUSPS_4State
 
-    #newer codes will typically get their own module
+    # newer codes will typically get their own module
     from reportlab.graphics.barcode.eanbc import Ean13BarcodeWidget, Ean8BarcodeWidget, UPCA
     from reportlab.graphics.barcode.qr import QrCodeWidget
 
-
-    #the module exports a dictionary of names to widgets, to make it easy for
-    #apps and doc tools to display information about them.
+    # the module exports a dictionary of names to widgets, to make it easy for
+    # apps and doc tools to display information about them.
     codes = {}
     for widget in (
-                BarcodeI2of5,
-                BarcodeCode128,
-                BarcodeStandard93,
-                BarcodeExtended93,
-                BarcodeStandard39,
-                BarcodeExtended39,
-                BarcodeMSI,
-                BarcodeCodabar,
-                BarcodeCode11,
-                BarcodeFIM,
-                BarcodePOSTNET,
-                BarcodeUSPS_4State,
-                Ean13BarcodeWidget,
-                Ean8BarcodeWidget,
-                UPCA,
-                QrCodeWidget,
-                ):
+        BarcodeI2of5,
+        BarcodeCode128,
+        BarcodeStandard93,
+        BarcodeExtended93,
+        BarcodeStandard39,
+        BarcodeExtended39,
+        BarcodeMSI,
+        BarcodeCodabar,
+        BarcodeCode11,
+        BarcodeFIM,
+        BarcodePOSTNET,
+        BarcodeUSPS_4State,
+        Ean13BarcodeWidget,
+        Ean8BarcodeWidget,
+        UPCA,
+        QrCodeWidget,
+    ):
         codeName = widget.codeName
         codes[codeName] = widget
 
     return codes
 
+
 def getCodeNames():
     """Returns sorted list of supported bar code names"""
     return sorted(getCodes().keys())
 
+
 def createBarcodeDrawing(codeName, **options):
     """This creates and returns a drawing with a barcode.
-    """    
+    """
     from reportlab.graphics.shapes import Drawing, Group
 
     codes = getCodes()
     bcc = codes[codeName]
-    width = options.pop('width',None)
-    height = options.pop('height',None)
-    isoScale = options.pop('isoScale',0)
+    width = options.pop('width', None)
+    height = options.pop('height', None)
+    isoScale = options.pop('isoScale', 0)
     kw = {}
-    for k,v in options.items():
-        if k.startswith('_') or k in bcc._attrMap: kw[k] = v
+    for k, v in options.items():
+        if k.startswith('_') or k in bcc._attrMap:
+            kw[k] = v
     bc = bcc(**kw)
 
-
-    #Robin's new ones validate when setting the value property.
-    #Ty Sarna's old ones do not.  We need to test.
+    # Robin's new ones validate when setting the value property.
+    # Ty Sarna's old ones do not.  We need to test.
     if hasattr(bc, 'validate'):
-        bc.validate()   #raise exception if bad value
+        bc.validate()  # raise exception if bad value
         if not bc.valid:
-            raise ValueError("Illegal barcode with value '%s' in code '%s'" % (options.get('value',None), codeName))
+            raise ValueError(
+                "Illegal barcode with value '%s' in code '%s'" %
+                (options.get(
+                    'value',
+                    None),
+                    codeName))
 
-    #size it after setting the data    
+    # size it after setting the data
     x1, y1, x2, y2 = bc.getBounds()
     w = float(x2 - x1)
     h = float(y2 - y1)
-    sx = width not in ('auto',None)
-    sy = height not in ('auto',None)
+    sx = width not in ('auto', None)
+    sy = height not in ('auto', None)
     if sx or sy:
-        sx = sx and width/w or 1.0
-        sy = sy and height/h or 1.0
+        sx = sx and width / w or 1.0
+        sy = sy and height / h or 1.0
         if isoScale:
-            if sx<1.0 and sy<1.0:
-                sx = sy = max(sx,sy)
+            if sx < 1.0 and sy < 1.0:
+                sx = sy = max(sx, sy)
             else:
-                sx = sy = min(sx,sy)
+                sx = sy = min(sx, sy)
 
         w *= sx
         h *= sy
@@ -121,16 +128,19 @@ def createBarcodeDrawing(codeName, **options):
 
     #bc.x = -sx*x1
     #bc.y = -sy*y1
-    d = Drawing(width=w,height=h,transform=[sx,0,0,sy,-sx*x1,-sy*y1])
+    d = Drawing(
+        width=w, height=h, transform=[
+            sx, 0, 0, sy, -sx * x1, -sy * y1])
     d.add(bc, "_bc")
     return d
 
-def createBarcodeImageInMemory(codeName,**options):
+
+def createBarcodeImageInMemory(codeName, **options):
     """This creates and returns barcode as an image in memory.
     Takes same arguments as createBarcodeDrawing and also an
     optional format keyword which can be anything acceptable
     to Drawing.asString eg gif, pdf, tiff, py ......
     """
-    format = options.pop('format','png')
+    format = options.pop('format', 'png')
     d = createBarcodeDrawing(codeName, **options)
     return d.asString(format)

@@ -21,6 +21,7 @@ listElementsMap = {
 
 
 class Node(object):
+
     def __init__(self, name):
         """Node representing an item in the tree.
         name - The tag name associated with the node
@@ -96,6 +97,7 @@ class Node(object):
 
 
 class ActiveFormattingElements(list):
+
     def append(self, node):
         equalCount = 0
         if node != Marker:
@@ -120,6 +122,7 @@ class ActiveFormattingElements(list):
 
 
 class TreeBuilder(object):
+
     """Base treebuilder implementation
     documentClass - the class to use for the bottommost node of a document
     elementClass - the class to use for HTML Elements
@@ -209,7 +212,8 @@ class TreeBuilder(object):
 
             # Step 8
             entry = self.activeFormattingElements[i]
-            clone = entry.cloneNode()  # Mainly to get a new copy of the attributes
+            # Mainly to get a new copy of the attributes
+            clone = entry.cloneNode()
 
             # Step 9
             element = self.insertElement({"type": "StartTag",
@@ -353,8 +357,14 @@ class TreeBuilder(object):
     def generateImpliedEndTags(self, exclude=None):
         name = self.openElements[-1].name
         # XXX td, th and tr are not actually needed
-        if (name in frozenset(("dd", "dt", "li", "option", "optgroup", "p", "rp", "rt"))
-                and name != exclude):
+        if (name in frozenset(("dd",
+                               "dt",
+                               "li",
+                               "option",
+                               "optgroup",
+                               "p",
+                               "rp",
+                               "rt")) and name != exclude):
             self.openElements.pop()
             # XXX This is not entirely what the specification says. We should
             # investigate it more closely.

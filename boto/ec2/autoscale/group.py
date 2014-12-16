@@ -28,6 +28,7 @@ from boto.ec2.autoscale.tag import Tag
 
 
 class ProcessType(object):
+
     def __init__(self, connection=None):
         self.connection = connection
         self.process_name = None
@@ -44,6 +45,7 @@ class ProcessType(object):
 
 
 class SuspendedProcess(object):
+
     def __init__(self, connection=None):
         self.connection = connection
         self.process_name = None
@@ -63,6 +65,7 @@ class SuspendedProcess(object):
 
 
 class EnabledMetric(object):
+
     def __init__(self, connection=None, metric=None, granularity=None):
         self.connection = connection
         self.metric = metric
@@ -92,6 +95,7 @@ class TerminationPolicies(list):
 
 
 class AutoScalingGroup(object):
+
     def __init__(self, connection=None, name=None,
                  launch_config=None, availability_zones=None,
                  load_balancers=None, default_cooldown=None,
@@ -188,7 +192,7 @@ class AutoScalingGroup(object):
         self.health_check_type = health_check_type
         self.placement_group = placement_group
         self.autoscaling_group_arn = None
-        if type(vpc_zone_identifier) is list:
+        if isinstance(vpc_zone_identifier, list):
             vpc_zone_identifier = ','.join(vpc_zone_identifier)
         self.vpc_zone_identifier = vpc_zone_identifier
         self.instances = None
@@ -221,7 +225,8 @@ class AutoScalingGroup(object):
             self.enabled_metrics = ResultSet([('member', EnabledMetric)])
             return self.enabled_metrics
         elif name == 'SuspendedProcesses':
-            self.suspended_processes = ResultSet([('member', SuspendedProcess)])
+            self.suspended_processes = ResultSet(
+                [('member', SuspendedProcess)])
             return self.suspended_processes
         elif name == 'Tags':
             self.tags = ResultSet([('member', Tag)])
@@ -316,9 +321,10 @@ class AutoScalingGroup(object):
         'autoscaling:EC2_INSTANCE_TERMINATE_ERROR',
         'autoscaling:TEST_NOTIFICATION'
         """
-        return self.connection.put_notification_configuration(self,
-                                                              topic,
-                                                              notification_types)
+        return self.connection.put_notification_configuration(
+            self,
+            topic,
+            notification_types)
 
     def delete_notification_configuration(self, topic):
         """
@@ -340,6 +346,7 @@ class AutoScalingGroup(object):
 
 
 class AutoScalingGroupMetric(object):
+
     def __init__(self, connection=None):
 
         self.connection = connection

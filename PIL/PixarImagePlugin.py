@@ -32,6 +32,7 @@ i32 = _binary.i32le
 ##
 # Image plugin for PIXAR raster images.
 
+
 class PixarImageFile(ImageFile.ImageFile):
 
     format = "PIXAR"
@@ -57,7 +58,7 @@ class PixarImageFile(ImageFile.ImageFile):
         # FIXME: to be continued...
 
         # create tile descriptor (assuming "dumped")
-        self.tile = [("raw", (0,0)+self.size, 1024, (self.mode, 0, 1))]
+        self.tile = [("raw", (0, 0) + self.size, 1024, (self.mode, 0, 1))]
 
 #
 # --------------------------------------------------------------------

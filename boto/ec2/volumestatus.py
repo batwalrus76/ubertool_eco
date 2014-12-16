@@ -25,6 +25,7 @@ from boto.ec2.instancestatus import Status, Details
 
 
 class Event(object):
+
     """
     A status event for an instance.
 
@@ -81,6 +82,7 @@ class EventSet(list):
 
 
 class Action(object):
+
     """
     An action for an instance.
 
@@ -130,6 +132,7 @@ class ActionSet(list):
 
 
 class VolumeStatus(object):
+
     """
     Represents an EC2 Volume status as reported by
     DescribeVolumeStatus request.
@@ -174,6 +177,7 @@ class VolumeStatus(object):
 
 
 class VolumeStatusSet(list):
+
     """
     A list object that contains the results of a call to
     DescribeVolumeStatus request.  Each element of the

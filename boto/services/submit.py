@@ -54,7 +54,15 @@ class Submitter(object):
         k.set_contents_from_filename(path, replace=False, cb=cb, num_cb=num_cb)
         self.write_message(k, metadata)
 
-    def submit_path(self, path, tags=None, ignore_dirs=None, cb=None, num_cb=0, status=False, prefix='/'):
+    def submit_path(
+            self,
+            path,
+            tags=None,
+            ignore_dirs=None,
+            cb=None,
+            num_cb=0,
+            status=False,
+            prefix='/'):
         path = os.path.expanduser(path)
         path = os.path.expandvars(path)
         path = os.path.abspath(path)
@@ -67,7 +75,9 @@ class Submitter(object):
             l.append(str(t))
         metadata['Batch'] = '_'.join(l)
         if self.output_domain:
-            self.output_domain.put_attributes(metadata['Batch'], {'type' : 'Batch'})
+            self.output_domain.put_attributes(
+                metadata['Batch'], {
+                    'type': 'Batch'})
         if os.path.isdir(path):
             for root, dirs, files in os.walk(path):
                 if ignore_dirs:

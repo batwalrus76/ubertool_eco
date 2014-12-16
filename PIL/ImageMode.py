@@ -19,6 +19,7 @@ _modes = {}
 ##
 # Wrapper for mode strings.
 
+
 class ModeDescriptor:
 
     def __init__(self, mode, bands, basemode, basetype):
@@ -32,6 +33,7 @@ class ModeDescriptor:
 
 ##
 # Gets a mode descriptor for the given mode.
+
 
 def getmode(mode):
     if not _modes:

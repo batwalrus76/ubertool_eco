@@ -13,12 +13,14 @@ import insect_model
 
 logger = logging.getLogger("InsectBatchRunner")
 
+
 class InsectBatchRunner():
-    
-    def runInsectModel(self,config_properties,results_dict):
+
+    def runInsectModel(self, config_properties, results_dict):
         if not results_dict:
             results_dict = {}
-        #this is where properties are searched, converted as needed, and any available methods are called
+        # this is where properties are searched, converted as needed, and any
+        # available methods are called
         logger.info(config_properties)
         chemical_name = None
         if 'chemical_name' in config_properties:
@@ -77,6 +79,28 @@ class InsectBatchRunner():
         noaec_o = None
         if 'noaec_o' in config_properties:
             noaec_o = config_properties['noaec_o']
-        insect_obj = insect_model.insect(True,True,True,chemical_name, b_species, m_species, bw_quail, bw_duck, bwb_other, bw_rat, bwm_other, sol, ld50_a, ld50_m, aw_bird, mineau, aw_mamm, noaec_d, noaec_q, noaec_o, Species_of_the_bird_NOAEC_CHOICES, noael)
+        insect_obj = insect_model.insect(
+            True,
+            True,
+            True,
+            chemical_name,
+            b_species,
+            m_species,
+            bw_quail,
+            bw_duck,
+            bwb_other,
+            bw_rat,
+            bwm_other,
+            sol,
+            ld50_a,
+            ld50_m,
+            aw_bird,
+            mineau,
+            aw_mamm,
+            noaec_d,
+            noaec_q,
+            noaec_o,
+            Species_of_the_bird_NOAEC_CHOICES,
+            noael)
         results_dict['insect'] = vars(insect_obj)
         return results_dict

@@ -32,6 +32,7 @@ def _accept(prefix):
 ##
 # Image plugin for X11 pixel maps.
 
+
 class XpmImageFile(ImageFile.ImageFile):
 
     format = "XPM"
@@ -80,15 +81,15 @@ class XpmImageFile(ImageFile.ImageFile):
                 if s[i] == b"c":
 
                     # process colour key
-                    rgb = s[i+1]
+                    rgb = s[i + 1]
                     if rgb == b"None":
                         self.info["transparency"] = c
                     elif rgb[0:1] == b"#":
                         # FIXME: handle colour names (see ImagePalette.py)
                         rgb = int(rgb[1:], 16)
                         palette[c] = o8((rgb >> 16) & 255) +\
-                                     o8((rgb >> 8) & 255) +\
-                                     o8(rgb & 255)
+                            o8((rgb >> 8) & 255) +\
+                            o8(rgb & 255)
                     else:
                         # unknown colour
                         raise ValueError("cannot read this XPM file")
@@ -102,7 +103,7 @@ class XpmImageFile(ImageFile.ImageFile):
         self.mode = "P"
         self.palette = ImagePalette.raw("RGB", b"".join(palette))
 
-        self.tile = [("raw", (0, 0)+self.size, self.fp.tell(), ("P", 0, 1))]
+        self.tile = [("raw", (0, 0) + self.size, self.fp.tell(), ("P", 0, 1))]
 
     def load_read(self, bytes):
 
@@ -114,7 +115,7 @@ class XpmImageFile(ImageFile.ImageFile):
         s = [None] * ysize
 
         for i in range(ysize):
-            s[i] = self.fp.readline()[1:xsize+1].ljust(xsize)
+            s[i] = self.fp.readline()[1:xsize + 1].ljust(xsize)
 
         self.fp = None
 

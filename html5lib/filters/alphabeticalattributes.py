@@ -9,6 +9,7 @@ except ImportError:
 
 
 class Filter(_base.Filter):
+
     def __iter__(self):
         for token in _base.Filter.__iter__(self):
             if token["type"] in ("StartTag", "EmptyTag"):

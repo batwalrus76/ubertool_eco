@@ -6,11 +6,13 @@ import boto.jsonresponse
 import boto.exception
 import awsqueryrequest
 
+
 class NoCredentialsError(boto.exception.BotoClientError):
 
     def __init__(self):
         s = 'Unable to find credentials'
         super(NoCredentialsError, self).__init__(s)
+
 
 class AWSQueryService(boto.connection.AWSQueryConnection):
 
@@ -118,4 +120,3 @@ class AWSQueryService(boto.connection.AWSQueryConnection):
 
     def _required_auth_capability(self):
         return [self.Authentication]
-

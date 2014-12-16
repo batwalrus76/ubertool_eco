@@ -27,7 +27,9 @@ import xml.sax
 from boto.ecs.item import ItemSet
 from boto import handler
 
+
 class ECSConnection(AWSQueryConnection):
+
     """
     ECommerce Connection
 
@@ -43,11 +45,23 @@ class ECSConnection(AWSQueryConnection):
                  proxy_user=None, proxy_pass=None, host='ecs.amazonaws.com',
                  debug=0, https_connection_factory=None, path='/',
                  security_token=None, profile_name=None):
-        super(ECSConnection, self).__init__(aws_access_key_id, aws_secret_access_key,
-                                    is_secure, port, proxy, proxy_port, proxy_user, proxy_pass,
-                                    host, debug, https_connection_factory, path,
-                                    security_token=security_token,
-                                    profile_name=profile_name)
+        super(
+            ECSConnection,
+            self).__init__(
+            aws_access_key_id,
+            aws_secret_access_key,
+            is_secure,
+            port,
+            proxy,
+            proxy_port,
+            proxy_user,
+            proxy_pass,
+            host,
+            debug,
+            https_connection_factory,
+            path,
+            security_token=security_token,
+            profile_name=profile_name)
 
     def _required_auth_capability(self):
         return ['ecs']

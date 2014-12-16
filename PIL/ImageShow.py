@@ -15,7 +15,8 @@
 from __future__ import print_function
 
 from PIL import Image
-import os, sys
+import os
+import sys
 
 if sys.version_info >= (3, 3):
     from shlex import quote
@@ -24,12 +25,13 @@ else:
 
 _viewers = []
 
+
 def register(viewer, order=1):
     try:
         if issubclass(viewer, Viewer):
             viewer = viewer()
     except TypeError:
-        pass # raised if viewer wasn't a class
+        pass  # raised if viewer wasn't a class
     if order > 0:
         _viewers.append(viewer)
     elif order < 0:
@@ -43,6 +45,7 @@ def register(viewer, order=1):
 # @param **options Additional viewer options.
 # @return True if a suitable viewer was found, false otherwise.
 
+
 def show(image, title=None, **options):
     for viewer in _viewers:
         if viewer.show(image, title=title, **options):
@@ -51,6 +54,7 @@ def show(image, title=None, **options):
 
 ##
 # Base class for viewers.
+
 
 class Viewer:
 
@@ -102,6 +106,7 @@ if sys.platform == "win32":
 
     class WindowsViewer(Viewer):
         format = "BMP"
+
         def get_command(self, file, **options):
             return ('start "Pillow" /WAIT "%s" '
                     '&& ping -n 2 127.0.0.1 >NUL '
@@ -113,11 +118,14 @@ elif sys.platform == "darwin":
 
     class MacViewer(Viewer):
         format = "BMP"
+
         def get_command(self, file, **options):
             # on darwin open returns immediately resulting in the temp
             # file removal while app is opening
             command = "open -a /Applications/Preview.app"
-            command = "(%s %s; sleep 20; rm -f %s)&" % (command, quote(file), quote(file))
+            command = "(%s %s; sleep 20; rm -f %s)&" % (command,
+                                                        quote(file),
+                                                        quote(file))
             return command
 
     register(MacViewer)
@@ -138,15 +146,19 @@ else:
         return None
 
     class UnixViewer(Viewer):
+
         def show_file(self, file, **options):
             command, executable = self.get_command_ex(file, **options)
-            command = "(%s %s; rm -f %s)&" % (command, quote(file), quote(file))
+            command = "(%s %s; rm -f %s)&" % (command,
+                                              quote(file),
+                                              quote(file))
             os.system(command)
             return 1
 
     # implementations
 
     class DisplayViewer(UnixViewer):
+
         def get_command_ex(self, file, **options):
             command = executable = "display"
             return command, executable
@@ -155,6 +167,7 @@ else:
         register(DisplayViewer)
 
     class XVViewer(UnixViewer):
+
         def get_command_ex(self, file, title=None, **options):
             # note: xv is pretty outdated.  most modern systems have
             # imagemagick's display command instead.

@@ -25,6 +25,7 @@ def getETreeBuilder(ElementTreeImplementation):
     ElementTreeCommentType = ElementTree.Comment("asd").tag
 
     class TreeWalker(_base.NonRecursiveTreeWalker):
+
         """Given the particular ElementTree representation, this implementation,
         to avoid using recursion, returns "nodes" as tuples with the following
         content:
@@ -38,6 +39,7 @@ def getETreeBuilder(ElementTreeImplementation):
         4. A flag "text", "tail" or None to indicate if the current node is a
            text node; either the text or tail of the current element (1)
         """
+
         def getNodeDetails(self, node):
             if isinstance(node, tuple):  # It might be the root Element
                 elt, key, parents, flag = node
@@ -60,7 +62,7 @@ def getETreeBuilder(ElementTreeImplementation):
                 return _base.COMMENT, node.text
 
             else:
-                assert type(node.tag) == text_type, type(node.tag)
+                assert isinstance(node.tag, text_type), type(node.tag)
                 # This is assumed to be an ordinary element
                 match = tag_regexp.match(node.tag)
                 if match:
@@ -131,7 +133,8 @@ def getETreeBuilder(ElementTreeImplementation):
                 if not parents:
                     return parent
                 else:
-                    return parent, list(parents[-1]).index(parent), parents, None
+                    return parent, list(
+                        parents[-1]).index(parent), parents, None
 
     return locals()
 

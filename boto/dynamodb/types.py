@@ -135,6 +135,7 @@ def dynamize_value(val):
 
 
 class Binary(object):
+
     def __init__(self, value):
         if not isinstance(value, basestring):
             raise TypeError('Value must be a string of binary data!')
@@ -187,6 +188,7 @@ def item_object_hook(dct):
 
 
 class Dynamizer(object):
+
     """Control serialization/deserialization of types.
 
     This class controls the encoding of python types to the
@@ -219,6 +221,7 @@ class Dynamizer(object):
         'foo'     (Python type)
 
     """
+
     def _get_dynamodb_type(self, attr):
         return get_dynamodb_type(attr)
 
@@ -247,7 +250,7 @@ class Dynamizer(object):
             if filter(lambda x: x in n, ('Infinity', 'NaN')):
                 raise TypeError('Infinity and NaN not supported')
             return n
-        except (TypeError, DecimalException), e:
+        except (TypeError, DecimalException) as e:
             msg = '{0} numeric for `{1}`\n{2}'.format(
                 e.__class__.__name__, attr, str(e) or '')
         raise DynamoDBNumberError(msg)
@@ -310,6 +313,7 @@ class Dynamizer(object):
 
 
 class LossyFloatDynamizer(Dynamizer):
+
     """Use float/int instead of Decimal for numeric types.
 
     This class is provided for backwards compatibility.  Instead of
@@ -320,6 +324,7 @@ class LossyFloatDynamizer(Dynamizer):
     `Dynamizer` class instead.
 
     """
+
     def _encode_n(self, attr):
         return serialize_num(attr)
 

@@ -54,6 +54,7 @@ else:
     else:
         # It's possible to have sizeof(long) != sizeof(Py_ssize_t).
         class X(object):
+
             def __len__(self):
                 return 1 << 31
         try:
@@ -85,7 +86,7 @@ class _LazyDescr(object):
 
     def __get__(self, obj, tp):
         result = self._resolve()
-        setattr(obj, self.name, result) # Invokes __set__.
+        setattr(obj, self.name, result)  # Invokes __set__.
         # This is a bit ugly, but it avoids running this again.
         delattr(obj.__class__, self.name)
         return result
@@ -153,12 +154,14 @@ class MovedAttribute(_LazyDescr):
 
 
 class _SixMetaPathImporter(object):
+
     """
     A meta path importer to import six.moves and its submodules.
 
     This class implements a PEP302 finder and loader. It should be compatible
     with Python 2.5 and all existing versions of Python3
     """
+
     def __init__(self, six_module_name):
         self.name = six_module_name
         self.known_modules = {}
@@ -216,74 +219,71 @@ _importer = _SixMetaPathImporter(__name__)
 
 
 class _MovedItems(_LazyModule):
+
     """Lazy loading of moved objects"""
     __path__ = []  # mark as package
 
 
 _moved_attributes = [
-    MovedAttribute("cStringIO", "cStringIO", "io", "StringIO"),
-    MovedAttribute("filter", "itertools", "builtins", "ifilter", "filter"),
-    MovedAttribute("filterfalse", "itertools", "itertools", "ifilterfalse", "filterfalse"),
-    MovedAttribute("input", "__builtin__", "builtins", "raw_input", "input"),
-    MovedAttribute("map", "itertools", "builtins", "imap", "map"),
-    MovedAttribute("range", "__builtin__", "builtins", "xrange", "range"),
-    MovedAttribute("reload_module", "__builtin__", "imp", "reload"),
-    MovedAttribute("reduce", "__builtin__", "functools"),
-    MovedAttribute("StringIO", "StringIO", "io"),
-    MovedAttribute("UserDict", "UserDict", "collections"),
-    MovedAttribute("UserList", "UserList", "collections"),
-    MovedAttribute("UserString", "UserString", "collections"),
-    MovedAttribute("xrange", "__builtin__", "builtins", "xrange", "range"),
-    MovedAttribute("zip", "itertools", "builtins", "izip", "zip"),
-    MovedAttribute("zip_longest", "itertools", "itertools", "izip_longest", "zip_longest"),
-
-    MovedModule("builtins", "__builtin__"),
-    MovedModule("configparser", "ConfigParser"),
-    MovedModule("copyreg", "copy_reg"),
-    MovedModule("dbm_gnu", "gdbm", "dbm.gnu"),
-    MovedModule("_dummy_thread", "dummy_thread", "_dummy_thread"),
-    MovedModule("http_cookiejar", "cookielib", "http.cookiejar"),
-    MovedModule("http_cookies", "Cookie", "http.cookies"),
-    MovedModule("html_entities", "htmlentitydefs", "html.entities"),
-    MovedModule("html_parser", "HTMLParser", "html.parser"),
-    MovedModule("http_client", "httplib", "http.client"),
-    MovedModule("email_mime_multipart", "email.MIMEMultipart", "email.mime.multipart"),
-    MovedModule("email_mime_text", "email.MIMEText", "email.mime.text"),
-    MovedModule("email_mime_base", "email.MIMEBase", "email.mime.base"),
-    MovedModule("BaseHTTPServer", "BaseHTTPServer", "http.server"),
-    MovedModule("CGIHTTPServer", "CGIHTTPServer", "http.server"),
-    MovedModule("SimpleHTTPServer", "SimpleHTTPServer", "http.server"),
-    MovedModule("cPickle", "cPickle", "pickle"),
-    MovedModule("queue", "Queue"),
-    MovedModule("reprlib", "repr"),
-    MovedModule("socketserver", "SocketServer"),
-    MovedModule("_thread", "thread", "_thread"),
-    MovedModule("tkinter", "Tkinter"),
-    MovedModule("tkinter_dialog", "Dialog", "tkinter.dialog"),
-    MovedModule("tkinter_filedialog", "FileDialog", "tkinter.filedialog"),
-    MovedModule("tkinter_scrolledtext", "ScrolledText", "tkinter.scrolledtext"),
-    MovedModule("tkinter_simpledialog", "SimpleDialog", "tkinter.simpledialog"),
-    MovedModule("tkinter_tix", "Tix", "tkinter.tix"),
-    MovedModule("tkinter_ttk", "ttk", "tkinter.ttk"),
-    MovedModule("tkinter_constants", "Tkconstants", "tkinter.constants"),
-    MovedModule("tkinter_dnd", "Tkdnd", "tkinter.dnd"),
-    MovedModule("tkinter_colorchooser", "tkColorChooser",
-                "tkinter.colorchooser"),
-    MovedModule("tkinter_commondialog", "tkCommonDialog",
-                "tkinter.commondialog"),
-    MovedModule("tkinter_tkfiledialog", "tkFileDialog", "tkinter.filedialog"),
-    MovedModule("tkinter_font", "tkFont", "tkinter.font"),
-    MovedModule("tkinter_messagebox", "tkMessageBox", "tkinter.messagebox"),
-    MovedModule("tkinter_tksimpledialog", "tkSimpleDialog",
-                "tkinter.simpledialog"),
-    MovedModule("urllib_parse", __name__ + ".moves.urllib_parse", "urllib.parse"),
-    MovedModule("urllib_error", __name__ + ".moves.urllib_error", "urllib.error"),
-    MovedModule("urllib", __name__ + ".moves.urllib", __name__ + ".moves.urllib"),
-    MovedModule("urllib_robotparser", "robotparser", "urllib.robotparser"),
-    MovedModule("xmlrpc_client", "xmlrpclib", "xmlrpc.client"),
-    MovedModule("xmlrpc_server", "SimpleXMLRPCServer", "xmlrpc.server"),
-    MovedModule("winreg", "_winreg"),
-]
+    MovedAttribute(
+        "cStringIO", "cStringIO", "io", "StringIO"), MovedAttribute(
+            "filter", "itertools", "builtins", "ifilter", "filter"), MovedAttribute(
+                "filterfalse", "itertools", "itertools", "ifilterfalse", "filterfalse"), MovedAttribute(
+                    "input", "__builtin__", "builtins", "raw_input", "input"), MovedAttribute(
+                        "map", "itertools", "builtins", "imap", "map"), MovedAttribute(
+                            "range", "__builtin__", "builtins", "xrange", "range"), MovedAttribute(
+                                "reload_module", "__builtin__", "imp", "reload"), MovedAttribute(
+                                    "reduce", "__builtin__", "functools"), MovedAttribute(
+                                        "StringIO", "StringIO", "io"), MovedAttribute(
+                                            "UserDict", "UserDict", "collections"), MovedAttribute(
+                                                "UserList", "UserList", "collections"), MovedAttribute(
+                                                    "UserString", "UserString", "collections"), MovedAttribute(
+                                                        "xrange", "__builtin__", "builtins", "xrange", "range"), MovedAttribute(
+                                                            "zip", "itertools", "builtins", "izip", "zip"), MovedAttribute(
+                                                                "zip_longest", "itertools", "itertools", "izip_longest", "zip_longest"), MovedModule(
+                                                                    "builtins", "__builtin__"), MovedModule(
+                                                                        "configparser", "ConfigParser"), MovedModule(
+                                                                            "copyreg", "copy_reg"), MovedModule(
+                                                                                "dbm_gnu", "gdbm", "dbm.gnu"), MovedModule(
+                                                                                    "_dummy_thread", "dummy_thread", "_dummy_thread"), MovedModule(
+                                                                                        "http_cookiejar", "cookielib", "http.cookiejar"), MovedModule(
+                                                                                            "http_cookies", "Cookie", "http.cookies"), MovedModule(
+                                                                                                "html_entities", "htmlentitydefs", "html.entities"), MovedModule(
+                                                                                                    "html_parser", "HTMLParser", "html.parser"), MovedModule(
+                                                                                                        "http_client", "httplib", "http.client"), MovedModule(
+                                                                                                            "email_mime_multipart", "email.MIMEMultipart", "email.mime.multipart"), MovedModule(
+                                                                                                                "email_mime_text", "email.MIMEText", "email.mime.text"), MovedModule(
+                                                                                                                    "email_mime_base", "email.MIMEBase", "email.mime.base"), MovedModule(
+                                                                                                                        "BaseHTTPServer", "BaseHTTPServer", "http.server"), MovedModule(
+                                                                                                                            "CGIHTTPServer", "CGIHTTPServer", "http.server"), MovedModule(
+                                                                                                                                "SimpleHTTPServer", "SimpleHTTPServer", "http.server"), MovedModule(
+                                                                                                                                    "cPickle", "cPickle", "pickle"), MovedModule(
+                                                                                                                                        "queue", "Queue"), MovedModule(
+                                                                                                                                            "reprlib", "repr"), MovedModule(
+                                                                                                                                                "socketserver", "SocketServer"), MovedModule(
+                                                                                                                                                    "_thread", "thread", "_thread"), MovedModule(
+                                                                                                                                                        "tkinter", "Tkinter"), MovedModule(
+                                                                                                                                                            "tkinter_dialog", "Dialog", "tkinter.dialog"), MovedModule(
+                                                                                                                                                                "tkinter_filedialog", "FileDialog", "tkinter.filedialog"), MovedModule(
+                                                                                                                                                                    "tkinter_scrolledtext", "ScrolledText", "tkinter.scrolledtext"), MovedModule(
+                                                                                                                                                                        "tkinter_simpledialog", "SimpleDialog", "tkinter.simpledialog"), MovedModule(
+                                                                                                                                                                            "tkinter_tix", "Tix", "tkinter.tix"), MovedModule(
+                                                                                                                                                                                "tkinter_ttk", "ttk", "tkinter.ttk"), MovedModule(
+                                                                                                                                                                                    "tkinter_constants", "Tkconstants", "tkinter.constants"), MovedModule(
+                                                                                                                                                                                        "tkinter_dnd", "Tkdnd", "tkinter.dnd"), MovedModule(
+                                                                                                                                                                                            "tkinter_colorchooser", "tkColorChooser", "tkinter.colorchooser"), MovedModule(
+                                                                                                                                                                                                "tkinter_commondialog", "tkCommonDialog", "tkinter.commondialog"), MovedModule(
+                                                                                                                                                                                                    "tkinter_tkfiledialog", "tkFileDialog", "tkinter.filedialog"), MovedModule(
+                                                                                                                                                                                                        "tkinter_font", "tkFont", "tkinter.font"), MovedModule(
+                                                                                                                                                                                                            "tkinter_messagebox", "tkMessageBox", "tkinter.messagebox"), MovedModule(
+                                                                                                                                                                                                                "tkinter_tksimpledialog", "tkSimpleDialog", "tkinter.simpledialog"), MovedModule(
+                                                                                                                                                                                                                    "urllib_parse", __name__ + ".moves.urllib_parse", "urllib.parse"), MovedModule(
+                                                                                                                                                                                                                        "urllib_error", __name__ + ".moves.urllib_error", "urllib.error"), MovedModule(
+                                                                                                                                                                                                                            "urllib", __name__ + ".moves.urllib", __name__ + ".moves.urllib"), MovedModule(
+                                                                                                                                                                                                                                "urllib_robotparser", "robotparser", "urllib.robotparser"), MovedModule(
+                                                                                                                                                                                                                                    "xmlrpc_client", "xmlrpclib", "xmlrpc.client"), MovedModule(
+                                                                                                                                                                                                                                        "xmlrpc_server", "SimpleXMLRPCServer", "xmlrpc.server"), MovedModule(
+                                                                                                                                                                                                                                            "winreg", "_winreg"), ]
 for attr in _moved_attributes:
     setattr(_MovedItems, attr.name, attr)
     if isinstance(attr, MovedModule):
@@ -297,6 +297,7 @@ _importer._add_module(moves, "moves")
 
 
 class Module_six_moves_urllib_parse(_LazyModule):
+
     """Lazy loading of moved objects in six.moves.urllib_parse"""
 
 
@@ -324,11 +325,16 @@ del attr
 
 Module_six_moves_urllib_parse._moved_attributes = _urllib_parse_moved_attributes
 
-_importer._add_module(Module_six_moves_urllib_parse(__name__ + ".moves.urllib_parse"),
-                      "moves.urllib_parse", "moves.urllib.parse")
+_importer._add_module(
+    Module_six_moves_urllib_parse(
+        __name__ +
+        ".moves.urllib_parse"),
+    "moves.urllib_parse",
+    "moves.urllib.parse")
 
 
 class Module_six_moves_urllib_error(_LazyModule):
+
     """Lazy loading of moved objects in six.moves.urllib_error"""
 
 
@@ -343,60 +349,70 @@ del attr
 
 Module_six_moves_urllib_error._moved_attributes = _urllib_error_moved_attributes
 
-_importer._add_module(Module_six_moves_urllib_error(__name__ + ".moves.urllib.error"),
-                      "moves.urllib_error", "moves.urllib.error")
+_importer._add_module(
+    Module_six_moves_urllib_error(
+        __name__ +
+        ".moves.urllib.error"),
+    "moves.urllib_error",
+    "moves.urllib.error")
 
 
 class Module_six_moves_urllib_request(_LazyModule):
+
     """Lazy loading of moved objects in six.moves.urllib_request"""
 
 
 _urllib_request_moved_attributes = [
-    MovedAttribute("urlopen", "urllib2", "urllib.request"),
-    MovedAttribute("install_opener", "urllib2", "urllib.request"),
-    MovedAttribute("build_opener", "urllib2", "urllib.request"),
-    MovedAttribute("pathname2url", "urllib", "urllib.request"),
-    MovedAttribute("url2pathname", "urllib", "urllib.request"),
-    MovedAttribute("getproxies", "urllib", "urllib.request"),
-    MovedAttribute("Request", "urllib2", "urllib.request"),
-    MovedAttribute("OpenerDirector", "urllib2", "urllib.request"),
-    MovedAttribute("HTTPDefaultErrorHandler", "urllib2", "urllib.request"),
-    MovedAttribute("HTTPRedirectHandler", "urllib2", "urllib.request"),
-    MovedAttribute("HTTPCookieProcessor", "urllib2", "urllib.request"),
-    MovedAttribute("ProxyHandler", "urllib2", "urllib.request"),
-    MovedAttribute("BaseHandler", "urllib2", "urllib.request"),
-    MovedAttribute("HTTPPasswordMgr", "urllib2", "urllib.request"),
-    MovedAttribute("HTTPPasswordMgrWithDefaultRealm", "urllib2", "urllib.request"),
-    MovedAttribute("AbstractBasicAuthHandler", "urllib2", "urllib.request"),
-    MovedAttribute("HTTPBasicAuthHandler", "urllib2", "urllib.request"),
-    MovedAttribute("ProxyBasicAuthHandler", "urllib2", "urllib.request"),
-    MovedAttribute("AbstractDigestAuthHandler", "urllib2", "urllib.request"),
-    MovedAttribute("HTTPDigestAuthHandler", "urllib2", "urllib.request"),
-    MovedAttribute("ProxyDigestAuthHandler", "urllib2", "urllib.request"),
-    MovedAttribute("HTTPHandler", "urllib2", "urllib.request"),
-    MovedAttribute("HTTPSHandler", "urllib2", "urllib.request"),
-    MovedAttribute("FileHandler", "urllib2", "urllib.request"),
-    MovedAttribute("FTPHandler", "urllib2", "urllib.request"),
-    MovedAttribute("CacheFTPHandler", "urllib2", "urllib.request"),
-    MovedAttribute("UnknownHandler", "urllib2", "urllib.request"),
-    MovedAttribute("HTTPErrorProcessor", "urllib2", "urllib.request"),
-    MovedAttribute("urlretrieve", "urllib", "urllib.request"),
-    MovedAttribute("urlcleanup", "urllib", "urllib.request"),
-    MovedAttribute("URLopener", "urllib", "urllib.request"),
-    MovedAttribute("FancyURLopener", "urllib", "urllib.request"),
-    MovedAttribute("proxy_bypass", "urllib", "urllib.request"),
-]
+    MovedAttribute(
+        "urlopen", "urllib2", "urllib.request"), MovedAttribute(
+            "install_opener", "urllib2", "urllib.request"), MovedAttribute(
+                "build_opener", "urllib2", "urllib.request"), MovedAttribute(
+                    "pathname2url", "urllib", "urllib.request"), MovedAttribute(
+                        "url2pathname", "urllib", "urllib.request"), MovedAttribute(
+                            "getproxies", "urllib", "urllib.request"), MovedAttribute(
+                                "Request", "urllib2", "urllib.request"), MovedAttribute(
+                                    "OpenerDirector", "urllib2", "urllib.request"), MovedAttribute(
+                                        "HTTPDefaultErrorHandler", "urllib2", "urllib.request"), MovedAttribute(
+                                            "HTTPRedirectHandler", "urllib2", "urllib.request"), MovedAttribute(
+                                                "HTTPCookieProcessor", "urllib2", "urllib.request"), MovedAttribute(
+                                                    "ProxyHandler", "urllib2", "urllib.request"), MovedAttribute(
+                                                        "BaseHandler", "urllib2", "urllib.request"), MovedAttribute(
+                                                            "HTTPPasswordMgr", "urllib2", "urllib.request"), MovedAttribute(
+                                                                "HTTPPasswordMgrWithDefaultRealm", "urllib2", "urllib.request"), MovedAttribute(
+                                                                    "AbstractBasicAuthHandler", "urllib2", "urllib.request"), MovedAttribute(
+                                                                        "HTTPBasicAuthHandler", "urllib2", "urllib.request"), MovedAttribute(
+                                                                            "ProxyBasicAuthHandler", "urllib2", "urllib.request"), MovedAttribute(
+                                                                                "AbstractDigestAuthHandler", "urllib2", "urllib.request"), MovedAttribute(
+                                                                                    "HTTPDigestAuthHandler", "urllib2", "urllib.request"), MovedAttribute(
+                                                                                        "ProxyDigestAuthHandler", "urllib2", "urllib.request"), MovedAttribute(
+                                                                                            "HTTPHandler", "urllib2", "urllib.request"), MovedAttribute(
+                                                                                                "HTTPSHandler", "urllib2", "urllib.request"), MovedAttribute(
+                                                                                                    "FileHandler", "urllib2", "urllib.request"), MovedAttribute(
+                                                                                                        "FTPHandler", "urllib2", "urllib.request"), MovedAttribute(
+                                                                                                            "CacheFTPHandler", "urllib2", "urllib.request"), MovedAttribute(
+                                                                                                                "UnknownHandler", "urllib2", "urllib.request"), MovedAttribute(
+                                                                                                                    "HTTPErrorProcessor", "urllib2", "urllib.request"), MovedAttribute(
+                                                                                                                        "urlretrieve", "urllib", "urllib.request"), MovedAttribute(
+                                                                                                                            "urlcleanup", "urllib", "urllib.request"), MovedAttribute(
+                                                                                                                                "URLopener", "urllib", "urllib.request"), MovedAttribute(
+                                                                                                                                    "FancyURLopener", "urllib", "urllib.request"), MovedAttribute(
+                                                                                                                                        "proxy_bypass", "urllib", "urllib.request"), ]
 for attr in _urllib_request_moved_attributes:
     setattr(Module_six_moves_urllib_request, attr.name, attr)
 del attr
 
 Module_six_moves_urllib_request._moved_attributes = _urllib_request_moved_attributes
 
-_importer._add_module(Module_six_moves_urllib_request(__name__ + ".moves.urllib.request"),
-                      "moves.urllib_request", "moves.urllib.request")
+_importer._add_module(
+    Module_six_moves_urllib_request(
+        __name__ +
+        ".moves.urllib.request"),
+    "moves.urllib_request",
+    "moves.urllib.request")
 
 
 class Module_six_moves_urllib_response(_LazyModule):
+
     """Lazy loading of moved objects in six.moves.urllib_response"""
 
 
@@ -412,11 +428,16 @@ del attr
 
 Module_six_moves_urllib_response._moved_attributes = _urllib_response_moved_attributes
 
-_importer._add_module(Module_six_moves_urllib_response(__name__ + ".moves.urllib.response"),
-                      "moves.urllib_response", "moves.urllib.response")
+_importer._add_module(
+    Module_six_moves_urllib_response(
+        __name__ +
+        ".moves.urllib.response"),
+    "moves.urllib_response",
+    "moves.urllib.response")
 
 
 class Module_six_moves_urllib_robotparser(_LazyModule):
+
     """Lazy loading of moved objects in six.moves.urllib_robotparser"""
 
 
@@ -429,11 +450,16 @@ del attr
 
 Module_six_moves_urllib_robotparser._moved_attributes = _urllib_robotparser_moved_attributes
 
-_importer._add_module(Module_six_moves_urllib_robotparser(__name__ + ".moves.urllib.robotparser"),
-                      "moves.urllib_robotparser", "moves.urllib.robotparser")
+_importer._add_module(
+    Module_six_moves_urllib_robotparser(
+        __name__ +
+        ".moves.urllib.robotparser"),
+    "moves.urllib_robotparser",
+    "moves.urllib.robotparser")
 
 
 class Module_six_moves_urllib(types.ModuleType):
+
     """Create a six.moves.urllib namespace that resembles the Python 3 namespace"""
     __path__ = []  # mark as package
     parse = _importer._get_module("moves.urllib_parse")
@@ -566,6 +592,7 @@ _add_doc(iterlists,
 if PY3:
     def b(s):
         return s.encode("latin-1")
+
     def u(s):
         return s
     unichr = chr
@@ -585,14 +612,18 @@ else:
     def b(s):
         return s
     # Workaround for standalone backslash
+
     def u(s):
         return unicode(s.replace(r'\\', r'\\\\'), "unicode_escape")
     unichr = unichr
     int2byte = chr
+
     def byte2int(bs):
         return ord(bs[0])
+
     def indexbytes(buf, i):
         return ord(buf[i])
+
     def iterbytes(buf):
         return (ord(byte) for byte in buf)
     import StringIO
@@ -603,7 +634,6 @@ _add_doc(u, """Text literal""")
 
 if PY3:
     exec_ = getattr(moves.builtins, "exec")
-
 
     def reraise(tp, value, tb=None):
         if value.__traceback__ is not tb:
@@ -623,7 +653,6 @@ else:
             _locs_ = _globs_
         exec("""exec _code_ in _globs_, _locs_""")
 
-
     exec_("""def reraise(tp, value, tb=None):
     raise tp, value, tb
 """)
@@ -636,13 +665,14 @@ if print_ is None:
         fp = kwargs.pop("file", sys.stdout)
         if fp is None:
             return
+
         def write(data):
             if not isinstance(data, basestring):
                 data = str(data)
             # If the file has an encoding, encode unicode with it.
             if (isinstance(fp, file) and
-                isinstance(data, unicode) and
-                fp.encoding is not None):
+                    isinstance(data, unicode) and
+                    fp.encoding is not None):
                 errors = getattr(fp, "errors", None)
                 if errors is None:
                     errors = "strict"
@@ -696,12 +726,14 @@ if sys.version_info[0:2] < (3, 4):
 else:
     wraps = functools.wraps
 
+
 def with_metaclass(meta, *bases):
     """Create a base class with a metaclass."""
     # This requires a bit of explanation: the basic idea is to make a dummy
     # metaclass for one level of class instantiation that replaces itself with
     # the actual metaclass.
     class metaclass(meta):
+
         def __new__(cls, name, this_bases, d):
             return meta(name, bases, d)
     return type.__new__(metaclass, 'temporary_class', (), {})
@@ -739,7 +771,7 @@ if sys.meta_path:
         # the six meta path importer, since the other six instance will have
         # inserted an importer with different class.
         if (type(importer).__name__ == "_SixMetaPathImporter" and
-            importer.name == __name__):
+                importer.name == __name__):
             del sys.meta_path[i]
             break
     del i, importer

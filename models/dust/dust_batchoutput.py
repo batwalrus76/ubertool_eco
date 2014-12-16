@@ -5,7 +5,8 @@
 
 from django.views.decorators.http import require_POST
 from StringIO import StringIO
-import dust_model,dust_tables
+import dust_model
+import dust_tables
 import csv
 from threading import Thread
 import Queue
@@ -32,48 +33,48 @@ mineau_scaling_factor = []
 
 
 ######Pre-defined outputs########
-ar_mg_out=[]
-bird_reptile_dermal_ld50_out=[]
-gran_bird_ex_derm_dose_out=[]
-gran_repamp_ex_derm_dose_out=[]
-gran_mam_ex_derm_dose_out=[]
-fol_bird_ex_derm_dose_out=[]
-fol_repamp_ex_derm_dose_out=[]
-fol_mam_ex_derm_dose_out=[]
-bgs_bird_ex_derm_dose_out=[]
-bgs_repamp_ex_derm_dose_out=[]
-bgs_mam_ex_derm_dose_out=[]
-amp_derm_ld50_out=[]
-birdrep_derm_ld50_out=[]
-mam_derm_ld50_out=[]
-ratio_gran_bird_out=[]
-LOC_gran_bird_out=[]
-ratio_gran_rep_out=[]
-LOC_gran_rep_out=[]
-ratio_gran_amp_out=[]
-LOC_gran_amp_out=[]
-ratio_gran_mam_out=[]
-LOC_gran_mam_out=[]
-ratio_fol_bird_out=[]
-LOC_fol_bird_out=[]
-ratio_fol_rep_out=[]
-LOC_fol_rep_out=[]
-ratio_fol_amp_out=[]
-LOC_fol_amp_out=[]
-ratio_fol_mam_out=[]
-LOC_fol_mam_out=[]
-ratio_bgs_bird_out=[]
-LOC_bgs_bird_out=[]
-ratio_bgs_rep_out=[]
-LOC_bgs_rep_out=[]
-ratio_bgs_amp_out=[]
-LOC_bgs_amp_out=[]
-ratio_bgs_mam_out=[]
-LOC_bgs_mam_out=[]
+ar_mg_out = []
+bird_reptile_dermal_ld50_out = []
+gran_bird_ex_derm_dose_out = []
+gran_repamp_ex_derm_dose_out = []
+gran_mam_ex_derm_dose_out = []
+fol_bird_ex_derm_dose_out = []
+fol_repamp_ex_derm_dose_out = []
+fol_mam_ex_derm_dose_out = []
+bgs_bird_ex_derm_dose_out = []
+bgs_repamp_ex_derm_dose_out = []
+bgs_mam_ex_derm_dose_out = []
+amp_derm_ld50_out = []
+birdrep_derm_ld50_out = []
+mam_derm_ld50_out = []
+ratio_gran_bird_out = []
+LOC_gran_bird_out = []
+ratio_gran_rep_out = []
+LOC_gran_rep_out = []
+ratio_gran_amp_out = []
+LOC_gran_amp_out = []
+ratio_gran_mam_out = []
+LOC_gran_mam_out = []
+ratio_fol_bird_out = []
+LOC_fol_bird_out = []
+ratio_fol_rep_out = []
+LOC_fol_rep_out = []
+ratio_fol_amp_out = []
+LOC_fol_amp_out = []
+ratio_fol_mam_out = []
+LOC_fol_mam_out = []
+ratio_bgs_bird_out = []
+LOC_bgs_bird_out = []
+ratio_bgs_rep_out = []
+LOC_bgs_rep_out = []
+ratio_bgs_amp_out = []
+LOC_bgs_amp_out = []
+ratio_bgs_mam_out = []
+LOC_bgs_mam_out = []
 
-jid_all=[]
-jid_batch=[]
-dust_obj_all=[]
+jid_all = []
+jid_batch = []
+dust_obj_all = []
 all_threads = []
 out_html_all = {}
 job_q = Queue.Queue()
@@ -106,26 +107,51 @@ def html_table(row_inp_all):
             mam_acute_oral_ld50.append(float(row_inp[13]))
             test_mam_bw.append(float(row_inp[14]))
 
-            Input_header="""<div class="out_">
+            Input_header = """<div class="out_">
                                 <br><H3>Batch Calculation of Iteration %s</H3>
-                            </div>"""%(iter)
+                            </div>""" % (iter)
 
-            
             # dust_obj_temp = dust_model.dust(True,True, 'batch', chemical_name[iter-1],label_epa_reg_no[iter-1],ar_lb[iter-1],frac_pest_surface[iter-1],
             # dislodge_fol_res[iter-1],bird_acute_oral_study[iter-1],bird_study_add_comm[iter-1],low_bird_acute_ld50[iter-1],test_bird_bw[iter-1],mineau_scaling_factor[iter-1],mamm_acute_derm_study[iter-1],mamm_study_add_comm[iter-1],mam_acute_derm_ld50[iter-1],mam_acute_oral_ld50[iter-1],test_mam_bw[iter-1],)
-            dust_obj_temp = dust_model.dust(True,True, 'batch', chemical_name[iter],label_epa_reg_no[iter],ar_lb[iter],frac_pest_surface[iter],
-            dislodge_fol_res[iter],bird_acute_oral_study[iter],bird_study_add_comm[iter],low_bird_acute_ld50[iter],test_bird_bw[iter],mineau_scaling_factor[iter],mamm_acute_derm_study[iter],mamm_study_add_comm[iter],mam_acute_derm_ld50[iter],mam_acute_oral_ld50[iter],test_mam_bw[iter],)
+            dust_obj_temp = dust_model.dust(
+                True,
+                True,
+                'batch',
+                chemical_name[iter],
+                label_epa_reg_no[iter],
+                ar_lb[iter],
+                frac_pest_surface[iter],
+                dislodge_fol_res[iter],
+                bird_acute_oral_study[iter],
+                bird_study_add_comm[iter],
+                low_bird_acute_ld50[iter],
+                test_bird_bw[iter],
+                mineau_scaling_factor[iter],
+                mamm_acute_derm_study[iter],
+                mamm_study_add_comm[iter],
+                mam_acute_derm_ld50[iter],
+                mam_acute_oral_ld50[iter],
+                test_mam_bw[iter],
+            )
 
             ar_mg_out.append(dust_obj_temp.ar_mg)
-            bird_reptile_dermal_ld50_out.append(dust_obj_temp.bird_reptile_dermal_ld50)
-            gran_bird_ex_derm_dose_out.append(dust_obj_temp.gran_bird_ex_derm_dose)
-            gran_repamp_ex_derm_dose_out.append(dust_obj_temp.gran_repamp_ex_derm_dose)
-            gran_mam_ex_derm_dose_out.append(dust_obj_temp.gran_mam_ex_derm_dose)
-            fol_bird_ex_derm_dose_out.append(dust_obj_temp.fol_bird_ex_derm_dose)
-            fol_repamp_ex_derm_dose_out.append(dust_obj_temp.fol_repamp_ex_derm_dose)
+            bird_reptile_dermal_ld50_out.append(
+                dust_obj_temp.bird_reptile_dermal_ld50)
+            gran_bird_ex_derm_dose_out.append(
+                dust_obj_temp.gran_bird_ex_derm_dose)
+            gran_repamp_ex_derm_dose_out.append(
+                dust_obj_temp.gran_repamp_ex_derm_dose)
+            gran_mam_ex_derm_dose_out.append(
+                dust_obj_temp.gran_mam_ex_derm_dose)
+            fol_bird_ex_derm_dose_out.append(
+                dust_obj_temp.fol_bird_ex_derm_dose)
+            fol_repamp_ex_derm_dose_out.append(
+                dust_obj_temp.fol_repamp_ex_derm_dose)
             fol_mam_ex_derm_dose_out.append(dust_obj_temp.fol_mam_ex_derm_dose)
-            bgs_bird_ex_derm_dose_out.append(dust_obj_temp.bgs_bird_ex_derm_dose)
-            bgs_repamp_ex_derm_dose_out.append(dust_obj_temp.bgs_repamp_ex_derm_dose)
+            bgs_bird_ex_derm_dose_out.append(
+                dust_obj_temp.bgs_bird_ex_derm_dose)
+            bgs_repamp_ex_derm_dose_out.append(
+                dust_obj_temp.bgs_repamp_ex_derm_dose)
             bgs_mam_ex_derm_dose_out.append(dust_obj_temp.bgs_mam_ex_derm_dose)
             amp_derm_ld50_out.append(dust_obj_temp.amp_derm_ld50)
             birdrep_derm_ld50_out.append(dust_obj_temp.birdrep_derm_ld50)
@@ -156,7 +182,7 @@ def html_table(row_inp_all):
             LOC_bgs_mam_out.append(dust_obj_temp.LOC_bgs_mam)
 
             jid_all.append(dust_obj_temp.jid)
-            dust_obj_all.append(dust_obj_temp)    
+            dust_obj_all.append(dust_obj_temp)
             if iter == 0:
                 jid_batch.append(dust_obj_temp.jid)
 
@@ -164,11 +190,11 @@ def html_table(row_inp_all):
                 <div class="out_">
                     <br><H3>Batch Calculation of Iteration %s:</H3>
                 </div>
-                """%(iter + 1)
+                """ % (iter + 1)
 
             out_html_temp = batch_header + dust_tables.table_all(dust_obj_temp)
-            out_html_all[iter]=out_html_temp
-                # html = html + dust_tables.table_all(dust_obj)[0]
+            out_html_all[iter] = out_html_temp
+            # html = html + dust_tables.table_all(dust_obj)[0]
 
             # html_table_temp = Input_header + table_all_out[0] + "<br>"
             # return html_table_temp
@@ -226,20 +252,25 @@ def html_table(row_inp_all):
 #     baremammrisk_out_temp=table_all_out[6]['baremammrisk']
 #     baremammrisk_out.append(baremammrisk_out_temp)
 
-#     return html_table_temp  
+#     return html_table_temp
 
 
 def loop_html(thefile):
     reader = csv.reader(thefile.file.read().splitlines())
     header = reader.next()
     # logger.info(header)
-    i=0
+    i = 0
     # iter_html=""
     for row in reader:
         job_q.put([row, i])
-        i=i+1
+        i = i + 1
 
-    all_threads = [Thread(target=html_table, args=(job_q, )) for j in range(thread_count)]
+    all_threads = [
+        Thread(
+            target=html_table,
+            args=(
+                job_q,
+            )) for j in range(thread_count)]
     for x in all_threads:
         x.start()
     for x in all_threads:
@@ -247,20 +278,51 @@ def loop_html(thefile):
     for x in all_threads:
         x.join()
 
-    html_timestamp = '' #dust_tables.timestamp("", jid_batch[0])
+    html_timestamp = ''  # dust_tables.timestamp("", jid_batch[0])
     out_html_all_sort = OrderedDict(sorted(out_html_all.items()))
     # logging.info(out_html_all_sort)
-    sum_input_html = dust_tables.table_sum_input(i, ar_lb,frac_pest_surface,dislodge_fol_res,low_bird_acute_ld50,test_bird_bw,mam_acute_derm_ld50, mam_acute_oral_ld50,test_mam_bw,mineau_scaling_factor)
-    sum_output_html = dust_tables.table_sum_output(gran_bird_ex_derm_dose_out,gran_repamp_ex_derm_dose_out,gran_mam_ex_derm_dose_out,fol_bird_ex_derm_dose_out,fol_repamp_ex_derm_dose_out,fol_mam_ex_derm_dose_out,bgs_bird_ex_derm_dose_out,bgs_repamp_ex_derm_dose_out,bgs_mam_ex_derm_dose_out,ratio_gran_bird_out,ratio_gran_rep_out,ratio_gran_amp_out,ratio_gran_mam_out,ratio_fol_bird_out,ratio_fol_rep_out,ratio_fol_amp_out,ratio_fol_mam_out,ratio_bgs_bird_out,ratio_bgs_rep_out,ratio_bgs_amp_out,ratio_bgs_mam_out)
+    sum_input_html = dust_tables.table_sum_input(
+        i,
+        ar_lb,
+        frac_pest_surface,
+        dislodge_fol_res,
+        low_bird_acute_ld50,
+        test_bird_bw,
+        mam_acute_derm_ld50,
+        mam_acute_oral_ld50,
+        test_mam_bw,
+        mineau_scaling_factor)
+    sum_output_html = dust_tables.table_sum_output(
+        gran_bird_ex_derm_dose_out,
+        gran_repamp_ex_derm_dose_out,
+        gran_mam_ex_derm_dose_out,
+        fol_bird_ex_derm_dose_out,
+        fol_repamp_ex_derm_dose_out,
+        fol_mam_ex_derm_dose_out,
+        bgs_bird_ex_derm_dose_out,
+        bgs_repamp_ex_derm_dose_out,
+        bgs_mam_ex_derm_dose_out,
+        ratio_gran_bird_out,
+        ratio_gran_rep_out,
+        ratio_gran_amp_out,
+        ratio_gran_mam_out,
+        ratio_fol_bird_out,
+        ratio_fol_rep_out,
+        ratio_fol_amp_out,
+        ratio_fol_mam_out,
+        ratio_bgs_bird_out,
+        ratio_bgs_rep_out,
+        ratio_bgs_amp_out,
+        ratio_bgs_mam_out)
     sum_html = sum_input_html + sum_output_html
 
-    # return sum_input_html + sum_output_html + iter_html 
+    # return sum_input_html + sum_output_html + iter_html
     return html_timestamp + sum_html + "".join(out_html_all_sort.values())
 
 
 @require_POST
 def dustBatchOutputPage(request):
     thefile = request.FILES['upfile']
-    iter_html=loop_html(thefile)
- 
+    iter_html = loop_html(thefile)
+
     return iter_html, dust_obj_all, jid_batch

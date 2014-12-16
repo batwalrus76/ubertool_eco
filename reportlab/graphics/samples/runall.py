@@ -5,32 +5,34 @@ import glob
 import inspect
 import types
 
+
 def moduleClasses(mod):
     def P(obj, m=mod.__name__, CT=type):
-        return (type(obj)==CT and obj.__module__==m)
+        return (isinstance(obj, CT) and obj.__module__ == m)
     try:
         return inspect.getmembers(mod, P)[0][1]
     except:
         return None
 
+
 def getclass(f):
     return moduleClasses(__import__(f))
 
+
 def run(format, VERBOSE=0):
-    formats = format.split( ',')
+    formats = format.split(',')
     for i in range(0, len(formats)):
         formats[i] == formats[i].strip().lower()
-    allfiles = glob.glob('*.py')
-    allfiles.sort()
+    allfiles = sorted(glob.glob('*.py'))
     for fn in allfiles:
         f = fn.split('.')[0]
         c = getclass(f)
-        if c != None:
+        if c is not None:
             print(c.__name__)
             try:
                 for fmt in formats:
                     if fmt:
-                        c().save(formats=[fmt],outDir='.',fnRoot=c.__name__)
+                        c().save(formats=[fmt], outDir='.', fnRoot=c.__name__)
                         if VERBOSE:
                             print("  %s.%s" % (c.__name__, fmt))
             except:
@@ -43,8 +45,10 @@ if __name__ == "__main__":
         try:
             if sys.argv[1] == "-h":
                 print('usage: runall.py [FORMAT] [-h]')
-                print('   if format is supplied is should be one or more of pdf,gif,eps,png etc')
-                print('   if format is missing the following formats are assumed: pdf,pict,png')
+                print(
+                    '   if format is supplied is should be one or more of pdf,gif,eps,png etc')
+                print(
+                    '   if format is missing the following formats are assumed: pdf,pict,png')
                 print('   -h prints this message')
             else:
                 t = sys.argv[1:]
@@ -52,7 +56,9 @@ if __name__ == "__main__":
                     run(f)
         except:
             print('usage: runall.py [FORMAT][-h]')
-            print('   if format is supplied is should be one or more of pdf,gif,eps,png etc')
-            print('   if format is missing the following formats are assumed: pdf,pict,png')
+            print(
+                '   if format is supplied is should be one or more of pdf,gif,eps,png etc')
+            print(
+                '   if format is missing the following formats are assumed: pdf,pict,png')
             print('   -h prints this message')
             raise

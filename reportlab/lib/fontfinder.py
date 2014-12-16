@@ -1,9 +1,9 @@
-#Copyright ReportLab Europe Ltd. 2000-2012
-#see license.txt for license details
-__version__=''' $Id$ '''
+# Copyright ReportLab Europe Ltd. 2000-2012
+# see license.txt for license details
+__version__ = ''' $Id$ '''
 
-#modification of users/robin/ttflist.py.
-__doc__="""This provides some general-purpose tools for finding fonts.
+# modification of users/robin/ttflist.py.
+__doc__ = """This provides some general-purpose tools for finding fonts.
 
 The FontFinder object can search for font files.  It aims to build
 a catalogue of fonts which our framework can work with.  It may be useful
@@ -58,44 +58,53 @@ of non-Python applications.
 Future plans might include using this to auto-register fonts; and making it
 update itself smartly on repeated instantiation.
 """
-import sys, time, os, pickle, tempfile
+import sys
+import time
+import os
+import pickle
+import tempfile
 from xml.sax.saxutils import quoteattr
 try:
     from hashlib import md5
 except ImportError:
     from md5 import md5
 
-EXTENSIONS = ['.ttf','.ttc','.otf','.pfb','.pfa']
+EXTENSIONS = ['.ttf', '.ttc', '.otf', '.pfb', '.pfa']
 
 # PDF font flags (see PDF Reference Guide table 5.19)
-FF_FIXED        = 1 <<  1-1
-FF_SERIF        = 1 <<  2-1
-FF_SYMBOLIC     = 1 <<  3-1
-FF_SCRIPT       = 1 <<  4-1
-FF_NONSYMBOLIC  = 1 <<  6-1
-FF_ITALIC       = 1 <<  7-1
-FF_ALLCAP       = 1 << 17-1
-FF_SMALLCAP     = 1 << 18-1
-FF_FORCEBOLD    = 1 << 19-1
+FF_FIXED = 1 << 1 - 1
+FF_SERIF = 1 << 2 - 1
+FF_SYMBOLIC = 1 << 3 - 1
+FF_SCRIPT = 1 << 4 - 1
+FF_NONSYMBOLIC = 1 << 6 - 1
+FF_ITALIC = 1 << 7 - 1
+FF_ALLCAP = 1 << 17 - 1
+FF_SMALLCAP = 1 << 18 - 1
+FF_FORCEBOLD = 1 << 19 - 1
+
 
 class FontDescriptor:
+
     """This is a short descriptive record about a font.
 
     typeCode should be a file extension e.g. ['ttf','ttc','otf','pfb','pfa']
     """
+
     def __init__(self):
         self.name = None
         self.fullName = None
         self.familyName = None
         self.styleName = None
-        self.isBold = False   #true if it's somehow bold
-        self.isItalic = False #true if it's italic or oblique or somehow slanty
+        self.isBold = False  # true if it's somehow bold
+        # true if it's italic or oblique or somehow slanty
+        self.isItalic = False
         self.isFixedPitch = False
-        self.isSymbolic = False   #false for Dingbats, Symbols etc.
+        self.isSymbolic = False  # false for Dingbats, Symbols etc.
 
-        self.typeCode = None   #normally the extension minus the dot
-        self.fileName = None  #full path to where we found it.
-        self.metricsFileName = None  #defined only for type='type1pc', or 'type1mac'
+        self.typeCode = None  # normally the extension minus the dot
+        self.fileName = None  # full path to where we found it.
+        # defined only for type='type1pc', or 'type1mac'
+        self.metricsFileName = None
 
         self.timeModified = 0
 
@@ -112,7 +121,10 @@ class FontDescriptor:
         return '<font ' + ' '.join(attrs) + '/>'
 
 from reportlab.lib.utils import rl_isdir, rl_isfile, rl_listdir, rl_getmtime
+
+
 class FontFinder:
+
     def __init__(self, dirs=[], useCache=True, validate=False):
         self.useCache = useCache
         self.validate = validate
@@ -120,16 +132,16 @@ class FontFinder:
         self._dirs = set(dirs)
         self._fonts = []
 
-        self._skippedFiles = [] #list of filenames we did not handle
-        self._badFiles = []  #list of filenames we rejected
+        self._skippedFiles = []  # list of filenames we did not handle
+        self._badFiles = []  # list of filenames we rejected
 
         self._fontsByName = {}
         self._fontsByFamily = {}
-        self._fontsByFamilyBoldItalic = {}   #indexed by bold, italic
+        self._fontsByFamilyBoldItalic = {}  # indexed by bold, italic
 
     def addDirectory(self, dirName):
-        #aesthetics - if there are 2 copies of a font, should the first or last
-        #be picked up?  might need reversing
+        # aesthetics - if there are 2 copies of a font, should the first or last
+        # be picked up?  might need reversing
         if rl_isdir(dirName):
             self._dirs.add(dirName)
 
@@ -148,13 +160,12 @@ class FontFinder:
                     self._fontsByFamily[fam].append(font)
                 else:
                     self._fontsByFamily[fam] = [font]
-        names = list(self._fontsByFamily.keys())
-        names.sort()
+        names = sorted(self._fontsByFamily.keys())
         return names
 
     def getFontsInFamily(self, familyName):
         "Return list of all font objects with this family name"
-        return self._fontsByFamily.get(familyName,[])
+        return self._fontsByFamily.get(familyName, [])
 
     def getFamilyXmlReport(self):
         """Reports on all families found as XML.
@@ -165,7 +176,7 @@ class FontFinder:
         for dirName in self._dirs:
             lines.append("    <directory name=%s/>" % quoteattr(dirName))
         for familyName in self.getFamilyNames():
-            if familyName:  #skip null case
+            if familyName:  # skip null case
                 lines.append('    <family name=%s>' % quoteattr(familyName))
                 for font in self.getFontsInFamily(familyName):
                     lines.append('        ' + font.getTag())
@@ -194,7 +205,9 @@ class FontFinder:
                     if font.isItalic == italic:
                         return font
 
-        raise KeyError("Cannot find font %s with bold=%s, italic=%s" % (familyName, bold, italic))
+        raise KeyError(
+            "Cannot find font %s with bold=%s, italic=%s" %
+            (familyName, bold, italic))
 
     def _getCacheFileName(self):
         """Base this on the directories...same set of directories
@@ -218,17 +231,21 @@ class FontFinder:
     def search(self):
         started = time.clock()
         if not self._dirs:
-            raise ValueError("Font search path is empty!  Please specify search directories using addDirectory or addDirectories")
+            raise ValueError(
+                "Font search path is empty!  Please specify search directories using addDirectory or addDirectories")
 
         if self.useCache:
             cfn = self._getCacheFileName()
             if rl_isfile(cfn):
                 try:
                     self.load(cfn)
-                    #print "loaded cached file with %d fonts (%s)" % (len(self._fonts), cfn)
+                    # print "loaded cached file with %d fonts (%s)" %
+                    # (len(self._fonts), cfn)
                     return
                 except:
-                    pass  #pickle load failed.  Ho hum, maybe it's an old pickle.  Better rebuild it.
+                    # pickle load failed.  Ho hum, maybe it's an old pickle.
+                    # Better rebuild it.
+                    pass
 
         from stat import ST_MTIME
         for dirName in self._dirs:
@@ -236,27 +253,30 @@ class FontFinder:
             for fileName in fileNames:
                 root, ext = os.path.splitext(fileName)
                 if ext.lower() in EXTENSIONS:
-                    #it's a font
+                    # it's a font
                     f = FontDescriptor()
-                    f.fileName = os.path.normpath(os.path.join(dirName, fileName))
+                    f.fileName = os.path.normpath(
+                        os.path.join(
+                            dirName,
+                            fileName))
                     f.timeModified = rl_getmtime(f.fileName)
 
                     ext = ext.lower()
                     if ext[0] == '.':
                         ext = ext[1:]
-                    f.typeCode = ext  #strip the dot
+                    f.typeCode = ext  # strip the dot
 
-                    #what to do depends on type.  We only accept .pfb if we
-                    #have .afm to go with it, and don't handle .otf now.
+                    # what to do depends on type.  We only accept .pfb if we
+                    # have .afm to go with it, and don't handle .otf now.
 
                     if ext in ('otf', 'pfa'):
                         self._skippedFiles.append(fileName)
 
-                    elif ext in ('ttf','ttc'):
-                        #parsing should check it for us
+                    elif ext in ('ttf', 'ttc'):
+                        # parsing should check it for us
                         from reportlab.pdfbase.ttfonts import TTFontFile, TTFError
                         try:
-                            font = TTFontFile(fileName,validate=self.validate)
+                            font = TTFontFile(fileName, validate=self.validate)
                         except TTFError:
                             self._badFiles.append(fileName)
                             continue
@@ -271,9 +291,17 @@ class FontFinder:
 
                         # type 1; we need an AFM file or have to skip.
                         if rl_isfile(os.path.join(dirName, root + '.afm')):
-                            f.metricsFileName = os.path.normpath(os.path.join(dirName, root + '.afm'))
+                            f.metricsFileName = os.path.normpath(
+                                os.path.join(
+                                    dirName,
+                                    root +
+                                    '.afm'))
                         elif rl_isfile(os.path.join(dirName, root + '.AFM')):
-                            f.metricsFileName = os.path.normpath(os.path.join(dirName, root + '.AFM'))
+                            f.metricsFileName = os.path.normpath(
+                                os.path.join(
+                                    dirName,
+                                    root +
+                                    '.AFM'))
                         else:
                             self._skippedFiles.append(fileName)
                             continue
@@ -284,21 +312,22 @@ class FontFinder:
                         f.fullName = info.get('FullName', f.name)
                         f.familyName = info.get('FamilyName', None)
                         f.isItalic = (float(info.get('ItalicAngle', 0)) > 0.0)
-                        #if the weight has the word bold, deem it bold
-                        f.isBold = ('bold' in info.get('Weight','').lower())
+                        # if the weight has the word bold, deem it bold
+                        f.isBold = ('bold' in info.get('Weight', '').lower())
 
                     self._fonts.append(f)
         if self.useCache:
             self.save(cfn)
 
         finished = time.clock()
-##        print "found %d fonts; skipped %d; bad %d.  Took %0.2f seconds" % (
+# print "found %d fonts; skipped %d; bad %d.  Took %0.2f seconds" % (
 ##            len(self._fonts), len(self._skippedFiles), len(self._badFiles),
 ##            finished - started
-##            )
+# )
+
 
 def test():
-    #windows-centric test maybe
+    # windows-centric test maybe
     from reportlab import rl_config
     ff = FontFinder()
     ff.useCache = True
@@ -325,10 +354,10 @@ def test():
     print()
     outw('Bold fonts\n\t')
     for font in ff.getFontsWithAttributes(isBold=True, isItalic=False):
-        outw(font.fullName+' ')
+        outw(font.fullName + ' ')
     print()
     print('family report')
     print(ff.getFamilyXmlReport())
 
-if __name__=='__main__':
+if __name__ == '__main__':
     test()

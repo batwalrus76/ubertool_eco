@@ -26,7 +26,9 @@ from boto.pyami.config import Config, BotoConfigPath
 from boto.pyami.scriptbase import ScriptBase
 import time
 
+
 class Bootstrap(ScriptBase):
+
     """
     The Bootstrap class is instantiated and run as part of the PyAMI
     instance initialization process.  The methods in this class will
@@ -72,18 +74,26 @@ class Bootstrap(ScriptBase):
                 version = '-r%s' % version
             else:
                 version = '-rHEAD'
-            location = boto.config.get('Boto', 'boto_location', '/usr/local/boto')
+            location = boto.config.get(
+                'Boto',
+                'boto_location',
+                '/usr/local/boto')
             self.run('svn update %s %s' % (version, location))
         elif update.startswith('git'):
-            location = boto.config.get('Boto', 'boto_location', '/usr/share/python-support/python-boto/boto')
+            location = boto.config.get(
+                'Boto',
+                'boto_location',
+                '/usr/share/python-support/python-boto/boto')
             num_remaining_attempts = 10
             while num_remaining_attempts > 0:
                 num_remaining_attempts -= 1
                 try:
                     self.run('git pull', cwd=location)
                     num_remaining_attempts = 0
-                except Exception, e:
-                    boto.log.info('git pull attempt failed with the following exception. Trying again in a bit. %s', e)
+                except Exception as e:
+                    boto.log.info(
+                        'git pull attempt failed with the following exception. Trying again in a bit. %s',
+                        e)
                     time.sleep(2)
             if update.find(':') >= 0:
                 method, version = update.split(':')
@@ -118,17 +128,23 @@ class Bootstrap(ScriptBase):
                     # if the "package" is really a .py file, it doesn't have to
                     # be installed, just being in the working dir is enough
                     if not package.endswith('.py'):
-                        self.run('easy_install -Z %s' % package, exit_on_error=False)
+                        self.run(
+                            'easy_install -Z %s' %
+                            package,
+                            exit_on_error=False)
 
     def main(self):
         self.create_working_dir()
         self.load_boto()
         self.load_packages()
-        self.notify('Bootstrap Completed for %s' % boto.config.get_instance('instance-id'))
+        self.notify(
+            'Bootstrap Completed for %s' %
+            boto.config.get_instance('instance-id'))
 
 if __name__ == "__main__":
     # because bootstrap starts before any logging configuration can be loaded from
-    # the boto config files, we will manually enable logging to /var/log/boto.log
+    # the boto config files, we will manually enable logging to
+    # /var/log/boto.log
     boto.set_file_logger('bootstrap', '/var/log/boto.log')
     bs = Bootstrap()
     bs.main()

@@ -37,6 +37,28 @@ def insectOutputPage(request):
     b_species = request.POST.get('b_species')
     m_species = request.POST.get('m_species')
 
-    insect_obj = insect_model.insect(True,True,'single',chemical_name, b_species, m_species, bw_quail, bw_duck, bwb_other, bw_rat, bwm_other, sol, ld50_a, ld50_m, aw_bird, mineau, aw_mamm, noaec_d, noaec_q, noaec_o, Species_of_the_bird_NOAEC_CHOICES, noael)
+    insect_obj = insect_model.insect(
+        True,
+        True,
+        'single',
+        chemical_name,
+        b_species,
+        m_species,
+        bw_quail,
+        bw_duck,
+        bwb_other,
+        bw_rat,
+        bwm_other,
+        sol,
+        ld50_a,
+        ld50_m,
+        aw_bird,
+        mineau,
+        aw_mamm,
+        noaec_d,
+        noaec_q,
+        noaec_o,
+        Species_of_the_bird_NOAEC_CHOICES,
+        noael)
 
     return insect_obj

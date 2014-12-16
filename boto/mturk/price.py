@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
+
 class Price(object):
 
     def __init__(self, amount=0.0, currency_code='USD'):
@@ -44,5 +45,5 @@ class Price(object):
             self.formatted_price = value
 
     def get_as_params(self, label, ord=1):
-        return {'%s.%d.Amount'%(label, ord) : str(self.amount),
-                '%s.%d.CurrencyCode'%(label, ord) : self.currency_code}
+        return {'%s.%d.Amount' % (label, ord): str(self.amount),
+                '%s.%d.CurrencyCode' % (label, ord): self.currency_code}

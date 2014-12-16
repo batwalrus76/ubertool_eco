@@ -25,6 +25,7 @@ from io import BytesIO
 
 
 class ImageFileIO(BytesIO):
+
     def __init__(self, fp):
         """
         Adds buffering to a stream file object, in order to

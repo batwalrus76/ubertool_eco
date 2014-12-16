@@ -19,10 +19,13 @@
 #
 # Created by Chris Huegle for TellApart, Inc.
 
+
 class CrossZoneLoadBalancingAttribute(object):
+
     """
     Represents the CrossZoneLoadBalancing segement of ELB Attributes.
     """
+
     def __init__(self, connection=None):
         self.enabled = None
 
@@ -40,14 +43,17 @@ class CrossZoneLoadBalancingAttribute(object):
             else:
                 self.enabled = False
 
+
 class LbAttributes(object):
+
     """
     Represents the Attributes of an Elastic Load Balancer.
     """
+
     def __init__(self, connection=None):
         self.connection = connection
         self.cross_zone_load_balancing = CrossZoneLoadBalancingAttribute(
-          self.connection)
+            self.connection)
 
     def __repr__(self):
         return 'LbAttributes(%s)' % (
@@ -56,6 +62,6 @@ class LbAttributes(object):
     def startElement(self, name, attrs, connection):
         if name == 'CrossZoneLoadBalancing':
             return self.cross_zone_load_balancing
-        
+
     def endElement(self, name, value, connection):
         pass

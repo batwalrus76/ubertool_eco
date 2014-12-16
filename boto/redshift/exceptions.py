@@ -338,7 +338,6 @@ class InvalidHsmConfigurationState(JSONResponseError):
     pass
 
 
-
 class ClusterAlreadyExists(JSONResponseError):
     pass
 

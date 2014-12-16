@@ -51,7 +51,7 @@ class Queue(object):
             val = urlparse.urlparse(self.url)[2].split('/')[2]
         else:
             val = self.url
-        return  val
+        return val
     name = property(_name)
 
     def _arn(self):
@@ -475,4 +475,3 @@ class Queue(object):
 
     # for backward compatibility
     load = load_from_filename
-

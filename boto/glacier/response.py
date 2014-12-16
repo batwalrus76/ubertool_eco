@@ -24,11 +24,13 @@ from boto.compat import json
 
 
 class GlacierResponse(dict):
+
     """
     Represents a response from Glacier layer1. It acts as a dictionary
     containing the combined keys received via JSON in the body (if
     supplied) and headers.
     """
+
     def __init__(self, http_response, response_headers):
         self.http_response = http_response
         self.status = http_response.status

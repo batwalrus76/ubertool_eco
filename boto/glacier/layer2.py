@@ -26,6 +26,7 @@ from .vault import Vault
 
 
 class Layer2(object):
+
     """
     Provides a more pythonic and friendly interface to Glacier based on Layer1
     """
@@ -93,7 +94,8 @@ class Layer2(object):
         marker = None
         while True:
             response_data = self.layer1.list_vaults(marker=marker, limit=1000)
-            vaults.extend([Vault(self.layer1, rd) for rd in response_data['VaultList']])
+            vaults.extend([Vault(self.layer1, rd)
+                           for rd in response_data['VaultList']])
             marker = response_data.get('Marker')
             if not marker:
                 break

@@ -69,29 +69,29 @@ STORAGE_RESPONSE_ERROR = 'StorageResponseError'
 class Provider(object):
 
     CredentialMap = {
-        'aws':    ('aws_access_key_id', 'aws_secret_access_key',
-                   'aws_security_token'),
-        'google': ('gs_access_key_id',  'gs_secret_access_key',
+        'aws': ('aws_access_key_id', 'aws_secret_access_key',
+                'aws_security_token'),
+        'google': ('gs_access_key_id', 'gs_secret_access_key',
                    None),
     }
 
     AclClassMap = {
-        'aws':    Policy,
+        'aws': Policy,
         'google': ACL
     }
 
     CannedAclsMap = {
-        'aws':    CannedS3ACLStrings,
+        'aws': CannedS3ACLStrings,
         'google': CannedGSACLStrings
     }
 
     HostKeyMap = {
-        'aws':    's3',
+        'aws': 's3',
         'google': 'gs'
     }
 
     ChunkedTransferSupport = {
-        'aws':    False,
+        'aws': False,
         'google': True
     }
 
@@ -113,15 +113,15 @@ class Provider(object):
             COPY_SOURCE_VERSION_ID_HEADER_KEY: AWS_HEADER_PREFIX +
                                                 'copy-source-version-id',
             COPY_SOURCE_RANGE_HEADER_KEY: AWS_HEADER_PREFIX +
-                                           'copy-source-range',
+            'copy-source-range',
             DATE_HEADER_KEY: AWS_HEADER_PREFIX + 'date',
             DELETE_MARKER_HEADER_KEY: AWS_HEADER_PREFIX + 'delete-marker',
             METADATA_DIRECTIVE_HEADER_KEY: AWS_HEADER_PREFIX +
-                                            'metadata-directive',
+            'metadata-directive',
             RESUMABLE_UPLOAD_HEADER_KEY: None,
             SECURITY_TOKEN_HEADER_KEY: AWS_HEADER_PREFIX + 'security-token',
             SERVER_SIDE_ENCRYPTION_KEY: AWS_HEADER_PREFIX +
-                                         'server-side-encryption',
+            'server-side-encryption',
             VERSION_ID_HEADER_KEY: AWS_HEADER_PREFIX + 'version-id',
             STORAGE_CLASS_HEADER_KEY: AWS_HEADER_PREFIX + 'storage-class',
             MFA_HEADER_KEY: AWS_HEADER_PREFIX + 'mfa',
@@ -134,12 +134,12 @@ class Provider(object):
             AUTH_HEADER_KEY: 'GOOG1',
             COPY_SOURCE_HEADER_KEY: GOOG_HEADER_PREFIX + 'copy-source',
             COPY_SOURCE_VERSION_ID_HEADER_KEY: GOOG_HEADER_PREFIX +
-                                                'copy-source-version-id',
+            'copy-source-version-id',
             COPY_SOURCE_RANGE_HEADER_KEY: None,
             DATE_HEADER_KEY: GOOG_HEADER_PREFIX + 'date',
             DELETE_MARKER_HEADER_KEY: GOOG_HEADER_PREFIX + 'delete-marker',
-            METADATA_DIRECTIVE_HEADER_KEY: GOOG_HEADER_PREFIX  +
-                                            'metadata-directive',
+            METADATA_DIRECTIVE_HEADER_KEY: GOOG_HEADER_PREFIX +
+            'metadata-directive',
             RESUMABLE_UPLOAD_HEADER_KEY: GOOG_HEADER_PREFIX + 'resumable',
             SECURITY_TOKEN_HEADER_KEY: GOOG_HEADER_PREFIX + 'security-token',
             SERVER_SIDE_ENCRYPTION_KEY: None,
@@ -182,7 +182,11 @@ class Provider(object):
         self.acl_class = self.AclClassMap[self.name]
         self.canned_acls = self.CannedAclsMap[self.name]
         self._credential_expiry_time = None
-        self.get_credentials(access_key, secret_key, security_token, profile_name)
+        self.get_credentials(
+            access_key,
+            secret_key,
+            security_token,
+            profile_name)
         self.configure_headers()
         self.configure_errors()
         # Allow config file to override default host and port.
@@ -238,7 +242,7 @@ class Provider(object):
             # datetime docs.
             seconds_left = (
                 (delta.microseconds + (delta.seconds + delta.days * 24 * 3600)
-                 * 10**6) / 10**6)
+                 * 10 ** 6) / 10 ** 6)
             if seconds_left < (5 * 60):
                 boto.log.debug("Credentials need to be refreshed.")
                 return True
@@ -247,7 +251,8 @@ class Provider(object):
 
     def get_credentials(self, access_key=None, secret_key=None,
                         security_token=None, profile_name=None):
-        access_key_name, secret_key_name, security_token_name = self.CredentialMap[self.name]
+        access_key_name, secret_key_name, security_token_name = self.CredentialMap[
+            self.name]
         if access_key is not None:
             self.access_key = access_key
             boto.log.debug("Using access key provided by client.")
@@ -255,8 +260,13 @@ class Provider(object):
             self.access_key = os.environ[access_key_name.upper()]
             boto.log.debug("Using access key found in environment variable.")
         elif config.has_option("profile %s" % profile_name, access_key_name):
-            self.access_key = config.get("profile %s" % profile_name, access_key_name)
-            boto.log.debug("Using access key found in config file: profile %s." % profile_name)
+            self.access_key = config.get(
+                "profile %s" %
+                profile_name,
+                access_key_name)
+            boto.log.debug(
+                "Using access key found in config file: profile %s." %
+                profile_name)
         elif config.has_option('Credentials', access_key_name):
             self.access_key = config.get('Credentials', access_key_name)
             boto.log.debug("Using access key found in config file.")
@@ -268,8 +278,13 @@ class Provider(object):
             self.secret_key = os.environ[secret_key_name.upper()]
             boto.log.debug("Using secret key found in environment variable.")
         elif config.has_option("profile %s" % profile_name, secret_key_name):
-            self.secret_key = config.get("profile %s" % profile_name, secret_key_name)
-            boto.log.debug("Using secret key found in config file: profile %s." % profile_name)
+            self.secret_key = config.get(
+                "profile %s" %
+                profile_name,
+                secret_key_name)
+            boto.log.debug(
+                "Using secret key found in config file: profile %s." %
+                profile_name)
         elif config.has_option('Credentials', secret_key_name):
             self.secret_key = config.get('Credentials', secret_key_name)
             boto.log.debug("Using secret key found in config file.")
@@ -321,13 +336,17 @@ class Provider(object):
             # I'm assuming there's only one role on the instance profile.
             security = metadata.values()[0]
             self._access_key = security['AccessKeyId']
-            self._secret_key = self._convert_key_to_str(security['SecretAccessKey'])
+            self._secret_key = self._convert_key_to_str(
+                security['SecretAccessKey'])
             self._security_token = security['Token']
             expires_at = security['Expiration']
             self._credential_expiry_time = datetime.strptime(
                 expires_at, "%Y-%m-%dT%H:%M:%SZ")
-            boto.log.debug("Retrieved credentials will expire in %s at: %s",
-                           self._credential_expiry_time - datetime.now(), expires_at)
+            boto.log.debug(
+                "Retrieved credentials will expire in %s at: %s",
+                self._credential_expiry_time -
+                datetime.now(),
+                expires_at)
 
     def _convert_key_to_str(self, key):
         if isinstance(key, unicode):
@@ -354,7 +373,8 @@ class Provider(object):
         self.security_token_header = header_info_map[SECURITY_TOKEN_HEADER_KEY]
         self.resumable_upload_header = (
             header_info_map[RESUMABLE_UPLOAD_HEADER_KEY])
-        self.server_side_encryption_header = header_info_map[SERVER_SIDE_ENCRYPTION_KEY]
+        self.server_side_encryption_header = header_info_map[
+            SERVER_SIDE_ENCRYPTION_KEY]
         self.storage_class_header = header_info_map[STORAGE_CLASS_HEADER_KEY]
         self.version_id = header_info_map[VERSION_ID_HEADER_KEY]
         self.mfa_header = header_info_map[MFA_HEADER_KEY]
@@ -375,5 +395,7 @@ class Provider(object):
         return self.ChunkedTransferSupport[self.name]
 
 # Static utility method for getting default Provider.
+
+
 def get_default():
     return Provider('aws')

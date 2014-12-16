@@ -27,8 +27,26 @@ def dustOutputPage(request):
     mam_acute_oral_ld50 = request.POST.get('mam_acute_oral_ld50')
     test_mam_bw = request.POST.get('tested_mamm_body_weight')
     mineau_scaling_factor = float(request.POST.get('mineau_scaling_factor'))
-    
-    dust_obj = dust_model.dust(True, False, 'single',chemical_name, label_epa_reg_no, ar_lb, frac_pest_surface, dislodge_fol_res, bird_acute_oral_study, bird_study_add_comm,
-          low_bird_acute_ld50, test_bird_bw, mineau_scaling_factor, mamm_acute_derm_study, mamm_study_add_comm, mam_acute_derm_ld50, mam_acute_oral_ld50, test_mam_bw, None)
-    
+
+    dust_obj = dust_model.dust(
+        True,
+        False,
+        'single',
+        chemical_name,
+        label_epa_reg_no,
+        ar_lb,
+        frac_pest_surface,
+        dislodge_fol_res,
+        bird_acute_oral_study,
+        bird_study_add_comm,
+        low_bird_acute_ld50,
+        test_bird_bw,
+        mineau_scaling_factor,
+        mamm_acute_derm_study,
+        mamm_study_add_comm,
+        mam_acute_derm_ld50,
+        mam_acute_oral_ld50,
+        test_mam_bw,
+        None)
+
     return dust_obj

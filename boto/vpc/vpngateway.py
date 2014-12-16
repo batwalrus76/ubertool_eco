@@ -25,6 +25,7 @@ Represents a Vpn Gateway
 
 from boto.ec2.ec2object import TaggedEC2Object
 
+
 class Attachment(object):
 
     def __init__(self, connection=None):
@@ -41,6 +42,7 @@ class Attachment(object):
             self.state = value
         else:
             setattr(self, name, value)
+
 
 class VpnGateway(TaggedEC2Object):
 
@@ -84,4 +86,3 @@ class VpnGateway(TaggedEC2Object):
             vpc_id,
             dry_run=dry_run
         )
-

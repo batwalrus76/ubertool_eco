@@ -17,6 +17,7 @@ def getETreeBuilder(ElementTreeImplementation, fullTree=False):
     ElementTreeCommentType = ElementTree.Comment("asd").tag
 
     class Element(_base.Node):
+
         def __init__(self, name, namespace=None):
             self._name = name
             self._namespace = namespace
@@ -142,6 +143,7 @@ def getETreeBuilder(ElementTreeImplementation, fullTree=False):
             _base.Node.reparentChildren(self, newParent)
 
     class Comment(Element):
+
         def __init__(self, data):
             # Use the superclass constructor to set all properties on the
             # wrapper element
@@ -159,6 +161,7 @@ def getETreeBuilder(ElementTreeImplementation, fullTree=False):
         data = property(_getData, _setData)
 
     class DocumentType(Element):
+
         def __init__(self, name, publicId, systemId):
             Element.__init__(self, "<!DOCTYPE>")
             self._element.text = name
@@ -184,10 +187,12 @@ def getETreeBuilder(ElementTreeImplementation, fullTree=False):
         systemId = property(_getSystemId, _setSystemId)
 
     class Document(Element):
+
         def __init__(self):
             Element.__init__(self, "DOCUMENT_ROOT")
 
     class DocumentFragment(Element):
+
         def __init__(self):
             Element.__init__(self, "DOCUMENT_FRAGMENT")
 
@@ -216,8 +221,8 @@ def getETreeBuilder(ElementTreeImplementation, fullTree=False):
             elif element.tag == ElementTreeCommentType:
                 rv.append("|%s<!-- %s -->" % (' ' * indent, element.text))
             else:
-                assert isinstance(element.tag, text_type), \
-                    "Expected unicode, got %s, %s" % (type(element.tag), element.tag)
+                assert isinstance(element.tag, text_type), "Expected unicode, got %s, %s" % (
+                    type(element.tag), element.tag)
                 nsmatch = tag_regexp.match(element.tag)
 
                 if nsmatch is None:
@@ -241,7 +246,8 @@ def getETreeBuilder(ElementTreeImplementation, fullTree=False):
                         attributes.append((attr_string, value))
 
                     for name, value in sorted(attributes):
-                        rv.append('|%s%s="%s"' % (' ' * (indent + 2), name, value))
+                        rv.append('|%s%s="%s"' %
+                                  (' ' * (indent + 2), name, value))
                 if element.text:
                     rv.append("|%s\"%s\"" % (' ' * (indent + 2), element.text))
             indent += 2

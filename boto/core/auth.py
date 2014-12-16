@@ -35,9 +35,11 @@ except ImportError:
 
 
 class SigV2Auth(object):
+
     """
     Sign an Query Signature V2 request.
     """
+
     def __init__(self, credentials, api_version=''):
         self.credentials = credentials
         self.api_version = api_version

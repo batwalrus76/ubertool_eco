@@ -22,15 +22,15 @@
 from boto.exception import InvalidLifecycleConfigError
 
 # Relevant tags for the lifecycle configuration XML document.
-LIFECYCLE_CONFIG   = 'LifecycleConfiguration'
-RULE               = 'Rule'
-ACTION             = 'Action'
-DELETE             = 'Delete'
-CONDITION          = 'Condition'
-AGE                = 'Age'
-CREATED_BEFORE     = 'CreatedBefore'
+LIFECYCLE_CONFIG = 'LifecycleConfiguration'
+RULE = 'Rule'
+ACTION = 'Action'
+DELETE = 'Delete'
+CONDITION = 'Condition'
+AGE = 'Age'
+CREATED_BEFORE = 'CreatedBefore'
 NUM_NEWER_VERSIONS = 'NumberOfNewerVersions'
-IS_LIVE            = 'IsLive'
+IS_LIVE = 'IsLive'
 
 # List of all action elements.
 LEGAL_ACTIONS = [DELETE]
@@ -43,7 +43,9 @@ LEGAL_ACTION_ACTION_PARAMS = {
     DELETE: [],
 }
 
+
 class Rule(object):
+
     """
     A lifecycle rule for a bucket.
 
@@ -164,7 +166,9 @@ class Rule(object):
         s += '</' + RULE + '>'
         return s
 
+
 class LifecycleConfig(list):
+
     """
     A container of rules associated with a lifecycle configuration.
     """

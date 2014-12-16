@@ -29,6 +29,7 @@ import xml.sax
 
 
 class CompleteMultiPartUpload(object):
+
     """
     Represents a completed MultiPart Upload.  Contains the
     following useful attributes:
@@ -72,6 +73,7 @@ class CompleteMultiPartUpload(object):
 
 
 class Part(object):
+
     """
     Represents a single part in a MultiPart upload.
     Attributes include:
@@ -126,6 +128,7 @@ def part_lister(mpupload, part_number_marker=None):
 
 
 class MultiPartUpload(object):
+
     """
     Represents a MultiPart Upload operation.
     """

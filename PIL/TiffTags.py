@@ -46,8 +46,8 @@ TAGS = {
     (262, 5): "CMYK",
     (262, 6): "YCbCr",
     (262, 8): "CieLAB",
-    (262, 32803): "CFA", # TIFF/EP, Adobe DNG
-    (262, 32892): "LinearRaw", # Adobe DNG
+    (262, 32803): "CFA",  # TIFF/EP, Adobe DNG
+    (262, 32892): "LinearRaw",  # Adobe DNG
 
     263: "Thresholding",
     264: "CellWidth",
@@ -161,7 +161,8 @@ TAGS = {
     50716: "BlackLevelDeltaV",
     50717: "WhiteLevel",
     50718: "DefaultScale",
-    50741: "BestQualityScale",  # FIXME! Dictionary contains duplicate keys 50741
+    # FIXME! Dictionary contains duplicate keys 50741
+    50741: "BestQualityScale",
     50719: "DefaultCropOrigin",
     50720: "DefaultCropSize",
     50778: "CalibrationIlluminant1",
@@ -185,11 +186,12 @@ TAGS = {
     50737: "ChromaBlurRadius",
     50738: "AntiAliasStrength",
     50740: "DNGPrivateData",
-    50741: "MakerNoteSafety",  # FIXME! Dictionary contains duplicate keys 50741
+    # FIXME! Dictionary contains duplicate keys 50741
+    50741: "MakerNoteSafety",
 
-    #ImageJ
-    50838: "ImageJMetaDataByteCounts", # private tag registered with Adobe
-    50839: "ImageJMetaData", # private tag registered with Adobe
+    # ImageJ
+    50838: "ImageJMetaDataByteCounts",  # private tag registered with Adobe
+    50839: "ImageJMetaData",  # private tag registered with Adobe
 }
 
 ##

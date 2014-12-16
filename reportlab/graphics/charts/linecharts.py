@@ -1,14 +1,15 @@
-#Copyright ReportLab Europe Ltd. 2000-2004
-#see license.txt for license details
-#history http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/graphics/charts/linecharts.py
+# Copyright ReportLab Europe Ltd. 2000-2004
+# see license.txt for license details
+# history
+# http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/graphics/charts/linecharts.py
 
-__version__=''' $Id$ '''
-__doc__="""This modules defines a very preliminary Line Chart example."""
+__version__ = ''' $Id$ '''
+__doc__ = """This modules defines a very preliminary Line Chart example."""
 
 from reportlab.lib import colors
 from reportlab.lib.validators import isNumber, isNumberOrNone, isColor, isColorOrNone, isListOfStrings, \
-                                    isListOfStringsOrNone, SequenceOf, isBoolean, NoneOr, \
-                                    isListOfNumbersOrNone, isStringOrNone, OneOf, Percentage
+    isListOfStringsOrNone, SequenceOf, isBoolean, NoneOr, \
+    isListOfNumbersOrNone, isStringOrNone, OneOf, Percentage
 from reportlab.lib.attrmap import *
 from reportlab.graphics.widgetbase import Widget, TypedPropertyCollection, PropHolder
 from reportlab.graphics.shapes import Line, Rect, Group, Drawing, Polygon, PolyLine
@@ -19,39 +20,87 @@ from reportlab.graphics.widgets.markers import uSymbol2Symbol, isSymbol, makeMar
 from reportlab.graphics.charts.areas import PlotArea
 from reportlab.graphics.charts.legends import _objStr
 
+
 class LineChartProperties(PropHolder):
     _attrMap = AttrMap(
-        strokeWidth = AttrMapValue(isNumber, desc='Width of a line.'),
-        strokeColor = AttrMapValue(isColorOrNone, desc='Color of a line or border.'),
-        fillColor = AttrMapValue(isColorOrNone, desc='fill color of a bar.'),
-        strokeDashArray = AttrMapValue(isListOfNumbersOrNone, desc='Dash array of a line.'),
-        symbol = AttrMapValue(NoneOr(isSymbol), desc='Widget placed at data points.',advancedUsage=1),
-        shader = AttrMapValue(None, desc='Shader Class.',advancedUsage=1),
-        filler = AttrMapValue(None, desc='Filler Class.',advancedUsage=1),
-        name = AttrMapValue(isStringOrNone, desc='Name of the line.'),
-        lineStyle = AttrMapValue(NoneOr(OneOf('line','joinedLine','bar')), desc="What kind of plot this line is",advancedUsage=1),
-        barWidth = AttrMapValue(isNumberOrNone,desc="Percentage of available width to be used for a bar",advancedUsage=1),
-        )
+        strokeWidth=AttrMapValue(
+            isNumber, desc='Width of a line.'), strokeColor=AttrMapValue(
+            isColorOrNone, desc='Color of a line or border.'), fillColor=AttrMapValue(
+                isColorOrNone, desc='fill color of a bar.'), strokeDashArray=AttrMapValue(
+                    isListOfNumbersOrNone, desc='Dash array of a line.'), symbol=AttrMapValue(
+                        NoneOr(isSymbol), desc='Widget placed at data points.', advancedUsage=1), shader=AttrMapValue(
+                            None, desc='Shader Class.', advancedUsage=1), filler=AttrMapValue(
+                                None, desc='Filler Class.', advancedUsage=1), name=AttrMapValue(
+                                    isStringOrNone, desc='Name of the line.'), lineStyle=AttrMapValue(
+                                        NoneOr(
+                                            OneOf(
+                                                'line', 'joinedLine', 'bar')), desc="What kind of plot this line is", advancedUsage=1), barWidth=AttrMapValue(
+                                                    isNumberOrNone, desc="Percentage of available width to be used for a bar", advancedUsage=1), )
+
 
 class AbstractLineChart(PlotArea):
 
-    def makeSwatchSample(self,rowNo, x, y, width, height):
+    def makeSwatchSample(self, rowNo, x, y, width, height):
         baseStyle = self.lines
         styleIdx = rowNo % len(baseStyle)
         style = baseStyle[styleIdx]
         color = style.strokeColor
-        yh2 = y+height/2.
-        lineStyle = getattr(style,'lineStyle',None)
-        if lineStyle=='bar':
-            dash = getattr(style, 'strokeDashArray', getattr(baseStyle,'strokeDashArray',None))
-            strokeWidth= getattr(style, 'strokeWidth', getattr(style, 'strokeWidth',None))
-            L = Rect(x,y,width,height,strokeWidth=strokeWidth,strokeColor=color,strokeLineCap=0,strokeDashArray=dash,fillColor=getattr(style,'fillColor',color))
-        elif self.joinedLines or lineStyle=='joinedLine':
-            dash = getattr(style, 'strokeDashArray', getattr(baseStyle,'strokeDashArray',None))
-            strokeWidth= getattr(style, 'strokeWidth', getattr(style, 'strokeWidth',None))
-            L = Line(x,yh2,x+width,yh2,strokeColor=color,strokeLineCap=0)
-            if strokeWidth: L.strokeWidth = strokeWidth
-            if dash: L.strokeDashArray = dash
+        yh2 = y + height / 2.
+        lineStyle = getattr(style, 'lineStyle', None)
+        if lineStyle == 'bar':
+            dash = getattr(
+                style,
+                'strokeDashArray',
+                getattr(
+                    baseStyle,
+                    'strokeDashArray',
+                    None))
+            strokeWidth = getattr(
+                style,
+                'strokeWidth',
+                getattr(
+                    style,
+                    'strokeWidth',
+                    None))
+            L = Rect(
+                x,
+                y,
+                width,
+                height,
+                strokeWidth=strokeWidth,
+                strokeColor=color,
+                strokeLineCap=0,
+                strokeDashArray=dash,
+                fillColor=getattr(
+                    style,
+                    'fillColor',
+                    color))
+        elif self.joinedLines or lineStyle == 'joinedLine':
+            dash = getattr(
+                style,
+                'strokeDashArray',
+                getattr(
+                    baseStyle,
+                    'strokeDashArray',
+                    None))
+            strokeWidth = getattr(
+                style,
+                'strokeWidth',
+                getattr(
+                    style,
+                    'strokeWidth',
+                    None))
+            L = Line(
+                x,
+                yh2,
+                x + width,
+                yh2,
+                strokeColor=color,
+                strokeLineCap=0)
+            if strokeWidth:
+                L.strokeWidth = strokeWidth
+            if dash:
+                L.strokeDashArray = dash
         else:
             L = None
 
@@ -62,7 +111,8 @@ class AbstractLineChart(PlotArea):
         else:
             S = None
 
-        if S: S = uSymbol2Symbol(S,x+width/2.,yh2,color)
+        if S:
+            S = uSymbol2Symbol(S, x + width / 2., yh2, color)
         if S and L:
             g = Group()
             g.add(L)
@@ -70,9 +120,10 @@ class AbstractLineChart(PlotArea):
             return g
         return S or L
 
-    def getSeriesName(self,i,default=None):
+    def getSeriesName(self, i, default=None):
         '''return series name i or default'''
-        return _objStr(getattr(self.lines[i],'name',default))
+        return _objStr(getattr(self.lines[i], 'name', default))
+
 
 class LineChart(AbstractLineChart):
     pass
@@ -80,7 +131,9 @@ class LineChart(AbstractLineChart):
 # This is conceptually similar to the VerticalBarChart.
 # Still it is better named HorizontalLineChart... :-/
 
+
 class HorizontalLineChart(LineChart):
+
     """Line chart with multiple lines.
 
     A line chart is assumed to have one category and one value axis.
@@ -115,23 +168,23 @@ class HorizontalLineChart(LineChart):
         data: chart data, a list of data series of equal length
     """
 
-    _attrMap = AttrMap(BASE=LineChart,
-        useAbsolute = AttrMapValue(isNumber, desc='Flag to use absolute spacing values.',advancedUsage=1),
-        lineLabelNudge = AttrMapValue(isNumber, desc='Distance between a data point and its label.',advancedUsage=1),
-        lineLabels = AttrMapValue(None, desc='Handle to the list of data point labels.'),
-        lineLabelFormat = AttrMapValue(None, desc='Formatting string or function used for data point labels.'),
-        lineLabelArray = AttrMapValue(None, desc='explicit array of line label values, must match size of data if present.'),
-        groupSpacing = AttrMapValue(isNumber, desc='? - Likely to disappear.'),
-        joinedLines = AttrMapValue(isNumber, desc='Display data points joined with lines if true.'),
-        lines = AttrMapValue(None, desc='Handle of the lines.'),
-        valueAxis = AttrMapValue(None, desc='Handle of the value axis.'),
-        categoryAxis = AttrMapValue(None, desc='Handle of the category axis.'),
-        categoryNames = AttrMapValue(isListOfStringsOrNone, desc='List of category names.'),
-        data = AttrMapValue(None, desc='Data to be plotted, list of (lists of) numbers.'),
-        inFill = AttrMapValue(isBoolean, desc='Whether infilling should be done.',advancedUsage=1),
-        reversePlotOrder = AttrMapValue(isBoolean, desc='If true reverse plot order.',advancedUsage=1),
-        annotations = AttrMapValue(None, desc='list of callables, will be called with self, xscale, yscale.',advancedUsage=1),
-        )
+    _attrMap = AttrMap(
+        BASE=LineChart, useAbsolute=AttrMapValue(
+            isNumber, desc='Flag to use absolute spacing values.', advancedUsage=1), lineLabelNudge=AttrMapValue(
+            isNumber, desc='Distance between a data point and its label.', advancedUsage=1), lineLabels=AttrMapValue(
+                None, desc='Handle to the list of data point labels.'), lineLabelFormat=AttrMapValue(
+                    None, desc='Formatting string or function used for data point labels.'), lineLabelArray=AttrMapValue(
+                        None, desc='explicit array of line label values, must match size of data if present.'), groupSpacing=AttrMapValue(
+                            isNumber, desc='? - Likely to disappear.'), joinedLines=AttrMapValue(
+                                isNumber, desc='Display data points joined with lines if true.'), lines=AttrMapValue(
+                                    None, desc='Handle of the lines.'), valueAxis=AttrMapValue(
+                                        None, desc='Handle of the value axis.'), categoryAxis=AttrMapValue(
+                                            None, desc='Handle of the category axis.'), categoryNames=AttrMapValue(
+                                                isListOfStringsOrNone, desc='List of category names.'), data=AttrMapValue(
+                                                    None, desc='Data to be plotted, list of (lists of) numbers.'), inFill=AttrMapValue(
+                                                        isBoolean, desc='Whether infilling should be done.', advancedUsage=1), reversePlotOrder=AttrMapValue(
+                                                            isBoolean, desc='If true reverse plot order.', advancedUsage=1), annotations=AttrMapValue(
+                                                                None, desc='list of callables, will be called with self, xscale, yscale.', advancedUsage=1), )
 
     def __init__(self):
         LineChart.__init__(self)
@@ -145,9 +198,9 @@ class HorizontalLineChart(LineChart):
         self.valueAxis = YValueAxis()
 
         # This defines two series of 3 points.  Just an example.
-        self.data = [(100,110,120,130),
+        self.data = [(100, 110, 120, 130),
                      (70, 80, 80, 90)]
-        self.categoryNames = ('North','South','East','West')
+        self.categoryNames = ('North', 'South', 'East', 'West')
 
         self.lines = TypedPropertyCollection(LineChartProperties)
         self.lines.strokeWidth = 1
@@ -159,8 +212,8 @@ class HorizontalLineChart(LineChart):
         # the next parameters are in points; otherwise
         # they are 'proportions' and are normalized to
         # fit the available space.
-        self.useAbsolute = 0   #- not done yet
-        self.groupSpacing = 1 #5
+        self.useAbsolute = 0  # - not done yet
+        self.groupSpacing = 1  # 5
 
         self.lineLabels = TypedPropertyCollection(Label)
         self.lineLabelFormat = None
@@ -177,10 +230,9 @@ class HorizontalLineChart(LineChart):
         # together.
 
         # New line chart attributes.
-        self.joinedLines = 1 # Connect items with straight lines.
+        self.joinedLines = 1  # Connect items with straight lines.
         self.inFill = 0
         self.reversePlotOrder = 0
-
 
     def demo(self):
         """Shows basic use of a line chart."""
@@ -188,9 +240,9 @@ class HorizontalLineChart(LineChart):
         drawing = Drawing(200, 100)
 
         data = [
-                (13, 5, 20, 22, 37, 45, 19, 4),
-                (14, 10, 21, 28, 38, 46, 25, 5)
-                ]
+            (13, 5, 20, 22, 37, 45, 19, 4),
+            (14, 10, 21, 28, 38, 46, 25, 5)
+        ]
 
         lc = HorizontalLineChart()
 
@@ -205,7 +257,6 @@ class HorizontalLineChart(LineChart):
 
         return drawing
 
-
     def calcPositions(self):
         """Works out where they go.
 
@@ -214,7 +265,7 @@ class HorizontalLineChart(LineChart):
         """
 
         self._seriesCount = len(self.data)
-        self._rowLength = max(list(map(len,self.data)))
+        self._rowLength = max(list(map(len, self.data)))
 
         if self.useAbsolute:
             # Dimensions are absolute.
@@ -238,9 +289,8 @@ class HorizontalLineChart(LineChart):
                     x = groupX + hngs
                     y = yzero
                     height = self.valueAxis.scale(datum) - y
-                    lineRow.append((x, y+height))
+                    lineRow.append((x, y + height))
             self._positions.append(lineRow)
-
 
     def _innerDrawLabel(self, rowNo, colNo, x, y):
         "Draw a label for a given item in the list."
@@ -250,7 +300,7 @@ class HorizontalLineChart(LineChart):
 
         if labelFmt is None:
             labelText = None
-        elif type(labelFmt) is str:
+        elif isinstance(labelFmt, str):
             if labelFmt == 'values':
                 try:
                     labelText = self.lineLabelArray[rowNo][colNo]
@@ -258,14 +308,17 @@ class HorizontalLineChart(LineChart):
                     labelText = None
             else:
                 labelText = labelFmt % labelValue
-        elif hasattr(labelFmt,'__call__'):
+        elif hasattr(labelFmt, '__call__'):
             labelText = labelFmt(labelValue)
         else:
-            raise ValueError("Unknown formatter type %s, expected string or function"%labelFmt)
+            raise ValueError(
+                "Unknown formatter type %s, expected string or function" %
+                labelFmt)
 
         if labelText:
             label = self.lineLabels[(rowNo, colNo)]
-            if not label.visible: return
+            if not label.visible:
+                return
             # Make sure labels are some distance off the data point.
             if y > 0:
                 label.setOrigin(x, y + self.lineLabelNudge)
@@ -279,20 +332,21 @@ class HorizontalLineChart(LineChart):
     def drawLabel(self, G, rowNo, colNo, x, y):
         '''Draw a label for a given item in the list.
         G must have an add method'''
-        G.add(self._innerDrawLabel(rowNo,colNo,x,y))
+        G.add(self._innerDrawLabel(rowNo, colNo, x, y))
 
     def makeLines(self):
         g = Group()
 
         labelFmt = self.lineLabelFormat
         P = list(range(len(self._positions)))
-        if self.reversePlotOrder: P.reverse()
+        if self.reversePlotOrder:
+            P.reverse()
         inFill = self.inFill
         if inFill:
             inFillY = self.categoryAxis._y
             inFillX0 = self.valueAxis._x
             inFillX1 = inFillX0 + self.categoryAxis._length
-            inFillG = getattr(self,'_inFillG',g)
+            inFillG = getattr(self, '_inFillG', g)
         yzero = self._yzero
 
         # Iterate over data rows.
@@ -303,7 +357,7 @@ class HorizontalLineChart(LineChart):
             rowStyle = self.lines[styleIdx]
             rowColor = rowStyle.strokeColor
             dash = getattr(rowStyle, 'strokeDashArray', None)
-            lineStyle = getattr(rowStyle,'lineStyle',None)
+            lineStyle = getattr(rowStyle, 'lineStyle', None)
 
             if hasattr(rowStyle, 'strokeWidth'):
                 strokeWidth = rowStyle.strokeWidth
@@ -313,25 +367,41 @@ class HorizontalLineChart(LineChart):
                 strokeWidth = None
 
             # Iterate over data columns.
-            if lineStyle=='bar':
-                barWidth = getattr(rowStyle,'barWidth',Percentage(50))
-                fillColor = getattr(rowStyle,'fillColor',rowColor)
-                if isinstance(barWidth,Percentage):
-                    hbw = self._hngs*barWidth*0.01
+            if lineStyle == 'bar':
+                barWidth = getattr(rowStyle, 'barWidth', Percentage(50))
+                fillColor = getattr(rowStyle, 'fillColor', rowColor)
+                if isinstance(barWidth, Percentage):
+                    hbw = self._hngs * barWidth * 0.01
                 else:
-                    hbw = barWidth*0.5
+                    hbw = barWidth * 0.5
                 for colNo in range(len(row)):
-                    x,y = row[colNo]
-                    g.add(Rect(x-hbw,min(y,yzero),2*hbw,abs(y-yzero),strokeWidth=strokeWidth,strokeColor=rowColor,fillColor=fillColor))
-            elif self.joinedLines or lineStyle=='joinedLine':
+                    x, y = row[colNo]
+                    g.add(Rect(x - hbw,
+                               min(y,
+                                   yzero),
+                               2 * hbw,
+                               abs(y - yzero),
+                               strokeWidth=strokeWidth,
+                               strokeColor=rowColor,
+                               fillColor=fillColor))
+            elif self.joinedLines or lineStyle == 'joinedLine':
                 points = []
                 for colNo in range(len(row)):
                     points += row[colNo]
                 if inFill:
-                    points = points + [inFillX1,inFillY,inFillX0,inFillY]
-                    inFillG.add(Polygon(points,fillColor=rowColor,strokeColor=rowColor,strokeWidth=0.1))
+                    points = points + [inFillX1, inFillY, inFillX0, inFillY]
+                    inFillG.add(
+                        Polygon(
+                            points,
+                            fillColor=rowColor,
+                            strokeColor=rowColor,
+                            strokeWidth=0.1))
                 else:
-                    line = PolyLine(points,strokeColor=rowColor,strokeLineCap=0,strokeLineJoin=1)
+                    line = PolyLine(
+                        points,
+                        strokeColor=rowColor,
+                        strokeLineCap=0,
+                        strokeLineJoin=1)
                     if strokeWidth:
                         line.strokeWidth = strokeWidth
                     if dash:
@@ -348,8 +418,13 @@ class HorizontalLineChart(LineChart):
             if uSymbol:
                 for colNo in range(len(row)):
                     x1, y1 = row[colNo]
-                    symbol = uSymbol2Symbol(uSymbol,x1,y1,rowStyle.strokeColor)
-                    if symbol: g.add(symbol)
+                    symbol = uSymbol2Symbol(
+                        uSymbol,
+                        x1,
+                        y1,
+                        rowStyle.strokeColor)
+                    if symbol:
+                        g.add(symbol)
 
             # Draw item labels.
             for colNo in range(len(row)):
@@ -363,14 +438,17 @@ class HorizontalLineChart(LineChart):
 
         vA, cA = self.valueAxis, self.categoryAxis
         vA.setPosition(self.x, self.y, self.height)
-        if vA: vA.joinAxis = cA
-        if cA: cA.joinAxis = vA
+        if vA:
+            vA.joinAxis = cA
+        if cA:
+            cA.joinAxis = vA
         vA.configure(self.data)
 
         # If zero is in chart, put x axis there, otherwise
         # use bottom.
         xAxisCrossesAt = vA.scale(0)
-        if ((xAxisCrossesAt > self.y + self.height) or (xAxisCrossesAt < self.y)):
+        if ((xAxisCrossesAt > self.y + self.height)
+                or (xAxisCrossesAt < self.y)):
             y = self.y
         else:
             y = xAxisCrossesAt
@@ -388,41 +466,60 @@ class HorizontalLineChart(LineChart):
 
         g.add(cA)
         g.add(vA)
-        cAdgl = getattr(cA,'drawGridLast',False)
-        vAdgl = getattr(vA,'drawGridLast',False)
-        if not cAdgl: cA.makeGrid(g,parent=self,dim=vA.getGridDims)
-        if not vAdgl: vA.makeGrid(g,parent=self,dim=cA.getGridDims)
+        cAdgl = getattr(cA, 'drawGridLast', False)
+        vAdgl = getattr(vA, 'drawGridLast', False)
+        if not cAdgl:
+            cA.makeGrid(g, parent=self, dim=vA.getGridDims)
+        if not vAdgl:
+            vA.makeGrid(g, parent=self, dim=cA.getGridDims)
         g.add(self.makeLines())
-        if cAdgl: cA.makeGrid(g,parent=self,dim=vA.getGridDims)
-        if vAdgl: vA.makeGrid(g,parent=self,dim=cA.getGridDims)
-        for a in getattr(self,'annotations',()): g.add(a(self,cA.scale,vA.scale))
+        if cAdgl:
+            cA.makeGrid(g, parent=self, dim=vA.getGridDims)
+        if vAdgl:
+            vA.makeGrid(g, parent=self, dim=cA.getGridDims)
+        for a in getattr(self, 'annotations', ()):
+            g.add(a(self, cA.scale, vA.scale))
         return g
+
 
 def _fakeItemKey(a):
     '''t, z0, z1, x, y = a[:5]'''
-    return (-a[1],a[3],a[0],-a[4])
+    return (-a[1], a[3], a[0], -a[4])
+
 
 class _FakeGroup:
+
     def __init__(self):
         self._data = []
 
-    def add(self,what):
-        if what: self._data.append(what)
+    def add(self, what):
+        if what:
+            self._data.append(what)
 
     def value(self):
         return self._data
 
     def sort(self):
         self._data.sort(key=_fakeItemKey)
-        #for t in self._data: print t
+        # for t in self._data: print t
+
 
 class HorizontalLineChart3D(HorizontalLineChart):
-    _attrMap = AttrMap(BASE=HorizontalLineChart,
-        theta_x = AttrMapValue(isNumber, desc='dx/dz'),
-        theta_y = AttrMapValue(isNumber, desc='dy/dz'),
-        zDepth = AttrMapValue(isNumber, desc='depth of an individual series'),
-        zSpace = AttrMapValue(isNumber, desc='z gap around series'),
-        )
+    _attrMap = AttrMap(
+        BASE=HorizontalLineChart,
+        theta_x=AttrMapValue(
+            isNumber,
+            desc='dx/dz'),
+        theta_y=AttrMapValue(
+            isNumber,
+            desc='dy/dz'),
+        zDepth=AttrMapValue(
+            isNumber,
+            desc='depth of an individual series'),
+        zSpace=AttrMapValue(
+            isNumber,
+            desc='z gap around series'),
+    )
     theta_x = .5
     theta_y = .5
     zDepth = 10
@@ -433,43 +530,45 @@ class HorizontalLineChart3D(HorizontalLineChart):
         nSeries = self._seriesCount
         zSpace = self.zSpace
         zDepth = self.zDepth
-        if self.categoryAxis.style=='parallel_3d':
-            _3d_depth = nSeries*zDepth+(nSeries+1)*zSpace
+        if self.categoryAxis.style == 'parallel_3d':
+            _3d_depth = nSeries * zDepth + (nSeries + 1) * zSpace
         else:
-            _3d_depth = zDepth + 2*zSpace
-        self._3d_dx = self.theta_x*_3d_depth
-        self._3d_dy = self.theta_y*_3d_depth
+            _3d_depth = zDepth + 2 * zSpace
+        self._3d_dx = self.theta_x * _3d_depth
+        self._3d_dy = self.theta_y * _3d_depth
 
-    def _calc_z0(self,rowNo):
+    def _calc_z0(self, rowNo):
         zSpace = self.zSpace
-        if self.categoryAxis.style=='parallel_3d':
-            z0 = rowNo*(self.zDepth+zSpace)+zSpace
+        if self.categoryAxis.style == 'parallel_3d':
+            z0 = rowNo * (self.zDepth + zSpace) + zSpace
         else:
             z0 = zSpace
         return z0
 
-    def _zadjust(self,x,y,z):
-        return x+z*self.theta_x, y+z*self.theta_y
+    def _zadjust(self, x, y, z):
+        return x + z * self.theta_x, y + z * self.theta_y
 
     def makeLines(self):
         labelFmt = self.lineLabelFormat
         P = list(range(len(self._positions)))
-        if self.reversePlotOrder: P.reverse()
+        if self.reversePlotOrder:
+            P.reverse()
         inFill = self.inFill
         assert not inFill, "inFill not supported for 3d yet"
-        #if inFill:
-            #inFillY = self.categoryAxis._y
-            #inFillX0 = self.valueAxis._x
-            #inFillX1 = inFillX0 + self.categoryAxis._length
-            #inFillG = getattr(self,'_inFillG',g)
+        # if inFill:
+        #inFillY = self.categoryAxis._y
+        #inFillX0 = self.valueAxis._x
+        #inFillX1 = inFillX0 + self.categoryAxis._length
+        #inFillG = getattr(self,'_inFillG',g)
         zDepth = self.zDepth
         _zadjust = self._zadjust
         theta_x = self.theta_x
         theta_y = self.theta_y
         F = _FakeGroup()
         from reportlab.graphics.charts.utils3d import _make_3d_line_info
-        tileWidth = getattr(self,'_3d_tilewidth',None)
-        if not tileWidth and self.categoryAxis.style!='parallel_3d': tileWidth = 1
+        tileWidth = getattr(self, '_3d_tilewidth', None)
+        if not tileWidth and self.categoryAxis.style != 'parallel_3d':
+            tileWidth = 1
 
         # Iterate over data rows.
         for rowNo in P:
@@ -494,13 +593,25 @@ class HorizontalLineChart3D(HorizontalLineChart):
             if self.joinedLines:
                 if n:
                     x0, y0 = row[0]
-                    for colNo in range(1,n):
+                    for colNo in range(1, n):
                         x1, y1 = row[colNo]
-                        _make_3d_line_info( F, x0, x1, y0, y1, z0, z1,
-                                theta_x, theta_y,
-                                rowColor, fillColorShaded=None, tileWidth=tileWidth,
-                                strokeColor=None, strokeWidth=None, strokeDashArray=None,
-                                shading=0.1)
+                        _make_3d_line_info(
+                            F,
+                            x0,
+                            x1,
+                            y0,
+                            y1,
+                            z0,
+                            z1,
+                            theta_x,
+                            theta_y,
+                            rowColor,
+                            fillColorShaded=None,
+                            tileWidth=tileWidth,
+                            strokeColor=None,
+                            strokeWidth=None,
+                            strokeDashArray=None,
+                            shading=0.1)
                         x0, y0 = x1, y1
 
             if hasattr(self.lines[styleIdx], 'symbol'):
@@ -513,21 +624,25 @@ class HorizontalLineChart3D(HorizontalLineChart):
             if uSymbol:
                 for colNo in range(n):
                     x1, y1 = row[colNo]
-                    x1, y1 = _zadjust(x1,y1,z0)
-                    symbol = uSymbol2Symbol(uSymbol,x1,y1,rowColor)
-                    if symbol: F.add((2,z0,z0,x1,y1,symbol))
+                    x1, y1 = _zadjust(x1, y1, z0)
+                    symbol = uSymbol2Symbol(uSymbol, x1, y1, rowColor)
+                    if symbol:
+                        F.add((2, z0, z0, x1, y1, symbol))
 
             # Draw item labels.
             for colNo in range(n):
                 x1, y1 = row[colNo]
-                x1, y1 = _zadjust(x1,y1,z0)
+                x1, y1 = _zadjust(x1, y1, z0)
                 L = self._innerDrawLabel(rowNo, colNo, x1, y1)
-                if L: F.add((2,z0,z0,x1,y1,L))
+                if L:
+                    F.add((2, z0, z0, x1, y1, L))
 
         F.sort()
         g = Group()
-        for v in F.value(): g.add(v[-1])
+        for v in F.value():
+            g.add(v[-1])
         return g
+
 
 class VerticalLineChart(LineChart):
     pass
@@ -537,9 +652,9 @@ def sample1():
     drawing = Drawing(400, 200)
 
     data = [
-            (13, 5, 20, 22, 37, 45, 19, 4),
-            (5, 20, 46, 38, 23, 21, 6, 14)
-            ]
+        (13, 5, 20, 22, 37, 45, 19, 4),
+        (5, 20, 46, 38, 23, 21, 6, 14)
+    ]
 
     lc = HorizontalLineChart()
 
@@ -566,6 +681,7 @@ def sample1():
 
 
 class SampleHorizontalLineChart(HorizontalLineChart):
+
     "Sample class overwriting one method to draw additional horizontal lines."
 
     def demo(self):
@@ -574,9 +690,9 @@ class SampleHorizontalLineChart(HorizontalLineChart):
         drawing = Drawing(200, 100)
 
         data = [
-                (13, 5, 20, 22, 37, 45, 19, 4),
-                (14, 10, 21, 28, 38, 46, 25, 5)
-                ]
+            (13, 5, 20, 22, 37, 45, 19, 4),
+            (14, 10, 21, 28, 38, 46, 25, 5)
+        ]
 
         lc = SampleHorizontalLineChart()
 
@@ -592,7 +708,6 @@ class SampleHorizontalLineChart(HorizontalLineChart):
 
         return drawing
 
-
     def makeBackground(self):
         g = Group()
 
@@ -603,20 +718,19 @@ class SampleHorizontalLineChart(HorizontalLineChart):
 
         for y in valTickPositions:
             y = valAxis.scale(y)
-            g.add(Line(self.x, y, self.x+self.width, y,
-                       strokeColor = self.strokeColor))
+            g.add(Line(self.x, y, self.x + self.width, y,
+                       strokeColor=self.strokeColor))
 
         return g
-
 
 
 def sample1a():
     drawing = Drawing(400, 200)
 
     data = [
-            (13, 5, 20, 22, 37, 45, 19, 4),
-            (5, 20, 46, 38, 23, 21, 6, 14)
-            ]
+        (13, 5, 20, 22, 37, 45, 19, 4),
+        (5, 20, 46, 38, 23, 21, 6, 14)
+    ]
 
     lc = SampleHorizontalLineChart()
 
@@ -648,9 +762,9 @@ def sample2():
     drawing = Drawing(400, 200)
 
     data = [
-            (13, 5, 20, 22, 37, 45, 19, 4),
-            (5, 20, 46, 38, 23, 21, 6, 14)
-            ]
+        (13, 5, 20, 22, 37, 45, 19, 4),
+        (5, 20, 46, 38, 23, 21, 6, 14)
+    ]
 
     lc = HorizontalLineChart()
 
@@ -682,9 +796,9 @@ def sample3():
     drawing = Drawing(400, 200)
 
     data = [
-            (13, 5, 20, 22, 37, 45, 19, 4),
-            (5, 20, 46, 38, 23, 21, 6, 14)
-            ]
+        (13, 5, 20, 22, 37, 45, 19, 4),
+        (5, 20, 46, 38, 23, 21, 6, 14)
+    ]
 
     lc = HorizontalLineChart()
 

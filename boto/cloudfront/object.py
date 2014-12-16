@@ -21,6 +21,7 @@
 
 from boto.s3.key import Key
 
+
 class Object(Key):
 
     def __init__(self, bucket, name=None):
@@ -40,9 +41,8 @@ class Object(Key):
         url += self.name
         return url
 
+
 class StreamingObject(Object):
 
     def url(self, scheme='rtmp'):
         return super(StreamingObject, self).url(scheme)
-
-

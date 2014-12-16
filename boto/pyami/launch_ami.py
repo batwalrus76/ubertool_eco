@@ -15,7 +15,7 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABIL-
 # ITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
@@ -29,7 +29,7 @@ import boto
 usage_string = """
 SYNOPSIS
     launch_ami.py -a ami_id [-b script_bucket] [-s script_name]
-                  [-m module] [-c class_name] [-r] 
+                  [-m module] [-c class_name] [-r]
                   [-g group] [-k key_name] [-n num_instances]
                   [-w] [extra_data]
     Where:
@@ -67,9 +67,11 @@ SYNOPSIS
         the IP address and internal and external DNS names before exiting.
 """
 
+
 def usage():
     print usage_string
     sys.exit()
+
 
 def main():
     try:
@@ -80,16 +82,16 @@ def main():
                                     'reload', 'script_name', 'wait'])
     except:
         usage()
-    params = {'module_name' : None,
-              'script_name' : None,
-              'class_name' : None,
-              'script_bucket' : None,
-              'group' : 'default',
-              'keypair' : None,
-              'ami' : None,
-              'num_instances' : 1,
-              'input_queue_name' : None,
-              'output_queue_name' : None}
+    params = {'module_name': None,
+              'script_name': None,
+              'class_name': None,
+              'script_bucket': None,
+              'group': 'default',
+              'keypair': None,
+              'ami': None,
+              'num_instances': 1,
+              'input_queue_name': None,
+              'output_queue_name': None}
     reload = None
     wait = None
     for o, a in opts:
@@ -135,7 +137,7 @@ def main():
         l = imp.find_module(params['script_name'])
         c = boto.connect_s3()
         bucket = c.get_bucket(params['script_bucket'])
-        key = bucket.new_key(params['script_name']+'.py')
+        key = bucket.new_key(params['script_name'] + '.py')
         key.set_contents_from_file(l[0])
         params['script_md5'] = key.md5
     # we have everything we need, now build userdata string
@@ -175,4 +177,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

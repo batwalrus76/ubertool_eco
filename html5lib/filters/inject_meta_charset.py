@@ -4,6 +4,7 @@ from . import _base
 
 
 class Filter(_base.Filter):
+
     def __init__(self, source, encoding):
         _base.Filter.__init__(self, source)
         self.encoding = encoding
@@ -33,8 +34,12 @@ class Filter(_base.Filter):
                         elif name == 'http-equiv' and value.lower() == 'content-type':
                             has_http_equiv_content_type = True
                     else:
-                        if has_http_equiv_content_type and (None, "content") in token["data"]:
-                            token["data"][(None, "content")] = 'text/html; charset=%s' % self.encoding
+                        if has_http_equiv_content_type and (
+                                None,
+                                "content") in token["data"]:
+                            token["data"][
+                                (None,
+                                 "content")] = 'text/html; charset=%s' % self.encoding
                             meta_found = True
 
                 elif token["name"].lower() == "head" and not meta_found:
@@ -49,7 +54,8 @@ class Filter(_base.Filter):
 
             elif type == "EndTag":
                 if token["name"].lower() == "head" and pending:
-                    # insert meta into head (if necessary) and flush pending queue
+                    # insert meta into head (if necessary) and flush pending
+                    # queue
                     yield pending.pop(0)
                     if not meta_found:
                         yield {"type": "EmptyTag", "name": "meta",

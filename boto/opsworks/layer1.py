@@ -33,6 +33,7 @@ from boto.opsworks import exceptions
 
 
 class OpsWorksConnection(AWSQueryConnection):
+
     """
     AWS OpsWorks
     Welcome to the AWS OpsWorks API Reference . This guide provides
@@ -88,7 +89,6 @@ class OpsWorksConnection(AWSQueryConnection):
         "ResourceNotFoundException": exceptions.ResourceNotFoundException,
         "ValidationException": exceptions.ValidationException,
     }
-
 
     def __init__(self, **kwargs):
         region = kwargs.get('region')
@@ -2591,4 +2591,3 @@ class OpsWorksConnection(AWSQueryConnection):
             exception_class = self._faults.get(fault_name, self.ResponseError)
             raise exception_class(response.status, response.reason,
                                   body=json_body)
-

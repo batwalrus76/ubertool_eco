@@ -30,6 +30,7 @@ import boto
 
 
 class SNSConnection(AWSQueryConnection):
+
     """
     Amazon Simple Notification Service
     Amazon Simple Notification Service (Amazon SNS) is a web service
@@ -49,10 +50,9 @@ class SNSConnection(AWSQueryConnection):
     SDKs, go to `Tools for Amazon Web Services`_.
     """
     DefaultRegionName = boto.config.get('Boto', 'sns_region_name', 'us-east-1')
-    DefaultRegionEndpoint = boto.config.get('Boto', 'sns_region_endpoint', 
+    DefaultRegionEndpoint = boto.config.get('Boto', 'sns_region_endpoint',
                                             'sns.us-east-1.amazonaws.com')
     APIVersion = boto.config.get('Boto', 'sns_version', '2010-03-31')
-
 
     def __init__(self, aws_access_key_id=None, aws_secret_access_key=None,
                  is_secure=True, port=None, proxy=None, proxy_port=None,
@@ -66,41 +66,41 @@ class SNSConnection(AWSQueryConnection):
                                 connection_cls=SNSConnection)
         self.region = region
         super(SNSConnection, self).__init__(aws_access_key_id,
-                                    aws_secret_access_key,
-                                    is_secure, port, proxy, proxy_port,
-                                    proxy_user, proxy_pass,
-                                    self.region.endpoint, debug,
-                                    https_connection_factory, path,
-                                    security_token=security_token,
-                                    validate_certs=validate_certs,
-                                    profile_name=profile_name)
+                                            aws_secret_access_key,
+                                            is_secure, port, proxy, proxy_port,
+                                            proxy_user, proxy_pass,
+                                            self.region.endpoint, debug,
+                                            https_connection_factory, path,
+                                            security_token=security_token,
+                                            validate_certs=validate_certs,
+                                            profile_name=profile_name)
 
     def _build_dict_as_list_params(self, params, dictionary, name):
-      """
-            Serialize a parameter 'name' which value is a 'dictionary' into a list of parameters.
+        """
+              Serialize a parameter 'name' which value is a 'dictionary' into a list of parameters.
 
-            See: http://docs.aws.amazon.com/sns/latest/api/API_SetPlatformApplicationAttributes.html
-            For example::
+              See: http://docs.aws.amazon.com/sns/latest/api/API_SetPlatformApplicationAttributes.html
+              For example::
 
-                dictionary = {'PlatformPrincipal': 'foo', 'PlatformCredential': 'bar'}
-                name = 'Attributes'
+                  dictionary = {'PlatformPrincipal': 'foo', 'PlatformCredential': 'bar'}
+                  name = 'Attributes'
 
-            would result in params dict being populated with:
-                Attributes.entry.1.key    = PlatformPrincipal
-                Attributes.entry.1.value  = foo
-                Attributes.entry.2.key    = PlatformCredential
-                Attributes.entry.2.value  = bar
+              would result in params dict being populated with:
+                  Attributes.entry.1.key    = PlatformPrincipal
+                  Attributes.entry.1.value  = foo
+                  Attributes.entry.2.key    = PlatformCredential
+                  Attributes.entry.2.value  = bar
 
-      :param params: the resulting parameters will be added to this dict
-      :param dictionary: dict - value of the serialized parameter
-      :param name: name of the serialized parameter
-      """
-      items = sorted(dictionary.items(), key=lambda x:x[0])
-      for kv, index in zip(items, range(1, len(items)+1)):
-        key, value = kv
-        prefix = '%s.entry.%s' % (name, index)
-        params['%s.key' % prefix] = key
-        params['%s.value' % prefix] = value
+        :param params: the resulting parameters will be added to this dict
+        :param dictionary: dict - value of the serialized parameter
+        :param name: name of the serialized parameter
+        """
+        items = sorted(dictionary.items(), key=lambda x: x[0])
+        for kv, index in zip(items, range(1, len(items) + 1)):
+            key, value = kv
+            prefix = '%s.entry.%s' % (name, index)
+            params['%s.key' % prefix] = key
+            params['%s.value' % prefix] = value
 
     def _required_auth_capability(self):
         return ['hmac-v4']

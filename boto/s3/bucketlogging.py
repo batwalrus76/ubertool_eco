@@ -22,6 +22,7 @@
 import xml.sax.saxutils
 from acl import Grant
 
+
 class BucketLogging(object):
 
     def __init__(self, target=None, prefix=None, grants=None):
@@ -44,7 +45,8 @@ class BucketLogging(object):
             else:
                 u = g.email_address
             grants.append("%s = %s" % (u, g.permission))
-        return "<BucketLoggingStatus: %s/%s (%s)>" % (self.target, self.prefix, ", ".join(grants))
+        return "<BucketLoggingStatus: %s/%s (%s)>" % (
+            self.target, self.prefix, ", ".join(grants))
 
     def add_grant(self, grant):
         self.grants.append(grant)
@@ -72,7 +74,8 @@ class BucketLogging(object):
             s += u'<LoggingEnabled>'
             s += u'<TargetBucket>%s</TargetBucket>' % self.target
             prefix = self.prefix or ''
-            s += u'<TargetPrefix>%s</TargetPrefix>' % xml.sax.saxutils.escape(prefix)
+            s += u'<TargetPrefix>%s</TargetPrefix>' % xml.sax.saxutils.escape(
+                prefix)
             if self.grants:
                 s += '<TargetGrants>'
                 for grant in self.grants:

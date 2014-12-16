@@ -22,9 +22,11 @@
 
 
 class Step(object):
+
     """
     Jobflow Step base class
     """
+
     def jar(self):
         """
         :rtype: str
@@ -48,9 +50,11 @@ class Step(object):
 
 
 class JarStep(Step):
+
     """
     Custom jar step
     """
+
     def __init__(self, name, jar, main_class=None,
                  action_on_failure='TERMINATE_JOB_FLOW', step_args=None):
         """
@@ -94,9 +98,11 @@ class JarStep(Step):
 
 
 class StreamingStep(Step):
+
     """
     Hadoop streaming step
     """
+
     def __init__(self, name, mapper, reducer=None, combiner=None,
                  action_on_failure='TERMINATE_JOB_FLOW',
                  cache_files=None, cache_archives=None,
@@ -204,7 +210,12 @@ class ScriptRunnerStep(JarStep):
     ScriptRunnerJar = 's3n://us-east-1.elasticmapreduce/libs/script-runner/script-runner.jar'
 
     def __init__(self, name, **kw):
-        super(ScriptRunnerStep, self).__init__(name, self.ScriptRunnerJar, **kw)
+        super(
+            ScriptRunnerStep,
+            self).__init__(
+            name,
+            self.ScriptRunnerJar,
+            **kw)
 
 
 class PigBase(ScriptRunnerStep):
@@ -214,6 +225,7 @@ class PigBase(ScriptRunnerStep):
 
 
 class InstallPigStep(PigBase):
+
     """
     Install pig on emr step
     """
@@ -225,10 +237,15 @@ class InstallPigStep(PigBase):
         step_args.extend(self.BaseArgs)
         step_args.extend(['--install-pig'])
         step_args.extend(['--pig-versions', pig_versions])
-        super(InstallPigStep, self).__init__(self.InstallPigName, step_args=step_args)
+        super(
+            InstallPigStep,
+            self).__init__(
+            self.InstallPigName,
+            step_args=step_args)
 
 
 class PigStep(PigBase):
+
     """
     Pig script step
     """
@@ -249,6 +266,7 @@ class HiveBase(ScriptRunnerStep):
 
 
 class InstallHiveStep(HiveBase):
+
     """
     Install Hive on EMR step
     """
@@ -262,10 +280,11 @@ class InstallHiveStep(HiveBase):
         if hive_site is not None:
             step_args.extend(['--hive-site=%s' % hive_site])
         super(InstallHiveStep, self).__init__(self.InstallHiveName,
-                                  step_args=step_args)
+                                              step_args=step_args)
 
 
 class HiveStep(HiveBase):
+
     """
     Hive script step
     """

@@ -36,6 +36,7 @@ import base64
 
 
 class InstanceState(object):
+
     """
     The state of the instance.
 
@@ -58,6 +59,7 @@ class InstanceState(object):
         * "stopping"
         * "stopped"
     """
+
     def __init__(self, code=0, name=None):
         self.code = code
         self.name = name
@@ -78,6 +80,7 @@ class InstanceState(object):
 
 
 class InstancePlacement(object):
+
     """
     The location where the instance launched.
 
@@ -88,6 +91,7 @@ class InstancePlacement(object):
         running within a VPC). An instance with a tenancy of dedicated
         runs on single-tenant hardware.
     """
+
     def __init__(self, zone=None, group_name=None, tenancy=None):
         self.zone = zone
         self.group_name = group_name
@@ -111,6 +115,7 @@ class InstancePlacement(object):
 
 
 class Reservation(EC2Object):
+
     """
     Represents a Reservation response object.
 
@@ -121,6 +126,7 @@ class Reservation(EC2Object):
     :ivar instances: A list of Instance objects launched in this
                      Reservation.
     """
+
     def __init__(self, connection=None):
         super(Reservation, self).__init__(connection)
         self.id = None
@@ -155,6 +161,7 @@ class Reservation(EC2Object):
 
 
 class Instance(TaggedEC2Object):
+
     """
     Represents an instance.
 
@@ -607,6 +614,7 @@ class Instance(TaggedEC2Object):
 
 
 class ConsoleOutput(object):
+
     def __init__(self, parent=None):
         self.parent = parent
         self.instance_id = None
@@ -666,6 +674,7 @@ class InstanceAttribute(dict):
 
 
 class SubParse(dict):
+
     def __init__(self, section, parent=None):
         dict.__init__(self)
         self.section = section

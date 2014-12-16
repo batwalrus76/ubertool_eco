@@ -1,5 +1,5 @@
 import os
-os.environ['DJANGO_SETTINGS_MODULE']='settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 import webapp2 as webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext.webapp import template
@@ -27,15 +27,20 @@ from collections import OrderedDict
 from google.appengine.api import background_thread
 import sys
 
+
 class przmBatchOutputPageBackend(webapp.RequestHandler):
+
     def post(self):
         data_all = sys.stdin
         loggger.info(data_all)
         # html=""
         # iter_html = przm_batchmodel.loop_html(thefile)
-        t = background_thread.BackgroundThread(target=przm_batchoutput.przmBatchOutputPage, args=[thefile])
+        t = background_thread.BackgroundThread(
+            target=przm_batchoutput.przmBatchOutputPage,
+            args=[thefile])
         t.start()
         # logging(t)
         # self.response.out.write(html)
 
-app = webapp.WSGIApplication([('/backend.html', przmBatchOutputPageBackend)], debug=True)
+app = webapp.WSGIApplication(
+    [('/backend.html', przmBatchOutputPageBackend)], debug=True)

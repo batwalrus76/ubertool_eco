@@ -123,7 +123,7 @@ class Job(object):
                                      verify_hashes, retry_exceptions)
 
     def download_to_fileobj(self, output_file, chunk_size=DefaultPartSize,
-                            verify_hashes=True, 
+                            verify_hashes=True,
                             retry_exceptions=(socket.error,)):
         """Download an archive to a file object.
 
@@ -144,8 +144,13 @@ class Job(object):
         self._download_to_fileob(output_file, num_chunks, chunk_size,
                                  verify_hashes, retry_exceptions)
 
-    def _download_to_fileob(self, fileobj, num_chunks, chunk_size, verify_hashes,
-                            retry_exceptions):
+    def _download_to_fileob(
+            self,
+            fileobj,
+            num_chunks,
+            chunk_size,
+            verify_hashes,
+            retry_exceptions):
         for i in xrange(num_chunks):
             byte_range = ((i * chunk_size), ((i + 1) * chunk_size) - 1)
             data, expected_tree_hash = self._download_byte_range(
@@ -169,7 +174,7 @@ class Job(object):
                 data = response.read()
                 expected_tree_hash = response['TreeHash']
                 return data, expected_tree_hash
-            except retry_exceptions, e:
+            except retry_exceptions as e:
                 continue
         else:
             raise DownloadArchiveError("There was an error downloading"

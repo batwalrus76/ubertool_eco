@@ -32,11 +32,12 @@ PAGE_RANGE_HELP = """Remember, page indices start with zero.
             ::-1      all pages in reverse order.
 """
 
-        
+
 class PageRange(object):
-    """ 
+
+    """
     A slice-like representation of a range of page indices,
-        i.e. page numbers, only starting at zero. 
+        i.e. page numbers, only starting at zero.
     The syntax is like what you would put between brackets [ ].
     The slice is one of the few Python types that can't be subclassed,
     but this class converts to and from slices, and allows similar use.
@@ -46,7 +47,7 @@ class PageRange(object):
       o  str() and repr() allow printing.
       o  indices(n) is like slice.indices(n).
     """
-    
+
     def __init__(self, arg):
         """
         Initialize with either a slice -- giving the equivalent page range,
@@ -67,7 +68,7 @@ class PageRange(object):
         if isinstance(arg, PageRange):
             self._slice = arg.to_slice()
             return
-        
+
         m = isinstance(arg, Str) and re.match(PAGE_RANGE_RE, arg)
         if not m:
             raise ParseError(arg)
@@ -77,36 +78,37 @@ class PageRange(object):
             stop = start + 1 if start != -1 else None
             self._slice = slice(start, stop)
         else:
-            self._slice = slice(*[int(g) if g else None 
+            self._slice = slice(*[int(g) if g else None
                                   for g in m.group(4, 6, 8)])
-    
+
     # Just formatting this when there is __doc__ for __init__
     if __init__.__doc__:
-        __init__.__doc__ = __init__.__doc__.format(page_range_help=PAGE_RANGE_HELP)
-        
+        __init__.__doc__ = __init__.__doc__.format(
+            page_range_help=PAGE_RANGE_HELP)
+
     @staticmethod
     def valid(input):
         """ True if input is a valid initializer for a PageRange. """
         return isinstance(input, slice)  or \
-               isinstance(input, PageRange) or \
-               (isinstance(input, Str)
-                and bool(re.match(PAGE_RANGE_RE, input)))
+            isinstance(input, PageRange) or \
+            (isinstance(input, Str)
+             and bool(re.match(PAGE_RANGE_RE, input)))
 
     def to_slice(self):
         """ Return the slice equivalent of this page range. """
         return self._slice
-        
+
     def __str__(self):
         """ A string like "1:2:3". """
         s = self._slice
-        if s.step == None:
-            if s.start != None  and  s.stop == s.start + 1:
+        if s.step is None:
+            if s.start is not None and s.stop == s.start + 1:
                 return str(s.start)
 
             indices = s.start, s.stop
         else:
             indices = s.start, s.stop, s.step
-        return ':'.join("" if i == None else str(i) for i in indices)
+        return ':'.join("" if i is None else str(i) for i in indices)
 
     def __repr__(self):
         """ A string like "PageRange('1:2:3')". """
@@ -127,7 +129,7 @@ def parse_filename_page_ranges(args):
     """
     Given a list of filenames and page ranges, return a list of
     (filename, page_range) pairs.
-    First arg must be a filename; other ags are filenames, page-range 
+    First arg must be a filename; other ags are filenames, page-range
     expressions, slice objects, or PageRange objects.
     A filename not followed by a page range indicates all pages of the file.
     """
@@ -137,16 +139,16 @@ def parse_filename_page_ranges(args):
     for arg in args + [None]:
         if PageRange.valid(arg):
             if not pdf_filename:
-                raise ValueError("The first argument must be a filename, " \
+                raise ValueError("The first argument must be a filename, "
                                  "not a page range.")
 
-            pairs.append( (pdf_filename, PageRange(arg)) )
+            pairs.append((pdf_filename, PageRange(arg)))
             did_page_range = True
         else:
             # New filename or end of list--do all of the previous file?
             if pdf_filename and not did_page_range:
-                pairs.append( (pdf_filename, PAGE_RANGE_ALL) )
-                    
+                pairs.append((pdf_filename, PAGE_RANGE_ALL))
+
             pdf_filename = arg
             did_page_range = False
     return pairs

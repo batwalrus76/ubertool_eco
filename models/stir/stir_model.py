@@ -14,25 +14,57 @@ import requests
 http_headers = auth_s3.setHTTPHeaders()
 url_part1 = os.environ['UBERTOOL_REST_SERVER']
 
+
 class StirModel(object):
-    def __init__(self,set_variables=True, run_methods=True, run_type = "single",
-            chemical_name=None,application_rate=None,column_height=None,spray_drift_fraction=None,direct_spray_duration=None, 
-            molecular_weight=None,vapor_pressure=None,avian_oral_ld50=None, body_weight_assessed_bird=None, body_weight_tested_bird=None, 
-            mineau_scaling_factor=None,mammal_inhalation_lc50=None,duration_mammal_inhalation_study=None,body_weight_assessed_mammal=None, 
-            body_weight_tested_mammal=None,mammal_oral_ld50=None,
+
+    def __init__(
+            self,
+            set_variables=True,
+            run_methods=True,
+            run_type="single",
+            chemical_name=None,
+            application_rate=None,
+            column_height=None,
+            spray_drift_fraction=None,
+            direct_spray_duration=None,
+            molecular_weight=None,
+            vapor_pressure=None,
+            avian_oral_ld50=None,
+            body_weight_assessed_bird=None,
+            body_weight_tested_bird=None,
+            mineau_scaling_factor=None,
+            mammal_inhalation_lc50=None,
+            duration_mammal_inhalation_study=None,
+            body_weight_assessed_mammal=None,
+            body_weight_tested_mammal=None,
+            mammal_oral_ld50=None,
             vars_dict=None):
         self.set_default_variables()
         if set_variables:
-            if vars_dict != None:
+            if vars_dict is not None:
                 self.__dict__.update(vars_dict)
             else:
-                self.set_variables(run_type,chemical_name,application_rate,column_height,spray_drift_fraction,direct_spray_duration, 
-                    molecular_weight,vapor_pressure,avian_oral_ld50, body_weight_assessed_bird, body_weight_tested_bird, mineau_scaling_factor, 
-                    mammal_inhalation_lc50,duration_mammal_inhalation_study,body_weight_assessed_mammal, body_weight_tested_mammal, 
+                self.set_variables(
+                    run_type,
+                    chemical_name,
+                    application_rate,
+                    column_height,
+                    spray_drift_fraction,
+                    direct_spray_duration,
+                    molecular_weight,
+                    vapor_pressure,
+                    avian_oral_ld50,
+                    body_weight_assessed_bird,
+                    body_weight_tested_bird,
+                    mineau_scaling_factor,
+                    mammal_inhalation_lc50,
+                    duration_mammal_inhalation_study,
+                    body_weight_assessed_mammal,
+                    body_weight_tested_mammal,
                     mammal_oral_ld50)
 
     def set_default_variables(self):
-        #inputs
+        # inputs
         self.jid = rest_funcs.gen_jid()
         self.run_type = 'single'
         self.chemical_name = ''
@@ -52,8 +84,6 @@ class StirModel(object):
         self.body_weight_tested_mammal = 1
         self.mammal_oral_ld50 = 1
         self.run_type = "single"
-
-
 
     # def __str__(self):
     #     #inputs
@@ -99,9 +129,24 @@ class StirModel(object):
     #     string_rep = string_rep + "loc_sid_mammal =" + self.loc_sid_mammal + "\n"
         # return string_rep
 
-    def set_variables(self,run_type,chemical_name,application_rate,column_height,spray_drift_fraction,direct_spray_duration, 
-            molecular_weight,vapor_pressure,avian_oral_ld50,body_weight_assessed_bird,body_weight_tested_bird,mineau_scaling_factor, 
-            mammal_inhalation_lc50,duration_mammal_inhalation_study,body_weight_assessed_mammal,body_weight_tested_mammal, 
+    def set_variables(
+            self,
+            run_type,
+            chemical_name,
+            application_rate,
+            column_height,
+            spray_drift_fraction,
+            direct_spray_duration,
+            molecular_weight,
+            vapor_pressure,
+            avian_oral_ld50,
+            body_weight_assessed_bird,
+            body_weight_tested_bird,
+            mineau_scaling_factor,
+            mammal_inhalation_lc50,
+            duration_mammal_inhalation_study,
+            body_weight_assessed_mammal,
+            body_weight_tested_mammal,
             mammal_oral_ld50):
         self.run_type = run_type
         self.chemical_name = chemical_name
@@ -121,14 +166,34 @@ class StirModel(object):
         self.body_weight_tested_mammal = body_weight_tested_mammal
         self.mammal_oral_ld50 = mammal_oral_ld50
 
-        all_dic = {"run_type":self.run_type, "chemical_name":self.chemical_name, "application_rate":self.application_rate, "column_height":self.column_height, "spray_drift_fraction":self.spray_drift_fraction, "direct_spray_duration":self.direct_spray_duration, "molecular_weight":self.molecular_weight,
-                   "vapor_pressure":self.vapor_pressure, "avian_oral_ld50":self.avian_oral_ld50, "body_weight_assessed_bird":self.body_weight_assessed_bird, "body_weight_tested_bird":self.body_weight_tested_bird, "body_weight_tested_bird":self.body_weight_tested_bird,
-                   "mineau_scaling_factor":self.mineau_scaling_factor, "mammal_inhalation_lc50":self.mammal_inhalation_lc50, "duration_mammal_inhalation_study":self.duration_mammal_inhalation_study, "body_weight_assessed_mammal":self.body_weight_assessed_mammal, "body_weight_tested_mammal":self.body_weight_tested_mammal, "mammal_oral_ld50":self.mammal_oral_ld50}
+        all_dic = {
+            "run_type": self.run_type,
+            "chemical_name": self.chemical_name,
+            "application_rate": self.application_rate,
+            "column_height": self.column_height,
+            "spray_drift_fraction": self.spray_drift_fraction,
+            "direct_spray_duration": self.direct_spray_duration,
+            "molecular_weight": self.molecular_weight,
+            "vapor_pressure": self.vapor_pressure,
+            "avian_oral_ld50": self.avian_oral_ld50,
+            "body_weight_assessed_bird": self.body_weight_assessed_bird,
+            "body_weight_tested_bird": self.body_weight_tested_bird,
+            "body_weight_tested_bird": self.body_weight_tested_bird,
+            "mineau_scaling_factor": self.mineau_scaling_factor,
+            "mammal_inhalation_lc50": self.mammal_inhalation_lc50,
+            "duration_mammal_inhalation_study": self.duration_mammal_inhalation_study,
+            "body_weight_assessed_mammal": self.body_weight_assessed_mammal,
+            "body_weight_tested_mammal": self.body_weight_tested_mammal,
+            "mammal_oral_ld50": self.mammal_oral_ld50}
         data = json.dumps(all_dic)
 
         self.jid = rest_funcs.gen_jid()
-        url=url_part1 + '/stir/' + self.jid 
-        response = requests.post(url, data=data, headers=http_headers, timeout=60)
+        url = url_part1 + '/stir/' + self.jid
+        response = requests.post(
+            url,
+            data=data,
+            headers=http_headers,
+            timeout=60)
         output_val = json.loads(response.content)['result']
         for key, value in output_val.items():
             setattr(self, key, value)

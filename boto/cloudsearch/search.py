@@ -37,6 +37,7 @@ class CommitMismatchError(Exception):
 
 
 class SearchResults(object):
+
     def __init__(self, **attrs):
         self.rid = attrs['info']['rid']
         # self.doc_coverage_pct = attrs['info']['doc-coverage-pct']
@@ -54,7 +55,15 @@ class SearchResults(object):
         if 'facets' in attrs:
             for (facet, values) in attrs['facets'].iteritems():
                 if 'constraints' in values:
-                    self.facets[facet] = dict((k, v) for (k, v) in map(lambda x: (x['value'], x['count']), values['constraints']))
+                    self.facets[facet] = dict(
+                        (k,
+                         v) for (
+                            k,
+                            v) in map(
+                            lambda x: (
+                                x['value'],
+                                x['count']),
+                            values['constraints']))
 
         self.num_pages_needed = ceil(self.hits / self.query.real_size)
 
@@ -102,8 +111,8 @@ class Query(object):
 
     def update_size(self, new_size):
         self.size = new_size
-        self.real_size = Query.RESULTS_PER_PAGE if (self.size >
-            Query.RESULTS_PER_PAGE or self.size == 0) else self.size
+        self.real_size = Query.RESULTS_PER_PAGE if (
+            self.size > Query.RESULTS_PER_PAGE or self.size == 0) else self.size
 
     def to_params(self):
         """Transform search parameters from instance properties to a dictionary
@@ -290,26 +299,34 @@ class SearchConnection(object):
         r = requests.get(url, params=params)
         try:
             data = json.loads(r.content)
-        except ValueError, e:
+        except ValueError as e:
             if r.status_code == 403:
                 msg = ''
                 import re
-                g = re.search('<html><body><h1>403 Forbidden</h1>([^<]+)<', r.content)
+                g = re.search(
+                    '<html><body><h1>403 Forbidden</h1>([^<]+)<',
+                    r.content)
                 try:
                     msg = ': %s' % (g.groups()[0].strip())
                 except AttributeError:
                     pass
-                raise SearchServiceException('Authentication error from Amazon%s' % msg)
-            raise SearchServiceException("Got non-json response from Amazon. %s" % r.content, query)
+                raise SearchServiceException(
+                    'Authentication error from Amazon%s' %
+                    msg)
+            raise SearchServiceException(
+                "Got non-json response from Amazon. %s" %
+                r.content, query)
 
         if 'messages' in data and 'error' in data:
             for m in data['messages']:
                 if m['severity'] == 'fatal':
-                    raise SearchServiceException("Error processing search %s "
-                        "=> %s" % (params, m['message']), query)
+                    raise SearchServiceException(
+                        "Error processing search %s "
+                        "=> %s" %
+                        (params, m['message']), query)
         elif 'error' in data:
             raise SearchServiceException("Unknown error processing search %s"
-                % json.dumps(data), query)
+                                         % json.dumps(data), query)
 
         data['query'] = query
         data['search_service'] = self
@@ -373,6 +390,3 @@ class SearchConnection(object):
         """
         query.update_size(1)
         return self(query).hits
-
-
-

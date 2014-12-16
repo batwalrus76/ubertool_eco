@@ -24,7 +24,9 @@ Represents an EC2 Availability Zone
 """
 from boto.ec2.ec2object import EC2Object
 
+
 class MessageSet(list):
+
     """
     A list object that contains messages associated with
     an availability zone.
@@ -39,7 +41,9 @@ class MessageSet(list):
         else:
             setattr(self, name, value)
 
+
 class Zone(EC2Object):
+
     """
     Represents an Availability Zone.
 
@@ -74,7 +78,3 @@ class Zone(EC2Object):
             self.region_name = value
         else:
             setattr(self, name, value)
-
-
-
-

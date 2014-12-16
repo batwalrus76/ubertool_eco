@@ -30,6 +30,7 @@ import base64
 
 
 class Ebs(object):
+
     def __init__(self, connection=None, snapshot_id=None, volume_size=None):
         self.connection = connection
         self.snapshot_id = snapshot_id
@@ -49,6 +50,7 @@ class Ebs(object):
 
 
 class InstanceMonitoring(object):
+
     def __init__(self, connection=None, enabled='false'):
         self.connection = connection
         self.enabled = enabled
@@ -66,6 +68,7 @@ class InstanceMonitoring(object):
 
 # this should use the BlockDeviceMapping from boto.ec2.blockdevicemapping
 class BlockDeviceMapping(object):
+
     def __init__(self, connection=None, device_name=None, virtual_name=None,
                  ebs=None, no_device=None):
         self.connection = connection
@@ -93,6 +96,7 @@ class BlockDeviceMapping(object):
 
 
 class LaunchConfiguration(object):
+
     def __init__(self, connection=None, name=None, image_id=None,
                  key_name=None, security_groups=None, user_data=None,
                  instance_type='m1.small', kernel_id=None,
@@ -224,7 +228,8 @@ class LaunchConfiguration(object):
         elif name == 'EbsOptimized':
             self.ebs_optimized = True if value.lower() == 'true' else False
         elif name == 'AssociatePublicIpAddress':
-            self.associate_public_ip_address = True if value.lower() == 'true' else False
+            self.associate_public_ip_address = True if value.lower(
+            ) == 'true' else False
         elif name == 'VolumeType':
             self.volume_type = value
         elif name == 'DeleteOnTermination':

@@ -7,13 +7,13 @@ from PIL import _webp
 _VALID_WEBP_MODES = {
     "RGB": True,
     "RGBA": True,
-    }
+}
 
 _VP8_MODES_BY_IDENTIFIER = {
     b"VP8 ": "RGB",
     b"VP8X": "RGBA",
-    b"VP8L": "RGBA", # lossless
-    }
+    b"VP8L": "RGBA",  # lossless
+}
 
 
 def _accept(prefix):
@@ -30,7 +30,8 @@ class WebPImageFile(ImageFile.ImageFile):
     format_description = "WebP image"
 
     def _open(self):
-        data, width, height, self.mode, icc_profile, exif = _webp.WebPDecode(self.fp.read())
+        data, width, height, self.mode, icc_profile, exif = _webp.WebPDecode(
+            self.fp.read())
 
         if icc_profile:
             self.info["icc_profile"] = icc_profile

@@ -23,6 +23,7 @@
 
 
 class Batch(object):
+
     """
     Used to construct a BatchGet request.
 
@@ -80,6 +81,7 @@ class Batch(object):
 
 
 class BatchWrite(object):
+
     """
     Used to construct a BatchWrite request.  Each BatchWrite object
     represents a collection of PutItem and DeleteItem requests for
@@ -127,6 +129,7 @@ class BatchWrite(object):
 
 
 class BatchList(list):
+
     """
     A subclass of a list object that contains a collection of
     :class:`boto.dynamodb.batch.Batch` objects.
@@ -196,7 +199,6 @@ class BatchList(list):
 
         return self.submit()
 
-
     def submit(self):
         res = self.layer2.batch_get_item(self)
         if 'UnprocessedKeys' in res:
@@ -216,6 +218,7 @@ class BatchList(list):
 
 
 class BatchWriteList(list):
+
     """
     A subclass of a list object that contains a collection of
     :class:`boto.dynamodb.batch.BatchWrite` objects.
@@ -259,4 +262,3 @@ class BatchWriteList(list):
             table_name, batch_dict = batch.to_dict()
             d[table_name] = batch_dict
         return d
-

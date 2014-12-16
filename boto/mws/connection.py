@@ -31,17 +31,17 @@ import boto.mws.response
 __all__ = ['MWSConnection']
 
 api_version_path = {
-    'Feeds':        ('2009-01-01', 'Merchant', '/'),
-    'Reports':      ('2009-01-01', 'Merchant', '/'),
-    'Orders':       ('2011-01-01', 'SellerId', '/Orders/2011-01-01'),
-    'Products':     ('2011-10-01', 'SellerId', '/Products/2011-10-01'),
-    'Sellers':      ('2011-07-01', 'SellerId', '/Sellers/2011-07-01'),
-    'Inbound':      ('2010-10-01', 'SellerId',
-                     '/FulfillmentInboundShipment/2010-10-01'),
-    'Outbound':     ('2010-10-01', 'SellerId',
-                     '/FulfillmentOutboundShipment/2010-10-01'),
-    'Inventory':    ('2010-10-01', 'SellerId',
-                     '/FulfillmentInventory/2010-10-01'),
+    'Feeds': ('2009-01-01', 'Merchant', '/'),
+    'Reports': ('2009-01-01', 'Merchant', '/'),
+    'Orders': ('2011-01-01', 'SellerId', '/Orders/2011-01-01'),
+    'Products': ('2011-10-01', 'SellerId', '/Products/2011-10-01'),
+    'Sellers': ('2011-07-01', 'SellerId', '/Sellers/2011-07-01'),
+    'Inbound': ('2010-10-01', 'SellerId',
+                '/FulfillmentInboundShipment/2010-10-01'),
+    'Outbound': ('2010-10-01', 'SellerId',
+                 '/FulfillmentOutboundShipment/2010-10-01'),
+    'Inventory': ('2010-10-01', 'SellerId',
+                  '/FulfillmentInventory/2010-10-01'),
 }
 content_md5 = lambda c: base64.encodestring(hashlib.md5(c).digest()).strip()
 decorated_attrs = ('action', 'response', 'section',
@@ -85,7 +85,7 @@ def http_body(field):
             kw['body'] = kw.pop(field)
             kw['headers'] = {
                 'Content-Type': kw.pop('content_type'),
-                'Content-MD5':  content_md5(kw['body']),
+                'Content-MD5': content_md5(kw['body']),
             }
             return func(*args, **kw)
         wrapper.__doc__ = "{0}\nRequired HTTP Body: " \
@@ -610,8 +610,8 @@ class MWSConnection(AWSQueryConnection):
 
     @structured_objects('DestinationAddress', 'Items')
     @requires(['SellerFulfillmentOrderId', 'DisplayableOrderId',
-               'ShippingSpeedCategory',    'DisplayableOrderDateTime',
-               'DestinationAddress',       'DisplayableOrderComment',
+               'ShippingSpeedCategory', 'DisplayableOrderDateTime',
+               'DestinationAddress', 'DisplayableOrderComment',
                'Items'])
     @api_action('Outbound', 30, 0.5)
     def create_fulfillment_order(self, path, response, **kw):

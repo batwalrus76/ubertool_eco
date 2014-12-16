@@ -29,6 +29,7 @@ from boto.ec2.launchspecification import LaunchSpecification
 
 
 class SpotInstanceStateFault(object):
+
     """
     The fault codes for the Spot Instance request, if any.
 
@@ -55,6 +56,7 @@ class SpotInstanceStateFault(object):
 
 
 class SpotInstanceStatus(object):
+
     """
     Contains the status of a Spot Instance Request.
 
@@ -84,6 +86,7 @@ class SpotInstanceStatus(object):
 
 
 class SpotInstanceRequest(TaggedEC2Object):
+
     """
 
     :ivar id: The ID of the Spot Instance Request.
@@ -142,7 +145,7 @@ class SpotInstanceRequest(TaggedEC2Object):
 
     def startElement(self, name, attrs, connection):
         retval = super(SpotInstanceRequest, self).startElement(name, attrs,
-            connection)
+                                                               connection)
         if retval is not None:
             return retval
         if name == 'launchSpecification':

@@ -33,6 +33,7 @@ from boto.rds2 import exceptions
 
 
 class RDSConnection(AWSQueryConnection):
+
     """
     Amazon Relational Database Service
     Amazon Relational Database Service (Amazon RDS) is a web service
@@ -122,7 +123,6 @@ class RDSConnection(AWSQueryConnection):
         "StorageQuotaExceeded": exceptions.StorageQuotaExceeded,
         "SubnetAlreadyInUse": exceptions.SubnetAlreadyInUse,
     }
-
 
     def __init__(self, **kwargs):
         region = kwargs.pop('region', None)
@@ -2305,7 +2305,8 @@ class RDSConnection(AWSQueryConnection):
         if reserved_db_instance_id is not None:
             params['ReservedDBInstanceId'] = reserved_db_instance_id
         if reserved_db_instances_offering_id is not None:
-            params['ReservedDBInstancesOfferingId'] = reserved_db_instances_offering_id
+            params[
+                'ReservedDBInstancesOfferingId'] = reserved_db_instances_offering_id
         if db_instance_class is not None:
             params['DBInstanceClass'] = db_instance_class
         if duration is not None:
@@ -2331,15 +2332,16 @@ class RDSConnection(AWSQueryConnection):
             verb='POST',
             path='/', params=params)
 
-    def describe_reserved_db_instances_offerings(self,
-                                                 reserved_db_instances_offering_id=None,
-                                                 db_instance_class=None,
-                                                 duration=None,
-                                                 product_description=None,
-                                                 offering_type=None,
-                                                 multi_az=None,
-                                                 max_records=None,
-                                                 marker=None):
+    def describe_reserved_db_instances_offerings(
+            self,
+            reserved_db_instances_offering_id=None,
+            db_instance_class=None,
+            duration=None,
+            product_description=None,
+            offering_type=None,
+            multi_az=None,
+            max_records=None,
+            marker=None):
         """
         Lists available reserved DB instance offerings.
 
@@ -2394,7 +2396,8 @@ class RDSConnection(AWSQueryConnection):
         """
         params = {}
         if reserved_db_instances_offering_id is not None:
-            params['ReservedDBInstancesOfferingId'] = reserved_db_instances_offering_id
+            params[
+                'ReservedDBInstancesOfferingId'] = reserved_db_instances_offering_id
         if db_instance_class is not None:
             params['DBInstanceClass'] = db_instance_class
         if duration is not None:
@@ -2888,9 +2891,19 @@ class RDSConnection(AWSQueryConnection):
         """
         params = {'DBParameterGroupName': db_parameter_group_name, }
         self.build_complex_list_params(
-            params, parameters,
+            params,
+            parameters,
             'Parameters.member',
-            ('ParameterName', 'ParameterValue', 'Description', 'Source', 'ApplyType', 'DataType', 'AllowedValues', 'IsModifiable', 'MinimumEngineVersion', 'ApplyMethod'))
+            ('ParameterName',
+             'ParameterValue',
+             'Description',
+             'Source',
+             'ApplyType',
+             'DataType',
+             'AllowedValues',
+             'IsModifiable',
+             'MinimumEngineVersion',
+             'ApplyMethod'))
         return self._make_request(
             action='ModifyDBParameterGroup',
             verb='POST',
@@ -3018,9 +3031,14 @@ class RDSConnection(AWSQueryConnection):
         params = {'OptionGroupName': option_group_name, }
         if options_to_include is not None:
             self.build_complex_list_params(
-                params, options_to_include,
+                params,
+                options_to_include,
                 'OptionsToInclude.member',
-                ('OptionName', 'Port', 'DBSecurityGroupMemberships', 'VpcSecurityGroupMemberships', 'OptionSettings'))
+                ('OptionName',
+                 'Port',
+                 'DBSecurityGroupMemberships',
+                 'VpcSecurityGroupMemberships',
+                 'OptionSettings'))
         if options_to_remove is not None:
             self.build_list_params(params,
                                    options_to_remove,
@@ -3090,11 +3108,12 @@ class RDSConnection(AWSQueryConnection):
             verb='POST',
             path='/', params=params)
 
-    def purchase_reserved_db_instances_offering(self,
-                                                reserved_db_instances_offering_id,
-                                                reserved_db_instance_id=None,
-                                                db_instance_count=None,
-                                                tags=None):
+    def purchase_reserved_db_instances_offering(
+            self,
+            reserved_db_instances_offering_id,
+            reserved_db_instance_id=None,
+            db_instance_count=None,
+            tags=None):
         """
         Purchases a reserved DB instance offering.
 
@@ -3290,9 +3309,19 @@ class RDSConnection(AWSQueryConnection):
                 reset_all_parameters).lower()
         if parameters is not None:
             self.build_complex_list_params(
-                params, parameters,
+                params,
+                parameters,
                 'Parameters.member',
-                ('ParameterName', 'ParameterValue', 'Description', 'Source', 'ApplyType', 'DataType', 'AllowedValues', 'IsModifiable', 'MinimumEngineVersion', 'ApplyMethod'))
+                ('ParameterName',
+                 'ParameterValue',
+                 'Description',
+                 'Source',
+                 'ApplyType',
+                 'DataType',
+                 'AllowedValues',
+                 'IsModifiable',
+                 'MinimumEngineVersion',
+                 'ApplyMethod'))
         return self._make_request(
             action='ResetDBParameterGroup',
             verb='POST',

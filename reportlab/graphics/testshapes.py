@@ -1,13 +1,14 @@
 #!/bin/env python
-#Copyright ReportLab Europe Ltd. 2000-2012
-#see license.txt for license details
-#history http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/graphics/testshapes.py
+# Copyright ReportLab Europe Ltd. 2000-2012
+# see license.txt for license details
+# history
+# http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/graphics/testshapes.py
 
 # testshapes.py - draws shapes onto a PDF canvas.
 
 
 __version__ = ''' $Id $ '''
-__doc__='''Execute this script to see some test drawings.
+__doc__ = '''Execute this script to see some test drawings.
 
 This contains a number of routines to generate test drawings
 for reportlab/graphics.  For now many of them are contrived,
@@ -15,7 +16,8 @@ but we will expand them to try and trip up any parser.
 Feel free to add more.
 '''
 
-import os, sys
+import os
+import sys
 
 from reportlab.lib import colors
 from reportlab.lib.units import cm
@@ -27,7 +29,8 @@ from reportlab.graphics.shapes import *
 from reportlab.graphics.renderPDF import _PDFRenderer
 import unittest
 
-_FONTS = ['Times-Roman','Vera','Times-BoldItalic',]
+_FONTS = ['Times-Roman', 'Vera', 'Times-BoldItalic', ]
+
 
 def _setup():
     from reportlab.pdfbase import pdfmetrics, ttfonts
@@ -35,25 +38,32 @@ def _setup():
     pdfmetrics.registerFont(ttfonts.TTFont("VeraBd", "VeraBd.ttf"))
     pdfmetrics.registerFont(ttfonts.TTFont("VeraIt", "VeraIt.ttf"))
     pdfmetrics.registerFont(ttfonts.TTFont("VeraBI", "VeraBI.ttf"))
-    F = ['Times-Roman','Courier','Helvetica','Vera', 'VeraBd', 'VeraIt', 'VeraBI']
-    if sys.platform=='win32':
+    F = [
+        'Times-Roman',
+        'Courier',
+        'Helvetica',
+        'Vera',
+        'VeraBd',
+        'VeraIt',
+        'VeraBI']
+    if sys.platform == 'win32':
         for name, ttf in [
-            ('Adventurer Light SF','Advlit.ttf'),('ArialMS','ARIAL.TTF'),
+            ('Adventurer Light SF', 'Advlit.ttf'), ('ArialMS', 'ARIAL.TTF'),
             ('Arial Unicode MS', 'ARIALUNI.TTF'),
-            ('Book Antiqua','BKANT.TTF'),
-            ('Century Gothic','GOTHIC.TTF'),
+            ('Book Antiqua', 'BKANT.TTF'),
+            ('Century Gothic', 'GOTHIC.TTF'),
             ('Comic Sans MS', 'COMIC.TTF'),
-            ('Elementary Heavy SF Bold','Vwagh.ttf'),
-            ('Firenze SF','flot.ttf'),
-            ('Garamond','GARA.TTF'),
-            ('Jagger','Rols.ttf'),
-            ('Monotype Corsiva','MTCORSVA.TTF'),
-            ('Seabird SF','seag.ttf'),
-            ('Tahoma','TAHOMA.TTF'),
-            ('VerdanaMS','VERDANA.TTF'),
-            ]:
-            for D in ('c:\WINNT','c:\Windows'):
-                fn = os.path.join(D,'Fonts',ttf)
+            ('Elementary Heavy SF Bold', 'Vwagh.ttf'),
+            ('Firenze SF', 'flot.ttf'),
+            ('Garamond', 'GARA.TTF'),
+            ('Jagger', 'Rols.ttf'),
+            ('Monotype Corsiva', 'MTCORSVA.TTF'),
+            ('Seabird SF', 'seag.ttf'),
+            ('Tahoma', 'TAHOMA.TTF'),
+            ('VerdanaMS', 'VERDANA.TTF'),
+        ]:
+            for D in ('c:\WINNT', 'c:\Windows'):
+                fn = os.path.join(D, 'Fonts', ttf)
                 if os.path.isfile(fn):
                     try:
                         f = ttfonts.TTFont(name, fn)
@@ -62,6 +72,7 @@ def _setup():
                     except:
                         pass
     return F
+
 
 def resetFonts():
     for f in _setup():
@@ -76,6 +87,8 @@ resetFonts()
 #   Collections of shape drawings.
 #
 #########################################################
+
+
 def getFailedDrawing(funcName):
     """Generate a drawing in case something goes really wrong.
 
@@ -87,9 +100,9 @@ def getFailedDrawing(funcName):
 
     D = Drawing(400, 200)
 
-    points = [200,170, 140,80, 260,80]
+    points = [200, 170, 140, 80, 260, 80]
     D.add(Polygon(points,
-                  strokeWidth=0.5*cm,
+                  strokeWidth=0.5 * cm,
                   strokeColor=colors.red,
                   fillColor=colors.yellow))
 
@@ -112,8 +125,13 @@ def getDrawing01():
 
     D = Drawing(400, 200)
     D.add(Rect(50, 50, 300, 100, fillColor=colors.yellow))
-    D.add(String(180,100, 'Hello World', fillColor=colors.red))
-    D.add(String(180,86, b'Special characters \xc2\xa2\xc2\xa9\xc2\xae\xc2\xa3\xce\xb1\xce\xb2', fillColor=colors.red))
+    D.add(String(180, 100, 'Hello World', fillColor=colors.red))
+    D.add(
+        String(
+            180,
+            86,
+            b'Special characters \xc2\xa2\xc2\xa9\xc2\xae\xc2\xa3\xce\xb1\xce\xb2',
+            fillColor=colors.red))
 
     return D
 
@@ -126,17 +144,17 @@ def getDrawing02():
     """
 
     D = Drawing(400, 200)
-    D.add(Line(50,50, 300,100,
+    D.add(Line(50, 50, 300, 100,
                strokeColor=colors.blue,
-               strokeWidth=0.5*cm,
+               strokeWidth=0.5 * cm,
                ))
-    D.add(Line(50,100, 300,50,
+    D.add(Line(50, 100, 300, 50,
                strokeColor=colors.blue,
-               strokeWidth=0.5*cm,
+               strokeWidth=0.5 * cm,
                strokeDashArray=[5, 10, 15],
                ))
 
-    #x = 1/0 # Comment this to see the actual drawing!
+    # x = 1/0 # Comment this to see the actual drawing!
 
     return D
 
@@ -152,8 +170,8 @@ def getDrawing03():
 
     D = Drawing(400, 200)
     for size in range(12, 36, 4):
-        D.add(String(10+size*2,
-                     10+size*2,
+        D.add(String(10 + size * 2,
+                     10 + size * 2,
                      'Hello World',
                      fontName=_FONTS[0],
                      fontSize=size))
@@ -175,7 +193,7 @@ def getDrawing04():
     D = Drawing(400, 200)
     i = 0
     for color in (colors.blue, colors.yellow, colors.red):
-        D.add(String(50+i*30, 50+i*30,
+        D.add(String(50 + i * 30, 50 + i * 30,
                      'Hello World', fillColor=color))
         i = i + 1
 
@@ -191,7 +209,7 @@ def getDrawing05():
     D = Drawing(400, 200)
 
     lineX = 250
-    D.add(Line(lineX,10, lineX,190, strokeColor=colors.gray))
+    D.add(Line(lineX, 10, lineX, 190, strokeColor=colors.gray))
 
     y = 130
     for anchor in ('start', 'middle', 'end'):
@@ -211,32 +229,40 @@ def getDrawing06():
 
     green = colors.green
 
-    D = Drawing(400, 200) #, fillColor=green)
+    D = Drawing(400, 200)  # , fillColor=green)
 
-    D.add(Line(10,10, 390,190))
+    D.add(Line(10, 10, 390, 190))
 
-    D.add(Circle(100,100,20, fillColor=green))
-    D.add(Circle(200,100,40, fillColor=green))
-    D.add(Circle(300,100,30, fillColor=green))
+    D.add(Circle(100, 100, 20, fillColor=green))
+    D.add(Circle(200, 100, 40, fillColor=green))
+    D.add(Circle(300, 100, 30, fillColor=green))
 
-    D.add(Wedge(330,100,40, -10,40, fillColor=green))
+    D.add(Wedge(330, 100, 40, -10, 40, fillColor=green))
 
-    D.add(PolyLine([120,10, 130,20, 140,10, 150,20, 160,10,
-                    170,20, 180,10, 190,20, 200,10], fillColor=green))
+    D.add(PolyLine([120, 10, 130, 20, 140, 10, 150, 20, 160, 10,
+                    170, 20, 180, 10, 190, 20, 200, 10], fillColor=green))
 
-    D.add(Polygon([300,20, 350,20, 390,80, 300,75, 330,40], fillColor=green))
+    D.add(
+        Polygon([300, 20, 350, 20, 390, 80, 300, 75, 330, 40], fillColor=green))
 
-    D.add(Ellipse(50,150, 40, 20, fillColor=green))
+    D.add(Ellipse(50, 150, 40, 20, fillColor=green))
 
-    D.add(Rect(120,150, 60,30,
+    D.add(Rect(120, 150, 60, 30,
                strokeWidth=10,
                strokeColor=colors.yellow,
-               fillColor=green))  #square corners
-    D.add(Rect(220, 150, 60, 30, 10, 10, fillColor=green))  #round corners
+               fillColor=green))  # square corners
+    D.add(Rect(220, 150, 60, 30, 10, 10, fillColor=green))  # round corners
 
-    D.add(String(10,50, 'Basic Shapes', fillColor=colors.black, fontName='Helvetica'))
+    D.add(
+        String(
+            10,
+            50,
+            'Basic Shapes',
+            fillColor=colors.black,
+            fontName='Helvetica'))
 
     return D
+
 
 def getDrawing07():
     """This tests the ability to translate and rotate groups.  The first set of axes should be
@@ -245,36 +271,41 @@ def getDrawing07():
     D = Drawing(400, 200)
 
     Axis = Group(
-        Line(0,0,100,0), #x axis
-        Line(0,0,0,50),   # y axis
-        Line(0,10,10,10), #ticks on y axis
-        Line(0,20,10,20),
-        Line(0,30,10,30),
-        Line(0,40,10,40),
-        Line(10,0,10,10), #ticks on x axis
-        Line(20,0,20,10),
-        Line(30,0,30,10),
-        Line(40,0,40,10),
-        Line(50,0,50,10),
-        Line(60,0,60,10),
-        Line(70,0,70,10),
-        Line(80,0,80,10),
-        Line(90,0,90,10),
+        Line(0, 0, 100, 0),  # x axis
+        Line(0, 0, 0, 50),   # y axis
+        Line(0, 10, 10, 10),  # ticks on y axis
+        Line(0, 20, 10, 20),
+        Line(0, 30, 10, 30),
+        Line(0, 40, 10, 40),
+        Line(10, 0, 10, 10),  # ticks on x axis
+        Line(20, 0, 20, 10),
+        Line(30, 0, 30, 10),
+        Line(40, 0, 40, 10),
+        Line(50, 0, 50, 10),
+        Line(60, 0, 60, 10),
+        Line(70, 0, 70, 10),
+        Line(80, 0, 80, 10),
+        Line(90, 0, 90, 10),
         String(20, 35, 'Axes', fill=colors.black)
-        )
+    )
 
     firstAxisGroup = Group(Axis)
-    firstAxisGroup.translate(10,10)
+    firstAxisGroup.translate(10, 10)
     D.add(firstAxisGroup)
 
     secondAxisGroup = Group(Axis)
-    secondAxisGroup.translate(150,10)
+    secondAxisGroup.translate(150, 10)
     secondAxisGroup.rotate(15)
 
     D.add(secondAxisGroup)
 
-
-    thirdAxisGroup = Group(Axis, transform=mmult(translate(300,10), rotate(30)))
+    thirdAxisGroup = Group(
+        Axis,
+        transform=mmult(
+            translate(
+                300,
+                10),
+            rotate(30)))
     D.add(thirdAxisGroup)
 
     return D
@@ -288,45 +319,45 @@ def getDrawing08():
     D = Drawing(400, 200)
 
     Axis = Group(
-        Line(0,0,100,0), #x axis
-        Line(0,0,0,50),   # y axis
-        Line(0,10,10,10), #ticks on y axis
-        Line(0,20,10,20),
-        Line(0,30,10,30),
-        Line(0,40,10,40),
-        Line(10,0,10,10), #ticks on x axis
-        Line(20,0,20,10),
-        Line(30,0,30,10),
-        Line(40,0,40,10),
-        Line(50,0,50,10),
-        Line(60,0,60,10),
-        Line(70,0,70,10),
-        Line(80,0,80,10),
-        Line(90,0,90,10),
+        Line(0, 0, 100, 0),  # x axis
+        Line(0, 0, 0, 50),   # y axis
+        Line(0, 10, 10, 10),  # ticks on y axis
+        Line(0, 20, 10, 20),
+        Line(0, 30, 10, 30),
+        Line(0, 40, 10, 40),
+        Line(10, 0, 10, 10),  # ticks on x axis
+        Line(20, 0, 20, 10),
+        Line(30, 0, 30, 10),
+        Line(40, 0, 40, 10),
+        Line(50, 0, 50, 10),
+        Line(60, 0, 60, 10),
+        Line(70, 0, 70, 10),
+        Line(80, 0, 80, 10),
+        Line(90, 0, 90, 10),
         String(20, 35, 'Axes', fill=colors.black)
-        )
+    )
 
     firstAxisGroup = Group(Axis)
-    firstAxisGroup.translate(10,10)
+    firstAxisGroup.translate(10, 10)
     D.add(firstAxisGroup)
 
     secondAxisGroup = Group(Axis)
-    secondAxisGroup.translate(150,10)
-    secondAxisGroup.scale(1,2)
+    secondAxisGroup.translate(150, 10)
+    secondAxisGroup.scale(1, 2)
     D.add(secondAxisGroup)
 
     thirdAxisGroup = Group(Axis)
-    thirdAxisGroup.translate(10,125)
-    thirdAxisGroup.scale(2,1)
+    thirdAxisGroup.translate(10, 125)
+    thirdAxisGroup.scale(2, 1)
     D.add(thirdAxisGroup)
 
     fourthAxisGroup = Group(Axis)
-    fourthAxisGroup.translate(250,125)
-    fourthAxisGroup.skew(30,0)
+    fourthAxisGroup.translate(250, 125)
+    fourthAxisGroup.skew(30, 0)
     D.add(fourthAxisGroup)
 
-
     return D
+
 
 def getDrawing09():
     """This tests rotated strings
@@ -340,24 +371,24 @@ def getDrawing09():
     text = "I should be totally horizontal and enclosed in a box"
     textWidth = stringWidth(text, fontName, fontSize)
 
-
     g1 = Group(
-            String(20, 20, text, fontName=fontName, fontSize = fontSize),
-            Rect(18, 18, textWidth + 4, fontSize + 4, fillColor=None)
-            )
+        String(20, 20, text, fontName=fontName, fontSize=fontSize),
+        Rect(18, 18, textWidth + 4, fontSize + 4, fillColor=None)
+    )
     D.add(g1)
 
     text = "I should slope up by 15 degrees, so my right end is higher than my left"
     textWidth = stringWidth(text, fontName, fontSize)
     g2 = Group(
-            String(20, 20, text, fontName=fontName, fontSize = fontSize),
-            Rect(18, 18, textWidth + 4, fontSize + 4, fillColor=None)
-            )
+        String(20, 20, text, fontName=fontName, fontSize=fontSize),
+        Rect(18, 18, textWidth + 4, fontSize + 4, fillColor=None)
+    )
     g2.translate(0, 50)
     g2.rotate(15)
     D.add(g2)
 
     return D
+
 
 def getDrawing10():
     """This tests nested groups with multiple levels of coordinate transformation.
@@ -368,24 +399,25 @@ def getDrawing10():
     fontSize = 12
 
     g1 = Group(
-            Rect(0, 0, 100, 20, fillColor=colors.yellow),
-            String(5, 5, 'Text in the box', fontName=fontName, fontSize = fontSize)
-            )
+        Rect(0, 0, 100, 20, fillColor=colors.yellow),
+        String(5, 5, 'Text in the box', fontName=fontName, fontSize=fontSize)
+    )
     D.add(g1)
 
-    g2 = Group(g1, transform = translate(25,25))
+    g2 = Group(g1, transform=translate(25, 25))
     D.add(g2)
 
-    g3 = Group(g2, transform = translate(25,25))
+    g3 = Group(g2, transform=translate(25, 25))
     D.add(g3)
 
-    g4 = Group(g3, transform = translate(25,25))
+    g4 = Group(g3, transform=translate(25, 25))
     D.add(g4)
-
 
     return D
 
 from reportlab.graphics.widgets.signsandsymbols import SmileyFace
+
+
 def getDrawing11():
     '''test of anchoring'''
     def makeSmiley(x, y, size, color):
@@ -393,23 +425,23 @@ def getDrawing11():
         d = size
         s = SmileyFace()
         s.fillColor = color
-        s.x = x-d
-        s.y = y-d
-        s.size = d*2
+        s.x = x - d
+        s.y = y - d
+        s.size = d * 2
         return s
 
-    D = Drawing(400, 200) #, fillColor=colors.purple)
-    g = Group(transform=(1,0,0,1,0,0))
-    g.add(makeSmiley(100,100,10,colors.red))
-    g.add(Line(90,100,110,100,strokeColor=colors.green))
-    g.add(Line(100,90,100,110,strokeColor=colors.green))
+    D = Drawing(400, 200)  # , fillColor=colors.purple)
+    g = Group(transform=(1, 0, 0, 1, 0, 0))
+    g.add(makeSmiley(100, 100, 10, colors.red))
+    g.add(Line(90, 100, 110, 100, strokeColor=colors.green))
+    g.add(Line(100, 90, 100, 110, strokeColor=colors.green))
     D.add(g)
-    g = Group(transform=(2,0,0,2,100,-100))
-    g.add(makeSmiley(100,100,10,colors.blue))
-    g.add(Line(90,100,110,100,strokeColor=colors.green))
-    g.add(Line(100,90,100,110,strokeColor=colors.green))
+    g = Group(transform=(2, 0, 0, 2, 100, -100))
+    g.add(makeSmiley(100, 100, 10, colors.blue))
+    g.add(Line(90, 100, 110, 100, strokeColor=colors.green))
+    g.add(Line(100, 90, 100, 110, strokeColor=colors.green))
     D.add(g)
-    g = Group(transform=(2,0,0,2,0,0))
+    g = Group(transform=(2, 0, 0, 2, 0, 0))
     return D
 
 
@@ -422,74 +454,92 @@ def getDrawing12():
     faceName = "DarkGardenMK"
     D = Drawing(400, 200)
     for size in range(12, 36, 4):
-        D.add(String(10+size*2,
-                     10+size*2,
+        D.add(String(10 + size * 2,
+                     10 + size * 2,
                      'Hello World',
                      fontName=faceName,
                      fontSize=size))
     return D
 
+
 def getDrawing13():
     'Test Various TTF Fonts'
 
-    def drawit(F,w=400,h=200,fontSize=12,slack=2,gap=5):
-        D = Drawing(w,h)
-        th = 2*gap + fontSize*1.2
-        gh = gap + .2*fontSize
+    def drawit(F, w=400, h=200, fontSize=12, slack=2, gap=5):
+        D = Drawing(w, h)
+        th = 2 * gap + fontSize * 1.2
+        gh = gap + .2 * fontSize
         y = h
         maxx = 0
         for fontName in F:
             y -= th
-            text = fontName+asNative(b': I should be totally horizontal and enclosed in a box and end in alphabetagamma \xc2\xa2\xc2\xa9\xc2\xae\xc2\xa3\xca\xa5\xd0\x96\xd6\x83\xd7\x90\xd9\x82\xe0\xa6\x95\xce\xb1\xce\xb2\xce\xb3')
+            text = fontName + \
+                asNative(b': I should be totally horizontal and enclosed in a box and end in alphabetagamma \xc2\xa2\xc2\xa9\xc2\xae\xc2\xa3\xca\xa5\xd0\x96\xd6\x83\xd7\x90\xd9\x82\xe0\xa6\x95\xce\xb1\xce\xb2\xce\xb3')
             textWidth = stringWidth(text, fontName, fontSize)
-            maxx = max(maxx,textWidth+20)
+            maxx = max(maxx, textWidth + 20)
             D.add(
-                Group(Rect(8, y-gh, textWidth + 4, th, strokeColor=colors.red, strokeWidth=.5, fillColor=colors.lightgrey),
-                    String(10, y, text, fontName=fontName, fontSize = fontSize)))
+                Group(
+                    Rect(
+                        8,
+                        y - gh,
+                        textWidth + 4,
+                        th,
+                        strokeColor=colors.red,
+                        strokeWidth=.5,
+                        fillColor=colors.lightgrey),
+                    String(
+                        10,
+                        y,
+                        text,
+                        fontName=fontName,
+                        fontSize=fontSize)))
             y -= 5
-        return maxx, h-y+gap, D
+        return maxx, h - y + gap, D
     maxx, maxy, D = drawit(_FONTS)
-    if maxx>400 or maxy>200: _,_,D = drawit(_FONTS,maxx,maxy)
+    if maxx > 400 or maxy > 200:
+        _, _, D = drawit(_FONTS, maxx, maxy)
     return D
 
-##def getDrawing14():
+# def getDrawing14():
 ##    """This tests inherited properties.  Each font should be as it says."""
 ##    D = Drawing(400, 200)
-##    
+##
 ##    fontSize = 12
 ##    D.fontName = 'Courier'
-##    
-##    g1 = Group(
+##
+# g1 = Group(
 ##            Rect(0, 0, 150, 20, fillColor=colors.yellow),
 ##            String(5, 5, 'Inherited Courier', fontName=inherit, fontSize = fontSize)
-##            )
-##    D.add(g1)
+# )
+# D.add(g1)
 ##
 ##    g2 = Group(g1, transform = translate(25,25))
-##    D.add(g2)
+# D.add(g2)
 ##
 ##    g3 = Group(g2, transform = translate(25,25))
-##    D.add(g3)
+# D.add(g3)
 ##
 ##    g4 = Group(g3, transform = translate(25,25))
-##    D.add(g4)
+# D.add(g4)
 ##
 ##
-##    return D
+# return D
+
+
 def getAllFunctionDrawingNames(doTTF=1):
     "Get a list of drawing function names from somewhere."
 
     funcNames = []
 
     # Here we get the names from the global name space.
-    symbols = list(globals().keys())
-    symbols.sort()
+    symbols = sorted(globals().keys())
     for funcName in symbols:
         if funcName[0:10] == 'getDrawing':
-            if doTTF or funcName!='getDrawing13':
+            if doTTF or funcName != 'getDrawing13':
                 funcNames.append(funcName)
 
     return funcNames
+
 
 def _evalFuncDrawing(name, D, l=None, g=None):
     try:
@@ -498,11 +548,13 @@ def _evalFuncDrawing(name, D, l=None, g=None):
         d = getFailedDrawing(name)
     D.append((d, eval(name + '.__doc__'), name[3:]))
 
+
 def getAllTestDrawings(doTTF=1):
     D = []
     for f in getAllFunctionDrawingNames(doTTF=doTTF):
-        _evalFuncDrawing(f,D)
+        _evalFuncDrawing(f, D)
     return D
+
 
 def writePDF(drawings):
     "Create and save a PDF file containing some drawings."
@@ -522,9 +574,9 @@ def writePDF(drawings):
             y = 740
         # Draw a title.
         y = y - 30
-        c.setFont(_FONTS[2],12)
+        c.setFont(_FONTS[2], 12)
         c.drawString(80, y, '%s (#%d)' % (funcname, i))
-        c.setFont(_FONTS[0],12)
+        c.setFont(_FONTS[0], 12)
         y = y - 14
         textObj = c.beginText(80, y)
         textObj.textLines(docstring)
@@ -539,6 +591,7 @@ def writePDF(drawings):
 
 
 class ShapesTestCase(unittest.TestCase):
+
     "Test generating all kinds of shapes."
 
     def setUp(self):
@@ -547,12 +600,10 @@ class ShapesTestCase(unittest.TestCase):
         self.funcNames = getAllFunctionDrawingNames()
         self.drawings = []
 
-
     def tearDown(self):
         "Do what has to be done after the tests are over."
 
         writePDF(self.drawings)
-
 
     # This should always succeed. If each drawing would be
     # wrapped in a dedicated test method like this one, it
@@ -565,7 +616,7 @@ class ShapesTestCase(unittest.TestCase):
             if f[0:10] == 'getDrawing':
                 # Make an instance and get its doc string.
                 # If that fails, use a default error drawing.
-                _evalFuncDrawing(f,self.drawings)
+                _evalFuncDrawing(f, self.drawings)
 
 
 def makeSuite():

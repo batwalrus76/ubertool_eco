@@ -1,8 +1,8 @@
 WinAnsiEncoding = (
-                None, None, None, None, None, None, None, None, None, None, None, None,
-                None, None, None, None, None, None, None, None, None, None, None, None,
-                None, None, None, None, None, None, None, None, 'space', 'exclam',
-                'quotedbl', 'numbersign', 'dollar', 'percent', 'ampersand',
+    None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, 'space', 'exclam',
+    'quotedbl', 'numbersign', 'dollar', 'percent', 'ampersand',
                 'quotesingle', 'parenleft', 'parenright', 'asterisk', 'plus', 'comma',
                 'hyphen', 'period', 'slash', 'zero', 'one', 'two', 'three', 'four',
                 'five', 'six', 'seven', 'eight', 'nine', 'colon', 'semicolon', 'less',
@@ -34,4 +34,3 @@ WinAnsiEncoding = (
                 'iacute', 'icircumflex', 'idieresis', 'eth', 'ntilde', 'ograve', 'oacute',
                 'ocircumflex', 'otilde', 'odieresis', 'divide', 'oslash', 'ugrave', 'uacute',
                 'ucircumflex', 'udieresis', 'yacute', 'thorn', 'ydieresis')
-

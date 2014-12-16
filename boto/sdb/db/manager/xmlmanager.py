@@ -27,7 +27,9 @@ from xml.dom.minidom import getDOMImplementation, parse, parseString, Node
 
 ISO8601 = '%Y-%m-%dT%H:%M:%SZ'
 
+
 class XMLConverter(object):
+
     """
     Responsible for converting base Python types to format compatible with underlying
     database.  For SimpleDB, that means everything needs to be converted to a string
@@ -39,15 +41,18 @@ class XMLConverter(object):
     method to call, the generic encode/decode methods will look for the type-specific
     method by searching for a method called "encode_<type name>" or "decode_<type name>".
     """
+
     def __init__(self, manager):
         self.manager = manager
-        self.type_map = { bool : (self.encode_bool, self.decode_bool),
-                          int : (self.encode_int, self.decode_int),
-                          long : (self.encode_long, self.decode_long),
-                          Model : (self.encode_reference, self.decode_reference),
-                          Key : (self.encode_reference, self.decode_reference),
-                          Password : (self.encode_password, self.decode_password),
-                          datetime : (self.encode_datetime, self.decode_datetime)}
+        self.type_map = {
+            bool: (
+                self.encode_bool, self.decode_bool), int: (
+                self.encode_int, self.decode_int), long: (
+                self.encode_long, self.decode_long), Model: (
+                    self.encode_reference, self.decode_reference), Key: (
+                        self.encode_reference, self.decode_reference), Password: (
+                            self.encode_password, self.decode_password), datetime: (
+                                self.encode_datetime, self.decode_datetime)}
 
     def get_text_value(self, parent_node):
         value = ''
@@ -122,7 +127,7 @@ class XMLConverter(object):
         return long(value)
 
     def encode_bool(self, value):
-        if value == True:
+        if value:
             return 'true'
         else:
             return 'false'
@@ -152,7 +157,9 @@ class XMLConverter(object):
         else:
             val_node = self.manager.doc.createElement("object")
             val_node.setAttribute('id', value.id)
-            val_node.setAttribute('class', '%s.%s' % (value.__class__.__module__, value.__class__.__name__))
+            val_node.setAttribute(
+                'class', '%s.%s' %
+                (value.__class__.__module__, value.__class__.__name__))
             return val_node
 
     def decode_reference(self, value):
@@ -202,8 +209,11 @@ class XMLManager(object):
         self.auth_header = None
         if self.db_user:
             import base64
-            base64string = base64.encodestring('%s:%s' % (self.db_user, self.db_passwd))[:-1]
-            authheader =  "Basic %s" % base64string
+            base64string = base64.encodestring(
+                '%s:%s' %
+                (self.db_user, self.db_passwd))[
+                :-1]
+            authheader = "Basic %s" % base64string
             self.auth_header = authheader
 
     def _connect(self):
@@ -269,7 +279,9 @@ class XMLManager(object):
 
     def get_s3_connection(self):
         if not self.s3:
-            self.s3 = boto.connect_s3(self.aws_access_key_id, self.aws_secret_access_key)
+            self.s3 = boto.connect_s3(
+                self.aws_access_key_id,
+                self.aws_secret_access_key)
         return self.s3
 
     def get_list(self, prop_node, item_type):
@@ -325,13 +337,13 @@ class XMLManager(object):
                 props[prop.name] = value
         return (cls, props, id)
 
-
     def get_object(self, cls, id):
         if not self.connection:
             self._connect()
 
         if not self.connection:
-            raise NotImplementedError("Can't query without a database connection")
+            raise NotImplementedError(
+                "Can't query without a database connection")
         url = "/%s/%s" % (self.db_name, id)
         resp = self._make_request('GET', url)
         if resp.status == 200:
@@ -345,7 +357,8 @@ class XMLManager(object):
             self._connect()
 
         if not self.connection:
-            raise NotImplementedError("Can't query without a database connection")
+            raise NotImplementedError(
+                "Can't query without a database connection")
 
         from urllib import urlencode
 
@@ -377,7 +390,9 @@ class XMLManager(object):
                         filter_parts = []
                         for val in value:
                             val = self.encode_value(property, val)
-                            filter_parts.append("'%s' %s '%s'" % (name, op, val))
+                            filter_parts.append(
+                                "'%s' %s '%s'" %
+                                (name, op, val))
                         parts.append("[%s]" % " OR ".join(filter_parts))
                     else:
                         value = self.encode_value(property, value)
@@ -391,7 +406,9 @@ class XMLManager(object):
             else:
                 key = order_by
                 type = "asc"
-            parts.append("['%s' starts-with ''] sort '%s' %s" % (key, key, type))
+            parts.append(
+                "['%s' starts-with ''] sort '%s' %s" %
+                (key, key, type))
         return ' intersection '.join(parts)
 
     def query_gql(self, query_string, *args, **kwds):
@@ -432,7 +449,6 @@ class XMLManager(object):
                     setattr(obj, prop.name, value)
         return obj
 
-
     def marshal_object(self, obj, doc=None):
         if not doc:
             doc = self.new_doc()
@@ -459,7 +475,10 @@ class XMLManager(object):
                 elif isinstance(value, Node):
                     prop_node.appendChild(value)
                 else:
-                    text_node = doc.createTextNode(unicode(value).encode("ascii", "ignore"))
+                    text_node = doc.createTextNode(
+                        unicode(value).encode(
+                            "ascii",
+                            "ignore"))
                     prop_node.appendChild(text_node)
             obj_node.appendChild(prop_node)
 
@@ -488,7 +507,7 @@ class XMLManager(object):
         return self._make_request("DELETE", url)
 
     def set_key_value(self, obj, name, value):
-        self.domain.put_attributes(obj.id, {name : value}, replace=True)
+        self.domain.put_attributes(obj.id, {name: value}, replace=True)
 
     def delete_key_value(self, obj, name):
         self.domain.delete_attributes(obj.id, name)
@@ -514,4 +533,3 @@ class XMLManager(object):
             obj = obj.get_by_id(obj.id)
             obj._loaded = True
         return obj
-

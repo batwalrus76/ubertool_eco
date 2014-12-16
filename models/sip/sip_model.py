@@ -19,14 +19,59 @@ url_part1 = os.environ['UBERTOOL_REST_SERVER']
 
 
 class sip(object):
-    def __init__(self, set_variables=True,run_methods=True,run_type = "single",chemical_name='', b_species='', m_species='', bw_quail=1, bw_duck=1, bwb_other=1, bw_rat=1, bwm_other=1, sol=1, ld50_a=1, ld50_m=1, aw_bird=1, mineau=1, aw_mamm=1, noaec_d=1, noaec_q=1, noaec_o=1, Species_of_the_bird_NOAEC_CHOICES=1, noael=1,vars_dict=None):
+
+    def __init__(
+            self,
+            set_variables=True,
+            run_methods=True,
+            run_type="single",
+            chemical_name='',
+            b_species='',
+            m_species='',
+            bw_quail=1,
+            bw_duck=1,
+            bwb_other=1,
+            bw_rat=1,
+            bwm_other=1,
+            sol=1,
+            ld50_a=1,
+            ld50_m=1,
+            aw_bird=1,
+            mineau=1,
+            aw_mamm=1,
+            noaec_d=1,
+            noaec_q=1,
+            noaec_o=1,
+            Species_of_the_bird_NOAEC_CHOICES=1,
+            noael=1,
+            vars_dict=None):
         self.set_default_variables()
         self.jid = rest_funcs.gen_jid()
         if set_variables:
-            if vars_dict != None:
+            if vars_dict is not None:
                 self.__dict__.update(vars_dict)
             else:
-                self.set_variables(run_type, chemical_name, b_species, m_species, bw_quail, bw_duck, bwb_other, bw_rat, bwm_other, sol, ld50_a, ld50_m, aw_bird, mineau, aw_mamm, noaec_d, noaec_q, noaec_o, Species_of_the_bird_NOAEC_CHOICES, noael)
+                self.set_variables(
+                    run_type,
+                    chemical_name,
+                    b_species,
+                    m_species,
+                    bw_quail,
+                    bw_duck,
+                    bwb_other,
+                    bw_rat,
+                    bwm_other,
+                    sol,
+                    ld50_a,
+                    ld50_m,
+                    aw_bird,
+                    mineau,
+                    aw_mamm,
+                    noaec_d,
+                    noaec_q,
+                    noaec_o,
+                    Species_of_the_bird_NOAEC_CHOICES,
+                    noael)
 
     def set_default_variables(self):
         self.run_type = "single"
@@ -50,7 +95,28 @@ class sip(object):
         self.noaec = -1
         self.noael = -1
 
-    def set_variables(self, run_type, chemical_name, b_species, m_species, bw_quail, bw_duck, bwb_other, bw_rat, bwm_other, sol, ld50_a, ld50_m, aw_bird, mineau, aw_mamm, noaec_d, noaec_q, noaec_o, Species_of_the_bird_NOAEC_CHOICES, noael):
+    def set_variables(
+            self,
+            run_type,
+            chemical_name,
+            b_species,
+            m_species,
+            bw_quail,
+            bw_duck,
+            bwb_other,
+            bw_rat,
+            bwm_other,
+            sol,
+            ld50_a,
+            ld50_m,
+            aw_bird,
+            mineau,
+            aw_mamm,
+            noaec_d,
+            noaec_q,
+            noaec_o,
+            Species_of_the_bird_NOAEC_CHOICES,
+            noael):
         self.run_type = run_type
         self.chemical_name = chemical_name
         self.bw_quail = bw_quail
@@ -60,13 +126,13 @@ class sip(object):
         self.bwm_other = bwm_other
         self.b_species = b_species
         self.m_species = m_species
-        if b_species =='178':
+        if b_species == '178':
             self.bw_bird = self.bw_quail
-        elif b_species =='1580':
+        elif b_species == '1580':
             self.bw_bird = self.bw_duck
         else:
             self.bw_bird = self.bwb_other
-        if m_species =='350':
+        if m_species == '350':
             self.bw_mamm = self.bw_rat
         else:
             self.bw_mamm = self.bwm_other
@@ -93,15 +159,35 @@ class sip(object):
         #         ('self.noaec=%g is a non-physical value.' % self.aw_bird)
         self.noael = noael
 
-        all_dic = {"chemical_name":self.chemical_name, "bw_bird":self.bw_bird, "bw_quail":self.bw_quail, "bw_duck":self.bw_duck, "bwb_other":self.bwb_other, "bw_rat":self.bw_rat,
-                   "bwm_other":self.bwm_other, "b_species":self.b_species, "m_species":self.m_species, "bw_mamm":self.bw_mamm, "sol":self.sol,
-                   "ld50_a":self.ld50_a, "ld50_m":self.ld50_m, "aw_bird":self.aw_bird, "mineau":self.mineau, "aw_mamm":self.aw_mamm, "noaec":self.noaec, "noael":self.noael}
+        all_dic = {
+            "chemical_name": self.chemical_name,
+            "bw_bird": self.bw_bird,
+            "bw_quail": self.bw_quail,
+            "bw_duck": self.bw_duck,
+            "bwb_other": self.bwb_other,
+            "bw_rat": self.bw_rat,
+            "bwm_other": self.bwm_other,
+            "b_species": self.b_species,
+            "m_species": self.m_species,
+            "bw_mamm": self.bw_mamm,
+            "sol": self.sol,
+            "ld50_a": self.ld50_a,
+            "ld50_m": self.ld50_m,
+            "aw_bird": self.aw_bird,
+            "mineau": self.mineau,
+            "aw_mamm": self.aw_mamm,
+            "noaec": self.noaec,
+            "noael": self.noael}
         data = json.dumps(all_dic)
 
         self.jid = rest_funcs.gen_jid()
-        url=url_part1 + '/sip/' + self.jid 
+        url = url_part1 + '/sip/' + self.jid
         # response = urlfetch.fetch(url=url, payload=data, method=urlfetch.POST, headers=http_headers, deadline=60)
-        response = requests.post(url, data=data, headers=http_headers, timeout=60)  
+        response = requests.post(
+            url,
+            data=data,
+            headers=http_headers,
+            timeout=60)
         output_val = json.loads(response.content)['result']
 
         for key, value in output_val.items():
@@ -125,5 +211,3 @@ class sip(object):
         self.chronconb_out_expected = None
         self.chron_mamm_out_expected = None
         self.chronconm_out_expected = None
-
-

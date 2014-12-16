@@ -34,6 +34,7 @@ from boto.dynamodb2 import exceptions
 
 
 class DynamoDBConnection(AWSQueryConnection):
+
     """
     Amazon DynamoDB **Overview**
     This is the Amazon DynamoDB API Reference. This guide provides
@@ -58,7 +59,6 @@ class DynamoDBConnection(AWSQueryConnection):
     }
 
     NumberRetries = 10
-
 
     def __init__(self, **kwargs):
         region = kwargs.pop('region', None)
@@ -272,7 +272,8 @@ class DynamoDBConnection(AWSQueryConnection):
         if return_consumed_capacity is not None:
             params['ReturnConsumedCapacity'] = return_consumed_capacity
         if return_item_collection_metrics is not None:
-            params['ReturnItemCollectionMetrics'] = return_item_collection_metrics
+            params[
+                'ReturnItemCollectionMetrics'] = return_item_collection_metrics
         return self.make_request(action='BatchWriteItem',
                                  body=json.dumps(params))
 
@@ -491,7 +492,8 @@ class DynamoDBConnection(AWSQueryConnection):
         if return_consumed_capacity is not None:
             params['ReturnConsumedCapacity'] = return_consumed_capacity
         if return_item_collection_metrics is not None:
-            params['ReturnItemCollectionMetrics'] = return_item_collection_metrics
+            params[
+                'ReturnItemCollectionMetrics'] = return_item_collection_metrics
         return self.make_request(action='DeleteItem',
                                  body=json.dumps(params))
 
@@ -733,7 +735,8 @@ class DynamoDBConnection(AWSQueryConnection):
         if return_consumed_capacity is not None:
             params['ReturnConsumedCapacity'] = return_consumed_capacity
         if return_item_collection_metrics is not None:
-            params['ReturnItemCollectionMetrics'] = return_item_collection_metrics
+            params[
+                'ReturnItemCollectionMetrics'] = return_item_collection_metrics
         return self.make_request(action='PutItem',
                                  body=json.dumps(params))
 
@@ -1417,7 +1420,8 @@ class DynamoDBConnection(AWSQueryConnection):
         if return_consumed_capacity is not None:
             params['ReturnConsumedCapacity'] = return_consumed_capacity
         if return_item_collection_metrics is not None:
-            params['ReturnItemCollectionMetrics'] = return_item_collection_metrics
+            params[
+                'ReturnItemCollectionMetrics'] = return_item_collection_metrics
         return self.make_request(action='UpdateItem',
                                  body=json.dumps(params))
 
@@ -1464,7 +1468,8 @@ class DynamoDBConnection(AWSQueryConnection):
         if provisioned_throughput is not None:
             params['ProvisionedThroughput'] = provisioned_throughput
         if global_secondary_index_updates is not None:
-            params['GlobalSecondaryIndexUpdates'] = global_secondary_index_updates
+            params[
+                'GlobalSecondaryIndexUpdates'] = global_secondary_index_updates
         return self.make_request(action='UpdateTable',
                                  body=json.dumps(params))
 

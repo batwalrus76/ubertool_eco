@@ -1,10 +1,11 @@
-#Copyright ReportLab Europe Ltd. 2000-2012
-#see license.txt for license details
-#history http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/platypus/doctemplate.py
+# Copyright ReportLab Europe Ltd. 2000-2012
+# see license.txt for license details
+# history
+# http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/platypus/doctemplate.py
 
-__version__=''' $Id$ '''
+__version__ = ''' $Id$ '''
 
-__doc__="""
+__doc__ = """
 This module contains the core structure of platypus.
 
 rlatypus constructs documents.  Document styles are determined by DocumentTemplates.
@@ -45,51 +46,61 @@ import sys
 import logging
 logger = logging.getLogger("reportlab.platypus")
 
+
 class LayoutError(Exception):
     pass
 
-def _fSizeString(f):
-    #used to get size during error messages
-    w=getattr(f,'width',None)
-    if w is None:
-        w=getattr(f,'_width',None)
 
-    h=getattr(f,'height',None)
+def _fSizeString(f):
+    # used to get size during error messages
+    w = getattr(f, 'width', None)
+    if w is None:
+        w = getattr(f, '_width', None)
+
+    h = getattr(f, 'height', None)
     if h is None:
-        h=getattr(f,'_height',None)
-    #tables in particular may have some nasty large culprit
+        h = getattr(f, '_height', None)
+    # tables in particular may have some nasty large culprit
     if hasattr(f, '_culprit'):
         c = ', %s, ' % f._culprit()
     else:
         c = ''
     if w is not None or h is not None:
-        if w is None: w='???'
-        if h is None: h='???'
-        return '(%s x %s)%s' % (w,h,c)
+        if w is None:
+            w = '???'
+        if h is None:
+            h = '???'
+        return '(%s x %s)%s' % (w, h, c)
     return ''
+
 
 def _doNothing(canvas, doc):
     "Dummy callback for onPage"
     pass
 
+
 class PTCycle(list):
+
     def __init__(self):
         self._restart = 0
         self._idx = 0
         list.__init__(self)
 
     def cyclicIterator(self):
-        while 1:
+        while True:
             yield self[self._idx]
             self._idx += 1
-            if self._idx>=len(self):
+            if self._idx >= len(self):
                 self._idx = self._restart
 
+
 class IndexingFlowable(Flowable):
+
     """Abstract interface definition for flowables which might
     hold references to other pages or themselves be targets
     of cross-references.  XRefStart, XRefDest, Table of Contents,
     Indexes etc."""
+
     def isIndexing(self):
         return 1
 
@@ -111,47 +122,53 @@ class IndexingFlowable(Flowable):
         """Called after build ends but before isSatisfied"""
         pass
 
+
 class ActionFlowable(Flowable):
+
     '''This Flowable is never drawn, it can be used for data driven controls
        For example to change a page template (from one column to two, for example)
        use NextPageTemplate which creates an ActionFlowable.
     '''
-    def __init__(self,action=()):
-        #must call super init to ensure it has a width and height (of zero),
-        #as in some cases the packer might get called on it...
+
+    def __init__(self, action=()):
+        # must call super init to ensure it has a width and height (of zero),
+        # as in some cases the packer might get called on it...
         Flowable.__init__(self)
         if not isSeq(action):
             action = (action,)
         self.action = tuple(action)
 
-    def apply(self,doc):
+    def apply(self, doc):
         '''
         This is called by the doc.build processing to allow the instance to
         implement its behaviour
         '''
         action = self.action[0]
         args = tuple(self.action[1:])
-        arn = 'handle_'+action
-        if arn=="handle_nextPageTemplate" and args[0]=='main':
+        arn = 'handle_' + action
+        if arn == "handle_nextPageTemplate" and args[0] == 'main':
             pass
         try:
-            getattr(doc,arn)(*args)
+            getattr(doc, arn)(*args)
         except AttributeError as aerr:
-            if aerr.args[0]==arn:
-                raise NotImplementedError("Can't handle ActionFlowable(%s)" % action)
+            if aerr.args[0] == arn:
+                raise NotImplementedError(
+                    "Can't handle ActionFlowable(%s)" %
+                    action)
             else:
                 raise
         except:
-            annotateException("\nhandle_%s args=%s"%(action,ascii(args)))
+            annotateException("\nhandle_%s args=%s" % (action, ascii(args)))
 
     def __call__(self):
         return self
 
     def identity(self, maxLen=None):
-        return "ActionFlowable: %s%s" % (str(self.action),self._frameName())
+        return "ActionFlowable: %s%s" % (str(self.action), self._frameName())
+
 
 class LCActionFlowable(ActionFlowable):
-    locChanger = 1                  #we cause a frame or page change
+    locChanger = 1  # we cause a frame or page change
 
     def wrap(self, availWidth, availHeight):
         '''Should never be called.'''
@@ -161,61 +178,77 @@ class LCActionFlowable(ActionFlowable):
         '''Should never be called.'''
         raise NotImplementedError
 
+
 class NextFrameFlowable(ActionFlowable):
-    def __init__(self,ix,resume=0):
-        ActionFlowable.__init__(self,('nextFrame',ix,resume))
+
+    def __init__(self, ix, resume=0):
+        ActionFlowable.__init__(self, ('nextFrame', ix, resume))
+
 
 class CurrentFrameFlowable(LCActionFlowable):
-    def __init__(self,ix,resume=0):
-        ActionFlowable.__init__(self,('currentFrame',ix,resume))
+
+    def __init__(self, ix, resume=0):
+        ActionFlowable.__init__(self, ('currentFrame', ix, resume))
+
 
 class NullActionFlowable(ActionFlowable):
-    def apply(self,doc):
+
+    def apply(self, doc):
         pass
 
+
 class _FrameBreak(LCActionFlowable):
+
     '''
     A special ActionFlowable that allows setting doc._nextFrameIndex
 
     eg story.append(FrameBreak('mySpecialFrame'))
     '''
-    def __call__(self,ix=None,resume=0):
-        r = self.__class__(self.action+(resume,))
+
+    def __call__(self, ix=None, resume=0):
+        r = self.__class__(self.action + (resume,))
         r._ix = ix
         return r
 
-    def apply(self,doc):
-        if getattr(self,'_ix',None):
+    def apply(self, doc):
+        if getattr(self, '_ix', None):
             doc.handle_nextFrame(self._ix)
-        ActionFlowable.apply(self,doc)
+        ActionFlowable.apply(self, doc)
 
 FrameBreak = _FrameBreak('frameEnd')
 PageBegin = LCActionFlowable('pageBegin')
 
+
 def _evalMeasurement(n):
-    if isinstance(n,str):
+    if isinstance(n, str):
         from reportlab.platypus.paraparser import _num
         n = _num(n)
-        if isSeq(n): n = n[1]
+        if isSeq(n):
+            n = n[1]
     return n
+
 
 class FrameActionFlowable(Flowable):
     _fixedWidth = _fixedHeight = 1
-    def __init__(self,*arg,**kw):
+
+    def __init__(self, *arg, **kw):
         raise NotImplementedError('Abstract Class')
 
-    def frameAction(self,frame):
+    def frameAction(self, frame):
         raise NotImplementedError('Abstract Class')
+
 
 class Indenter(FrameActionFlowable):
+
     """Increases or decreases left and right margins of frame.
 
     This allows one to have a 'context-sensitive' indentation
     and makes nested lists way easier.
     """
-    _ZEROSIZE=True
-    width=0
-    height=0
+    _ZEROSIZE = True
+    width = 0
+    height = 0
+
     def __init__(self, left=0, right=0):
         self.left = _evalMeasurement(left)
         self.right = _evalMeasurement(right)
@@ -224,30 +257,47 @@ class Indenter(FrameActionFlowable):
         frame._leftExtraIndent += self.left
         frame._rightExtraIndent += self.right
 
+
 class NotAtTopPageBreak(FrameActionFlowable):
+
     def __init__(self):
         pass
 
-    def frameAction(self,frame):
+    def frameAction(self, frame):
         if not frame._atTop:
             frame.add_generated_content(PageBreak())
 
+
 class NextPageTemplate(ActionFlowable):
+
     """When you get to the next page, use the template specified (change to two column, for example)  """
-    def __init__(self,pt):
-        ActionFlowable.__init__(self,('nextPageTemplate',pt))
+
+    def __init__(self, pt):
+        ActionFlowable.__init__(self, ('nextPageTemplate', pt))
+
 
 class PageTemplate:
+
     """
     essentially a list of Frames and an onPage routine to call at the start
     of a page when this is selected. onPageEnd gets called at the end.
     derived classes can also implement beforeDrawPage and afterDrawPage if they want
     """
-    def __init__(self,id=None,frames=[],onPage=_doNothing, onPageEnd=_doNothing,
-                 pagesize=None, autoNextPageTemplate=None):
+
+    def __init__(
+            self,
+            id=None,
+            frames=[],
+            onPage=_doNothing,
+            onPageEnd=_doNothing,
+            pagesize=None,
+            autoNextPageTemplate=None):
         frames = frames or []
-        if not isSeq(frames): frames = [frames]
-        assert [x for x in frames if not isinstance(x,Frame)]==[], "frames argument error"
+        if not isSeq(frames):
+            frames = [frames]
+        assert [
+            x for x in frames if not isinstance(
+                x, Frame)] == [], "frames argument error"
         self.id = id
         self.frames = frames
         self.onPage = onPage
@@ -255,31 +305,34 @@ class PageTemplate:
         self.pagesize = pagesize
         self.autoNextPageTemplate = autoNextPageTemplate
 
-    def beforeDrawPage(self,canv,doc):
+    def beforeDrawPage(self, canv, doc):
         """Override this if you want additional functionality or prefer
         a class based page routine.  Called before any flowables for
         this page are processed."""
         pass
 
-    def checkPageSize(self,canv,doc):
+    def checkPageSize(self, canv, doc):
         """This gets called by the template framework
         If canv size != template size then the canv size is set to
         the template size or if that's not available to the
         doc size.
         """
-        #### NEVER EVER EVER COMPARE FLOATS FOR EQUALITY
-        #RGB converting pagesizes to ints means we are accurate to one point
-        #RGB I suggest we should be aiming a little better
+        # NEVER EVER EVER COMPARE FLOATS FOR EQUALITY
+        # RGB converting pagesizes to ints means we are accurate to one point
+        # RGB I suggest we should be aiming a little better
         cp = None
         dp = None
         sp = None
-        if canv._pagesize: cp = list(map(int, canv._pagesize))
-        if self.pagesize: sp = list(map(int, self.pagesize))
-        if doc.pagesize: dp = list(map(int, doc.pagesize))
-        if cp!=sp:
+        if canv._pagesize:
+            cp = list(map(int, canv._pagesize))
+        if self.pagesize:
+            sp = list(map(int, self.pagesize))
+        if doc.pagesize:
+            dp = list(map(int, doc.pagesize))
+        if cp != sp:
             if sp:
                 canv.setPageSize(self.pagesize)
-            elif cp!=dp:
+            elif cp != dp:
                 canv.setPageSize(doc.pagesize)
 
     def afterDrawPage(self, canv, doc):
@@ -289,29 +342,34 @@ class PageTemplate:
         this page."""
         pass
 
-def _addGeneratedContent(flowables,frame):
-    S = getattr(frame,'_generated_content',None)
-    if S: 
+
+def _addGeneratedContent(flowables, frame):
+    S = getattr(frame, '_generated_content', None)
+    if S:
         flowables[0:0] = S
         del frame._generated_content
 
 
 class onDrawStr(str):
-    def __new__(cls,value,onDraw,label,kind=None):
-        self = str.__new__(cls,value)
+
+    def __new__(cls, value, onDraw, label, kind=None):
+        self = str.__new__(cls, value)
         self.onDraw = onDraw
         self.kind = kind
         self.label = label
         return self
 
+
 class PageAccumulator:
+
     '''gadget to accumulate information in a page
     and then allow it to be interrogated at the end
     of the page'''
     _count = 0
-    def __init__(self,name=None):
+
+    def __init__(self, name=None):
         if name is None:
-            name = self.__class__.__name__+str(self.__class__._count)
+            name = self.__class__.__name__ + str(self.__class__._count)
             self.__class__._count += 1
         self.name = name
         self.data = []
@@ -319,60 +377,63 @@ class PageAccumulator:
     def reset(self):
         self.data[:] = []
 
-    def add(self,*args):
+    def add(self, *args):
         self.data.append(args)
 
-    def onDrawText(self,*args):
-        return '<onDraw name="%s" label="%s" />' % (self.name,encode_label(args))
+    def onDrawText(self, *args):
+        return '<onDraw name="%s" label="%s" />' % (
+            self.name, encode_label(args))
 
-    def __call__(self,canv,kind,label):
+    def __call__(self, canv, kind, label):
         self.add(*decode_label(label))
 
-    def attachToPageTemplate(self,pt):
+    def attachToPageTemplate(self, pt):
         if pt.onPage:
-            def onPage(canv,doc,oop=pt.onPage):
-                self.onPage(canv,doc)
-                oop(canv,doc)
+            def onPage(canv, doc, oop=pt.onPage):
+                self.onPage(canv, doc)
+                oop(canv, doc)
         else:
-            def onPage(canv,doc):
-                self.onPage(canv,doc)
+            def onPage(canv, doc):
+                self.onPage(canv, doc)
         pt.onPage = onPage
         if pt.onPageEnd:
-            def onPageEnd(canv,doc,oop=pt.onPageEnd):
-                self.onPageEnd(canv,doc)
-                oop(canv,doc)
+            def onPageEnd(canv, doc, oop=pt.onPageEnd):
+                self.onPageEnd(canv, doc)
+                oop(canv, doc)
         else:
-            def onPageEnd(canv,doc):
-                self.onPageEnd(canv,doc)
+            def onPageEnd(canv, doc):
+                self.onPageEnd(canv, doc)
         pt.onPageEnd = onPageEnd
 
-    def onPage(self,canv,doc):
+    def onPage(self, canv, doc):
         '''this will be called at the start of the page'''
-        setattr(canv,self.name,self)    #push ourselves onto the canvas
+        setattr(canv, self.name, self)  # push ourselves onto the canvas
         self.reset()
 
-    def onPageEnd(self,canv,doc):
+    def onPageEnd(self, canv, doc):
         '''this will be called at the end of a page'''
-        self.pageEndAction(canv,doc)
+        self.pageEndAction(canv, doc)
         try:
-            delattr(canv,self.name)
+            delattr(canv, self.name)
         except:
             pass
         self.reset()
 
-    def pageEndAction(self,canv,doc):
+    def pageEndAction(self, canv, doc):
         '''this should be overridden to do something useful'''
         pass
 
-    def onDrawStr(self,value,*args):
-        return onDrawStr(value,self,encode_label(args))
+    def onDrawStr(self, value, *args):
+        return onDrawStr(value, self, encode_label(args))
+
 
 class BaseDocTemplate:
+
     """
     First attempt at defining a document template class.
 
     The basic idea is simple.
-    
+
     1)  The document has a list of data associated with it
         this data should derive from flowables. We'll have
         special classes like PageBreak, FrameBreak to do things
@@ -417,34 +478,34 @@ class BaseDocTemplate:
     - bottomMargin:  Margin sizes in points (default 1 inch).  These margins may be
       overridden by the pageTemplates.  They are primarily of interest for the
       SimpleDocumentTemplate subclass.
-    
+
     - allowSplitting:  If set flowables (eg, paragraphs) may be split across frames or pages
       (default: 1)
     - title: Internal title for document (does not automatically display on any page)
     - author: Internal author for document (does not automatically display on any page)
     """
-    _initArgs = {   'pagesize':defaultPageSize,
-                    'pageTemplates':[],
-                    'showBoundary':0,
-                    'leftMargin':inch,
-                    'rightMargin':inch,
-                    'topMargin':inch,
-                    'bottomMargin':inch,
-                    'allowSplitting':1,
-                    'title':None,
-                    'author':None,
-                    'subject':None,
-                    'creator':None,
-                    'keywords':[],
-                    'invariant':None,
-                    'pageCompression':None,
-                    '_pageBreakQuick':1,
-                    'rotation':0,
-                    '_debug':0,
-                    'encrypt': None,
-                    'cropMarks': None,
-                    'enforceColorSpace': None,
-                    }
+    _initArgs = {'pagesize': defaultPageSize,
+                 'pageTemplates': [],
+                 'showBoundary': 0,
+                 'leftMargin': inch,
+                 'rightMargin': inch,
+                 'topMargin': inch,
+                 'bottomMargin': inch,
+                 'allowSplitting': 1,
+                 'title': None,
+                 'author': None,
+                 'subject': None,
+                 'creator': None,
+                 'keywords': [],
+                 'invariant': None,
+                 'pageCompression': None,
+                 '_pageBreakQuick': 1,
+                 'rotation': 0,
+                 '_debug': 0,
+                 'encrypt': None,
+                 'cropMarks': None,
+                 'enforceColorSpace': None,
+                 }
     _invalidInitArgs = ()
     _firstPageTemplateIndex = 0
 
@@ -461,7 +522,7 @@ class BaseDocTemplate:
                 if k in self._invalidInitArgs:
                     raise ValueError("Invalid argument %s" % k)
                 v = kw[k]
-            setattr(self,k,v)
+            setattr(self, k, v)
 
         p = self.pageTemplates
         self.pageTemplates = []
@@ -474,17 +535,17 @@ class BaseDocTemplate:
         self._pageRefs = {}
         self._indexingFlowables = []
 
-        #callback facility for progress monitoring
+        # callback facility for progress monitoring
         self._onPage = None
         self._onProgress = None
         self._flowableCount = 0  # so we know how far to go
 
-        #infinite loop detection if we start doing lots of empty pages
+        # infinite loop detection if we start doing lots of empty pages
         self._curPageFlowableCount = 0
         self._emptyPages = 0
         self._emptyPagesAllowed = 10
 
-        #context sensitive margins - set by story, not from outside
+        # context sensitive margins - set by story, not from outside
         self._leftExtraIndent = 0.0
         self._rightExtraIndent = 0.0
         self._frameBGs = []
@@ -511,11 +572,11 @@ class BaseDocTemplate:
         while len(self._hanging):
             self.handle_flowable(self._hanging)
 
-    def addPageTemplates(self,pageTemplates):
+    def addPageTemplates(self, pageTemplates):
         'add one or a sequence of pageTemplates'
         if not isSeq(pageTemplates):
             pageTemplates = [pageTemplates]
-        #this test below fails due to inconsistent imports!
+        # this test below fails due to inconsistent imports!
         #assert filter(lambda x: not isinstance(x,PageTemplate), pageTemplates)==[], "pageTemplates argument error"
         for t in pageTemplates:
             self.pageTemplates.append(t)
@@ -531,15 +592,18 @@ class BaseDocTemplate:
         """Perform actions required at beginning of page.
         shouldn't normally be called directly"""
         self.page += 1
-        if self._debug: logger.debug("beginning page %d" % self.page)
-        self.pageTemplate.beforeDrawPage(self.canv,self)
-        self.pageTemplate.checkPageSize(self.canv,self)
-        self.pageTemplate.onPage(self.canv,self)
-        for f in self.pageTemplate.frames: f._reset()
+        if self._debug:
+            logger.debug("beginning page %d" % self.page)
+        self.pageTemplate.beforeDrawPage(self.canv, self)
+        self.pageTemplate.checkPageSize(self.canv, self)
+        self.pageTemplate.onPage(self.canv, self)
+        for f in self.pageTemplate.frames:
+            f._reset()
         self.beforePage()
-        #keep a count of flowables added to this page.  zero indicates bad stuff
+        # keep a count of flowables added to this page.  zero indicates bad
+        # stuff
         self._curPageFlowableCount = 0
-        if hasattr(self,'_nextFrameIndex'):
+        if hasattr(self, '_nextFrameIndex'):
             del self._nextFrameIndex
         self.frame = self.pageTemplate.frames[0]
         self.frame._debug = self._debug
@@ -550,11 +614,11 @@ class BaseDocTemplate:
             check the next page template
             hang a page begin
         '''
-        self._removeVars(('page','frame'))
+        self._removeVars(('page', 'frame'))
         self._leftExtraIndent = self.frame._leftExtraIndent
         self._rightExtraIndent = self.frame._rightExtraIndent
         self._frameBGs = self.frame._frameBGs
-        #detect infinite loops...
+        # detect infinite loops...
         if self._curPageFlowableCount == 0:
             self._emptyPages += 1
         else:
@@ -562,43 +626,51 @@ class BaseDocTemplate:
         if self._emptyPages >= self._emptyPagesAllowed:
             if 1:
                 ident = "More than %d pages generated without content - halting layout.  Likely that a flowable is too large for any frame." % self._emptyPagesAllowed
-                #leave to keep apart from the raise
+                # leave to keep apart from the raise
                 raise LayoutError(ident)
             else:
-                pass    #attempt to restore to good state
+                pass  # attempt to restore to good state
         else:
             if self._onProgress:
                 self._onProgress('PAGE', self.canv.getPageNumber())
             self.pageTemplate.afterDrawPage(self.canv, self)
             self.pageTemplate.onPageEnd(self.canv, self)
             self.afterPage()
-            if self._debug: logger.debug("ending page %d" % self.page)
-            self.canv.setPageRotation(getattr(self.pageTemplate,'rotation',self.rotation))
+            if self._debug:
+                logger.debug("ending page %d" % self.page)
+            self.canv.setPageRotation(
+                getattr(
+                    self.pageTemplate,
+                    'rotation',
+                    self.rotation))
             self.canv.showPage()
 
-            if hasattr(self,'_nextPageTemplateCycle'):
-                #they are cycling through pages'; we keep the index
+            if hasattr(self, '_nextPageTemplateCycle'):
+                # they are cycling through pages'; we keep the index
                 self.pageTemplate = next(self._nextPageTemplateCycle)
-            elif hasattr(self,'_nextPageTemplateIndex'):
-                self.pageTemplate = self.pageTemplates[self._nextPageTemplateIndex]
+            elif hasattr(self, '_nextPageTemplateIndex'):
+                self.pageTemplate = self.pageTemplates[
+                    self._nextPageTemplateIndex]
                 del self._nextPageTemplateIndex
             elif self.pageTemplate.autoNextPageTemplate:
-                self.handle_nextPageTemplate(self.pageTemplate.autoNextPageTemplate)
-                self.pageTemplate = self.pageTemplates[self._nextPageTemplateIndex]
-            if self._emptyPages==0:
-                pass    #store good state here
+                self.handle_nextPageTemplate(
+                    self.pageTemplate.autoNextPageTemplate)
+                self.pageTemplate = self.pageTemplates[
+                    self._nextPageTemplateIndex]
+            if self._emptyPages == 0:
+                pass  # store good state here
         self._hanging.append(PageBegin)
 
-    def handle_pageBreak(self,slow=None):
+    def handle_pageBreak(self, slow=None):
         '''some might choose not to end all the frames'''
         if self._pageBreakQuick and not slow:
             self.handle_pageEnd()
         else:
             n = len(self._hanging)
-            while len(self._hanging)==n:
+            while len(self._hanging) == n:
                 self.handle_frameEnd()
 
-    def handle_frameBegin(self,resume=0):
+    def handle_frameBegin(self, resume=0):
         '''What to do at the beginning of a frame'''
         f = self.frame
         if f._atTop:
@@ -608,7 +680,7 @@ class BaseDocTemplate:
         f._rightExtraIndent = self._rightExtraIndent
         f._frameBGs = self._frameBGs
 
-    def handle_frameEnd(self,resume=0):
+    def handle_frameEnd(self, resume=0):
         ''' Handles the semantics of the end of a frame. This includes the selection of
             the next frame or if this is the last frame then invoke pageEnd.
         '''
@@ -618,38 +690,43 @@ class BaseDocTemplate:
         self._frameBGs = self.frame._frameBGs
 
         f = self.frame
-        if hasattr(self,'_nextFrameIndex'):
+        if hasattr(self, '_nextFrameIndex'):
             self.frame = self.pageTemplate.frames[self._nextFrameIndex]
             self.frame._debug = self._debug
             del self._nextFrameIndex
             self.handle_frameBegin(resume)
-        elif hasattr(f,'lastFrame') or f is self.pageTemplate.frames[-1]:
+        elif hasattr(f, 'lastFrame') or f is self.pageTemplate.frames[-1]:
             self.handle_pageEnd()
             self.frame = None
         else:
-            self.frame = self.pageTemplate.frames[self.pageTemplate.frames.index(f) + 1]
+            self.frame = self.pageTemplate.frames[
+                self.pageTemplate.frames.index(f) +
+                1]
             self.frame._debug = self._debug
             self.handle_frameBegin()
 
-    def handle_nextPageTemplate(self,pt):
+    def handle_nextPageTemplate(self, pt):
         '''On endPage change to the page template with name or index pt'''
-        if isinstance(pt,strTypes):
-            if hasattr(self, '_nextPageTemplateCycle'): del self._nextPageTemplateCycle
+        if isinstance(pt, strTypes):
+            if hasattr(self, '_nextPageTemplateCycle'):
+                del self._nextPageTemplateCycle
             for t in self.pageTemplates:
                 if t.id == pt:
                     self._nextPageTemplateIndex = self.pageTemplates.index(t)
                     return
-            raise ValueError("can't find template('%s')"%pt)
-        elif isinstance(pt,int):
-            if hasattr(self, '_nextPageTemplateCycle'): del self._nextPageTemplateCycle
+            raise ValueError("can't find template('%s')" % pt)
+        elif isinstance(pt, int):
+            if hasattr(self, '_nextPageTemplateCycle'):
+                del self._nextPageTemplateCycle
             self._nextPageTemplateIndex = pt
         elif isSeq(pt):
-            #used for alternating left/right pages
-            #collect the refs to the template objects, complain if any are bad
+            # used for alternating left/right pages
+            # collect the refs to the template objects, complain if any are bad
             c = PTCycle()
             for ptn in pt:
                 found = 0
-                if ptn=='*':    #special case name used to short circuit the iteration
+                # special case name used to short circuit the iteration
+                if ptn == '*':
                     c._restart = len(c)
                     continue
                 for t in self.pageTemplates:
@@ -657,33 +734,38 @@ class BaseDocTemplate:
                         c.append(t)
                         found = 1
                 if not found:
-                    raise ValueError("Cannot find page template called %s" % ptn)
+                    raise ValueError(
+                        "Cannot find page template called %s" %
+                        ptn)
             if not c:
                 raise ValueError("No valid page templates in cycle")
-            elif c._restart>len(c):
+            elif c._restart > len(c):
                 raise ValueError("Invalid cycle restart position")
 
-            #ensure we start on the first one
+            # ensure we start on the first one
             self._nextPageTemplateCycle = c.cyclicIterator()
         else:
             raise TypeError("argument pt should be string or integer or list")
 
-    def handle_nextFrame(self,fx,resume=0):
+    def handle_nextFrame(self, fx, resume=0):
         '''On endFrame change to the frame with name or index fx'''
-        if isinstance(fx,strTypes):
+        if isinstance(fx, strTypes):
             for f in self.pageTemplate.frames:
                 if f.id == fx:
                     self._nextFrameIndex = self.pageTemplate.frames.index(f)
                     return
-            raise ValueError("can't find frame('%s') in %r(%s) which has frames %r"%(fx,self.pageTemplate,self.pageTemplate.id,[(f,f.id) for f in self.pageTemplate.frames]))
-        elif isinstance(fx,int):
+            raise ValueError(
+                "can't find frame('%s') in %r(%s) which has frames %r" %
+                (fx, self.pageTemplate, self.pageTemplate.id, [
+                    (f, f.id) for f in self.pageTemplate.frames]))
+        elif isinstance(fx, int):
             self._nextFrameIndex = fx
         else:
             raise TypeError("argument fx should be string or integer")
 
-    def handle_currentFrame(self,fx,resume=0):
+    def handle_currentFrame(self, fx, resume=0):
         '''change to the frame with name or index fx'''
-        self.handle_nextFrame(fx,resume)
+        self.handle_nextFrame(fx, resume)
         self.handle_frameEnd(resume)
 
     def handle_breakBefore(self, flowables):
@@ -697,19 +779,27 @@ class BaseDocTemplate:
             return
         # this could all be made much quicker by putting the attributes
         # in to the flowables with a defult value of 0
-        if hasattr(first,'pageBreakBefore') and first.pageBreakBefore == 1:
+        if hasattr(first, 'pageBreakBefore') and first.pageBreakBefore == 1:
             first._skipMeNextTime = 1
             first.insert(0, PageBreak())
             return
-        if hasattr(first,'style') and hasattr(first.style, 'pageBreakBefore') and first.style.pageBreakBefore == 1:
+        if hasattr(
+                first,
+                'style') and hasattr(
+                first.style,
+                'pageBreakBefore') and first.style.pageBreakBefore == 1:
             first._skipMeNextTime = 1
             flowables.insert(0, PageBreak())
             return
-        if hasattr(first,'frameBreakBefore') and first.frameBreakBefore == 1:
+        if hasattr(first, 'frameBreakBefore') and first.frameBreakBefore == 1:
             first._skipMeNextTime = 1
             flowables.insert(0, FrameBreak())
             return
-        if hasattr(first,'style') and hasattr(first.style, 'frameBreakBefore') and first.style.frameBreakBefore == 1:
+        if hasattr(
+                first,
+                'style') and hasattr(
+                first.style,
+                'frameBreakBefore') and first.style.frameBreakBefore == 1:
             first._skipMeNextTime = 1
             flowables.insert(0, FrameBreak())
             return
@@ -718,36 +808,41 @@ class BaseDocTemplate:
         "implements keepWithNext"
         i = 0
         n = len(flowables)
-        while i<n and flowables[i].getKeepWithNext(): i += 1
+        while i < n and flowables[i].getKeepWithNext():
+            i += 1
         if i:
-            if i<n and not getattr(flowables[i],'locChanger',None): i += 1
+            if i < n and not getattr(flowables[i], 'locChanger', None):
+                i += 1
             K = KeepTogether(flowables[:i])
-            mbe = getattr(self,'_multiBuildEdits',None)
+            mbe = getattr(self, '_multiBuildEdits', None)
             if mbe:
                 for f in K._content[:-1]:
-                    if hasattr(f,'keepWithNext'):
-                        mbe((setattr,f,'keepWithNext',f.keepWithNext))
+                    if hasattr(f, 'keepWithNext'):
+                        mbe((setattr, f, 'keepWithNext', f.keepWithNext))
                     else:
-                        mbe((delattr,f,'keepWithNext')) #must get it from a style
+                        # must get it from a style
+                        mbe((delattr, f, 'keepWithNext'))
                     f.__dict__['keepWithNext'] = 0
             else:
                 for f in K._content[:-1]:
                     f.__dict__['keepWithNext'] = 0
             del flowables[:i]
-            flowables.insert(0,K)
+            flowables.insert(0, K)
 
-    def _fIdent(self,f,maxLen=None,frame=None):
-        if frame: f._frame = frame
+    def _fIdent(self, f, maxLen=None, frame=None):
+        if frame:
+            f._frame = frame
         try:
             return f.identity(maxLen)
         finally:
-            if frame: del f._frame
+            if frame:
+                del f._frame
 
-    def handle_flowable(self,flowables):
+    def handle_flowable(self, flowables):
         '''try to handle one flowable from the front of list flowables.'''
 
-        #allow document a chance to look at, modify or ignore
-        #the object(s) about to be processed
+        # allow document a chance to look at, modify or ignore
+        # the object(s) about to be processed
         self.filterFlowables(flowables)
 
         self.handle_breakBefore(flowables)
@@ -757,59 +852,68 @@ class BaseDocTemplate:
         if f is None:
             return
 
-        if isinstance(f,PageBreak):
-            if isinstance(f,SlowPageBreak):
+        if isinstance(f, PageBreak):
+            if isinstance(f, SlowPageBreak):
                 self.handle_pageBreak(slow=1)
             else:
                 self.handle_pageBreak()
             self.afterFlowable(f)
-        elif isinstance(f,ActionFlowable):
+        elif isinstance(f, ActionFlowable):
             f.apply(self)
             self.afterFlowable(f)
         else:
             frame = self.frame
             canv = self.canv
-            #try to fit it then draw it
+            # try to fit it then draw it
             if frame.add(f, canv, trySplit=self.allowSplitting):
-                if not isinstance(f,FrameActionFlowable):
+                if not isinstance(f, FrameActionFlowable):
                     self._curPageFlowableCount += 1
                     self.afterFlowable(f)
-                _addGeneratedContent(flowables,frame)
+                _addGeneratedContent(flowables, frame)
             else:
                 if self.allowSplitting:
                     # see if this is a splittable thing
-                    S = frame.split(f,canv)
+                    S = frame.split(f, canv)
                     n = len(S)
                 else:
                     n = 0
                 if n:
-                    if not isinstance(S[0],(PageBreak,SlowPageBreak,ActionFlowable,DDIndenter)):
+                    if not isinstance(
+                        S[0],
+                        (PageBreak,
+                         SlowPageBreak,
+                         ActionFlowable,
+                         DDIndenter)):
                         if not frame.add(S[0], canv, trySplit=0):
-                            ident = "Splitting error(n==%d) on page %d in\n%s\nS[0]=%s" % (n,self.page,self._fIdent(f,60,frame),self._fIdent(S[0],60,frame))
-                            #leave to keep apart from the raise
+                            ident = "Splitting error(n==%d) on page %d in\n%s\nS[0]=%s" % (
+                                n, self.page, self._fIdent(f, 60, frame), self._fIdent(S[0], 60, frame))
+                            # leave to keep apart from the raise
                             raise LayoutError(ident)
                         self._curPageFlowableCount += 1
                         self.afterFlowable(S[0])
-                        flowables[0:0] = S[1:]  # put rest of splitted flowables back on the list
-                        _addGeneratedContent(flowables,frame)
+                        flowables[
+                            0:0] = S[
+                            1:]  # put rest of splitted flowables back on the list
+                        _addGeneratedContent(flowables, frame)
                     else:
-                        flowables[0:0] = S  # put splitted flowables back on the list
+                        flowables[
+                            0:0] = S  # put splitted flowables back on the list
                 else:
-                    if hasattr(f,'_postponed'):
+                    if hasattr(f, '_postponed'):
                         ident = "Flowable %s%s too large on page %d in frame %r%s of template %r" % \
-                                (self._fIdent(f,60,frame),_fSizeString(f),self.page, self.frame.id,
-                                        self.frame._aSpaceString(), self.pageTemplate.id)
-                        #leave to keep apart from the raise
+                                (self._fIdent(f, 60, frame), _fSizeString(f), self.page, self.frame.id,
+                                 self.frame._aSpaceString(), self.pageTemplate.id)
+                        # leave to keep apart from the raise
                         raise LayoutError(ident)
                     # this ought to be cleared when they are finally drawn!
                     f._postponed = 1
-                    mbe = getattr(self,'_multiBuildEdits',None)
+                    mbe = getattr(self, '_multiBuildEdits', None)
                     if mbe:
-                        mbe((delattr,f,'_postponed'))
-                    flowables.insert(0,f)           # put the flowable back
+                        mbe((delattr, f, '_postponed'))
+                    flowables.insert(0, f)           # put the flowable back
                     self.handle_frameEnd()
 
-    #these are provided so that deriving classes can refer to them
+    # these are provided so that deriving classes can refer to them
     _handle_documentBegin = handle_documentBegin
     _handle_pageBegin = handle_pageBegin
     _handle_pageEnd = handle_pageEnd
@@ -823,7 +927,7 @@ class BaseDocTemplate:
     def _startBuild(self, filename=None, canvasmaker=canvas.Canvas):
         self._calc()
 
-        #each distinct pass gets a sequencer
+        # each distinct pass gets a sequencer
         self.seq = reportlab.lib.sequencer.Sequencer()
 
         self.canv = canvasmaker(filename or self.filename,
@@ -832,8 +936,8 @@ class BaseDocTemplate:
                                 pageCompression=self.pageCompression,
                                 enforceColorSpace=self.enforceColorSpace,
                                 )
- 
-        getattr(self.canv,'setEncrypt',lambda x: None)(self.encrypt)
+
+        getattr(self.canv, 'setEncrypt', lambda x: None)(self.encrypt)
 
         self.canv._cropMarks = self.cropMarks
         self.canv.setAuthor(self.author)
@@ -847,16 +951,18 @@ class BaseDocTemplate:
         self.handle_documentBegin()
 
     def _endBuild(self):
-        self._removeVars(('build','page','frame'))
-        if self._hanging!=[] and self._hanging[-1] is PageBegin:
+        self._removeVars(('build', 'page', 'frame'))
+        if self._hanging != [] and self._hanging[-1] is PageBegin:
             del self._hanging[-1]
             self.clean_hanging()
         else:
             self.clean_hanging()
             self.handle_pageBreak()
 
-        if getattr(self,'_doSave',1): self.canv.save()
-        if self._onPage: self.canv.setPageCallBack(None)
+        if getattr(self, '_doSave', 1):
+            self.canv.save()
+        if self._onPage:
+            self.canv.setPageCallBack(None)
 
     def build(self, flowables, filename=None, canvasmaker=canvas.Canvas):
         """Build the document from a list of flowables.
@@ -871,12 +977,13 @@ class BaseDocTemplate:
         #assert filter(lambda x: not isinstance(x,Flowable), flowables)==[], "flowables argument error"
         flowableCount = len(flowables)
         if self._onProgress:
-            self._onProgress('STARTED',0)
+            self._onProgress('STARTED', 0)
             self._onProgress('SIZE_EST', len(flowables))
-        self._startBuild(filename,canvasmaker)
+        self._startBuild(filename, canvasmaker)
 
-        #pagecatcher can drag in information from embedded PDFs and we want ours
-        #to take priority, so cache and reapply our own info dictionary after the build.
+        # pagecatcher can drag in information from embedded PDFs and we want ours
+        # to take priority, so cache and reapply our own info dictionary after
+        # the build.
         canv = self.canv
         self._savedInfo = canv._doc.info
         handled = 0
@@ -890,7 +997,7 @@ class BaseDocTemplate:
                     self.handle_flowable(flowables)
                     handled += 1
                 except:
-                    #if it has trace info, add it to the traceback message.
+                    # if it has trace info, add it to the traceback message.
                     if hasattr(first, '_traceInfo') and first._traceInfo:
                         exc = sys.exc_info()[1]
                         args = list(exc.args)
@@ -901,21 +1008,23 @@ class BaseDocTemplate:
                             tr.startLinePos,
                             tr.endLineNo,
                             tr.endLinePos
-                            )
+                        )
                         exc.args = tuple(args)
                     raise
                 if self._onProgress:
-                    self._onProgress('PROGRESS',flowableCount - len(flowables))
+                    self._onProgress(
+                        'PROGRESS',
+                        flowableCount -
+                        len(flowables))
         finally:
             del canv._doctemplate
 
-
-        #reapply pagecatcher info
+        # reapply pagecatcher info
         canv._doc.info = self._savedInfo
 
         self._endBuild()
         if self._onProgress:
-            self._onProgress('FINISHED',0)
+            self._onProgress('FINISHED', 0)
 
     def _allSatisfied(self):
         """Called by multi-build - are all cross-references resolved?"""
@@ -933,34 +1042,36 @@ class BaseDocTemplate:
 
     def pageRef(self, label):
         """hook to register a page number"""
-        if verbose: print("pageRef called with label '%s' on page %d" % (
-            label, self.page))
+        if verbose:
+            print("pageRef called with label '%s' on page %d" % (
+                label, self.page))
         self._pageRefs[label] = self.page
 
     def multiBuild(self, story,
-                   maxPasses = 10,
+                   maxPasses=10,
                    **buildKwds
                    ):
         """Makes multiple passes until all indexing flowables
         are happy.
-        
+
         Returns number of passes"""
         self._indexingFlowables = []
-        #scan the story and keep a copy
+        # scan the story and keep a copy
         for thing in story:
             if thing.isIndexing():
                 self._indexingFlowables.append(thing)
 
-        #better fix for filename is a 'file' problem
+        # better fix for filename is a 'file' problem
         self._doSave = 0
         passes = 0
         mbe = []
         self._multiBuildEdits = mbe.append
-        while 1:
+        while True:
             passes += 1
             if self._onProgress:
                 self._onProgress('PASS', passes)
-            if verbose: sys.stdout.write('building pass '+str(passes) + '...')
+            if verbose:
+                sys.stdout.write('building pass ' + str(passes) + '...')
 
             for fl in self._indexingFlowables:
                 fl.beforeBuild()
@@ -968,7 +1079,7 @@ class BaseDocTemplate:
             # work with a copy of the story, since it is consumed
             tempStory = story[:]
             self.build(tempStory, **buildKwds)
-            #self.notify('debug',None)
+            # self.notify('debug',None)
 
             for fl in self._indexingFlowables:
                 fl.afterBuild()
@@ -980,21 +1091,24 @@ class BaseDocTemplate:
                 self.canv.save()
                 break
             if passes > maxPasses:
-                raise IndexError("Index entries not resolved after %d passes" % maxPasses)
+                raise IndexError(
+                    "Index entries not resolved after %d passes" %
+                    maxPasses)
 
-            #work through any edits
+            # work through any edits
             while mbe:
                 e = mbe.pop(0)
                 e[0](*e[1:])
 
         del self._multiBuildEdits
-        if verbose: print('saved')
+        if verbose:
+            print('saved')
         return passes
-        
-    #these are pure virtuals override in derived classes
-    #NB these get called at suitable places by the base class
-    #so if you derive and override the handle_xxx methods
-    #it's up to you to ensure that they maintain the needed consistency
+
+    # these are pure virtuals override in derived classes
+    # NB these get called at suitable places by the base class
+    # so if you derive and override the handle_xxx methods
+    # it's up to you to ensure that they maintain the needed consistency
     def afterInit(self):
         """This is called after initialisation of the base class."""
         pass
@@ -1017,7 +1131,7 @@ class BaseDocTemplate:
         of the current page template."""
         pass
 
-    def filterFlowables(self,flowables):
+    def filterFlowables(self, flowables):
         '''called to filter flowables at the start of the main handle_flowable method.
         Upon return if flowables[0] has been set to None it is discarded and the main
         method returns.
@@ -1028,57 +1142,61 @@ class BaseDocTemplate:
         '''called after a flowable has been rendered'''
         pass
 
-    _allowedLifetimes = 'page','frame','build','forever'
-    def docAssign(self,var,expr,lifetime):
-        if not isinstance(expr,strTypes): expr=str(expr)
-        expr=expr.strip()
-        var=var.strip()
-        self.docExec('%s=(%s)'%(var.strip(),expr.strip()),lifetime)
+    _allowedLifetimes = 'page', 'frame', 'build', 'forever'
 
-    def docExec(self,stmt,lifetime):
-        stmt=stmt.strip()
-        NS=self._nameSpace
-        K0=list(NS.keys())
+    def docAssign(self, var, expr, lifetime):
+        if not isinstance(expr, strTypes):
+            expr = str(expr)
+        expr = expr.strip()
+        var = var.strip()
+        self.docExec('%s=(%s)' % (var.strip(), expr.strip()), lifetime)
+
+    def docExec(self, stmt, lifetime):
+        stmt = stmt.strip()
+        NS = self._nameSpace
+        K0 = list(NS.keys())
         try:
             if lifetime not in self._allowedLifetimes:
-                raise ValueError('bad lifetime %r not in %r'%(lifetime,self._allowedLifetimes))
-            exec(stmt, {},NS)
+                raise ValueError(
+                    'bad lifetime %r not in %r' %
+                    (lifetime, self._allowedLifetimes))
+            exec(stmt, {}, NS)
         except:
             exc = sys.exc_info()[1]
             args = list(exc.args)
-            msg = '\ndocExec %s lifetime=%r failed!' % (stmt,lifetime)
+            msg = '\ndocExec %s lifetime=%r failed!' % (stmt, lifetime)
             args.append(msg)
             exc.args = tuple(args)
             for k in NS.keys():
                 if k not in K0:
                     del NS[k]
             raise
-        self._addVars([k for k in NS.keys() if k not in K0],lifetime)
+        self._addVars([k for k in NS.keys() if k not in K0], lifetime)
 
-    def _addVars(self,vars,lifetime):
+    def _addVars(self, vars, lifetime):
         '''add namespace variables to lifetimes lists'''
-        LT=self._lifetimes
+        LT = self._lifetimes
         for var in vars:
             for v in LT.values():
                 if var in v:
                     v.remove(var)
-            LT.setdefault(lifetime,set([])).add(var)
+            LT.setdefault(lifetime, set([])).add(var)
 
-    def _removeVars(self,lifetimes):
+    def _removeVars(self, lifetimes):
         '''remove namespace variables for with lifetime in lifetimes'''
-        LT=self._lifetimes
-        NS=self._nameSpace
+        LT = self._lifetimes
+        NS = self._nameSpace
         for lifetime in lifetimes:
-            for k in LT.setdefault(lifetime,[]):
+            for k in LT.setdefault(lifetime, []):
                 try:
                     del NS[k]
                 except KeyError:
                     pass
             del LT[lifetime]
 
-    def docEval(self,expr):
+    def docEval(self, expr):
         try:
-            return eval(expr.strip(),{},self._nameSpace)
+            return eval(expr.strip(), {}, self._nameSpace)
         except:
             exc = sys.exc_info()[1]
             args = list(exc.args)
@@ -1086,7 +1204,9 @@ class BaseDocTemplate:
             exc.args = tuple(args)
             raise
 
+
 class SimpleDocTemplate(BaseDocTemplate):
+
     """A special case document template that will handle many simple documents.
        See documentation for BaseDocTemplate.  No pageTemplates are required
        for this special case.   A page templates are inferred from the
@@ -1103,7 +1223,12 @@ class SimpleDocTemplate(BaseDocTemplate):
         self._handle_pageBegin()
         self._handle_nextPageTemplate('Later')
 
-    def build(self,flowables,onFirstPage=_doNothing, onLaterPages=_doNothing, canvasmaker=canvas.Canvas):
+    def build(
+            self,
+            flowables,
+            onFirstPage=_doNothing,
+            onLaterPages=_doNothing,
+            canvasmaker=canvas.Canvas):
         """build the document using the flowables.  Annotate the first page using the onFirstPage
                function and later pages using the onLaterPages function.  The onXXX pages should follow
                the signature
@@ -1116,15 +1241,27 @@ class SimpleDocTemplate(BaseDocTemplate):
                footers, etcetera. They can use external variables to vary
                the look (for example providing page numbering or section names).
         """
-        self._calc()    #in case we changed margins sizes etc
-        frameT = Frame(self.leftMargin, self.bottomMargin, self.width, self.height, id='normal')
-        self.addPageTemplates([PageTemplate(id='First',frames=frameT, onPage=onFirstPage,pagesize=self.pagesize),
-                        PageTemplate(id='Later',frames=frameT, onPage=onLaterPages,pagesize=self.pagesize)])
-        if onFirstPage is _doNothing and hasattr(self,'onFirstPage'):
+        self._calc()  # in case we changed margins sizes etc
+        frameT = Frame(
+            self.leftMargin,
+            self.bottomMargin,
+            self.width,
+            self.height,
+            id='normal')
+        self.addPageTemplates([PageTemplate(id='First',
+                                            frames=frameT,
+                                            onPage=onFirstPage,
+                                            pagesize=self.pagesize),
+                               PageTemplate(id='Later',
+                                            frames=frameT,
+                                            onPage=onLaterPages,
+                                            pagesize=self.pagesize)])
+        if onFirstPage is _doNothing and hasattr(self, 'onFirstPage'):
             self.pageTemplates[0].beforeDrawPage = self.onFirstPage
-        if onLaterPages is _doNothing and hasattr(self,'onLaterPages'):
+        if onLaterPages is _doNothing and hasattr(self, 'onLaterPages'):
             self.pageTemplates[1].beforeDrawPage = self.onLaterPages
-        BaseDocTemplate.build(self,flowables, canvasmaker=canvasmaker)
+        BaseDocTemplate.build(self, flowables, canvasmaker=canvasmaker)
+
 
 def progressCB(typ, value):
     """Example prototype for progress monitoring.
@@ -1164,16 +1301,17 @@ def progressCB(typ, value):
 
 if __name__ == '__main__':
     from reportlab.lib.styles import _baseFontName, _baseFontNameB
+
     def myFirstPage(canvas, doc):
         from reportlab.lib.colors import red
         PAGE_HEIGHT = canvas._pagesize[1]
         canvas.saveState()
         canvas.setStrokeColor(red)
         canvas.setLineWidth(5)
-        canvas.line(66,72,66,PAGE_HEIGHT-72)
-        canvas.setFont(_baseFontNameB,24)
-        canvas.drawString(108, PAGE_HEIGHT-108, "TABLE OF CONTENTS DEMO")
-        canvas.setFont(_baseFontName,12)
+        canvas.line(66, 72, 66, PAGE_HEIGHT - 72)
+        canvas.setFont(_baseFontNameB, 24)
+        canvas.drawString(108, PAGE_HEIGHT - 108, "TABLE OF CONTENTS DEMO")
+        canvas.setFont(_baseFontName, 12)
         canvas.drawString(4 * inch, 0.75 * inch, "First Page")
         canvas.restoreState()
 
@@ -1183,8 +1321,8 @@ if __name__ == '__main__':
         canvas.saveState()
         canvas.setStrokeColor(red)
         canvas.setLineWidth(5)
-        canvas.line(66,72,66,PAGE_HEIGHT-72)
-        canvas.setFont(_baseFontName,12)
+        canvas.line(66, 72, 66, PAGE_HEIGHT - 72)
+        canvas.setFont(_baseFontName, 12)
         canvas.drawString(4 * inch, 0.75 * inch, "Page %d" % doc.page)
         canvas.restoreState()
 
@@ -1194,20 +1332,22 @@ if __name__ == '__main__':
         #from paragraph import Paragraph
         from reportlab.platypus.doctemplate import SimpleDocTemplate
 
-        #need a style
+        # need a style
         normal = ParagraphStyle('normal')
         normal.firstLineIndent = 18
         normal.spaceBefore = 6
         from reportlab.lib.randomtext import randomText
         import random
         for i in range(15):
-            height = 0.5 + (2*random.random())
+            height = 0.5 + (2 * random.random())
             box = XBox(6 * inch, height * inch, 'Box Number %d' % i)
             objects_to_draw.append(box)
             para = Paragraph(randomText(), normal)
             objects_to_draw.append(para)
 
-        SimpleDocTemplate('doctemplate.pdf').build(objects_to_draw,
-            onFirstPage=myFirstPage,onLaterPages=myLaterPages)
+        SimpleDocTemplate('doctemplate.pdf').build(
+            objects_to_draw,
+            onFirstPage=myFirstPage,
+            onLaterPages=myLaterPages)
 
     run()

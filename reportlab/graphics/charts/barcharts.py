@@ -1,20 +1,22 @@
-#Copyright ReportLab Europe Ltd. 2000-2012
-#see license.txt for license details
-#history http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/graphics/charts/barcharts.py
-__version__=''' $Id$ '''
-__doc__="""This module defines a variety of Bar Chart components.
+# Copyright ReportLab Europe Ltd. 2000-2012
+# see license.txt for license details
+# history
+# http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/graphics/charts/barcharts.py
+__version__ = ''' $Id$ '''
+__doc__ = """This module defines a variety of Bar Chart components.
 
 The basic flavors are stacked and side-by-side, available in horizontal and
-vertical versions. 
+vertical versions.
 
 """
 
-import copy, functools
+import copy
+import functools
 
 from reportlab.lib import colors
 from reportlab.lib.validators import isNumber, isNumberOrNone, isColor, isColorOrNone, isString,\
-            isListOfStrings, SequenceOf, isBoolean, isNoneOrShape, isStringOrNone,\
-            NoneOr, isListOfNumbersOrNone, EitherOr, OneOf
+    isListOfStrings, SequenceOf, isBoolean, isNoneOrShape, isStringOrNone,\
+    NoneOr, isListOfNumbersOrNone, EitherOr, OneOf
 from reportlab.graphics.widgets.markers import uSymbol2Symbol, isSymbol
 from reportlab.lib.formatters import Formatter
 from reportlab.lib.attrmap import AttrMap, AttrMapValue
@@ -26,17 +28,18 @@ from reportlab.graphics.charts.textlabels import BarChartLabel, NA_Label, NoneOr
 from reportlab.graphics.charts.areas import PlotArea
 from reportlab.graphics.charts.legends import _objStr
 
+
 class BarChartProperties(PropHolder):
     _attrMap = AttrMap(
-        strokeColor = AttrMapValue(isColorOrNone, desc='Color of the bar border.'),
-        fillColor = AttrMapValue(isColorOrNone, desc='Color of the bar interior area.'),
-        strokeWidth = AttrMapValue(isNumber, desc='Width of the bar border.'),
-        strokeDashArray = AttrMapValue(isListOfNumbersOrNone, desc='Dash array of a line.'),
-        symbol = AttrMapValue(None, desc='A widget to be used instead of a normal bar.',advancedUsage=1),
-        name = AttrMapValue(isString, desc='Text to be associated with a bar (eg seriesname)'),
-        swatchMarker = AttrMapValue(NoneOr(isSymbol), desc="None or makeMarker('Diamond') ...",advancedUsage=1),
-        minDimen = AttrMapValue(isNumberOrNone, desc='minimum width/height that will be drawn.'),
-        )
+        strokeColor=AttrMapValue(
+            isColorOrNone, desc='Color of the bar border.'), fillColor=AttrMapValue(
+            isColorOrNone, desc='Color of the bar interior area.'), strokeWidth=AttrMapValue(
+                isNumber, desc='Width of the bar border.'), strokeDashArray=AttrMapValue(
+                    isListOfNumbersOrNone, desc='Dash array of a line.'), symbol=AttrMapValue(
+                        None, desc='A widget to be used instead of a normal bar.', advancedUsage=1), name=AttrMapValue(
+                            isString, desc='Text to be associated with a bar (eg seriesname)'), swatchMarker=AttrMapValue(
+                                NoneOr(isSymbol), desc="None or makeMarker('Diamond') ...", advancedUsage=1), minDimen=AttrMapValue(
+                                    isNumberOrNone, desc='minimum width/height that will be drawn.'), )
 
     def __init__(self):
         self.strokeColor = None
@@ -46,29 +49,83 @@ class BarChartProperties(PropHolder):
         self.strokeDashArray = None
 
 # Bar chart classes.
+
+
 class BarChart(PlotArea):
+
     "Abstract base class, unusable by itself."
 
-    _attrMap = AttrMap(BASE=PlotArea,
-        useAbsolute = AttrMapValue(EitherOr((isBoolean,EitherOr((isString,isNumber)))), desc='Flag to use absolute spacing values; use string of gsb for finer control\n(g=groupSpacing,s=barSpacing,b=barWidth).',advancedUsage=1),
-        barWidth = AttrMapValue(isNumber, desc='The width of an individual bar.'),
-        groupSpacing = AttrMapValue(isNumber, desc='Width between groups of bars.'),
-        barSpacing = AttrMapValue(isNumber, desc='Width between individual bars.'),
-        bars = AttrMapValue(None, desc='Handle of the individual bars.'),
-        valueAxis = AttrMapValue(None, desc='Handle of the value axis.'),
-        categoryAxis = AttrMapValue(None, desc='Handle of the category axis.'),
-        data = AttrMapValue(None, desc='Data to be plotted, list of (lists of) numbers.'),
-        barLabels = AttrMapValue(None, desc='Handle to the list of bar labels.'),
-        barLabelFormat = AttrMapValue(None, desc='Formatting string or function used for bar labels.'),
-        barLabelCallOut = AttrMapValue(None, desc='Callout function(label)\nlabel._callOutInfo = (self,g,rowNo,colNo,x,y,width,height,x00,y00,x0,y0)',advancedUsage=1),
-        barLabelArray = AttrMapValue(None, desc='explicit array of bar label values, must match size of data if present.'),
-        reversePlotOrder = AttrMapValue(isBoolean, desc='If true, reverse common category plot order.',advancedUsage=1),
-        naLabel = AttrMapValue(NoneOrInstanceOfNA_Label, desc='Label to use for N/A values.',advancedUsage=1),
-        annotations = AttrMapValue(None, desc='list of callables, will be called with self, xscale, yscale.'),
-        categoryLabelBarSize = AttrMapValue(isNumber, desc='width to leave for a category label to go between categories.'),
-        categoryLabelBarOrder = AttrMapValue(OneOf('first','last','auto'), desc='where any label bar should appear first/last'),
-        barRecord = AttrMapValue(None, desc='callable(bar,label=labelText,value=value,**kwds) to record bar information', advancedUsage=1),
-        zIndexOverrides = AttrMapValue(isStringOrNone, desc='''None (the default ie use old z ordering scheme) or a ',' separated list of key=value (int/float) for new zIndex ordering. If used defaults are
+    _attrMap = AttrMap(
+        BASE=PlotArea,
+        useAbsolute=AttrMapValue(
+            EitherOr(
+                (isBoolean,
+                 EitherOr(
+                     (isString,
+                      isNumber)))),
+            desc='Flag to use absolute spacing values; use string of gsb for finer control\n(g=groupSpacing,s=barSpacing,b=barWidth).',
+            advancedUsage=1),
+        barWidth=AttrMapValue(
+            isNumber,
+            desc='The width of an individual bar.'),
+        groupSpacing=AttrMapValue(
+            isNumber,
+            desc='Width between groups of bars.'),
+        barSpacing=AttrMapValue(
+            isNumber,
+            desc='Width between individual bars.'),
+        bars=AttrMapValue(
+            None,
+            desc='Handle of the individual bars.'),
+        valueAxis=AttrMapValue(
+            None,
+            desc='Handle of the value axis.'),
+        categoryAxis=AttrMapValue(
+            None,
+            desc='Handle of the category axis.'),
+        data=AttrMapValue(
+            None,
+            desc='Data to be plotted, list of (lists of) numbers.'),
+        barLabels=AttrMapValue(
+            None,
+            desc='Handle to the list of bar labels.'),
+        barLabelFormat=AttrMapValue(
+            None,
+            desc='Formatting string or function used for bar labels.'),
+        barLabelCallOut=AttrMapValue(
+            None,
+            desc='Callout function(label)\nlabel._callOutInfo = (self,g,rowNo,colNo,x,y,width,height,x00,y00,x0,y0)',
+            advancedUsage=1),
+        barLabelArray=AttrMapValue(
+            None,
+            desc='explicit array of bar label values, must match size of data if present.'),
+        reversePlotOrder=AttrMapValue(
+            isBoolean,
+            desc='If true, reverse common category plot order.',
+            advancedUsage=1),
+        naLabel=AttrMapValue(
+            NoneOrInstanceOfNA_Label,
+            desc='Label to use for N/A values.',
+            advancedUsage=1),
+        annotations=AttrMapValue(
+            None,
+            desc='list of callables, will be called with self, xscale, yscale.'),
+        categoryLabelBarSize=AttrMapValue(
+            isNumber,
+            desc='width to leave for a category label to go between categories.'),
+        categoryLabelBarOrder=AttrMapValue(
+            OneOf(
+                'first',
+                'last',
+                'auto'),
+            desc='where any label bar should appear first/last'),
+        barRecord=AttrMapValue(
+            None,
+            desc='callable(bar,label=labelText,value=value,**kwds) to record bar information',
+            advancedUsage=1),
+        zIndexOverrides=AttrMapValue(
+            isStringOrNone,
+            desc='''None (the default ie use old z ordering scheme) or a ',' separated list of key=value (int/float) for new zIndex ordering. If used defaults are
     background=0,
     categoryAxis=1,
     valueAxis=2,
@@ -77,29 +134,74 @@ class BarChart(PlotArea):
     categoryAxisGrid=5,
     valueAxisGrid=6,
     annotations=7'''),
-        categoryNALabel = AttrMapValue(NoneOrInstanceOfNA_Label, desc='Label to use for a group of N/A values.',advancedUsage=1),
-        )
+        categoryNALabel=AttrMapValue(
+            NoneOrInstanceOfNA_Label,
+            desc='Label to use for a group of N/A values.',
+            advancedUsage=1),
+    )
 
     def makeSwatchSample(self, rowNo, x, y, width, height):
         baseStyle = self.bars
         styleIdx = rowNo % len(baseStyle)
         style = baseStyle[styleIdx]
-        strokeColor = getattr(style, 'strokeColor', getattr(baseStyle,'strokeColor',None))
-        fillColor = getattr(style, 'fillColor', getattr(baseStyle,'fillColor',None))
-        strokeDashArray = getattr(style, 'strokeDashArray', getattr(baseStyle,'strokeDashArray',None))
-        strokeWidth = getattr(style, 'strokeWidth', getattr(style, 'strokeWidth',None))
-        swatchMarker = getattr(style, 'swatchMarker', getattr(baseStyle, 'swatchMarker',None))
+        strokeColor = getattr(
+            style,
+            'strokeColor',
+            getattr(
+                baseStyle,
+                'strokeColor',
+                None))
+        fillColor = getattr(
+            style,
+            'fillColor',
+            getattr(
+                baseStyle,
+                'fillColor',
+                None))
+        strokeDashArray = getattr(
+            style,
+            'strokeDashArray',
+            getattr(
+                baseStyle,
+                'strokeDashArray',
+                None))
+        strokeWidth = getattr(
+            style,
+            'strokeWidth',
+            getattr(
+                style,
+                'strokeWidth',
+                None))
+        swatchMarker = getattr(
+            style,
+            'swatchMarker',
+            getattr(
+                baseStyle,
+                'swatchMarker',
+                None))
         if swatchMarker:
-            return uSymbol2Symbol(swatchMarker,x+width/2.,y+height/2.,fillColor)
-        return Rect(x,y,width,height,strokeWidth=strokeWidth,strokeColor=strokeColor,
-                    strokeDashArray=strokeDashArray,fillColor=fillColor)
+            return uSymbol2Symbol(
+                swatchMarker,
+                x + width / 2.,
+                y + height / 2.,
+                fillColor)
+        return Rect(
+            x,
+            y,
+            width,
+            height,
+            strokeWidth=strokeWidth,
+            strokeColor=strokeColor,
+            strokeDashArray=strokeDashArray,
+            fillColor=fillColor)
 
-    def getSeriesName(self,i,default=None):
+    def getSeriesName(self, i, default=None):
         '''return series name i or default'''
-        return _objStr(getattr(self.bars[i],'name',default))
+        return _objStr(getattr(self.bars[i], 'name', default))
 
     def __init__(self):
-        assert self.__class__.__name__ not in ('BarChart','BarChart3D'), 'Abstract Class %s Instantiated' % self.__class__.__name__
+        assert self.__class__.__name__ not in (
+            'BarChart', 'BarChart3D'), 'Abstract Class %s Instantiated' % self.__class__.__name__
 
         if self._flipXY:
             self.categoryAxis = YCategoryAxis()
@@ -112,10 +214,9 @@ class BarChart(PlotArea):
         self.barSpacing = 0
         self.reversePlotOrder = 0
 
-
         # this defines two series of 3 points.  Just an example.
-        self.data = [(100,110,120,130),
-                    (70, 80, 85, 90)]
+        self.data = [(100, 110, 120, 130),
+                     (70, 80, 85, 90)]
 
         # control bar spacing. is useAbsolute = 1 then
         # the next parameters are in points; otherwise
@@ -123,7 +224,7 @@ class BarChart(PlotArea):
         # fit the available space.  Half a barSpacing
         # is allocated at the beginning and end of the
         # chart.
-        self.useAbsolute = 0   #- not done yet
+        self.useAbsolute = 0  # - not done yet
         self.barWidth = 10
         self.groupSpacing = 5
         self.barSpacing = 0
@@ -160,7 +261,7 @@ class BarChart(PlotArea):
 
     def demo(self):
         """Shows basic use of a bar chart"""
-        if self.__class__.__name__=='BarChart':
+        if self.__class__.__name__ == 'BarChart':
             raise NotImplementedError('Abstract Class BarChart has no demo')
         drawing = Drawing(200, 100)
         bc = self.__class__()
@@ -170,9 +271,9 @@ class BarChart(PlotArea):
     def _getConfigureData(self):
         cA = self.categoryAxis
         data = self.data
-        if cA.style not in ('parallel','parallel_3d'):
+        if cA.style not in ('parallel', 'parallel_3d'):
             _data = data
-            data = max(list(map(len,_data)))*[0]
+            data = max(list(map(len, _data))) * [0]
             for d in _data:
                 for i in range(len(d)):
                     data[i] = data[i] + (d[i] or 0)
@@ -185,7 +286,7 @@ class BarChart(PlotArea):
         self.valueAxis._setRange(self._configureData)
         return self.valueAxis._valueMin, self.valueAxis._valueMax
 
-    def _drawBegin(self,org,length):
+    def _drawBegin(self, org, length):
         '''Position and configure value axis, return crossing value'''
         vA = self.valueAxis
         vA.setPosition(self.x, self.y, length)
@@ -194,7 +295,7 @@ class BarChart(PlotArea):
 
         # if zero is in chart, put the other axis there, otherwise use low
         crossesAt = vA.scale(0)
-        if crossesAt > org+length or crossesAt<org:
+        if crossesAt > org + length or crossesAt < org:
             crossesAt = org
         return crossesAt
 
@@ -206,21 +307,26 @@ class BarChart(PlotArea):
         self.calcBarPositions()
         g = Group()
 
-        zIndex = getattr(self,'zIndexOverrides',None)
+        zIndex = getattr(self, 'zIndexOverrides', None)
         if not zIndex:
             g.add(self.makeBackground())
-            cAdgl = getattr(cA,'drawGridLast',False)
-            vAdgl = getattr(vA,'drawGridLast',False)
-            if not cAdgl: cA.makeGrid(g,parent=self, dim=vA.getGridDims)
-            if not vAdgl: vA.makeGrid(g,parent=self, dim=cA.getGridDims)
+            cAdgl = getattr(cA, 'drawGridLast', False)
+            vAdgl = getattr(vA, 'drawGridLast', False)
+            if not cAdgl:
+                cA.makeGrid(g, parent=self, dim=vA.getGridDims)
+            if not vAdgl:
+                vA.makeGrid(g, parent=self, dim=cA.getGridDims)
             g.add(self.makeBars())
             g.add(cA)
             g.add(vA)
-            if cAdgl: cA.makeGrid(g,parent=self, dim=vA.getGridDims)
-            if vAdgl: vA.makeGrid(g,parent=self, dim=cA.getGridDims)
-            for a in getattr(self,'annotations',()): g.add(a(self,cA.scale,vA.scale))
+            if cAdgl:
+                cA.makeGrid(g, parent=self, dim=vA.getGridDims)
+            if vAdgl:
+                vA.makeGrid(g, parent=self, dim=cA.getGridDims)
+            for a in getattr(self, 'annotations', ()):
+                g.add(a(self, cA.scale, vA.scale))
         else:
-            Z=dict(
+            Z = dict(
                 background=0,
                 categoryAxis=1,
                 valueAxis=2,
@@ -229,47 +335,60 @@ class BarChart(PlotArea):
                 categoryAxisGrid=5,
                 valueAxisGrid=6,
                 annotations=7,
-                )
+            )
             for z in zIndex.strip().split(','):
                 z = z.strip()
-                if not z: continue
+                if not z:
+                    continue
                 try:
-                    k,v=z.split('=')
+                    k, v = z.split('=')
                 except:
-                    raise ValueError('Badly formatted zIndex clause %r in %r\nallowed variables are\n%s' % (z,zIndex,'\n'.join(['%s=%r'% (k,Z[k]) for k in sorted(Z.keys())])))
+                    raise ValueError(
+                        'Badly formatted zIndex clause %r in %r\nallowed variables are\n%s' %
+                        (z, zIndex, '\n'.join(
+                            [
+                                '%s=%r' %
+                                (k, Z[k]) for k in sorted(
+                                    Z.keys())])))
                 if k not in Z:
-                    raise ValueError('Unknown zIndex variable %r in %r\nallowed variables are\n%s' % (k,Z,'\n'.join(['%s=%r'% (k,Z[k]) for k in sorted(Z.keys())])))
+                    raise ValueError('Unknown zIndex variable %r in %r\nallowed variables are\n%s' % (
+                        k, Z, '\n'.join(['%s=%r' % (k, Z[k]) for k in sorted(Z.keys())])))
                 try:
-                    v = eval(v,{})  #only constants allowed
-                    assert isinstance(v,(float,int))
+                    v = eval(v, {})  # only constants allowed
+                    assert isinstance(v, (float, int))
                 except:
-                    raise ValueError('Bad zIndex value %r in clause %r of zIndex\nallowed variables are\n%s' % (v,z,zIndex,'\n'.join(['%s=%r'% (k,Z[k]) for k in sorted(Z.keys())])))
+                    raise ValueError(
+                        'Bad zIndex value %r in clause %r of zIndex\nallowed variables are\n%s' %
+                        (v, z, zIndex, '\n'.join(
+                            [
+                                '%s=%r' %
+                                (k, Z[k]) for k in sorted(
+                                    Z.keys())])))
                 Z[k] = v
-            Z = [(v,k) for k,v in Z.items()]
-            Z.sort()
+            Z = sorted([(v, k) for k, v in Z.items()])
             b = self.makeBars()
             bl = b.contents.pop(-1)
-            for v,k in Z:
-                if k=='background':
+            for v, k in Z:
+                if k == 'background':
                     g.add(self.makeBackground())
-                elif k=='categoryAxis':
+                elif k == 'categoryAxis':
                     g.add(cA)
-                elif k=='categoryAxisGrid':
-                    cA.makeGrid(g,parent=self, dim=vA.getGridDims)
-                elif k=='valueAxis':
+                elif k == 'categoryAxisGrid':
+                    cA.makeGrid(g, parent=self, dim=vA.getGridDims)
+                elif k == 'valueAxis':
                     g.add(vA)
-                elif k=='valueAxisGrid':
-                    vA.makeGrid(g,parent=self, dim=cA.getGridDims)
-                elif k=='bars':
+                elif k == 'valueAxisGrid':
+                    vA.makeGrid(g, parent=self, dim=cA.getGridDims)
+                elif k == 'bars':
                     g.add(b)
-                elif k=='barLabels':
+                elif k == 'barLabels':
                     g.add(bl)
-                elif k=='annotations':
-                    for a in getattr(self,'annotations',()): g.add(a(self,cA.scale,vA.scale))
+                elif k == 'annotations':
+                    for a in getattr(self, 'annotations', ()):
+                        g.add(a(self, cA.scale, vA.scale))
 
         del self._configureData
         return g
-
 
     def calcBarPositions(self):
         """Works out where they go. default vertical.
@@ -288,61 +407,63 @@ class BarChart(PlotArea):
 
         data = self.data
         seriesCount = self._seriesCount = len(data)
-        self._rowLength = rowLength = max(list(map(len,data)))
+        self._rowLength = rowLength = max(list(map(len, data)))
         wG = self.groupSpacing
         barSpacing = self.barSpacing
         barWidth = self.barWidth
-        clbs = getattr(self,'categoryLabelBarSize',0)
-        clbo = getattr(self,'categoryLabelBarOrder','auto')
-        if clbo=='auto': clbo = flipXY and 'last' or 'first'
-        clbo = clbo=='first'
+        clbs = getattr(self, 'categoryLabelBarSize', 0)
+        clbo = getattr(self, 'categoryLabelBarOrder', 'auto')
+        if clbo == 'auto':
+            clbo = flipXY and 'last' or 'first'
+        clbo = clbo == 'first'
         style = cA.style
-        if style=='parallel':
-            wB = seriesCount*barWidth
-            wS = (seriesCount-1)*barSpacing
+        if style == 'parallel':
+            wB = seriesCount * barWidth
+            wS = (seriesCount - 1) * barSpacing
             bGapB = barWidth
             bGapS = barSpacing
         else:
-            accum = rowLength*[0]
+            accum = rowLength * [0]
             wB = barWidth
             wS = bGapB = bGapS = 0
-        self._groupWidth = groupWidth = wG+wB+wS
+        self._groupWidth = groupWidth = wG + wB + wS
         useAbsolute = self.useAbsolute
 
         if useAbsolute:
-            if not isinstance(useAbsolute,str):
-                useAbsolute = 7 #all three are fixed
+            if not isinstance(useAbsolute, str):
+                useAbsolute = 7  # all three are fixed
             else:
-                useAbsolute = 0 + 1*('b' in useAbsolute)+2*('g' in useAbsolute)+4*('s' in useAbsolute)
+                useAbsolute = 0 + 1 * \
+                    ('b' in useAbsolute) + 2 * ('g' in useAbsolute) + 4 * ('s' in useAbsolute)
         else:
             useAbsolute = 0
 
         aW0 = float(cScale(0)[1])
         aW = aW0 - clbs
 
-        if useAbsolute==0: #case 0 all are free
-            self._normFactor = fB = fG = fS = aW/groupWidth
-        elif useAbsolute==7:    #all fixed
+        if useAbsolute == 0:  # case 0 all are free
+            self._normFactor = fB = fG = fS = aW / groupWidth
+        elif useAbsolute == 7:  # all fixed
             fB = fG = fS = 1.0
             _cscale = cA._scale
-        elif useAbsolute==1: #case 1 barWidth is fixed
+        elif useAbsolute == 1:  # case 1 barWidth is fixed
             fB = 1.0
-            fG = fS = (aW-wB)/(wG+wS)
-        elif useAbsolute==2: #groupspacing is fixed
-            fG=1.0
-            fB = fS = (aW-wG)/(wB+wS)
-        elif useAbsolute==3: #groupspacing & barwidth are fixed
+            fG = fS = (aW - wB) / (wG + wS)
+        elif useAbsolute == 2:  # groupspacing is fixed
+            fG = 1.0
+            fB = fS = (aW - wG) / (wB + wS)
+        elif useAbsolute == 3:  # groupspacing & barwidth are fixed
             fB = fG = 1.0
-            fS = (aW-wG-wB)/wS if wS else 0
-        elif useAbsolute==4: #barspacing is fixed
-            fS=1.0
-            fG = fB = (aW-wS)/(wG+wB)
-        elif useAbsolute==5: #barspacing & barWidth are fixed
+            fS = (aW - wG - wB) / wS if wS else 0
+        elif useAbsolute == 4:  # barspacing is fixed
+            fS = 1.0
+            fG = fB = (aW - wS) / (wG + wB)
+        elif useAbsolute == 5:  # barspacing & barWidth are fixed
             fS = fB = 1.0
-            fG = (aW-wB-wS)/wG
-        elif useAbsolute==6: #barspacing & groupspacing are fixed
+            fG = (aW - wB - wS) / wG
+        elif useAbsolute == 6:  # barspacing & groupspacing are fixed
             fS = fG = 1
-            fB = (aW-wS-wG)/wB
+            fB = (aW - wS - wG) / wB
         self._normFactorB = fB
         self._normFactorG = fG
         self._normFactorS = fS
@@ -359,18 +480,18 @@ class BarChart(PlotArea):
             baseLine = vScale(vM)
         self._baseLine = baseLine
 
-        nC = max(list(map(len,data)))
+        nC = max(list(map(len, data)))
 
-        width = barWidth*fB
-        offs = 0.5*wG*fG
-        bGap = bGapB*fB+bGapS*fS
+        width = barWidth * fB
+        offs = 0.5 * wG * fG
+        bGap = bGapB * fB + bGapS * fS
 
         if clbs:
-            if clbo: #the lable bar comes first
-                lbpf = (offs+clbs/6.0)/aW0
+            if clbo:  # the lable bar comes first
+                lbpf = (offs + clbs / 6.0) / aW0
                 offs += clbs
             else:
-                lbpf = (offs+wB*fB+wS*fS+clbs/6.0)/aW0
+                lbpf = (offs + wB * fB + wS * fS + clbs / 6.0) / aW0
             cA.labels.labelPosFrac = lbpf
 
         self._barPositions = []
@@ -379,17 +500,17 @@ class BarChart(PlotArea):
         for rowNo in range(seriesCount):
             barRow = []
             if reversePlotOrder:
-                xVal = seriesCount-1 - rowNo
+                xVal = seriesCount - 1 - rowNo
             else:
                 xVal = rowNo
-            xVal = offs + xVal*bGap
+            xVal = offs + xVal * bGap
             row = data[rowNo]
             for colNo in range(nC):
                 datum = row[colNo]
 
                 # Ufff...
-                if useAbsolute==7:
-                    x = groupWidth*_cscale(colNo) + xVal + org
+                if useAbsolute == 7:
+                    x = groupWidth * _cscale(colNo) + xVal + org
                 else:
                     (g, _) = cScale(colNo)
                     x = g + xVal
@@ -398,18 +519,29 @@ class BarChart(PlotArea):
                     height = None
                     y = baseLine
                 else:
-                    if style not in ('parallel','parallel_3d'):
+                    if style not in ('parallel', 'parallel_3d'):
                         y = vScale(accum[colNo])
-                        if y<baseLine: y = baseLine
+                        if y < baseLine:
+                            y = baseLine
                         accum[colNo] = accum[colNo] + datum
                         datum = accum[colNo]
                     else:
                         y = baseLine
                     height = vScale(datum) - y
-                    if -1e-8<height<=1e-8:
+                    if -1e-8 < height <= 1e-8:
                         height = 1e-8
-                        if datum<-1e-8: height = -1e-8
-                barRow.append(flipXY and (y,x,height,width) or (x,y,width,height))
+                        if datum < -1e-8:
+                            height = -1e-8
+                barRow.append(
+                    flipXY and (
+                        y,
+                        x,
+                        height,
+                        width) or (
+                        x,
+                        y,
+                        width,
+                        height))
 
             aBP(barRow)
 
@@ -420,67 +552,114 @@ class BarChart(PlotArea):
             labelText = None
         elif labelFmt == 'values':
             labelText = self.barLabelArray[rowNo][colNo]
-        elif type(labelFmt) is str:
+        elif isinstance(labelFmt, str):
             labelText = labelFmt % self.data[rowNo][colNo]
-        elif hasattr(labelFmt,'__call__'):
+        elif hasattr(labelFmt, '__call__'):
             labelText = labelFmt(self.data[rowNo][colNo])
         else:
             msg = "Unknown formatter type %s, expected string or function" % labelFmt
             raise Exception(msg)
         return labelText
 
-    def _labelXY(self,label,x,y,width,height):
+    def _labelXY(self, label, x, y, width, height):
         'Compute x, y for a label'
         nudge = label.nudge
-        bt = getattr(label,'boxTarget','normal')
-        anti = bt=='anti'
-        if anti: nudge = -nudge
+        bt = getattr(label, 'boxTarget', 'normal')
+        anti = bt == 'anti'
+        if anti:
+            nudge = -nudge
         pm = value = height
-        if anti: value = 0
-        a = x + 0.5*width
-        nudge = (height>=0 and 1 or -1)*nudge
-        if bt=='hi':
-            if value>=0:
+        if anti:
+            value = 0
+        a = x + 0.5 * width
+        nudge = (height >= 0 and 1 or -1) * nudge
+        if bt == 'hi':
+            if value >= 0:
                 b = y + value + nudge
             else:
                 b = y - nudge
                 pm = -pm
-        elif bt=='lo':
-            if value<=0:
+        elif bt == 'lo':
+            if value <= 0:
                 b = y + value + nudge
             else:
                 b = y - nudge
                 pm = -pm
         else:
             b = y + value + nudge
-        label._pmv = pm #the plus minus val
-        return a,b,pm
+        label._pmv = pm  # the plus minus val
+        return a, b, pm
 
     def _addBarLabel(self, g, rowNo, colNo, x, y, width, height):
-        text = self._getLabelText(rowNo,colNo)
+        text = self._getLabelText(rowNo, colNo)
         if text:
-            self._addLabel(text, self.barLabels[(rowNo, colNo)], g, rowNo, colNo, x, y, width, height)
+            self._addLabel(
+                text,
+                self.barLabels[
+                    (rowNo,
+                     colNo)],
+                g,
+                rowNo,
+                colNo,
+                x,
+                y,
+                width,
+                height)
 
-    def _addNABarLabel(self, g, rowNo, colNo, x, y, width, height, calcOnly=False, na=None):
-        if na is None: na = self.naLabel
+    def _addNABarLabel(
+            self,
+            g,
+            rowNo,
+            colNo,
+            x,
+            y,
+            width,
+            height,
+            calcOnly=False,
+            na=None):
+        if na is None:
+            na = self.naLabel
         if na and na.text:
             na = copy.copy(na)
-            v = self.valueAxis._valueMax<=0 and -1e-8 or 1e-8
-            if width is None: width = v
-            if height is None: height = v
-            return self._addLabel(na.text, na, g, rowNo, colNo, x, y, width, height, calcOnly=calcOnly)
+            v = self.valueAxis._valueMax <= 0 and -1e-8 or 1e-8
+            if width is None:
+                width = v
+            if height is None:
+                height = v
+            return self._addLabel(
+                na.text,
+                na,
+                g,
+                rowNo,
+                colNo,
+                x,
+                y,
+                width,
+                height,
+                calcOnly=calcOnly)
 
-    def _addLabel(self, text, label, g, rowNo, colNo, x, y, width, height, calcOnly=False):
+    def _addLabel(
+            self,
+            text,
+            label,
+            g,
+            rowNo,
+            colNo,
+            x,
+            y,
+            width,
+            height,
+            calcOnly=False):
         if label.visible:
             labelWidth = stringWidth(text, label.fontName, label.fontSize)
             flipXY = self._flipXY
             if flipXY:
-                y0, x0, pm = self._labelXY(label,y,x,height,width)
+                y0, x0, pm = self._labelXY(label, y, x, height, width)
             else:
-                x0, y0, pm = self._labelXY(label,x,y,width,height)
-            fixedEnd = getattr(label,'fixedEnd', None)
+                x0, y0, pm = self._labelXY(label, x, y, width, height)
+            fixedEnd = getattr(label, 'fixedEnd', None)
             if fixedEnd is not None:
-                v = fixedEnd._getValue(self,pm)
+                v = fixedEnd._getValue(self, pm)
                 x00, y00 = x0, y0
                 if flipXY:
                     x0 = v
@@ -489,40 +668,62 @@ class BarChart(PlotArea):
             else:
                 if flipXY:
                     x00 = x0
-                    y00 = y+height/2.0
+                    y00 = y + height / 2.0
                 else:
-                    x00 = x+width/2.0
+                    x00 = x + width / 2.0
                     y00 = y0
-            fixedStart = getattr(label,'fixedStart', None)
+            fixedStart = getattr(label, 'fixedStart', None)
             if fixedStart is not None:
-                v = fixedStart._getValue(self,pm)
+                v = fixedStart._getValue(self, pm)
                 if flipXY:
                     x00 = v
                 else:
                     y00 = v
 
-            if pm<0:
+            if pm < 0:
                 if flipXY:
-                    dx = -2*label.dx
+                    dx = -2 * label.dx
                     dy = 0
                 else:
-                    dy = -2*label.dy
+                    dy = -2 * label.dy
                     dx = 0
             else:
                 dy = dx = 0
-            if calcOnly: return x0+dx, y0+dy
-            label.setOrigin(x0+dx, y0+dy)
+            if calcOnly:
+                return x0 + dx, y0 + dy
+            label.setOrigin(x0 + dx, y0 + dy)
             label.setText(text)
             sC, sW = label.lineStrokeColor, label.lineStrokeWidth
-            if sC and sW: g.insert(0,Line(x00,y00,x0,y0, strokeColor=sC, strokeWidth=sW))
+            if sC and sW:
+                g.insert(
+                    0,
+                    Line(
+                        x00,
+                        y00,
+                        x0,
+                        y0,
+                        strokeColor=sC,
+                        strokeWidth=sW))
             g.add(label)
-            alx = getattr(self,'barLabelCallOut',None)
+            alx = getattr(self, 'barLabelCallOut', None)
             if alx:
-                label._callOutInfo = (self,g,rowNo,colNo,x,y,width,height,x00,y00,x0,y0)
+                label._callOutInfo = (
+                    self,
+                    g,
+                    rowNo,
+                    colNo,
+                    x,
+                    y,
+                    width,
+                    height,
+                    x00,
+                    y00,
+                    x0,
+                    y0)
                 alx(label)
                 del label._callOutInfo
 
-    def _makeBar(self,g,x,y,width,height,rowNo,style):
+    def _makeBar(self, g, x, y, width, height, rowNo, style):
         r = Rect(x, y, width, height)
         r.strokeWidth = style.strokeWidth
         r.fillColor = style.fillColor
@@ -531,10 +732,10 @@ class BarChart(PlotArea):
             r.strokeDashArray = style.strokeDashArray
         g.add(r)
 
-    def _makeBars(self,g,lg):
+    def _makeBars(self, g, lg):
         lenData = len(self.data)
         bars = self.bars
-        br = getattr(self,'barRecord',None)
+        br = getattr(self, 'barRecord', None)
         BP = self._barPositions
         flipXY = self._flipXY
 
@@ -543,12 +744,12 @@ class BarChart(PlotArea):
         if catNAL:
             CBL = []
             rowNoL = lenData - 1
-            #find all the categories that have at least one value
+            # find all the categories that have at least one value
             for rowNo in range(lenData):
                 row = BP[rowNo]
                 for colNo in range(len(row)):
                     x, y, width, height = row[colNo]
-                    if None not in (width,height):
+                    if None not in (width, height):
                         catNNA[colNo] = 1
 
         for rowNo in range(lenData):
@@ -557,19 +758,54 @@ class BarChart(PlotArea):
             styleIdx = rowNo % styleCount
             rowStyle = bars[styleIdx]
             for colNo in range(len(row)):
-                style = (styleIdx,colNo) in bars and bars[(styleIdx,colNo)] or rowStyle
+                style = (
+                    styleIdx, colNo) in bars and bars[
+                    (styleIdx, colNo)] or rowStyle
                 x, y, width, height = row[colNo]
-                if None in (width,height):
+                if None in (width, height):
                     if not catNAL or colNo in catNNA:
-                        self._addNABarLabel(lg,rowNo,colNo,x,y,width,height)
+                        self._addNABarLabel(
+                            lg,
+                            rowNo,
+                            colNo,
+                            x,
+                            y,
+                            width,
+                            height)
                     elif catNAL and colNo not in CBL:
-                        r0 = self._addNABarLabel(lg,rowNo,colNo,x,y,width,height,True,catNAL)
+                        r0 = self._addNABarLabel(
+                            lg,
+                            rowNo,
+                            colNo,
+                            x,
+                            y,
+                            width,
+                            height,
+                            True,
+                            catNAL)
                         if r0:
                             x, y, width, height = BP[rowNoL][colNo]
-                            r1 = self._addNABarLabel(lg,rowNoL,colNo,x,y,width,height,True,catNAL)
-                            x = (r0[0]+r1[0])/2.0
-                            y = (r0[1]+r1[1])/2.0
-                            self._addNABarLabel(lg,rowNoL,colNo,x,y,0.0001,0.0001,na=catNAL)
+                            r1 = self._addNABarLabel(
+                                lg,
+                                rowNoL,
+                                colNo,
+                                x,
+                                y,
+                                width,
+                                height,
+                                True,
+                                catNAL)
+                            x = (r0[0] + r1[0]) / 2.0
+                            y = (r0[1] + r1[1]) / 2.0
+                            self._addNABarLabel(
+                                lg,
+                                rowNoL,
+                                colNo,
+                                x,
+                                y,
+                                0.0001,
+                                0.0001,
+                                na=catNAL)
                         CBL.append(colNo)
                     continue
 
@@ -581,41 +817,56 @@ class BarChart(PlotArea):
                 elif hasattr(self.bars, 'symbol'):
                     symbol = self.bars.symbol
 
-                minDimen=getattr(style,'minDimen',None)
+                minDimen = getattr(style, 'minDimen', None)
                 if minDimen:
                     if flipXY:
-                        if width<0:
-                            width = min(-style.minDimen,width)
+                        if width < 0:
+                            width = min(-style.minDimen, width)
                         else:
-                            width = max(style.minDimen,width)
+                            width = max(style.minDimen, width)
                     else:
-                        if height<0:
-                            height = min(-style.minDimen,height)
+                        if height < 0:
+                            height = min(-style.minDimen, height)
                         else:
-                            height = max(style.minDimen,height)
+                            height = max(style.minDimen, height)
                 if symbol:
                     symbol.x = x
                     symbol.y = y
                     symbol.width = width
                     symbol.height = height
                     g.add(symbol)
-                elif abs(width)>1e-7 and abs(height)>=1e-7 and (style.fillColor is not None or style.strokeColor is not None):
-                    self._makeBar(g,x,y,width,height,rowNo,style)
-                    if br: br(g.contents[-1],label=self._getLabelText(rowNo,colNo),value=self.data[rowNo][colNo],rowNo=rowNo,colNo=colNo)
+                elif abs(width) > 1e-7 and abs(height) >= 1e-7 and (style.fillColor is not None or style.strokeColor is not None):
+                    self._makeBar(g, x, y, width, height, rowNo, style)
+                    if br:
+                        br(g.contents[-1],
+                           label=self._getLabelText(rowNo,
+                                                    colNo),
+                           value=self.data[rowNo][colNo],
+                            rowNo=rowNo,
+                            colNo=colNo)
 
-                self._addBarLabel(lg,rowNo,colNo,x,y,width,height)
+                self._addBarLabel(lg, rowNo, colNo, x, y, width, height)
 
-    def _computeLabelPosition(self, text, label, rowNo, colNo, x, y, width, height):
+    def _computeLabelPosition(
+            self,
+            text,
+            label,
+            rowNo,
+            colNo,
+            x,
+            y,
+            width,
+            height):
         if label.visible:
             labelWidth = stringWidth(text, label.fontName, label.fontSize)
             flipXY = self._flipXY
             if flipXY:
-                y0, x0, pm = self._labelXY(label,y,x,height,width)
+                y0, x0, pm = self._labelXY(label, y, x, height, width)
             else:
-                x0, y0, pm = self._labelXY(label,x,y,width,height)
-            fixedEnd = getattr(label,'fixedEnd', None)
+                x0, y0, pm = self._labelXY(label, x, y, width, height)
+            fixedEnd = getattr(label, 'fixedEnd', None)
             if fixedEnd is not None:
-                v = fixedEnd._getValue(self,pm)
+                v = fixedEnd._getValue(self, pm)
                 x00, y00 = x0, y0
                 if flipXY:
                     x0 = v
@@ -624,44 +875,56 @@ class BarChart(PlotArea):
             else:
                 if flipXY:
                     x00 = x0
-                    y00 = y+height/2.0
+                    y00 = y + height / 2.0
                 else:
-                    x00 = x+width/2.0
+                    x00 = x + width / 2.0
                     y00 = y0
-            fixedStart = getattr(label,'fixedStart', None)
+            fixedStart = getattr(label, 'fixedStart', None)
             if fixedStart is not None:
-                v = fixedStart._getValue(self,pm)
+                v = fixedStart._getValue(self, pm)
                 if flipXY:
                     x00 = v
                 else:
                     y00 = v
 
-            if pm<0:
+            if pm < 0:
                 if flipXY:
-                    dx = -2*label.dx
+                    dx = -2 * label.dx
                     dy = 0
                 else:
-                    dy = -2*label.dy
+                    dy = -2 * label.dy
                     dx = 0
             else:
                 dy = dx = 0
-            label.setOrigin(x0+dx, y0+dy)
+            label.setOrigin(x0 + dx, y0 + dy)
             label.setText(text)
-            return pm,label.getBounds()
+            return pm, label.getBounds()
 
     def _computeBarPositions(self):
         """Information function, can be called by charts which want to with space around bars"""
         cA, vA = self.categoryAxis, self.valueAxis
-        if vA: vA.joinAxis = cA
-        if cA: cA.joinAxis = vA
+        if vA:
+            vA.joinAxis = cA
+        if cA:
+            cA.joinAxis = vA
         if self._flipXY:
-            cA.setPosition(self._drawBegin(self.x,self.width), self.y, self.height)
+            cA.setPosition(
+                self._drawBegin(
+                    self.x,
+                    self.width),
+                self.y,
+                self.height)
         else:
-            cA.setPosition(self.x, self._drawBegin(self.y,self.height), self.width)
+            cA.setPosition(
+                self.x,
+                self._drawBegin(
+                    self.y,
+                    self.height),
+                self.width)
         cA.configure(self._configureData)
         self.calcBarPositions()
 
-    def _computeMaxSpace(self,size,required):
+    def _computeMaxSpace(self, size, required):
         '''helper for madmen who want to put stuff inside their barcharts
         basically after _computebarPositions we slide a line of length size
         down the bar profile on either side of the bars to find the
@@ -677,63 +940,99 @@ class BarChart(PlotArea):
         if flipXY:
             lo = self.x
             hi = lo + self.width
-            end = self.y+self.height
+            end = self.y + self.height
             for i in range(lenData):
                 for x, y, w, h in BP[i]:
-                    v = x+w
-                    z = y+h
-                    aC((min(y,z),max(y,z), min(x,v) - lo, hi - max(x,v)))
+                    v = x + w
+                    z = y + h
+                    aC((min(y, z), max(y, z), min(x, v) - lo, hi - max(x, v)))
         else:
             lo = self.y
             hi = lo + self.height
-            end = self.x+self.width
+            end = self.x + self.width
             for i in range(lenData):
                 for x, y, w, h in BP[i]:
-                    v = y+h
-                    z = x+w
-                    aC((min(x,z), max(x,z), min(y,v) - lo, hi - max(y,v)))
+                    v = y + h
+                    z = x + w
+                    aC((min(x, z), max(x, z), min(y, v) - lo, hi - max(y, v)))
         C.sort()
         R = [C[0]]
         for c in C:
             r = R[-1]
-            if r[0]<c[1] and c[0]<r[1]: #merge overlapping space
-                R[-1] = (min(r[0],c[0]),max(r[1],c[1]),min(r[2],c[2]),min(r[3],c[3]))
+            if r[0] < c[1] and c[0] < r[1]:  # merge overlapping space
+                R[-1] = (min(r[0], c[0]), max(r[1], c[1]),
+                         min(r[2], c[2]), min(r[3], c[3]))
             else:
                 R.append(c)
         C = R
         maxS = -0x7fffffff
         maxP = None
         nC = len(C)
-        for i,ci in enumerate(C):
+        for i, ci in enumerate(C):
             v0 = ci[0]
-            v1 = v0+size
-            if v1>end: break
+            v1 = v0 + size
+            if v1 > end:
+                break
             j = i
             alo = ahi = 0x7fffffff
-            while j<nC and C[j][1]<=v1:
-                alo = min(C[j][2],alo)
-                ahi = min(C[j][3],ahi)
+            while j < nC and C[j][1] <= v1:
+                alo = min(C[j][2], alo)
+                ahi = min(C[j][3], ahi)
                 j += 1
-            if alo>ahi:
-                if alo>maxS:
+            if alo > ahi:
+                if alo > maxS:
                     maxS = alo
-                    maxP = flipXY and (lo,v0,lo+alo,v0+size,0) or (v0,lo,v0+size,lo+alo,0)
-                    if maxS >= required: break
-            elif ahi>maxS:
+                    maxP = flipXY and (
+                        lo,
+                        v0,
+                        lo + alo,
+                        v0 + size,
+                        0) or (
+                        v0,
+                        lo,
+                        v0 + size,
+                        lo + alo,
+                        0)
+                    if maxS >= required:
+                        break
+            elif ahi > maxS:
                 maxS = ahi
-                maxP = flipXY and (hi-ahi,v0,hi,v0+size,1) or (v0,hi-ahi,v0+size,hi,1)
-                if maxS >= required: break
+                maxP = flipXY and (
+                    hi - ahi,
+                    v0,
+                    hi,
+                    v0 + size,
+                    1) or (
+                    v0,
+                    hi - ahi,
+                    v0 + size,
+                    hi,
+                    1)
+                if maxS >= required:
+                    break
         return maxS, maxP
 
     def _computeSimpleBarLabelPositions(self):
         """Information function, can be called by charts which want to mess with labels"""
         cA, vA = self.categoryAxis, self.valueAxis
-        if vA: vA.joinAxis = cA
-        if cA: cA.joinAxis = vA
+        if vA:
+            vA.joinAxis = cA
+        if cA:
+            cA.joinAxis = vA
         if self._flipXY:
-            cA.setPosition(self._drawBegin(self.x,self.width), self.y, self.height)
+            cA.setPosition(
+                self._drawBegin(
+                    self.x,
+                    self.width),
+                self.y,
+                self.height)
         else:
-            cA.setPosition(self.x, self._drawBegin(self.y,self.height), self.width)
+            cA.setPosition(
+                self.x,
+                self._drawBegin(
+                    self.y,
+                    self.height),
+                self.width)
         cA.configure(self._configureData)
         self.calcBarPositions()
 
@@ -746,20 +1045,30 @@ class BarChart(PlotArea):
             C = [].append
             for colNo in range(len(row)):
                 x, y, width, height = row[colNo]
-                if None in (width,height):
+                if None in (width, height):
                     na = self.naLabel
                     if na and na.text:
                         na = copy.copy(na)
-                        v = self.valueAxis._valueMax<=0 and -1e-8 or 1e-8
-                        if width is None: width = v
-                        if height is None: height = v
-                        C(self._computeLabelPosition(na.text, na, rowNo, colNo, x, y, width, height))
+                        v = self.valueAxis._valueMax <= 0 and -1e-8 or 1e-8
+                        if width is None:
+                            width = v
+                        if height is None:
+                            height = v
+                        C(self._computeLabelPosition(na.text,
+                                                     na,
+                                                     rowNo,
+                                                     colNo,
+                                                     x,
+                                                     y,
+                                                     width,
+                                                     height))
                     else:
                         C(None)
                 else:
-                    text = self._getLabelText(rowNo,colNo)
+                    text = self._getLabelText(rowNo, colNo)
                     if text:
-                        C(self._computeLabelPosition(text, self.barLabels[(rowNo, colNo)], rowNo, colNo, x, y, width, height))
+                        C(self._computeLabelPosition(
+                            text, self.barLabels[(rowNo, colNo)], rowNo, colNo, x, y, width, height))
                     else:
                         C(None)
             R(C.__self__)
@@ -768,7 +1077,7 @@ class BarChart(PlotArea):
     def makeBars(self):
         g = Group()
         lg = Group()
-        self._makeBars(g,lg)
+        self._makeBars(g, lg)
         g.add(lg)
         return g
 
@@ -777,37 +1086,55 @@ class BarChart(PlotArea):
         style = self.categoryAxis.style
         data = self.data
         n = len(data)
-        m = max(list(map(len,data)))
-        if style=='parallel':
-            groupWidth = (n-1)*self.barSpacing+n*self.barWidth
+        m = max(list(map(len, data)))
+        if style == 'parallel':
+            groupWidth = (n - 1) * self.barSpacing + n * self.barWidth
         else:
             groupWidth = self.barWidth
-        return m*(self.groupSpacing+groupWidth)
+        return m * (self.groupSpacing + groupWidth)
 
     def draw(self):
         cA, vA = self.categoryAxis, self.valueAxis
-        if vA: vA.joinAxis = cA
-        if cA: cA.joinAxis = vA
+        if vA:
+            vA.joinAxis = cA
+        if cA:
+            cA.joinAxis = vA
         if self._flipXY:
-            cA.setPosition(self._drawBegin(self.x,self.width), self.y, self.height)
+            cA.setPosition(
+                self._drawBegin(
+                    self.x,
+                    self.width),
+                self.y,
+                self.height)
         else:
-            cA.setPosition(self.x, self._drawBegin(self.y,self.height), self.width)
+            cA.setPosition(
+                self.x,
+                self._drawBegin(
+                    self.y,
+                    self.height),
+                self.width)
         return self._drawFinish()
 
+
 class VerticalBarChart(BarChart):
+
     "Vertical bar chart with multiple side-by-side bars."
     _flipXY = 0
 
+
 class HorizontalBarChart(BarChart):
+
     "Horizontal bar chart with multiple side-by-side bars."
     _flipXY = 1
 
+
 class _FakeGroup:
+
     def __init__(self, cmp=None):
         self._data = []
         self._key = functools.cmp_to_key(cmp)
 
-    def add(self,what):
+    def add(self, what):
         self._data.append(what)
 
     def value(self):
@@ -816,13 +1143,23 @@ class _FakeGroup:
     def sort(self):
         self._data.sort(key=self._key)
 
+
 class BarChart3D(BarChart):
-    _attrMap = AttrMap(BASE=BarChart,
-        theta_x = AttrMapValue(isNumber, desc='dx/dz'),
-        theta_y = AttrMapValue(isNumber, desc='dy/dz'),
-        zDepth = AttrMapValue(isNumber, desc='depth of an individual series'),
-        zSpace = AttrMapValue(isNumber, desc='z gap around series'),
-        )
+    _attrMap = AttrMap(
+        BASE=BarChart,
+        theta_x=AttrMapValue(
+            isNumber,
+            desc='dx/dz'),
+        theta_y=AttrMapValue(
+            isNumber,
+            desc='dy/dz'),
+        zDepth=AttrMapValue(
+            isNumber,
+            desc='depth of an individual series'),
+        zSpace=AttrMapValue(
+            isNumber,
+            desc='z gap around series'),
+    )
     theta_x = .5
     theta_y = .5
     zDepth = None
@@ -832,90 +1169,123 @@ class BarChart3D(BarChart):
         BarChart.calcBarPositions(self)
         seriesCount = self._seriesCount
         zDepth = self.zDepth
-        if zDepth is None: zDepth = self.barWidth
+        if zDepth is None:
+            zDepth = self.barWidth
         zSpace = self.zSpace
-        if zSpace is None: zSpace = self.barSpacing
-        if self.categoryAxis.style=='parallel_3d':
-            _3d_depth = seriesCount*zDepth+(seriesCount+1)*zSpace
+        if zSpace is None:
+            zSpace = self.barSpacing
+        if self.categoryAxis.style == 'parallel_3d':
+            _3d_depth = seriesCount * zDepth + (seriesCount + 1) * zSpace
         else:
-            _3d_depth = zDepth + 2*zSpace
+            _3d_depth = zDepth + 2 * zSpace
         _3d_depth *= self._normFactor
-        self._3d_dx = self.theta_x*_3d_depth
-        self._3d_dy = self.theta_y*_3d_depth
+        self._3d_dx = self.theta_x * _3d_depth
+        self._3d_dy = self.theta_y * _3d_depth
 
-    def _calc_z0(self,rowNo):
+    def _calc_z0(self, rowNo):
         zDepth = self.zDepth
-        if zDepth is None: zDepth = self.barWidth
+        if zDepth is None:
+            zDepth = self.barWidth
         zSpace = self.zSpace
-        if zSpace is None: zSpace = self.barSpacing
-        if self.categoryAxis.style=='parallel_3d':
-            z0 = self._normFactor*(rowNo*(zDepth+zSpace)+zSpace)
+        if zSpace is None:
+            zSpace = self.barSpacing
+        if self.categoryAxis.style == 'parallel_3d':
+            z0 = self._normFactor * (rowNo * (zDepth + zSpace) + zSpace)
         else:
-            z0 = self._normFactor*zSpace
+            z0 = self._normFactor * zSpace
         return z0
 
-    def _makeBar(self,g,x,y,width,height,rowNo,style):
+    def _makeBar(self, g, x, y, width, height, rowNo, style):
         zDepth = self.zDepth
-        if zDepth is None: zDepth = self.barWidth
+        if zDepth is None:
+            zDepth = self.barWidth
         zSpace = self.zSpace
-        if zSpace is None: zSpace = self.barSpacing
+        if zSpace is None:
+            zSpace = self.barSpacing
         z0 = self._calc_z0(rowNo)
-        z1 = z0 + zDepth*self._normFactor
-        if width<0:
+        z1 = z0 + zDepth * self._normFactor
+        if width < 0:
             x += width
             width = -width
-        x += z0*self.theta_x
-        y += z0*self.theta_y
+        x += z0 * self.theta_x
+        y += z0 * self.theta_y
         if self._flipXY:
             y += zSpace
         else:
             x += zSpace
-        g.add((0,z0,z1,x,y,width,height,rowNo,style))
+        g.add((0, z0, z1, x, y, width, height, rowNo, style))
 
     def _addBarLabel(self, g, rowNo, colNo, x, y, width, height):
         z0 = self._calc_z0(rowNo)
         zSpace = self.zSpace
-        if zSpace is None: zSpace = self.barSpacing
+        if zSpace is None:
+            zSpace = self.barSpacing
         z1 = z0
-        x += z0*self.theta_x
-        y += z0*self.theta_y
+        x += z0 * self.theta_x
+        y += z0 * self.theta_y
         if self._flipXY:
             y += zSpace
         else:
             x += zSpace
-        g.add((1,z0,z1,x,y,width,height,rowNo,colNo))
+        g.add((1, z0, z1, x, y, width, height, rowNo, colNo))
 
     def makeBars(self):
         from reportlab.graphics.charts.utils3d import _draw_3d_bar
         fg = _FakeGroup(cmp=self._cmpZ)
-        self._makeBars(fg,fg)
+        self._makeBars(fg, fg)
         fg.sort()
         g = Group()
         theta_x = self.theta_x
         theta_y = self.theta_y
         if self.categoryAxis.style == 'stacked':
-          fg_value=fg.value().reverse()
+            fg_value = fg.value().reverse()
         for t in fg.value():
-            if t[0]==0:
-                z0,z1,x,y,width,height,rowNo,style = t[1:]
+            if t[0] == 0:
+                z0, z1, x, y, width, height, rowNo, style = t[1:]
                 dz = z1 - z0
-                _draw_3d_bar(g, x, x+width, y, y+height, dz*theta_x, dz*theta_y,
-                            fillColor=style.fillColor, fillColorShaded=None,
-                            strokeColor=style.strokeColor, strokeWidth=style.strokeWidth,
-                            shading=0.45)
+                _draw_3d_bar(
+                    g,
+                    x,
+                    x + width,
+                    y,
+                    y + height,
+                    dz * theta_x,
+                    dz * theta_y,
+                    fillColor=style.fillColor,
+                    fillColorShaded=None,
+                    strokeColor=style.strokeColor,
+                    strokeWidth=style.strokeWidth,
+                    shading=0.45)
         for t in fg.value():
-            if t[0]==1:
-                z0,z1,x,y,width,height,rowNo,colNo = t[1:]
-                BarChart._addBarLabel(self,g,rowNo,colNo,x,y,width,height)
+            if t[0] == 1:
+                z0, z1, x, y, width, height, rowNo, colNo = t[1:]
+                BarChart._addBarLabel(
+                    self,
+                    g,
+                    rowNo,
+                    colNo,
+                    x,
+                    y,
+                    width,
+                    height)
         return g
 
-class VerticalBarChart3D(BarChart3D,VerticalBarChart):
-    _cmpZ=lambda self,a,b:cmp((-a[1],a[3],a[0],-a[4]),(-b[1],b[3],b[0],-b[4]))
 
-class HorizontalBarChart3D(BarChart3D,HorizontalBarChart):
-    _cmpZ = lambda self,a,b: cmp((-a[1],a[4],a[0],-a[3]),(-b[1],b[4],b[0],-b[3]))   #t, z0, z1, x, y = a[:5]
+class VerticalBarChart3D(BarChart3D, VerticalBarChart):
+    _cmpZ = lambda self, a, b: cmp(
+        (-a[1], a[3], a[0], -a[4]), (-b[1], b[3], b[0], -b[4]))
+
+
+class HorizontalBarChart3D(BarChart3D, HorizontalBarChart):
+    _cmpZ = lambda self, a, b: cmp((-
+                                    a[1], a[4], a[0], -
+                                    a[3]), (-
+                                            b[1], b[4], b[0], -
+                                            b[3]))  # t, z0, z1, x, y = a[:5]
 
 # Vertical samples.
+
+
 def sampleV0a():
     "A slightly pathologic bar chart with only TWO data items."
 
@@ -1012,9 +1382,9 @@ def sampleV1():
     drawing = Drawing(400, 200)
 
     data = [
-            (13, 5, 20, 22, 37, 45, 19, 4),
-            (14, 6, 21, 23, 38, 46, 20, 5)
-            ]
+        (13, 5, 20, 22, 37, 45, 19, 4),
+        (14, 6, 21, 23, 38, 46, 20, 5)
+    ]
 
     bc = VerticalBarChart()
     bc.x = 50
@@ -1034,7 +1404,7 @@ def sampleV1():
     bc.categoryAxis.labels.angle = 30
 
     catNames = 'Jan Feb Mar Apr May Jun Jul Aug'.split(' ')
-    catNames = [n+'-99' for n in catNames]
+    catNames = [n + '-99' for n in catNames]
     bc.categoryAxis.categoryNames = catNames
     drawing.add(bc)
 
@@ -1176,9 +1546,17 @@ def sampleV2c():
 def sampleV3():
     "Faked horizontal bar chart using a vertical real one (deprecated)."
 
-    names = ("UK Equities", "US Equities", "European Equities", "Japanese Equities",
-              "Pacific (ex Japan) Equities", "Emerging Markets Equities",
-              "UK Bonds", "Overseas Bonds", "UK Index-Linked", "Cash")
+    names = (
+        "UK Equities",
+        "US Equities",
+        "European Equities",
+        "Japanese Equities",
+        "Pacific (ex Japan) Equities",
+        "Emerging Markets Equities",
+        "UK Bonds",
+        "Overseas Bonds",
+        "UK Index-Linked",
+        "Cash")
 
     series1 = (-1.5, 0.3, 0.5, 1.0, 0.8, 0.7, 0.4, 0.1, 1.0, 0.3)
     series2 = (0.0, 0.33, 0.55, 1.1, 0.88, 0.77, 0.44, 0.11, 1.10, 0.33)
@@ -1199,7 +1577,7 @@ def sampleV3():
     bc.barLabelFormat = '%0.2f'
     bc.barLabels.dx = 0
     bc.barLabels.dy = 0
-    bc.barLabels.boxAnchor = 'w' # irrelevant (becomes 'c')
+    bc.barLabels.boxAnchor = 'w'  # irrelevant (becomes 'c')
     bc.barLabels.angle = 90
     bc.barLabels.fontName = 'Helvetica'
     bc.barLabels.fontSize = 6
@@ -1350,6 +1728,7 @@ def sampleV4d():
 ##dataSample5 = [(10, 20), (20, 30), (30, 40), (40, 50), (50, 60)]
 ##dataSample5 = [(10, 60), (20, 50), (30, 40), (40, 30), (50, 20)]
 dataSample5 = [(10, 60), (20, 50), (30, 40), (40, 30)]
+
 
 def sampleV5a():
     "A simple bar chart with no expressed spacing attributes."
@@ -1637,9 +2016,9 @@ def sampleH1():
     drawing = Drawing(400, 200)
 
     data = [
-            (13, 5, 20, 22, 37, 45, 19, 4),
-            (14, 6, 21, 23, 38, 46, 20, 5)
-            ]
+        (13, 5, 20, 22, 37, 45, 19, 4),
+        (14, 6, 21, 23, 38, 46, 20, 5)
+    ]
 
     bc = HorizontalBarChart()
     bc.x = 50
@@ -1655,7 +2034,7 @@ def sampleH1():
 
     bc.categoryAxis.labels.boxAnchor = 'e'
     catNames = 'Jan Feb Mar Apr May Jun Jul Aug'.split(' ')
-    catNames = [n+'-99' for n in catNames]
+    catNames = [n + '-99' for n in catNames]
     bc.categoryAxis.categoryNames = catNames
     drawing.add(bc, 'barchart')
 
@@ -1798,9 +2177,17 @@ def sampleH2c():
 def sampleH3():
     "A really horizontal bar chart (compared to the equivalent faked one)."
 
-    names = ("UK Equities", "US Equities", "European Equities", "Japanese Equities",
-              "Pacific (ex Japan) Equities", "Emerging Markets Equities",
-              "UK Bonds", "Overseas Bonds", "UK Index-Linked", "Cash")
+    names = (
+        "UK Equities",
+        "US Equities",
+        "European Equities",
+        "Japanese Equities",
+        "Pacific (ex Japan) Equities",
+        "Emerging Markets Equities",
+        "UK Bonds",
+        "Overseas Bonds",
+        "UK Index-Linked",
+        "Cash")
 
     series1 = (-1.5, 0.3, 0.5, 1.0, 0.8, 0.7, 0.4, 0.1, 1.0, 0.3)
     series2 = (0.0, 0.33, 0.55, 1.1, 0.88, 0.77, 0.44, 0.11, 1.10, 0.33)
@@ -1821,7 +2208,7 @@ def sampleH3():
     bc.barLabelFormat = '%0.2f'
     bc.barLabels.dx = 0
     bc.barLabels.dy = 0
-    bc.barLabels.boxAnchor = 'w' # irrelevant (becomes 'c')
+    bc.barLabels.boxAnchor = 'w'  # irrelevant (becomes 'c')
     bc.barLabels.fontName = 'Helvetica'
     bc.barLabels.fontSize = 6
     bc.barLabels.nudge = 10
@@ -1958,6 +2345,7 @@ def sampleH4d():
 
 
 dataSample5 = [(10, 60), (20, 50), (30, 40), (40, 30)]
+
 
 def sampleH5a():
     "A simple bar chart with no expressed spacing attributes."
@@ -2145,6 +2533,7 @@ def sampleH5c4():
 
     return drawing
 
+
 def sampleSymbol1():
     "Simple bar chart using symbol attribute."
 
@@ -2198,6 +2587,7 @@ def sampleSymbol1():
     drawing.add(bc)
 
     return drawing
+
 
 def sampleStacked1():
     "Simple bar chart using symbol attribute."
@@ -2255,12 +2645,15 @@ def sampleStacked1():
 
     return drawing
 
-#class version of function sampleH5c4 above
+# class version of function sampleH5c4 above
+
+
 class SampleH5c4(Drawing):
+
     "Simple bar chart with absolute spacing."
 
-    def __init__(self,width=400,height=200,*args,**kw):
-        Drawing.__init__(self,width,height,*args,**kw)
+    def __init__(self, width=400, height=200, *args, **kw):
+        Drawing.__init__(self, width, height, *args, **kw)
         bc = HorizontalBarChart()
         bc.x = 50
         bc.y = 50
@@ -2281,4 +2674,4 @@ class SampleH5c4(Drawing):
         bc.categoryAxis.labels.boxAnchor = 'e'
         bc.categoryAxis.categoryNames = ['Ying', 'Yang']
 
-        self.add(bc,name='HBC')
+        self.add(bc, name='HBC')

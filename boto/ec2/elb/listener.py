@@ -25,12 +25,19 @@ from boto.ec2.elb.listelement import ListElement
 
 
 class Listener(object):
+
     """
     Represents an EC2 Load Balancer Listener tuple
     """
 
-    def __init__(self, load_balancer=None, load_balancer_port=0,
-                 instance_port=0, protocol='', ssl_certificate_id=None, instance_protocol=None):
+    def __init__(
+            self,
+            load_balancer=None,
+            load_balancer_port=0,
+            instance_port=0,
+            protocol='',
+            ssl_certificate_id=None,
+            instance_protocol=None):
         self.load_balancer = load_balancer
         self.load_balancer_port = load_balancer_port
         self.instance_port = instance_port
@@ -40,7 +47,8 @@ class Listener(object):
         self.policy_names = ListElement()
 
     def __repr__(self):
-        r = "(%d, %d, '%s'" % (self.load_balancer_port, self.instance_port, self.protocol)
+        r = "(%d, %d, '%s'" % (
+            self.load_balancer_port, self.instance_port, self.protocol)
         if self.instance_protocol:
             r += ", '%s'" % self.instance_protocol
         if self.ssl_certificate_id:

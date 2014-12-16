@@ -26,6 +26,7 @@ from boto.compat import json
 
 
 class JSONMessage(MHMessage):
+
     """
     Acts like a dictionary but encodes it's data as a Base64 encoded JSON payload.
     """

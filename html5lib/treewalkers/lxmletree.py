@@ -22,6 +22,7 @@ def ensure_str(s):
 
 
 class Root(object):
+
     def __init__(self, et):
         self.elementtree = et
         self.children = []
@@ -53,6 +54,7 @@ class Root(object):
 
 
 class Doctype(object):
+
     def __init__(self, root_node, name, public_id, system_id):
         self.root_node = root_node
         self.name = name
@@ -67,6 +69,7 @@ class Doctype(object):
 
 
 class FragmentRoot(Root):
+
     def __init__(self, children):
         self.children = [FragmentWrapper(self, child) for child in children]
         self.text = self.tail = None
@@ -76,6 +79,7 @@ class FragmentRoot(Root):
 
 
 class FragmentWrapper(object):
+
     def __init__(self, fragment_root, obj):
         self.root_node = fragment_root
         self.obj = obj
@@ -119,6 +123,7 @@ class FragmentWrapper(object):
 
 
 class TreeWalker(_base.NonRecursiveTreeWalker):
+
     def __init__(self, tree):
         if hasattr(tree, "getroot"):
             tree = Root(tree)
@@ -130,7 +135,8 @@ class TreeWalker(_base.NonRecursiveTreeWalker):
     def getNodeDetails(self, node):
         if isinstance(node, tuple):  # Text node
             node, key = node
-            assert key in ("text", "tail"), _("Text nodes are text or tail, found %s") % key
+            assert key in ("text", "tail"), _(
+                "Text nodes are text or tail, found %s") % key
             return _base.TEXT, ensure_str(getattr(node, key))
 
         elif isinstance(node, Root):
@@ -180,10 +186,12 @@ class TreeWalker(_base.NonRecursiveTreeWalker):
     def getNextSibling(self, node):
         if isinstance(node, tuple):  # Text node
             node, key = node
-            assert key in ("text", "tail"), _("Text nodes are text or tail, found %s") % key
+            assert key in ("text", "tail"), _(
+                "Text nodes are text or tail, found %s") % key
             if key == "text":
                 # XXX: we cannot use a "bool(node) and node[0] or None" construct here
-                # because node[0] might evaluate to False if it has no child element
+                # because node[0] might evaluate to False if it has no child
+                # element
                 if len(node):
                     return node[0]
                 else:
@@ -196,7 +204,8 @@ class TreeWalker(_base.NonRecursiveTreeWalker):
     def getParentNode(self, node):
         if isinstance(node, tuple):  # Text node
             node, key = node
-            assert key in ("text", "tail"), _("Text nodes are text or tail, found %s") % key
+            assert key in ("text", "tail"), _(
+                "Text nodes are text or tail, found %s") % key
             if key == "text":
                 return node
             # else: fallback to "normal" processing

@@ -3,6 +3,7 @@ import xml.sax
 
 
 class Tag(object):
+
     def __init__(self, key=None, value=None):
         self.key = key
         self.value = value
@@ -25,6 +26,7 @@ class Tag(object):
 
 
 class TagSet(list):
+
     def startElement(self, name, attrs, connection):
         if name == 'Tag':
             tag = Tag()
@@ -48,6 +50,7 @@ class TagSet(list):
 
 
 class Tags(list):
+
     """A container for the tags associated with a bucket."""
 
     def startElement(self, name, attrs, connection):
@@ -64,7 +67,7 @@ class Tags(list):
         xml = '<Tagging>'
         for tag_set in self:
             xml += tag_set.to_xml()
-        xml +='</Tagging>'
+        xml += '</Tagging>'
         return xml
 
     def add_tag_set(self, tag_set):

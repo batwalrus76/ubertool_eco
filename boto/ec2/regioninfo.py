@@ -23,7 +23,9 @@
 
 from boto.regioninfo import RegionInfo
 
+
 class EC2RegionInfo(RegionInfo):
+
     """
     Represents an EC2 Region
     """
@@ -32,4 +34,4 @@ class EC2RegionInfo(RegionInfo):
                  connection_cls=None):
         from boto.ec2.connection import EC2Connection
         super(EC2RegionInfo, self).__init__(connection, name, endpoint,
-                            EC2Connection)
+                                            EC2Connection)

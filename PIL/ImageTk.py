@@ -40,11 +40,12 @@ from PIL import Image
 
 _pilbitmap_ok = None
 
+
 def _pilbitmap_check():
     global _pilbitmap_ok
     if _pilbitmap_ok is None:
         try:
-            im = Image.new("1", (1,1))
+            im = Image.new("1", (1, 1))
             tkinter.BitmapImage(data="PIL:%d" % im.im.id)
             _pilbitmap_ok = 1
         except tkinter.TclError:
@@ -54,7 +55,9 @@ def _pilbitmap_check():
 # --------------------------------------------------------------------
 # PhotoImage
 
+
 class PhotoImage:
+
     """
     A Tkinter-compatible photo image.  This can be used
     everywhere Tkinter expects an image object.  If the image is an RGBA
@@ -95,7 +98,7 @@ class PhotoImage:
                 try:
                     mode = image.palette.mode
                 except AttributeError:
-                    mode = "RGB" # default
+                    mode = "RGB"  # default
             size = image.size
             kw["width"], kw["height"] = size
         else:
@@ -118,8 +121,7 @@ class PhotoImage:
         try:
             self.__photo.tk.call("image", "delete", name)
         except:
-            pass # ignore internal errors
-
+            pass  # ignore internal errors
 
     def __str__(self):
         """
@@ -131,7 +133,6 @@ class PhotoImage:
         """
         return str(self.__photo)
 
-
     def width(self):
         """
         Get the width of the image.
@@ -140,7 +141,6 @@ class PhotoImage:
         """
         return self.__size[0]
 
-
     def height(self):
         """
         Get the height of the image.
@@ -148,7 +148,6 @@ class PhotoImage:
         :return: The height, in pixels.
         """
         return self.__size[1]
-
 
     def paste(self, im, box=None):
         """
@@ -170,7 +169,7 @@ class PhotoImage:
             block = image
         else:
             block = image.new_block(self.__mode, im.size)
-            image.convert2(block, image) # convert directly between buffers
+            image.convert2(block, image)  # convert directly between buffers
 
         tk = self.__photo.tk
 
@@ -186,13 +185,14 @@ class PhotoImage:
                     _imagingtk.tkinit(id(tk), 0)
                 tk.call("PyImagingPhoto", self.__photo, block.id)
             except (ImportError, AttributeError, tkinter.TclError):
-                raise # configuration problem; cannot attach to Tkinter
+                raise  # configuration problem; cannot attach to Tkinter
 
 # --------------------------------------------------------------------
 # BitmapImage
 
 
 class BitmapImage:
+
     """
 
     A Tkinter-compatible bitmap image.  This can be used everywhere Tkinter
@@ -226,7 +226,7 @@ class BitmapImage:
             # fast way (requires the pilbitmap booster patch)
             image.load()
             kw["data"] = "PIL:%d" % image.im.id
-            self.__im = image # must keep a reference
+            self.__im = image  # must keep a reference
         else:
             # slow but safe way
             kw["data"] = image.tobitmap()
@@ -238,8 +238,7 @@ class BitmapImage:
         try:
             self.__photo.tk.call("image", "delete", name)
         except:
-            pass # ignore internal errors
-
+            pass  # ignore internal errors
 
     def width(self):
         """
@@ -249,7 +248,6 @@ class BitmapImage:
         """
         return self.__size[0]
 
-
     def height(self):
         """
         Get the height of the image.
@@ -257,7 +255,6 @@ class BitmapImage:
         :return: The height, in pixels.
         """
         return self.__size[1]
-
 
     def __str__(self):
         """
@@ -277,16 +274,18 @@ def getimage(photo):
 # --------------------------------------------------------------------
 # Helper for the Image.show method.
 
+
 def _show(image, title):
 
     class UI(tkinter.Label):
+
         def __init__(self, master, im):
             if im.mode == "1":
                 self.image = BitmapImage(im, foreground="white", master=master)
             else:
                 self.image = PhotoImage(im, master=master)
             tkinter.Label.__init__(self, master, image=self.image,
-                bg="black", bd=0)
+                                   bg="black", bd=0)
 
     if not tkinter._default_root:
         raise IOError("tkinter not initialized")

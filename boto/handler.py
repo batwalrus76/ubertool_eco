@@ -14,13 +14,14 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABIL-
 # ITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
 import StringIO
 import xml.sax
+
 
 class XmlHandler(xml.sax.ContentHandler):
 
@@ -48,6 +49,7 @@ class XmlHandler(xml.sax.ContentHandler):
 
 
 class XmlHandlerWrapper(object):
+
     def __init__(self, root_node, connection):
         self.handler = XmlHandler(root_node, connection)
         self.parser = xml.sax.make_parser()

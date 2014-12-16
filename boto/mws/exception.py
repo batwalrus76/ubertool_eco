@@ -35,6 +35,7 @@ class ResponseErrorFactory(BotoServerError):
 
 
 class ResponseError(BotoServerError):
+
     """
     Undefined response error.
     """
@@ -58,18 +59,21 @@ class RetriableResponseError(ResponseError):
 
 
 class InvalidParameterValue(ResponseError):
+
     """
     One or more parameter values in the request is invalid.
     """
 
 
 class InvalidParameter(ResponseError):
+
     """
     One or more parameters in the request is invalid.
     """
 
 
 class InvalidAddress(ResponseError):
+
     """
     Invalid address.
     """

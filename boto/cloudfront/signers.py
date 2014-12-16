@@ -19,7 +19,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
+
 class Signer(object):
+
     def __init__(self):
         self.id = None
         self.key_pair_ids = []
@@ -37,6 +39,7 @@ class Signer(object):
 
 
 class ActiveTrustedSigners(list):
+
     def startElement(self, name, attrs, connection):
         if name == 'Signer':
             s = Signer()
@@ -48,6 +51,7 @@ class ActiveTrustedSigners(list):
 
 
 class TrustedSigners(list):
+
     def startElement(self, name, attrs, connection):
         return None
 
@@ -56,4 +60,3 @@ class TrustedSigners(list):
             self.append(name)
         elif name == 'AwsAccountNumber':
             self.append(value)
-

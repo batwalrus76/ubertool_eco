@@ -1,13 +1,13 @@
-#Copyright ReportLab Europe Ltd. 2000-2012
-#see license.txt for license details
-#history http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/graphics/renderPDF.py
+# Copyright ReportLab Europe Ltd. 2000-2012
+# see license.txt for license details
+# history http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/graphics/renderPDF.py
 # renderPDF - draws Drawings onto a canvas
 
-__version__=''' $Id$ '''
-__doc__="""Render Drawing objects within others PDFs or standalone
+__version__ = ''' $Id$ '''
+__doc__ = """Render Drawing objects within others PDFs or standalone
 
 Usage::
-    
+
     import renderpdf
     renderpdf.draw(drawing, canvas, x, y)
 
@@ -23,12 +23,21 @@ from reportlab import rl_config
 from reportlab.graphics.renderbase import Renderer, StateTracker, getStateDelta, renderScaledDrawing
 
 # the main entry point for users...
+
+
 def draw(drawing, canvas, x, y, showBoundary=rl_config._unset_):
     """As it says"""
     R = _PDFRenderer()
-    R.draw(renderScaledDrawing(drawing), canvas, x, y, showBoundary=showBoundary)
+    R.draw(
+        renderScaledDrawing(drawing),
+        canvas,
+        x,
+        y,
+        showBoundary=showBoundary)
+
 
 class _PDFRenderer(Renderer):
+
     """This draws onto a PDF document.  It needs to be a class
     rather than a function, as some PDF-specific state tracking is
     needed outside of the state info in the SVG model."""
@@ -41,17 +50,17 @@ class _PDFRenderer(Renderer):
     def drawNode(self, node):
         """This is the recursive method called for each node
         in the tree"""
-        #print "pdf:drawNode", self
+        # print "pdf:drawNode", self
         #if node.__class__ is Wedge: stop
         if not (isinstance(node, Path) and node.isClipPath):
             self._canvas.saveState()
 
-        #apply state changes
+        # apply state changes
         deltas = getStateDelta(node)
         self._tracker.push(deltas)
         self.applyStateChanges(deltas, {})
 
-        #draw the object, or recurse
+        # draw the object, or recurse
         self.drawNodeDispatcher(node)
 
         self._tracker.pop()
@@ -60,82 +69,113 @@ class _PDFRenderer(Renderer):
 
     def drawRect(self, rect):
         if rect.rx == rect.ry == 0:
-            #plain old rectangle
+            # plain old rectangle
             self._canvas.rect(
-                    rect.x, rect.y,
-                    rect.width, rect.height,
-                    stroke=self._stroke,
-                    fill=self._fill
-                    )
+                rect.x, rect.y,
+                rect.width, rect.height,
+                stroke=self._stroke,
+                fill=self._fill
+            )
         else:
-            #cheat and assume ry = rx; better to generalize
-            #pdfgen roundRect function.  TODO
+            # cheat and assume ry = rx; better to generalize
+            # pdfgen roundRect function.  TODO
             self._canvas.roundRect(
-                    rect.x, rect.y,
-                    rect.width, rect.height, rect.rx,
-                    fill=self._fill,
-                    stroke=self._stroke
-                    )
+                rect.x, rect.y,
+                rect.width, rect.height, rect.rx,
+                fill=self._fill,
+                stroke=self._stroke
+            )
 
     def drawImage(self, image):
         path = image.path
         # currently not implemented in other renderers
-        if path and (hasattr(path,'mode') or os.path.exists(image.path)):
+        if path and (hasattr(path, 'mode') or os.path.exists(image.path)):
             self._canvas.drawInlineImage(
-                    path,
-                    image.x, image.y,
-                    image.width, image.height
-                    )
+                path,
+                image.x, image.y,
+                image.width, image.height
+            )
 
     def drawLine(self, line):
         if self._stroke:
             self._canvas.line(line.x1, line.y1, line.x2, line.y2)
 
     def drawCircle(self, circle):
-            self._canvas.circle(
-                    circle.cx, circle.cy, circle.r,
-                    fill=self._fill,
-                    stroke=self._stroke
-                    )
+        self._canvas.circle(
+            circle.cx, circle.cy, circle.r,
+            fill=self._fill,
+            stroke=self._stroke
+        )
 
     def drawPolyLine(self, polyline):
         if self._stroke:
-            assert len(polyline.points) >= 2, 'Polyline must have 2 or more points'
+            assert len(
+                polyline.points) >= 2, 'Polyline must have 2 or more points'
             head, tail = polyline.points[0:2], polyline.points[2:],
             path = self._canvas.beginPath()
             path.moveTo(head[0], head[1])
             for i in range(0, len(tail), 2):
-                path.lineTo(tail[i], tail[i+1])
+                path.lineTo(tail[i], tail[i + 1])
             self._canvas.drawPath(path)
 
     def drawWedge(self, wedge):
         centerx, centery, radius, startangledegrees, endangledegrees = \
-         wedge.centerx, wedge.centery, wedge.radius, wedge.startangledegrees, wedge.endangledegrees
+            wedge.centerx, wedge.centery, wedge.radius, wedge.startangledegrees, wedge.endangledegrees
         yradius, radius1, yradius1 = wedge._xtraRadii()
-        if yradius is None: yradius = radius
-        angle = endangledegrees-startangledegrees
+        if yradius is None:
+            yradius = radius
+        angle = endangledegrees - startangledegrees
         path = self._canvas.beginPath()
-        if (radius1==0 or radius1 is None) and (yradius1==0 or yradius1 is None):
+        if (radius1 == 0 or radius1 is None) and (
+                yradius1 == 0 or yradius1 is None):
             path.moveTo(centerx, centery)
-            path.arcTo(centerx-radius, centery-yradius, centerx+radius, centery+yradius,
-                   startangledegrees, angle)
+            path.arcTo(
+                centerx -
+                radius,
+                centery -
+                yradius,
+                centerx +
+                radius,
+                centery +
+                yradius,
+                startangledegrees,
+                angle)
         else:
-            path.arc(centerx-radius, centery-yradius, centerx+radius, centery+yradius,
-                   startangledegrees, angle)
-            path.arcTo(centerx-radius1, centery-yradius1, centerx+radius1, centery+yradius1,
-                   endangledegrees, -angle)
+            path.arc(
+                centerx -
+                radius,
+                centery -
+                yradius,
+                centerx +
+                radius,
+                centery +
+                yradius,
+                startangledegrees,
+                angle)
+            path.arcTo(centerx -
+                       radius1, centery -
+                       yradius1, centerx +
+                       radius1, centery +
+                       yradius1, endangledegrees, -
+                       angle)
         path.close()
         self._canvas.drawPath(path,
-                    fill=self._fill,
-                    stroke=self._stroke)
+                              fill=self._fill,
+                              stroke=self._stroke)
 
     def drawEllipse(self, ellipse):
-        #need to convert to pdfgen's bounding box representation
+        # need to convert to pdfgen's bounding box representation
         x1 = ellipse.cx - ellipse.rx
         x2 = ellipse.cx + ellipse.rx
         y1 = ellipse.cy - ellipse.ry
         y2 = ellipse.cy + ellipse.ry
-        self._canvas.ellipse(x1,y1,x2,y2,fill=self._fill,stroke=self._stroke)
+        self._canvas.ellipse(
+            x1,
+            y1,
+            x2,
+            y2,
+            fill=self._fill,
+            stroke=self._stroke)
 
     def drawPolygon(self, polygon):
         assert len(polygon.points) >= 2, 'Polyline must have 2 or more points'
@@ -143,37 +183,49 @@ class _PDFRenderer(Renderer):
         path = self._canvas.beginPath()
         path.moveTo(head[0], head[1])
         for i in range(0, len(tail), 2):
-            path.lineTo(tail[i], tail[i+1])
+            path.lineTo(tail[i], tail[i + 1])
         path.close()
         self._canvas.drawPath(
-                            path,
-                            stroke=self._stroke,
-                            fill=self._fill
-                            )
+            path,
+            stroke=self._stroke,
+            fill=self._fill
+        )
 
     def drawString(self, stringObj):
         if self._fill:
             S = self._tracker.getState()
-            text_anchor, x, y, text, enc = S['textAnchor'], stringObj.x,stringObj.y,stringObj.text, stringObj.encoding
-            if not text_anchor in ['start','inherited']:
+            text_anchor, x, y, text, enc = S[
+                'textAnchor'], stringObj.x, stringObj.y, stringObj.text, stringObj.encoding
+            if not text_anchor in ['start', 'inherited']:
                 font, font_size = S['fontName'], S['fontSize']
                 textLen = stringWidth(text, font, font_size, enc)
-                if text_anchor=='end':
+                if text_anchor == 'end':
                     x -= textLen
-                elif text_anchor=='middle':
-                    x -= textLen*0.5
-                elif text_anchor=='numeric':
-                    x -= numericXShift(text_anchor,text,textLen,font,font_size,enc)
+                elif text_anchor == 'middle':
+                    x -= textLen * 0.5
+                elif text_anchor == 'numeric':
+                    x -= numericXShift(text_anchor,
+                                       text,
+                                       textLen,
+                                       font,
+                                       font_size,
+                                       enc)
                 else:
-                    raise ValueError('bad value for textAnchor '+str(text_anchor))
-            t = self._canvas.beginText(x,y)
+                    raise ValueError(
+                        'bad value for textAnchor ' +
+                        str(text_anchor))
+            t = self._canvas.beginText(x, y)
             t.textLine(text)
             self._canvas.drawText(t)
 
     def drawPath(self, path):
         from reportlab.graphics.shapes import _renderPath
         pdfPath = self._canvas.beginPath()
-        drawFuncs = (pdfPath.moveTo, pdfPath.lineTo, pdfPath.curveTo, pdfPath.close)
+        drawFuncs = (
+            pdfPath.moveTo,
+            pdfPath.lineTo,
+            pdfPath.curveTo,
+            pdfPath.close)
         isClosed = _renderPath(path, drawFuncs)
         if isClosed:
             fill = self._fill
@@ -183,13 +235,13 @@ class _PDFRenderer(Renderer):
             self._canvas.clipPath(pdfPath, fill=fill, stroke=self._stroke)
         else:
             self._canvas.drawPath(pdfPath,
-                        fill=fill,
-                        stroke=self._stroke)
+                                  fill=fill,
+                                  stroke=self._stroke)
 
-    def setStrokeColor(self,c):
+    def setStrokeColor(self, c):
         self._canvas.setStrokeColor(c)
 
-    def setFillColor(self,c):
+    def setFillColor(self, c):
         self._canvas.setFillColor(c)
 
     def applyStateChanges(self, delta, newState):
@@ -198,11 +250,11 @@ class _PDFRenderer(Renderer):
         for key, value in delta.items():
             if key == 'transform':
                 self._canvas.transform(value[0], value[1], value[2],
-                                 value[3], value[4], value[5])
+                                       value[3], value[4], value[5])
             elif key == 'strokeColor':
-                #this has different semantics in PDF to SVG;
-                #we always have a color, and either do or do
-                #not apply it; in SVG one can have a 'None' color
+                # this has different semantics in PDF to SVG;
+                # we always have a color, and either do or do
+                # not apply it; in SVG one can have a 'None' color
                 if value is None:
                     self._stroke = 0
                 else:
@@ -210,7 +262,7 @@ class _PDFRenderer(Renderer):
                     self.setStrokeColor(value)
             elif key == 'strokeWidth':
                 self._canvas.setLineWidth(value)
-            elif key == 'strokeLineCap':  #0,1,2
+            elif key == 'strokeLineCap':  # 0,1,2
                 self._canvas.setLineCap(value)
             elif key == 'strokeLineJoin':
                 self._canvas.setLineJoin(value)
@@ -218,18 +270,20 @@ class _PDFRenderer(Renderer):
 #                self._canvas.setDash(array=value)
             elif key == 'strokeDashArray':
                 if value:
-                    if isinstance(value,(list,tuple)) and len(value)==2 and isinstance(value[1],(tuple,list)):
+                    if isinstance(
+                            value, (list, tuple)) and len(value) == 2 and isinstance(
+                            value[1], (tuple, list)):
                         phase = value[0]
                         value = value[1]
                     else:
                         phase = 0
-                    self._canvas.setDash(value,phase)
+                    self._canvas.setDash(value, phase)
                 else:
                     self._canvas.setDash()
             elif key == 'fillColor':
-                #this has different semantics in PDF to SVG;
-                #we always have a color, and either do or do
-                #not apply it; in SVG one can have a 'None' color
+                # this has different semantics in PDF to SVG;
+                # we always have a color, and either do or do
+                # not apply it; in SVG one can have a 'None' color
                 if value is None:
                     self._fill = 0
                 else:
@@ -242,22 +296,26 @@ class _PDFRenderer(Renderer):
                 fontname = delta.get('fontName', self._canvas._fontname)
                 fontsize = delta.get('fontSize', self._canvas._fontsize)
                 self._canvas.setFont(fontname, fontsize)
-            elif key=='fillOpacity':
+            elif key == 'fillOpacity':
                 if value is not None:
                     self._canvas.setFillAlpha(value)
-            elif key=='strokeOpacity':
+            elif key == 'strokeOpacity':
                 if value is not None:
                     self._canvas.setStrokeAlpha(value)
-            elif key=='fillOverprint':
+            elif key == 'fillOverprint':
                 self._canvas.setFillOverprint(value)
-            elif key=='strokeOverprint':
+            elif key == 'strokeOverprint':
                 self._canvas.setStrokeOverprint(value)
-            elif key=='overprintMask':
+            elif key == 'overprintMask':
                 self._canvas.setOverprintMask(value)
 
 from reportlab.platypus import Flowable
+
+
 class GraphicsFlowable(Flowable):
+
     """Flowable wrapper around a Pingo drawing"""
+
     def __init__(self, drawing):
         self.drawing = drawing
         self.width = self.drawing.width
@@ -265,6 +323,7 @@ class GraphicsFlowable(Flowable):
 
     def draw(self):
         draw(self.drawing, self.canv, 0, 0)
+
 
 def drawToFile(d, fn, msg="", showBoundary=rl_config._unset_, autoSize=1):
     """Makes a one-page PDF with just the drawing.
@@ -284,7 +343,7 @@ def drawToFile(d, fn, msg="", showBoundary=rl_config._unset_, autoSize=1):
         c.setPageSize((d.width, d.height))
         draw(d, c, 0, 0, showBoundary=showBoundary)
     else:
-        #show with a title
+        # show with a title
         c.setFont(rl_config.defaultGraphicsFontName, 12)
         y = 740
         i = 1
@@ -293,18 +352,20 @@ def drawToFile(d, fn, msg="", showBoundary=rl_config._unset_, autoSize=1):
 
     c.showPage()
     c.save()
-    if sys.platform=='mac' and not hasattr(fn, "write"):
+    if sys.platform == 'mac' and not hasattr(fn, "write"):
         try:
-            import macfs, macostools
+            import macfs
+            import macostools
             macfs.FSSpec(fn).SetCreatorType("CARO", "PDF ")
             macostools.touched(fn)
         except:
             pass
 
-def drawToString(d, msg="", showBoundary=rl_config._unset_,autoSize=1):
+
+def drawToString(d, msg="", showBoundary=rl_config._unset_, autoSize=1):
     "Returns a PDF as a string in memory, without touching the disk"
     s = getBytesIO()
-    drawToFile(d, s, msg=msg, showBoundary=showBoundary,autoSize=autoSize)
+    drawToFile(d, s, msg=msg, showBoundary=showBoundary, autoSize=autoSize)
     return s.getvalue()
 
 #########################################################
@@ -313,13 +374,15 @@ def drawToString(d, msg="", showBoundary=rl_config._unset_,autoSize=1):
 #   Routine to draw them comes at the end.
 #
 #########################################################
-def test(outDir='pdfout',shout=False):
+
+
+def test(outDir='pdfout', shout=False):
     from reportlab.graphics.shapes import _baseGFontName, _baseGFontNameBI
     from reportlab.rl_config import verbose
     import os
     if not os.path.isdir(outDir):
         os.mkdir(outDir)
-    fn = os.path.join(outDir,'renderPDF.pdf')
+    fn = os.path.join(outDir, 'renderPDF.pdf')
     c = Canvas(fn)
     c.setFont(_baseGFontName, 36)
     c.drawString(80, 750, 'Graphics Test')
@@ -327,29 +390,29 @@ def test(outDir='pdfout',shout=False):
     # print all drawings and their doc strings from the test
     # file
 
-    #grab all drawings from the test module
+    # grab all drawings from the test module
     from reportlab.graphics import testshapes
     drawings = []
     for funcname in dir(testshapes):
         if funcname[0:10] == 'getDrawing':
-            drawing = eval('testshapes.' + funcname + '()')  #execute it
+            drawing = eval('testshapes.' + funcname + '()')  # execute it
             docstring = eval('testshapes.' + funcname + '.__doc__')
             drawings.append((drawing, docstring))
 
-    #print in a loop, with their doc strings
+    # print in a loop, with their doc strings
     c.setFont(_baseGFontName, 12)
     y = 740
     i = 1
     for (drawing, docstring) in drawings:
         assert (docstring is not None), "Drawing %d has no docstring!" % i
-        if y < 300:  #allows 5-6 lines of text
+        if y < 300:  # allows 5-6 lines of text
             c.showPage()
             y = 740
         # draw a title
         y = y - 30
-        c.setFont(_baseGFontNameBI,12)
+        c.setFont(_baseGFontNameBI, 12)
         c.drawString(80, y, 'Drawing %d' % i)
-        c.setFont(_baseGFontName,12)
+        c.setFont(_baseGFontName, 12)
         y = y - 14
         textObj = c.beginText(80, y)
         textObj.textLines(docstring)
@@ -358,13 +421,14 @@ def test(outDir='pdfout',shout=False):
         y = y - drawing.height
         draw(drawing, c, 80, y)
         i = i + 1
-    if y!=740: c.showPage()
+    if y != 740:
+        c.showPage()
 
     c.save()
-    if shout or verbose>2:
+    if shout or verbose > 2:
         print('saved %s' % ascii(fn))
 
-##def testFlowable():
+# def testFlowable():
 ##    """Makes a platypus document"""
 ##    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 ##    from reportlab.lib.styles import getSampleStyleSheet
@@ -378,24 +442,24 @@ def test(outDir='pdfout',shout=False):
 ##    import testdrawings
 ##    drawings = []
 ##
-##    for funcname in dir(testdrawings):
-##        if funcname[0:10] == 'getDrawing':
-##            drawing = eval('testdrawings.' + funcname + '()')  #execute it
+# for funcname in dir(testdrawings):
+# if funcname[0:10] == 'getDrawing':
+# drawing = eval('testdrawings.' + funcname + '()')  #execute it
 ##            docstring = eval('testdrawings.' + funcname + '.__doc__')
 ##            story.append(Paragraph(docstring, styNormal))
-##            story.append(Spacer(18,18))
-##            story.append(drawing)
-##            story.append(Spacer(36,36))
+# story.append(Spacer(18,18))
+# story.append(drawing)
+# story.append(Spacer(36,36))
 ##
-##    doc.build(story)
-##    print 'saves test_flowable.pdf'
+# doc.build(story)
+# print 'saves test_flowable.pdf'
 
-if __name__=='__main__':
+if __name__ == '__main__':
     test(shout=True)
     import sys
-    if len(sys.argv)>1:
+    if len(sys.argv) > 1:
         outdir = sys.argv[1]
     else:
         outdir = 'pdfout'
-    test(outdir,shout=True)
-    #testFlowable()
+    test(outdir, shout=True)
+    # testFlowable()

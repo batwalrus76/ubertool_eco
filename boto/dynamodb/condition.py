@@ -25,6 +25,7 @@ from boto.dynamodb.types import dynamize_value
 
 
 class Condition(object):
+
     """
     Base class for conditions.  Doesn't do a darn thing but allows
     is to test if something is a Condition instance or not.
@@ -34,7 +35,9 @@ class Condition(object):
         if isinstance(other, Condition):
             return self.to_dict() == other.to_dict()
 
+
 class ConditionNoArgs(Condition):
+
     """
     Abstract class for Conditions that require no arguments, such
     as NULL or NOT_NULL.
@@ -48,6 +51,7 @@ class ConditionNoArgs(Condition):
 
 
 class ConditionOneArg(Condition):
+
     """
     Abstract class for Conditions that require a single argument
     such as EQ or NE.
@@ -65,6 +69,7 @@ class ConditionOneArg(Condition):
 
 
 class ConditionTwoArgs(Condition):
+
     """
     Abstract class for Conditions that require two arguments.
     The only example of this currently is BETWEEN.
@@ -84,6 +89,7 @@ class ConditionTwoArgs(Condition):
 
 
 class ConditionSeveralArgs(Condition):
+
     """
     Abstract class for conditions that require several argument (ex: IN).
     """
@@ -93,7 +99,7 @@ class ConditionSeveralArgs(Condition):
 
     def __repr__(self):
         return '{0}({1})'.format(self.__class__.__name__,
-                               ', '.join(self.values))
+                                 ', '.join(self.values))
 
     def to_dict(self):
         return {'AttributeValueList': [dynamize_value(v) for v in self.values],

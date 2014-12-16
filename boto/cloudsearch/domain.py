@@ -31,13 +31,15 @@ from .optionstatus import RankExpressionStatus
 from .document import DocumentServiceConnection
 from .search import SearchConnection
 
+
 def handle_bool(value):
     if value in [True, 'true', 'True', 'TRUE', 1]:
         return True
     return False
 
-            
+
 class Domain(object):
+
     """
     A Cloudsearch domain.
 
@@ -118,7 +120,7 @@ class Domain(object):
     @created.setter
     def created(self, value):
         self._created = handle_bool(value)
-            
+
     @property
     def deleted(self):
         return self._deleted
@@ -126,7 +128,7 @@ class Domain(object):
     @deleted.setter
     def deleted(self, value):
         self._deleted = handle_bool(value)
-            
+
     @property
     def processing(self):
         return self._processing
@@ -134,7 +136,7 @@ class Domain(object):
     @processing.setter
     def processing(self, value):
         self._processing = handle_bool(value)
-            
+
     @property
     def requires_index_documents(self):
         return self._requires_index_documents
@@ -142,7 +144,7 @@ class Domain(object):
     @requires_index_documents.setter
     def requires_index_documents(self, value):
         self._requires_index_documents = handle_bool(value)
-            
+
     @property
     def search_partition_count(self):
         return self._search_partition_count
@@ -150,7 +152,7 @@ class Domain(object):
     @search_partition_count.setter
     def search_partition_count(self, value):
         self._search_partition_count = int(value)
-            
+
     @property
     def search_instance_count(self):
         return self._search_instance_count
@@ -158,7 +160,7 @@ class Domain(object):
     @search_instance_count.setter
     def search_instance_count(self, value):
         self._search_instance_count = int(value)
-            
+
     @property
     def num_searchable_docs(self):
         return self._num_searchable_docs
@@ -166,7 +168,7 @@ class Domain(object):
     @num_searchable_docs.setter
     def num_searchable_docs(self, value):
         self._num_searchable_docs = int(value)
-            
+
     @property
     def name(self):
         return self.domain_name
@@ -217,9 +219,11 @@ class Domain(object):
         representing the currently defined access policies for
         the domain.
         """
-        return ServicePoliciesStatus(self, None,
-                                     self.layer1.describe_service_access_policies,
-                                     self.layer1.update_service_access_policies)
+        return ServicePoliciesStatus(
+            self,
+            None,
+            self.layer1.describe_service_access_policies,
+            self.layer1.update_service_access_policies)
 
     def index_documents(self):
         """
@@ -238,9 +242,15 @@ class Domain(object):
         data = self.layer1.describe_index_fields(self.name, field_names)
         return [IndexFieldStatus(self, d) for d in data]
 
-    def create_index_field(self, field_name, field_type,
-        default='', facet=False, result=False, searchable=False,
-        source_attributes=[]):
+    def create_index_field(
+            self,
+            field_name,
+            field_type,
+            default='',
+            facet=False,
+            result=False,
+            searchable=False,
+            source_attributes=[]):
         """
         Defines an ``IndexField``, either replacing an existing
         definition or creating a new one.
@@ -307,11 +317,15 @@ class Domain(object):
         :raises: BaseException, InternalException, LimitExceededException,
             InvalidTypeException, ResourceNotFoundException
         """
-        data = self.layer1.define_index_field(self.name, field_name,
-                                              field_type, default=default,
-                                              facet=facet, result=result,
-                                              searchable=searchable,
-                                              source_attributes=source_attributes)
+        data = self.layer1.define_index_field(
+            self.name,
+            field_name,
+            field_type,
+            default=default,
+            facet=facet,
+            result=result,
+            searchable=searchable,
+            source_attributes=source_attributes)
         return IndexFieldStatus(self, data,
                                 self.layer1.describe_index_fields)
 
@@ -326,7 +340,7 @@ class Domain(object):
     def create_rank_expression(self, name, expression):
         """
         Create a new rank expression.
-        
+
         :type rank_name: string
         :param rank_name: The name of an expression computed for ranking
             while processing a search request.
@@ -391,4 +405,3 @@ class Domain(object):
 
     def __repr__(self):
         return '<Domain: %s>' % self.domain_name
-

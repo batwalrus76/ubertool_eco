@@ -25,9 +25,11 @@ from boto.s3.connection import SubdomainCallingFormat
 from boto.s3.connection import check_lowercase_bucketname
 from boto.utils import get_utf8_value
 
+
 class Location(object):
     DEFAULT = 'US'
     EU = 'EU'
+
 
 class GSConnection(S3Connection):
 
@@ -40,11 +42,25 @@ class GSConnection(S3Connection):
                  host=DefaultHost, debug=0, https_connection_factory=None,
                  calling_format=SubdomainCallingFormat(), path='/',
                  suppress_consec_slashes=True):
-        super(GSConnection, self).__init__(gs_access_key_id, gs_secret_access_key,
-                 is_secure, port, proxy, proxy_port, proxy_user, proxy_pass,
-                 host, debug, https_connection_factory, calling_format, path,
-                 "google", Bucket,
-                 suppress_consec_slashes=suppress_consec_slashes)
+        super(
+            GSConnection,
+            self).__init__(
+            gs_access_key_id,
+            gs_secret_access_key,
+            is_secure,
+            port,
+            proxy,
+            proxy_port,
+            proxy_user,
+            proxy_pass,
+            host,
+            debug,
+            https_connection_factory,
+            calling_format,
+            path,
+            "google",
+            Bucket,
+            suppress_consec_slashes=suppress_consec_slashes)
 
     def create_bucket(self, bucket_name, headers=None,
                       location=Location.DEFAULT, policy=None,
@@ -78,7 +94,7 @@ class GSConnection(S3Connection):
             if headers:
                 headers[self.provider.acl_header] = policy
             else:
-                headers = {self.provider.acl_header : policy}
+                headers = {self.provider.acl_header: policy}
         if not location:
             location = Location.DEFAULT
         location_elem = ('<LocationConstraint>%s</LocationConstraint>'
@@ -89,7 +105,7 @@ class GSConnection(S3Connection):
         else:
             storage_class_elem = ''
         data = ('<CreateBucketConfiguration>%s%s</CreateBucketConfiguration>'
-                 % (location_elem, storage_class_elem))
+                % (location_elem, storage_class_elem))
         response = self.make_request(
             'PUT', get_utf8_value(bucket_name), headers=headers,
             data=get_utf8_value(data))

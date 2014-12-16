@@ -1,11 +1,11 @@
 SymbolEncoding = (
-                    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-                    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 'space',
-                    'exclam', 'universal', 'numbersign', 'existential', 'percent', 'ampersand', 'suchthat',
-                    'parenleft', 'parenright', 'asteriskmath', 'plus', 'comma', 'minus', 'period', 'slash', 'zero',
-                    'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'colon', 'semicolon',
-                    'less', 'equal', 'greater', 'question', 'congruent', 'Alpha', 'Beta', 'Chi', 'Delta', 'Epsilon',
-                    'Phi', 'Gamma', 'Eta', 'Iota', 'theta1', 'Kappa', 'Lambda', 'Mu', 'Nu', 'Omicron', 'Pi', 'Theta',
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 'space',
+    'exclam', 'universal', 'numbersign', 'existential', 'percent', 'ampersand', 'suchthat',
+    'parenleft', 'parenright', 'asteriskmath', 'plus', 'comma', 'minus', 'period', 'slash', 'zero',
+    'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'colon', 'semicolon',
+    'less', 'equal', 'greater', 'question', 'congruent', 'Alpha', 'Beta', 'Chi', 'Delta', 'Epsilon',
+    'Phi', 'Gamma', 'Eta', 'Iota', 'theta1', 'Kappa', 'Lambda', 'Mu', 'Nu', 'Omicron', 'Pi', 'Theta',
                     'Rho', 'Sigma', 'Tau', 'Upsilon', 'sigma1', 'Omega', 'Xi', 'Psi', 'Zeta', 'bracketleft',
                     'therefore', 'bracketright', 'perpendicular', 'underscore', 'radicalex', 'alpha', 'beta', 'chi',
                     'delta', 'epsilon', 'phi', 'gamma', 'eta', 'iota', 'phi1', 'kappa', 'lambda', 'mu', 'nu',
@@ -27,4 +27,3 @@ SymbolEncoding = (
                     'braceex', None, 'angleright', 'integral', 'integraltp', 'integralex', 'integralbt',
                     'parenrighttp', 'parenrightex', 'parenrightbt', 'bracketrighttp', 'bracketrightex',
                     'bracketrightbt', 'bracerighttp', 'bracerightmid', 'bracerightbt', None)
-

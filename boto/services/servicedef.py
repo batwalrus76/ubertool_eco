@@ -23,9 +23,14 @@ from boto.pyami.config import Config
 from boto.services.message import ServiceMessage
 import boto
 
+
 class ServiceDef(Config):
 
-    def __init__(self, config_file, aws_access_key_id=None, aws_secret_access_key=None):
+    def __init__(
+            self,
+            config_file,
+            aws_access_key_id=None,
+            aws_secret_access_key=None):
         super(ServiceDef, self).__init__(config_file)
         self.aws_access_key_id = aws_access_key_id
         self.aws_secret_access_key = aws_secret_access_key
@@ -34,7 +39,6 @@ class ServiceDef(Config):
             self.name = script.split('.')[-1]
         else:
             self.name = None
-
 
     def get(self, name, default=None):
         return super(ServiceDef, self).get(self.name, name, default)
@@ -87,5 +91,3 @@ class ServiceDef(Config):
         else:
             obj = None
         return obj
-
-

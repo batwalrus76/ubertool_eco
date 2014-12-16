@@ -10,5 +10,7 @@ from models.agdrift import agdrift_parameters
 from models.therps import therps_parameters
 
 
-class Agdrift_TherpsInp(agdrift_parameters.AgdriftInp, therps_parameters.TherpsInp):
+class Agdrift_TherpsInp(
+        agdrift_parameters.AgdriftInp,
+        therps_parameters.TherpsInp):
     pass

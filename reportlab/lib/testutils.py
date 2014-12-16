@@ -1,10 +1,10 @@
-#Copyright ReportLab Europe Ltd. 2000-2013
-#see license.txt for license details
+# Copyright ReportLab Europe Ltd. 2000-2013
+# see license.txt for license details
 import reportlab
-reportlab._rl_testing=True
+reportlab._rl_testing = True
 del reportlab
-__version__='''$Id$'''
-__doc__="""Provides support for the test suite.
+__version__ = '''$Id$'''
+__doc__ = """Provides support for the test suite.
 
 The test suite as a whole, and individual tests, need to share
 certain support functions.  We have to put these in here so they
@@ -12,7 +12,10 @@ can always be imported, and so that individual tests need to import
 nothing more than "reportlab.whatever..."
 """
 
-import sys, os, fnmatch, re
+import sys
+import os
+import fnmatch
+import re
 try:
     from configparser import ConfigParser
 except ImportError:
@@ -21,6 +24,8 @@ import unittest
 from reportlab.lib.utils import isCompactDistro, __loader__, rl_isdir, asUnicode
 
 # Helper functions.
+
+
 def isWritable(D):
     try:
         fn = '00DELETE.ME'
@@ -36,13 +41,16 @@ def isWritable(D):
 _OUTDIR = None
 RL_HOME = None
 testsFolder = None
+
+
 def setOutDir(name):
     """Is it a writable file system distro being invoked within
     test directory?  If so, can write test output here.  If not,
     it had better go in a temp directory.  Only do this once per
     process"""
     global _OUTDIR, RL_HOME, testsFolder
-    if _OUTDIR: return _OUTDIR
+    if _OUTDIR:
+        return _OUTDIR
     D = [d[9:] for d in sys.argv if d.startswith('--outdir=')]
     if D:
         _OUTDIR = D[-1]
@@ -50,33 +58,38 @@ def setOutDir(name):
             os.makedirs(_OUTDIR)
         except:
             pass
-        for d in D: sys.argv.remove(d)
+        for d in D:
+            sys.argv.remove(d)
     else:
-        assert name=='__main__',"setOutDir should only be called in the main script"
-        scriptDir=os.path.dirname(sys.argv[0])
-        if not scriptDir: scriptDir=os.getcwd()
+        assert name == '__main__', "setOutDir should only be called in the main script"
+        scriptDir = os.path.dirname(sys.argv[0])
+        if not scriptDir:
+            scriptDir = os.getcwd()
         _OUTDIR = scriptDir
 
     if not isWritable(_OUTDIR):
         _OUTDIR = get_rl_tempdir('reportlab_test')
 
     import reportlab
-    RL_HOME=reportlab.__path__[0]
-    if not os.path.isabs(RL_HOME): RL_HOME=os.path.normpath(os.path.abspath(RL_HOME))
+    RL_HOME = reportlab.__path__[0]
+    if not os.path.isabs(RL_HOME):
+        RL_HOME = os.path.normpath(os.path.abspath(RL_HOME))
     topDir = os.path.dirname(RL_HOME)
-    testsFolder = os.path.join(topDir,'tests')
+    testsFolder = os.path.join(topDir, 'tests')
     if not os.path.isdir(testsFolder):
-        testsFolder = os.path.join(os.path.dirname(topDir),'tests')
+        testsFolder = os.path.join(os.path.dirname(topDir), 'tests')
     if not os.path.isdir(testsFolder):
-        if name=='__main__':
-            scriptDir=os.path.dirname(sys.argv[0])
-            if not scriptDir: scriptDir=os.getcwd()
+        if name == '__main__':
+            scriptDir = os.path.dirname(sys.argv[0])
+            if not scriptDir:
+                scriptDir = os.getcwd()
             testsFolder = os.path.abspath(scriptDir)
         else:
             testsFolder = None
     if testsFolder:
-        sys.path.insert(0,os.path.dirname(testsFolder))
+        sys.path.insert(0, os.path.dirname(testsFolder))
     return _OUTDIR
+
 
 def outputfile(fn):
     """This works out where to write test output.  If running
@@ -85,14 +98,17 @@ def outputfile(fn):
     normally be a file called 'test_foo.pdf', next door.
     """
     D = setOutDir(__name__)
-    if fn: D = os.path.join(D,fn)
+    if fn:
+        D = os.path.join(D, fn)
     return D
 
+
 def printLocation(depth=1):
-    if sys._getframe(depth).f_locals.get('__name__')=='__main__':
+    if sys._getframe(depth).f_locals.get('__name__') == '__main__':
         outDir = outputfile('')
-        if outDir!=_OUTDIR:
+        if outDir != _OUTDIR:
             print('Logs and output files written to folder "%s"' % outDir)
+
 
 def makeSuiteForClasses(*classes):
     "Return a test suite with tests loaded from provided classes."
@@ -102,6 +118,7 @@ def makeSuiteForClasses(*classes):
     for C in classes:
         suite.addTest(loader.loadTestsFromTestCase(C))
     return suite
+
 
 def getCVSEntries(folder, files=1, folders=0):
     """Returns a list of filenames as listed in the CVS/Entries file.
@@ -134,6 +151,7 @@ def getCVSEntries(folder, files=1, folders=0):
 
 # Still experimental class extending ConfigParser's behaviour.
 class ExtConfigParser(ConfigParser):
+
     "A slightly extended version to return lists of strings."
 
     pat = re.compile('\s*\[.*\]\s*')
@@ -157,26 +175,32 @@ class ExtConfigParser(ConfigParser):
 # to be able to filter filenames.
 
 class GlobDirectoryWalker:
+
     "A forward iterator that traverses files in a directory tree."
 
     def __init__(self, directory, pattern='*'):
         self.index = 0
         self.pattern = pattern
-        directory.replace('/',os.sep)
+        directory.replace('/', os.sep)
         if os.path.isdir(directory):
             self.stack = [directory]
             self.files = []
         else:
-            if not isCompactDistro() or not __loader__ or not rl_isdir(directory):
+            if not isCompactDistro() or not __loader__ or not rl_isdir(
+                    directory):
                 raise ValueError('"%s" is not a directory' % directory)
-            self.directory = directory[len(__loader__.archive)+len(os.sep):]
-            pfx = self.directory+os.sep
+            self.directory = directory[len(__loader__.archive) + len(os.sep):]
+            pfx = self.directory + os.sep
             n = len(pfx)
-            self.files = list(map(lambda x, n=n: x[n:],list(filter(lambda x,pfx=pfx: x.startswith(pfx),list(__loader__._files.keys())))))
+            self.files = list(map(lambda x,
+                                  n=n: x[n:],
+                                  list(filter(lambda x,
+                                              pfx=pfx: x.startswith(pfx),
+                                              list(__loader__._files.keys())))))
             self.stack = []
 
     def __getitem__(self, index):
-        while 1:
+        while True:
             try:
                 file = self.files[self.index]
                 self.index = self.index + 1
@@ -202,20 +226,20 @@ class GlobDirectoryWalker:
 
 
 class RestrictedGlobDirectoryWalker(GlobDirectoryWalker):
+
     "An restricted directory tree iterator."
 
     def __init__(self, directory, pattern='*', ignore=None):
         GlobDirectoryWalker.__init__(self, directory, pattern)
 
-        if ignore == None:
+        if ignore is None:
             ignore = []
         self.ignoredPatterns = []
-        if type(ignore) == type([]):
+        if isinstance(ignore, type([])):
             for p in ignore:
                 self.ignoredPatterns.append(p)
-        elif type(ignore) == type(''):
+        elif isinstance(ignore, type('')):
             self.ignoredPatterns.append(ignore)
-
 
     def filterFiles(self, folder, files):
         "Filters all items from files matching patterns to ignore."
@@ -234,6 +258,7 @@ class RestrictedGlobDirectoryWalker(GlobDirectoryWalker):
 
 
 class CVSGlobDirectoryWalker(GlobDirectoryWalker):
+
     "An directory tree iterator that checks for CVS data."
 
     def filterFiles(self, folder, files):
@@ -262,6 +287,7 @@ class CVSGlobDirectoryWalker(GlobDirectoryWalker):
 # An experimental untested base class with additional 'security'.
 
 class SecureTestCase(unittest.TestCase):
+
     """Secure testing base class with additional pre- and postconditions.
 
     We try to ensure that each test leaves the environment it has
@@ -286,21 +312,26 @@ class SecureTestCase(unittest.TestCase):
         sys.path = self._initialPath
         os.chdir(self._initialWorkDir)
 
+
 class NearTestCase(unittest.TestCase):
-    def assertNear(a,b,accuracy=1e-5):
-        if isinstance(a,(float,int)):
-            if abs(a-b)>accuracy:
+
+    def assertNear(a, b, accuracy=1e-5):
+        if isinstance(a, (float, int)):
+            if abs(a - b) > accuracy:
                 raise AssertionError("%s not near %s" % (a, b))
         else:
-            for ae,be in zip(a,b):
-                if abs(ae-be)>accuracy:
+            for ae, be in zip(a, b):
+                if abs(ae - be) > accuracy:
                     raise AssertionError("%s not near %s" % (a, b))
     assertNear = staticmethod(assertNear)
 
+
 class ScriptThatMakesFileTest(unittest.TestCase):
+
     """Runs a Python script at OS level, expecting it to produce a file.
 
     It CDs to the working directory to run the script."""
+
     def __init__(self, scriptDir, scriptName, outFileName, verbose=0):
         self.scriptDir = scriptDir
         self.scriptName = scriptName
@@ -312,12 +343,13 @@ class ScriptThatMakesFileTest(unittest.TestCase):
     def setUp(self):
         self.cwd = os.getcwd()
         global testsFolder
-        scriptDir=self.scriptDir
+        scriptDir = self.scriptDir
         if not os.path.isabs(scriptDir):
-            scriptDir=os.path.join(testsFolder,scriptDir)
+            scriptDir = os.path.join(testsFolder, scriptDir)
 
         os.chdir(scriptDir)
-        assert os.path.isfile(self.scriptName), "Script %s not found!" % self.scriptName
+        assert os.path.isfile(
+            self.scriptName), "Script %s not found!" % self.scriptName
         if os.path.isfile(self.outFileName):
             os.remove(self.outFileName)
 
@@ -325,17 +357,26 @@ class ScriptThatMakesFileTest(unittest.TestCase):
         os.chdir(self.cwd)
 
     def runTest(self):
-        fmt = sys.platform=='win32' and '"%s" %s' or '%s %s'
-        p = os.popen(fmt % (sys.executable,self.scriptName),'r')
+        fmt = sys.platform == 'win32' and '"%s" %s' or '%s %s'
+        p = os.popen(fmt % (sys.executable, self.scriptName), 'r')
         out = p.read()
         if self.verbose:
             print(out)
         status = p.close()
-        assert os.path.isfile(self.outFileName), "File %s not created!" % self.outFileName
+        assert os.path.isfile(
+            self.outFileName), "File %s not created!" % self.outFileName
 
-def equalStrings(a,b,enc='utf8'):
-    return a==b if type(a)==type(b) else asUnicode(a,enc)==asUnicode(b,enc)
 
-def eqCheck(r,x):
-    if r!=x:
-        print('Strings unequal\nexp: %s\ngot: %s' % (ascii(x),ascii(r)))
+def equalStrings(a, b, enc='utf8'):
+    return a == b if isinstance(
+        a,
+        type(b)) else asUnicode(
+        a,
+        enc) == asUnicode(
+            b,
+        enc)
+
+
+def eqCheck(r, x):
+    if r != x:
+        print('Strings unequal\nexp: %s\ngot: %s' % (ascii(x), ascii(r)))

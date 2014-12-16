@@ -18,7 +18,7 @@ def riceOutputPage(request):
     :returns: html code.
     :raises: errors.
     """
-    
+
     import rice_model
 
     version_rice = request.POST.get('version_rice')
@@ -31,8 +31,19 @@ def riceOutputPage(request):
     osed = request.POST.get('osed')
     kd = request.POST.get('Kd')
 
-    rice_obj = rice_model.rice(True,True,version_rice,'single',chemical_name, mai, dsed, 
-        a, pb, dw, osed, kd)
+    rice_obj = rice_model.rice(
+        True,
+        True,
+        version_rice,
+        'single',
+        chemical_name,
+        mai,
+        dsed,
+        a,
+        pb,
+        dw,
+        osed,
+        kd)
 
     import logging
     logging.info(rice_obj)

@@ -36,22 +36,24 @@ from string import digits as string_digits, whitespace as string_whitespace
 from reportlab.lib.utils import asNative
 
 _fim_patterns = {
-    'A' : "||  |  ||",
-    'B' : "| || || |",
-    'C' : "|| | | ||",
-    'D' : "||| | |||",
+    'A': "||  |  ||",
+    'B': "| || || |",
+    'C': "|| | | ||",
+    'D': "||| | |||",
     # XXX There is an E.
     # The below has been seen, but dunno if it is E or not:
     # 'E' : '|||| ||||'
 }
 
 _postnet_patterns = {
-    '1' : "...||",    '2' : "..|.|",    '3' : "..||.",    '4' : ".|..|",
-    '5' : ".|.|.",    '6' : ".||..",    '7' : "|...|",    '8' : "|..|.",
-    '9' : "|.|..",    '0' : "||...",    'S' : "|",
+    '1': "...||", '2': "..|.|", '3': "..||.", '4': ".|..|",
+    '5': ".|.|.", '6': ".||..", '7': "|...|", '8': "|..|.",
+    '9': "|.|..", '0': "||...", 'S': "|",
 }
 
+
 class FIM(Barcode):
+
     """
     FIM (Facing ID Marks) encode only one letter.
     There are currently four defined:
@@ -91,14 +93,15 @@ class FIM(Barcode):
     USPS Publication 25, A Guide to Business Mail Preparation
     http://new.usps.com/cpim/ftp/pubs/pub25.pdf
     """
-    barWidth = inch * (1.0/32.0)
-    spaceWidth = inch * (1.0/16.0)
-    barHeight = inch * (5.0/8.0)
+    barWidth = inch * (1.0 / 32.0)
+    spaceWidth = inch * (1.0 / 16.0)
+    barHeight = inch * (5.0 / 8.0)
     rquiet = inch * (0.25)
-    lquiet = inch * (15.0/32.0)
+    lquiet = inch * (15.0 / 32.0)
     quiet = 0
+
     def __init__(self, value='', **args):
-        value = str(value) if isinstance(value,int) else asNative(value)
+        value = str(value) if isinstance(value, int) else asNative(value)
         for k, v in args.items():
             setattr(self, k, v)
 
@@ -128,7 +131,8 @@ class FIM(Barcode):
         return self.decomposed
 
     def computeSize(self):
-        self._width = (len(self.decomposed) - 1) * self.spaceWidth + self.barWidth
+        self._width = (len(self.decomposed) - 1) * \
+            self.spaceWidth + self.barWidth
         if self.quiet:
             self._width += self.lquiet + self.rquiet
         self._height = self.barHeight
@@ -145,7 +149,9 @@ class FIM(Barcode):
     def _humanText(self):
         return self.value
 
+
 class POSTNET(Barcode):
+
     """
     POSTNET is used in the US to encode "zip codes" (postal codes) on
     mail. It can encode 5, 9, or 11 digit codes. I've read that it's
@@ -162,8 +168,9 @@ class POSTNET(Barcode):
     barHeight = inch * 0.125
     barWidth = inch * 0.018
     spaceWidth = inch * 0.0275
+
     def __init__(self, value='', **args):
-        value = str(value) if isinstance(value,int) else asNative(value)
+        value = str(value) if isinstance(value, int) else asNative(value)
         for k, v in args.items():
             setattr(self, k, v)
 
@@ -211,7 +218,8 @@ class POSTNET(Barcode):
         return self.decomposed
 
     def computeSize(self):
-        self._width = len(self.decomposed) * self.barWidth + (len(self.decomposed) - 1) * self.spaceWidth
+        self._width = len(self.decomposed) * self.barWidth + \
+            (len(self.decomposed) - 1) * self.spaceWidth
         self._height = self.barHeight
 
     def draw(self):

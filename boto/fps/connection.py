@@ -49,7 +49,7 @@ def complex_amounts(*fields):
                                                       self.currencycode)
             return func(self, *args, **kw)
         wrapper.__doc__ = "{0}\nComplex Amounts: {1}".format(func.__doc__,
-                                                 ', '.join(fields))
+                                                             ', '.join(fields))
         return add_attrs_from(func, to=wrapper)
     return decorator
 
@@ -68,7 +68,7 @@ def requires(*groups):
             return func(*args, **kw)
         message = ' OR '.join(['+'.join(g) for g in groups])
         wrapper.__doc__ = "{0}\nRequired: {1}".format(func.__doc__,
-                                                           message)
+                                                      message)
         return add_attrs_from(func, to=wrapper)
     return decorator
 
@@ -117,7 +117,7 @@ class FPSConnection(AWSQueryConnection):
     @needs_caller_reference
     @complex_amounts('SettlementAmount')
     @requires(['CreditInstrumentId', 'SettlementAmount.Value',
-               'SenderTokenId',      'SettlementAmount.CurrencyCode'])
+               'SenderTokenId', 'SettlementAmount.CurrencyCode'])
     @api_action()
     def settle_debt(self, action, response, **kw):
         """
@@ -206,7 +206,7 @@ class FPSConnection(AWSQueryConnection):
                           'SetupPrepaid', 'SetupPostpaid', 'EditToken')
         assert kw['pipelineName'] in validpipelines, "Invalid pipelineName"
         kw.update({
-            'signatureMethod':  'HmacSHA256',
+            'signatureMethod': 'HmacSHA256',
             'signatureVersion': '2',
         })
         kw.setdefault('callerKey', self.aws_access_key_id)
@@ -267,7 +267,7 @@ class FPSConnection(AWSQueryConnection):
         return self.get_object(action, kw, response)
 
     @complex_amounts('RefundAmount')
-    @requires(['TransactionId',   'RefundAmount.Value',
+    @requires(['TransactionId', 'RefundAmount.Value',
                'CallerReference', 'RefundAmount.CurrencyCode'])
     @api_action()
     def refund(self, action, response, **kw):
@@ -328,7 +328,7 @@ class FPSConnection(AWSQueryConnection):
     @needs_caller_reference
     @complex_amounts('FundingAmount')
     @requires(['PrepaidInstrumentId', 'FundingAmount.Value',
-               'SenderTokenId',       'FundingAmount.CurrencyCode'])
+               'SenderTokenId', 'FundingAmount.CurrencyCode'])
     @api_action()
     def fund_prepaid(self, action, response, **kw):
         """
@@ -383,7 +383,7 @@ class FPSConnection(AWSQueryConnection):
         message = "If you specify a RefundAmount, " \
                   "you must specify CallerReference."
         assert not 'RefundAmount.Value' in kw \
-                or 'CallerReference' in kw, message
+            or 'CallerReference' in kw, message
         return self.get_object(action, kw, response)
 
     @requires(['TokenId'])

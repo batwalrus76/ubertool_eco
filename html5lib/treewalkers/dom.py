@@ -9,6 +9,7 @@ from . import _base
 
 
 class TreeWalker(_base.NonRecursiveTreeWalker):
+
     def getNodeDetails(self, node):
         if node.nodeType == Node.DOCUMENT_TYPE_NODE:
             return _base.DOCTYPE, node.name, node.publicId, node.systemId

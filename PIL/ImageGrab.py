@@ -32,15 +32,15 @@ def grab(bbox=None):
     im = Image.frombytes(
         "RGB", size, data,
         # RGB, 32-bit line padding, origo in lower left corner
-        "raw", "BGR", (size[0]*3 + 3) & -4, -1
-        )
+        "raw", "BGR", (size[0] * 3 + 3) & -4, -1
+    )
     if bbox:
         im = im.crop(bbox)
     return im
 
 
 def grabclipboard():
-    debug = 0 # temporary interface
+    debug = 0  # temporary interface
     data = Image.core.grabclipboard(debug)
     if isinstance(data, bytes):
         from PIL import BmpImagePlugin

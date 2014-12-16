@@ -28,6 +28,7 @@ import requests
 
 
 class Credentials(object):
+
     """
     Holds the credentials needed to authenticate requests.  In addition
     the Credential object knows how to search for credentials and how

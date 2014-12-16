@@ -23,6 +23,7 @@ from boto.resultset import ResultSet
 
 
 class AppCookieStickinessPolicy(object):
+
     def __init__(self, connection=None):
         self.cookie_name = None
         self.policy_name = None
@@ -42,6 +43,7 @@ class AppCookieStickinessPolicy(object):
 
 
 class LBCookieStickinessPolicy(object):
+
     def __init__(self, connection=None):
         self.policy_name = None
         self.cookie_expiration_period = None
@@ -61,6 +63,7 @@ class LBCookieStickinessPolicy(object):
 
 
 class OtherPolicy(object):
+
     def __init__(self, connection=None):
         self.policy_name = None
 
@@ -75,9 +78,11 @@ class OtherPolicy(object):
 
 
 class Policies(object):
+
     """
     ELB Policies
     """
+
     def __init__(self, connection=None):
         self.connection = connection
         self.app_cookie_stickiness_policies = None
@@ -106,4 +111,3 @@ class Policies(object):
 
     def endElement(self, name, value, connection):
         return
-

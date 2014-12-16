@@ -10,133 +10,139 @@ from StringIO import StringIO
 import csv
 
 
-data = csv.reader(open(os.path.join(os.environ['PROJECT_PATH'], 'models','therps','therps_qaqc.csv')))
+data = csv.reader(
+    open(
+        os.path.join(
+            os.environ['PROJECT_PATH'],
+            'models',
+            'therps',
+            'therps_qaqc.csv')))
 
-chem_name=[]
-use=[]
-formu_name=[]
-a_i=[]
-a_i_disp=[]
-a_r=[]
-n_a=[]
-i_a=[]
-h_l=[]
-ld50_bird=[]
-Species_of_the_tested_bird_avian_ld50=[]
-bw_avian_ld50=[]
-lc50_bird=[]
-Species_of_the_tested_bird_avian_lc50=[]
-bw_avian_lc50=[]
-NOAEC_bird=[]
-Species_of_the_tested_bird_avian_NOAEC=[]
-bw_avian_NOAEC=[]
-NOAEL_bird=[]
-Species_of_the_tested_bird_avian_NOAEL=[]
-bw_avian_NOAEL=[]
-x=[]
-c_mamm_a=[]
-c_herp_a=[]
-bw_herp_a_sm=[]
-bw_herp_a_md=[]
-bw_herp_a_lg=[]
-wp_herp_a_sm=[]
-wp_herp_a_md=[]
-wp_herp_a_lg=[]
+chem_name = []
+use = []
+formu_name = []
+a_i = []
+a_i_disp = []
+a_r = []
+n_a = []
+i_a = []
+h_l = []
+ld50_bird = []
+Species_of_the_tested_bird_avian_ld50 = []
+bw_avian_ld50 = []
+lc50_bird = []
+Species_of_the_tested_bird_avian_lc50 = []
+bw_avian_lc50 = []
+NOAEC_bird = []
+Species_of_the_tested_bird_avian_NOAEC = []
+bw_avian_NOAEC = []
+NOAEL_bird = []
+Species_of_the_tested_bird_avian_NOAEL = []
+bw_avian_NOAEL = []
+x = []
+c_mamm_a = []
+c_herp_a = []
+bw_herp_a_sm = []
+bw_herp_a_md = []
+bw_herp_a_lg = []
+wp_herp_a_sm = []
+wp_herp_a_md = []
+wp_herp_a_lg = []
 
 ######Pre-defined outputs########
-EEC_diet_herp_BL_exp=[]
-EEC_ARQ_herp_BL_exp=[]
-EEC_CRQ_herp_BL_exp=[]
-EEC_diet_herp_FR_exp=[]
-EEC_ARQ_herp_FR_exp=[]
-EEC_CRQ_herp_FR_exp=[]
-EEC_diet_herp_HM_exp=[]
-EEC_ARQ_herp_HM_exp=[]
-EEC_CRQ_herp_HM_exp=[]
-EEC_diet_herp_IM_exp=[]
-EEC_ARQ_herp_IM_exp=[]
-EEC_CRQ_herp_IM_exp=[]
-EEC_diet_herp_TP_exp=[]
-EEC_ARQ_herp_TP_exp=[]
-EEC_CRQ_herp_TP_exp=[]
-LD50_AD_sm_exp=[]
-LD50_AD_md_exp=[]
-LD50_AD_lg_exp=[]
-EEC_dose_BP_sm_exp=[]
-EEC_dose_BP_md_exp=[]
-EEC_dose_BP_lg_exp=[]
-ARQ_dose_BP_sm_exp=[]
-ARQ_dose_BP_md_exp=[]
-ARQ_dose_BP_lg_exp=[]
-EEC_dose_FR_sm_exp=[]
-EEC_dose_FR_md_exp=[]
-EEC_dose_FR_lg_exp=[]
-ARQ_dose_FR_sm_exp=[]
-ARQ_dose_FR_md_exp=[]
-ARQ_dose_FR_lg_exp=[]
-EEC_dose_HM_md_exp=[]
-EEC_dose_HM_lg_exp=[]
-ARQ_dose_HM_md_exp=[]
-ARQ_dose_HM_lg_exp=[]
-EEC_dose_IM_md_exp=[]
-EEC_dose_IM_lg_exp=[]
-ARQ_dose_IM_md_exp=[]
-ARQ_dose_IM_lg_exp=[]
-EEC_dose_TP_md_exp=[]
-EEC_dose_TP_lg_exp=[]
-ARQ_dose_TP_md_exp=[]
-ARQ_dose_TP_lg_exp=[]
+EEC_diet_herp_BL_exp = []
+EEC_ARQ_herp_BL_exp = []
+EEC_CRQ_herp_BL_exp = []
+EEC_diet_herp_FR_exp = []
+EEC_ARQ_herp_FR_exp = []
+EEC_CRQ_herp_FR_exp = []
+EEC_diet_herp_HM_exp = []
+EEC_ARQ_herp_HM_exp = []
+EEC_CRQ_herp_HM_exp = []
+EEC_diet_herp_IM_exp = []
+EEC_ARQ_herp_IM_exp = []
+EEC_CRQ_herp_IM_exp = []
+EEC_diet_herp_TP_exp = []
+EEC_ARQ_herp_TP_exp = []
+EEC_CRQ_herp_TP_exp = []
+LD50_AD_sm_exp = []
+LD50_AD_md_exp = []
+LD50_AD_lg_exp = []
+EEC_dose_BP_sm_exp = []
+EEC_dose_BP_md_exp = []
+EEC_dose_BP_lg_exp = []
+ARQ_dose_BP_sm_exp = []
+ARQ_dose_BP_md_exp = []
+ARQ_dose_BP_lg_exp = []
+EEC_dose_FR_sm_exp = []
+EEC_dose_FR_md_exp = []
+EEC_dose_FR_lg_exp = []
+ARQ_dose_FR_sm_exp = []
+ARQ_dose_FR_md_exp = []
+ARQ_dose_FR_lg_exp = []
+EEC_dose_HM_md_exp = []
+EEC_dose_HM_lg_exp = []
+ARQ_dose_HM_md_exp = []
+ARQ_dose_HM_lg_exp = []
+EEC_dose_IM_md_exp = []
+EEC_dose_IM_lg_exp = []
+ARQ_dose_IM_md_exp = []
+ARQ_dose_IM_lg_exp = []
+EEC_dose_TP_md_exp = []
+EEC_dose_TP_lg_exp = []
+ARQ_dose_TP_md_exp = []
+ARQ_dose_TP_lg_exp = []
 
-EEC_diet_herp_BL_exp_mean=[]
-EEC_ARQ_herp_BL_exp_mean=[]
-EEC_CRQ_herp_BL_exp_mean=[]
-EEC_diet_herp_FR_exp_mean=[]
-EEC_ARQ_herp_FR_exp_mean=[]
-EEC_CRQ_herp_FR_exp_mean=[]
-EEC_diet_herp_HM_exp_mean=[]
-EEC_ARQ_herp_HM_exp_mean=[]
-EEC_CRQ_herp_HM_exp_mean=[]
-EEC_diet_herp_IM_exp_mean=[]
-EEC_ARQ_herp_IM_exp_mean=[]
-EEC_CRQ_herp_IM_exp_mean=[]
-EEC_diet_herp_TP_exp_mean=[]
-EEC_ARQ_herp_TP_exp_mean=[]
-EEC_CRQ_herp_TP_exp_mean=[]
-LD50_AD_sm_exp_mean=[]
-LD50_AD_md_exp_mean=[]
-LD50_AD_lg_exp_mean=[]
-EEC_dose_BP_sm_exp_mean=[]
-EEC_dose_BP_md_exp_mean=[]
-EEC_dose_BP_lg_exp_mean=[]
-ARQ_dose_BP_sm_exp_mean=[]
-ARQ_dose_BP_md_exp_mean=[]
-ARQ_dose_BP_lg_exp_mean=[]
-EEC_dose_FR_sm_exp_mean=[]
-EEC_dose_FR_md_exp_mean=[]
-EEC_dose_FR_lg_exp_mean=[]
-ARQ_dose_FR_sm_exp_mean=[]
-ARQ_dose_FR_md_exp_mean=[]
-ARQ_dose_FR_lg_exp_mean=[]
-EEC_dose_HM_md_exp_mean=[]
-EEC_dose_HM_lg_exp_mean=[]
-ARQ_dose_HM_md_exp_mean=[]
-ARQ_dose_HM_lg_exp_mean=[]
-EEC_dose_IM_md_exp_mean=[]
-EEC_dose_IM_lg_exp_mean=[]
-ARQ_dose_IM_md_exp_mean=[]
-ARQ_dose_IM_lg_exp_mean=[]
-EEC_dose_TP_md_exp_mean=[]
-EEC_dose_TP_lg_exp_mean=[]
-ARQ_dose_TP_md_exp_mean=[]
-ARQ_dose_TP_lg_exp_mean=[]
+EEC_diet_herp_BL_exp_mean = []
+EEC_ARQ_herp_BL_exp_mean = []
+EEC_CRQ_herp_BL_exp_mean = []
+EEC_diet_herp_FR_exp_mean = []
+EEC_ARQ_herp_FR_exp_mean = []
+EEC_CRQ_herp_FR_exp_mean = []
+EEC_diet_herp_HM_exp_mean = []
+EEC_ARQ_herp_HM_exp_mean = []
+EEC_CRQ_herp_HM_exp_mean = []
+EEC_diet_herp_IM_exp_mean = []
+EEC_ARQ_herp_IM_exp_mean = []
+EEC_CRQ_herp_IM_exp_mean = []
+EEC_diet_herp_TP_exp_mean = []
+EEC_ARQ_herp_TP_exp_mean = []
+EEC_CRQ_herp_TP_exp_mean = []
+LD50_AD_sm_exp_mean = []
+LD50_AD_md_exp_mean = []
+LD50_AD_lg_exp_mean = []
+EEC_dose_BP_sm_exp_mean = []
+EEC_dose_BP_md_exp_mean = []
+EEC_dose_BP_lg_exp_mean = []
+ARQ_dose_BP_sm_exp_mean = []
+ARQ_dose_BP_md_exp_mean = []
+ARQ_dose_BP_lg_exp_mean = []
+EEC_dose_FR_sm_exp_mean = []
+EEC_dose_FR_md_exp_mean = []
+EEC_dose_FR_lg_exp_mean = []
+ARQ_dose_FR_sm_exp_mean = []
+ARQ_dose_FR_md_exp_mean = []
+ARQ_dose_FR_lg_exp_mean = []
+EEC_dose_HM_md_exp_mean = []
+EEC_dose_HM_lg_exp_mean = []
+ARQ_dose_HM_md_exp_mean = []
+ARQ_dose_HM_lg_exp_mean = []
+EEC_dose_IM_md_exp_mean = []
+EEC_dose_IM_lg_exp_mean = []
+ARQ_dose_IM_md_exp_mean = []
+ARQ_dose_IM_lg_exp_mean = []
+EEC_dose_TP_md_exp_mean = []
+EEC_dose_TP_lg_exp_mean = []
+ARQ_dose_TP_md_exp_mean = []
+ARQ_dose_TP_lg_exp_mean = []
 
 data.next()
 for row in data:
     chem_name.append(str(row[0]))
     use.append(str(row[1]))
     formu_name.append(str(row[2]))
-    a_i.append(float(row[3])/100)
-    a_i_disp.append(100*float(row[3]))
+    a_i.append(float(row[3]) / 100)
+    a_i_disp.append(100 * float(row[3]))
     a_r.append(float(row[4]))
     n_a.append(float(row[5]))
     i_a.append(float(row[6]))
@@ -159,9 +165,9 @@ for row in data:
     bw_herp_a_sm.append(float(row[23]))
     bw_herp_a_md.append(float(row[25]))
     bw_herp_a_lg.append(float(row[27]))
-    wp_herp_a_sm.append(float(row[24])/100)
-    wp_herp_a_md.append(float(row[26])/100)
-    wp_herp_a_lg.append(float(row[28])/100)
+    wp_herp_a_sm.append(float(row[24]) / 100)
+    wp_herp_a_md.append(float(row[26]) / 100)
+    wp_herp_a_lg.append(float(row[28]) / 100)
 ##############Upper bound#############
     LD50_AD_sm_exp.append(float(row[29]))
     LD50_AD_md_exp.append(float(row[30]))
@@ -250,11 +256,37 @@ for row in data:
     EEC_CRQ_herp_IM_exp_mean.append(float(row[108]))
     EEC_CRQ_herp_TP_exp_mean.append(float(row[109]))
 
-    therps_obj = therps_model.therps('qaqc', chem_name[0], use[0], formu_name[0], a_i[0], h_l[0], n_a[0], i_a[0], a_r[0], ld50_bird[0], lc50_bird[0], NOAEC_bird[0], NOAEL_bird[0], 
-                                     Species_of_the_tested_bird_avian_ld50[0], Species_of_the_tested_bird_avian_lc50[0], Species_of_the_tested_bird_avian_NOAEC[0], Species_of_the_tested_bird_avian_NOAEL[0],
-                                     bw_avian_ld50[0], bw_avian_lc50[0], bw_avian_NOAEC[0], bw_avian_NOAEL[0],
-                                     x[0], bw_herp_a_sm[0], bw_herp_a_md[0], bw_herp_a_lg[0], wp_herp_a_sm[0], wp_herp_a_md[0], 
-                                     wp_herp_a_lg[0], c_mamm_a[0], c_herp_a[0])
+    therps_obj = therps_model.therps(
+        'qaqc',
+        chem_name[0],
+        use[0],
+        formu_name[0],
+        a_i[0],
+        h_l[0],
+        n_a[0],
+        i_a[0],
+        a_r[0],
+        ld50_bird[0],
+        lc50_bird[0],
+        NOAEC_bird[0],
+        NOAEL_bird[0],
+        Species_of_the_tested_bird_avian_ld50[0],
+        Species_of_the_tested_bird_avian_lc50[0],
+        Species_of_the_tested_bird_avian_NOAEC[0],
+        Species_of_the_tested_bird_avian_NOAEL[0],
+        bw_avian_ld50[0],
+        bw_avian_lc50[0],
+        bw_avian_NOAEC[0],
+        bw_avian_NOAEL[0],
+        x[0],
+        bw_herp_a_sm[0],
+        bw_herp_a_md[0],
+        bw_herp_a_lg[0],
+        wp_herp_a_sm[0],
+        wp_herp_a_md[0],
+        wp_herp_a_lg[0],
+        c_mamm_a[0],
+        c_herp_a[0])
 
     therps_obj.LD50_AD_sm_exp = LD50_AD_sm_exp[0]
     therps_obj.LD50_AD_md_exp = LD50_AD_md_exp[0]

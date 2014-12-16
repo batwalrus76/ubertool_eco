@@ -66,7 +66,7 @@ from boto.ec2.attributes import AccountAttribute, VPCAttribute
 from boto.ec2.blockdevicemapping import BlockDeviceMapping, BlockDeviceType
 from boto.exception import EC2ResponseError
 
-#boto.set_stream_logger('ec2')
+# boto.set_stream_logger('ec2')
 
 
 class EC2Connection(AWSQueryConnection):
@@ -92,14 +92,14 @@ class EC2Connection(AWSQueryConnection):
                                 self.DefaultRegionEndpoint)
         self.region = region
         super(EC2Connection, self).__init__(aws_access_key_id,
-                                    aws_secret_access_key,
-                                    is_secure, port, proxy, proxy_port,
-                                    proxy_user, proxy_pass,
-                                    self.region.endpoint, debug,
-                                    https_connection_factory, path,
-                                    security_token,
-                                    validate_certs=validate_certs,
-                                    profile_name=profile_name)
+                                            aws_secret_access_key,
+                                            is_secure, port, proxy, proxy_port,
+                                            proxy_user, proxy_pass,
+                                            self.region.endpoint, debug,
+                                            https_connection_factory, path,
+                                            security_token,
+                                            validate_certs=validate_certs,
+                                            profile_name=profile_name)
         if api_version:
             self.APIVersion = api_version
 
@@ -257,7 +257,9 @@ class EC2Connection(AWSQueryConnection):
         :return: The EC2 Image specified or None if the image is not found
         """
         try:
-            return self.get_all_images(image_ids=[image_id], dry_run=dry_run)[0]
+            return self.get_all_images(
+                image_ids=[image_id],
+                dry_run=dry_run)[0]
         except IndexError:  # None of those images available
             return None
 
@@ -345,7 +347,6 @@ class EC2Connection(AWSQueryConnection):
             params['VirtualizationType'] = virtualization_type
         if sriov_net_support:
             params['SriovNetSupport'] = sriov_net_support
-
 
         rs = self.get_object('RegisterImage', params, ResultSet, verb='POST')
         image_id = getattr(rs, 'imageId', None)
@@ -1285,7 +1286,10 @@ class EC2Connection(AWSQueryConnection):
         """
         params = {}
         if request_ids:
-            self.build_list_params(params, request_ids, 'SpotInstanceRequestId')
+            self.build_list_params(
+                params,
+                request_ids,
+                'SpotInstanceRequestId')
         if filters:
             if 'launch.group-id' in filters:
                 lgid = filters.get('launch.group-id')
@@ -1611,7 +1615,10 @@ class EC2Connection(AWSQueryConnection):
         """
         params = {}
         if request_ids:
-            self.build_list_params(params, request_ids, 'SpotInstanceRequestId')
+            self.build_list_params(
+                params,
+                request_ids,
+                'SpotInstanceRequestId')
         if dry_run:
             params['DryRun'] = 'true'
         return self.get_list('CancelSpotInstanceRequests', params,
@@ -1758,7 +1765,9 @@ class EC2Connection(AWSQueryConnection):
             self.build_filter_params(params, filters)
         if dry_run:
             params['DryRun'] = 'true'
-        return self.get_list('DescribeAddresses', params, [('item', Address)], verb='POST')
+        return self.get_list(
+            'DescribeAddresses', params, [
+                ('item', Address)], verb='POST')
 
     def allocate_address(self, domain=None, dry_run=False):
         """
@@ -1838,14 +1847,14 @@ class EC2Connection(AWSQueryConnection):
         return self.get_status('AssignPrivateIpAddresses', params, verb='POST')
 
     def _associate_address(self, status, instance_id=None, public_ip=None,
-                          allocation_id=None, network_interface_id=None,
-                          private_ip_address=None, allow_reassociation=False,
-                          dry_run=False):
+                           allocation_id=None, network_interface_id=None,
+                           private_ip_address=None, allow_reassociation=False,
+                           dry_run=False):
         params = {}
         if instance_id is not None:
-                params['InstanceId'] = instance_id
+            params['InstanceId'] = instance_id
         elif network_interface_id is not None:
-                params['NetworkInterfaceId'] = network_interface_id
+            params['NetworkInterfaceId'] = network_interface_id
 
         if public_ip is not None:
             params['PublicIp'] = public_ip
@@ -1909,16 +1918,25 @@ class EC2Connection(AWSQueryConnection):
         :rtype: bool
         :return: True if successful
         """
-        return self._associate_address(True, instance_id=instance_id,
-            public_ip=public_ip, allocation_id=allocation_id,
+        return self._associate_address(
+            True,
+            instance_id=instance_id,
+            public_ip=public_ip,
+            allocation_id=allocation_id,
             network_interface_id=network_interface_id,
             private_ip_address=private_ip_address,
-            allow_reassociation=allow_reassociation, dry_run=dry_run)
+            allow_reassociation=allow_reassociation,
+            dry_run=dry_run)
 
-    def associate_address_object(self, instance_id=None, public_ip=None,
-                          allocation_id=None, network_interface_id=None,
-                          private_ip_address=None, allow_reassociation=False,
-                          dry_run=False):
+    def associate_address_object(
+            self,
+            instance_id=None,
+            public_ip=None,
+            allocation_id=None,
+            network_interface_id=None,
+            private_ip_address=None,
+            allow_reassociation=False,
+            dry_run=False):
         """
         Associate an Elastic IP address with a currently running instance.
         This requires one of ``public_ip`` or ``allocation_id`` depending
@@ -1957,11 +1975,15 @@ class EC2Connection(AWSQueryConnection):
         :rtype: class:`boto.ec2.address.Address`
         :return: The associated address instance
         """
-        return self._associate_address(False, instance_id=instance_id,
-            public_ip=public_ip, allocation_id=allocation_id,
+        return self._associate_address(
+            False,
+            instance_id=instance_id,
+            public_ip=public_ip,
+            allocation_id=allocation_id,
             network_interface_id=network_interface_id,
             private_ip_address=private_ip_address,
-            allow_reassociation=allow_reassociation, dry_run=dry_run)
+            allow_reassociation=allow_reassociation,
+            dry_run=dry_run)
 
     def disassociate_address(self, public_ip=None, association_id=None,
                              dry_run=False):
@@ -2031,8 +2053,11 @@ class EC2Connection(AWSQueryConnection):
 
         return self.get_status('ReleaseAddress', params, verb='POST')
 
-    def unassign_private_ip_addresses(self, network_interface_id=None,
-                                      private_ip_addresses=None, dry_run=False):
+    def unassign_private_ip_addresses(
+            self,
+            network_interface_id=None,
+            private_ip_addresses=None,
+            dry_run=False):
         """
         Unassigns one or more secondary private IP addresses from a network
         interface in Amazon VPC.
@@ -2537,7 +2562,8 @@ class EC2Connection(AWSQueryConnection):
         now = datetime.utcnow()
         last_hour = datetime(now.year, now.month, now.day, now.hour)
         last_midnight = datetime(now.year, now.month, now.day)
-        last_sunday = datetime(now.year, now.month, now.day) - timedelta(days = (now.weekday() + 1) % 7)
+        last_sunday = datetime(
+            now.year, now.month, now.day) - timedelta(days=(now.weekday() + 1) % 7)
         start_of_month = datetime(now.year, now.month, 1)
 
         target_backup_times = []
@@ -2546,15 +2572,15 @@ class EC2Connection(AWSQueryConnection):
         oldest_snapshot_date = datetime(2007, 1, 1)
 
         for hour in range(0, hourly_backups):
-            target_backup_times.append(last_hour - timedelta(hours = hour))
+            target_backup_times.append(last_hour - timedelta(hours=hour))
 
         for day in range(0, daily_backups):
-            target_backup_times.append(last_midnight - timedelta(days = day))
+            target_backup_times.append(last_midnight - timedelta(days=day))
 
         for week in range(0, weekly_backups):
-            target_backup_times.append(last_sunday - timedelta(weeks = week))
+            target_backup_times.append(last_sunday - timedelta(weeks=week))
 
-        one_day = timedelta(days = 1)
+        one_day = timedelta(days=1)
         monthly_snapshots_added = 0
         while (start_of_month > oldest_snapshot_date and
                (monthly_backups is True or
@@ -2583,8 +2609,8 @@ class EC2Connection(AWSQueryConnection):
 
         # get all the snapshots, sort them by date and time, and
         # organize them into one array for each volume:
-        all_snapshots = self.get_all_snapshots(owner = 'self')
-        all_snapshots.sort(cmp = lambda x, y: cmp(x.start_time, y.start_time))
+        all_snapshots = self.get_all_snapshots(owner='self')
+        all_snapshots.sort(cmp=lambda x, y: cmp(x.start_time, y.start_time))
         snaps_for_each_volume = {}
         for snap in all_snapshots:
             # the snapshot name and the volume name are the same.
@@ -2600,11 +2626,11 @@ class EC2Connection(AWSQueryConnection):
                 snaps_for_volume.append(snap)
 
         # Do a running comparison of snapshot dates to desired time
-        #periods, keeping the oldest snapshot in each
+        # periods, keeping the oldest snapshot in each
         # time period and deleting the rest:
         for volume_name in snaps_for_each_volume:
             snaps = snaps_for_each_volume[volume_name]
-            snaps = snaps[:-1] # never delete the newest snapshot
+            snaps = snaps[:-1]  # never delete the newest snapshot
             time_period_number = 0
             snap_found_for_this_time_period = False
             for snap in snaps:
@@ -2616,23 +2642,27 @@ class EC2Connection(AWSQueryConnection):
                         # the snap date is before the cutoff date.
                         # Figure out if it's the first snap in this
                         # date range and act accordingly (since both
-                        #date the date ranges and the snapshots
+                        # date the date ranges and the snapshots
                         # are sorted chronologically, we know this
-                        #snapshot isn't in an earlier date range):
-                        if snap_found_for_this_time_period == True:
+                        # snapshot isn't in an earlier date range):
+                        if snap_found_for_this_time_period:
                             if not snap.tags.get('preserve_snapshot'):
                                 # as long as the snapshot wasn't marked
                                 # with the 'preserve_snapshot' tag, delete it:
                                 try:
                                     self.delete_snapshot(snap.id)
-                                    boto.log.info('Trimmed snapshot %s (%s)' % (snap.tags['Name'], snap.start_time))
+                                    boto.log.info(
+                                        'Trimmed snapshot %s (%s)' %
+                                        (snap.tags['Name'], snap.start_time))
                                 except EC2ResponseError:
-                                    boto.log.error('Attempt to trim snapshot %s (%s) failed. Possible result of a race condition with trimming on another server?' % (snap.tags['Name'], snap.start_time))
+                                    boto.log.error(
+                                        'Attempt to trim snapshot %s (%s) failed. Possible result of a race condition with trimming on another server?' %
+                                        (snap.tags['Name'], snap.start_time))
                             # go on and look at the next snapshot,
-                            #leaving the time period alone
+                            # leaving the time period alone
                         else:
                             # this was the first snapshot found for this
-                            #time period. Leave it alone and look at the
+                            # time period. Leave it alone and look at the
                             # next snapshot:
                             snap_found_for_this_time_period = True
                         check_this_snap = False
@@ -2787,7 +2817,7 @@ class EC2Connection(AWSQueryConnection):
                 keynames=[keyname],
                 dry_run=dry_run
             )[0]
-        except self.ResponseError, e:
+        except self.ResponseError as e:
             if e.code == 'InvalidKeyPair.NotFound':
                 return None
             else:
@@ -3028,7 +3058,7 @@ class EC2Connection(AWSQueryConnection):
         :rtype: bool
         :return: True if successful.
         """
-        params = {'GroupName':group_name}
+        params = {'GroupName': group_name}
         if src_security_group_name:
             params['SourceSecurityGroupName'] = src_security_group_name
         if src_security_group_owner_id:
@@ -3132,7 +3162,7 @@ class EC2Connection(AWSQueryConnection):
             if not isinstance(cidr_ip, list):
                 cidr_ip = [cidr_ip]
             for i, single_cidr_ip in enumerate(cidr_ip):
-                params['IpPermissions.1.IpRanges.%d.CidrIp' % (i+1)] = \
+                params['IpPermissions.1.IpRanges.%d.CidrIp' % (i + 1)] = \
                     single_cidr_ip
         if dry_run:
             params['DryRun'] = 'true'
@@ -3226,7 +3256,7 @@ class EC2Connection(AWSQueryConnection):
         :rtype: bool
         :return: True if successful.
         """
-        params = {'GroupName':group_name}
+        params = {'GroupName': group_name}
         if src_security_group_name:
             params['SourceSecurityGroupName'] = src_security_group_name
         if src_security_group_owner_id:
@@ -3424,7 +3454,7 @@ class EC2Connection(AWSQueryConnection):
         if dry_run:
             params['DryRun'] = 'true'
         regions = self.get_list('DescribeRegions', params,
-                                 [('item', RegionInfo)], verb='POST')
+                                [('item', RegionInfo)], verb='POST')
         for region in regions:
             region.connection_cls = EC2Connection
         return regions
@@ -3433,21 +3463,22 @@ class EC2Connection(AWSQueryConnection):
     # Reservation methods
     #
 
-    def get_all_reserved_instances_offerings(self,
-                                             reserved_instances_offering_ids=None,
-                                             instance_type=None,
-                                             availability_zone=None,
-                                             product_description=None,
-                                             filters=None,
-                                             instance_tenancy=None,
-                                             offering_type=None,
-                                             include_marketplace=None,
-                                             min_duration=None,
-                                             max_duration=None,
-                                             max_instance_count=None,
-                                             next_token=None,
-                                             max_results=None,
-                                             dry_run=False):
+    def get_all_reserved_instances_offerings(
+            self,
+            reserved_instances_offering_ids=None,
+            instance_type=None,
+            availability_zone=None,
+            product_description=None,
+            filters=None,
+            instance_tenancy=None,
+            offering_type=None,
+            include_marketplace=None,
+            min_duration=None,
+            max_duration=None,
+            max_instance_count=None,
+            next_token=None,
+            max_results=None,
+            dry_run=False):
         """
         Describes Reserved Instance offerings that are available for purchase.
 
@@ -3697,8 +3728,9 @@ class EC2Connection(AWSQueryConnection):
             params['PriceSchedules.%s.Term' % i] = str(term)
         if dry_run:
             params['DryRun'] = 'true'
-        return self.get_list('CreateReservedInstancesListing',
-                             params, [('item', ReservedInstanceListing)], verb='POST')
+        return self.get_list(
+            'CreateReservedInstancesListing', params, [
+                ('item', ReservedInstanceListing)], verb='POST')
 
     def cancel_reserved_instances_listing(self,
                                           reserved_instances_listing_ids=None,
@@ -3723,8 +3755,9 @@ class EC2Connection(AWSQueryConnection):
                                    'ReservedInstancesListingId')
         if dry_run:
             params['DryRun'] = 'true'
-        return self.get_list('CancelReservedInstancesListing',
-                             params, [('item', ReservedInstanceListing)], verb='POST')
+        return self.get_list(
+            'CancelReservedInstancesListing', params, [
+                ('item', ReservedInstanceListing)], verb='POST')
 
     def build_configurations_param_list(self, params, target_configurations):
         for offset, tc in enumerate(target_configurations):
@@ -3772,8 +3805,10 @@ class EC2Connection(AWSQueryConnection):
         )
         return mrir.modification_id
 
-    def describe_reserved_instances_modifications(self,
-            reserved_instances_modification_ids=None, next_token=None,
+    def describe_reserved_instances_modifications(
+            self,
+            reserved_instances_modification_ids=None,
+            next_token=None,
             filters=None):
         """
         A request to describe the modifications made to Reserved Instances in
@@ -4058,7 +4093,7 @@ class EC2Connection(AWSQueryConnection):
         :rtype: bool
         :return: True if successful
         """
-        params = {'GroupName':name, 'Strategy':strategy}
+        params = {'GroupName': name, 'Strategy': strategy}
         if dry_run:
             params['DryRun'] = 'true'
         group = self.get_status('CreatePlacementGroup', params, verb='POST')
@@ -4075,7 +4110,7 @@ class EC2Connection(AWSQueryConnection):
         :param dry_run: Set to True if the operation should not actually run.
 
         """
-        params = {'GroupName':name}
+        params = {'GroupName': name}
         if dry_run:
             params['DryRun'] = 'true'
         return self.get_status('DeletePlacementGroup', params, verb='POST')
@@ -4087,9 +4122,9 @@ class EC2Connection(AWSQueryConnection):
         i = 1
         for key in keys:
             value = tags[key]
-            params['Tag.%d.Key'%i] = key
+            params['Tag.%d.Key' % i] = key
             if value is not None:
-                params['Tag.%d.Value'%i] = value
+                params['Tag.%d.Value' % i] = value
             i += 1
 
     def get_all_tags(self, filters=None, dry_run=False, max_results=None):
@@ -4329,7 +4364,9 @@ class EC2Connection(AWSQueryConnection):
         :return: The requested VmType objects
         """
         params = {}
-        return self.get_list('DescribeVmTypes', params, [('euca:item', VmType)], verb='POST')
+        return self.get_list(
+            'DescribeVmTypes', params, [
+                ('euca:item', VmType)], verb='POST')
 
     def copy_image(self, source_region, source_image_id, name=None,
                    description=None, client_token=None, dry_run=False):
@@ -4351,7 +4388,7 @@ class EC2Connection(AWSQueryConnection):
         if dry_run:
             params['DryRun'] = 'true'
         return self.get_object('CopyImage', params, CopyImage,
-                                 verb='POST')
+                               verb='POST')
 
     def describe_account_attributes(self, attribute_names=None, dry_run=False):
         """

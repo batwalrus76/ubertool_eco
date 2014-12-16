@@ -78,8 +78,10 @@ def connect_to_region(region_name, **kw_params):
 
 class AutoScaleConnection(AWSQueryConnection):
     APIVersion = boto.config.get('Boto', 'autoscale_version', '2011-01-01')
-    DefaultRegionEndpoint = boto.config.get('Boto', 'autoscale_endpoint',
-                                            'autoscaling.us-east-1.amazonaws.com')
+    DefaultRegionEndpoint = boto.config.get(
+        'Boto',
+        'autoscale_endpoint',
+        'autoscaling.us-east-1.amazonaws.com')
     DefaultRegionName = boto.config.get('Boto', 'autoscale_region_name',
                                         'us-east-1')
 
@@ -99,15 +101,24 @@ class AutoScaleConnection(AWSQueryConnection):
                                 self.DefaultRegionEndpoint,
                                 AutoScaleConnection)
         self.region = region
-        super(AutoScaleConnection, self).__init__(aws_access_key_id,
-                                    aws_secret_access_key,
-                                    is_secure, port, proxy, proxy_port,
-                                    proxy_user, proxy_pass,
-                                    self.region.endpoint, debug,
-                                    https_connection_factory, path=path,
-                                    security_token=security_token,
-                                    validate_certs=validate_certs,
-                                    profile_name=profile_name)
+        super(
+            AutoScaleConnection,
+            self).__init__(
+            aws_access_key_id,
+            aws_secret_access_key,
+            is_secure,
+            port,
+            proxy,
+            proxy_port,
+            proxy_user,
+            proxy_pass,
+            self.region.endpoint,
+            debug,
+            https_connection_factory,
+            path=path,
+            security_token=security_token,
+            validate_certs=validate_certs,
+            profile_name=profile_name)
 
     def _required_auth_capability(self):
         return ['hmac-v4']
@@ -135,7 +146,9 @@ class AutoScaleConnection(AWSQueryConnection):
                 for k, v in items[i - 1].iteritems():
                     if isinstance(v, dict):
                         for kk, vv in v.iteritems():
-                            params['%s.member.%d.%s.%s' % (label, i, k, kk)] = vv
+                            params[
+                                '%s.member.%d.%s.%s' %
+                                (label, i, k, kk)] = vv
                     else:
                         params['%s.member.%d.%s' % (label, i, k)] = v
             elif isinstance(items[i - 1], basestring):
@@ -223,7 +236,8 @@ class AutoScaleConnection(AWSQueryConnection):
         if launch_config.ramdisk_id:
             params['RamdiskId'] = launch_config.ramdisk_id
         if launch_config.block_device_mappings:
-            [x.autoscale_build_list_params(params) for x in launch_config.block_device_mappings]
+            [x.autoscale_build_list_params(
+                params) for x in launch_config.block_device_mappings]
         if launch_config.security_groups:
             self.build_list_params(params, launch_config.security_groups,
                                    'SecurityGroups')
@@ -698,7 +712,11 @@ class AutoScaleConnection(AWSQueryConnection):
             params['HonorCooldown'] = honor_cooldown
         return self.get_status('ExecutePolicy', params)
 
-    def put_notification_configuration(self, autoscale_group, topic, notification_types):
+    def put_notification_configuration(
+            self,
+            autoscale_group,
+            topic,
+            notification_types):
         """
         Configures an Auto Scaling group to send notifications when
         specified events take place.
@@ -780,7 +798,11 @@ class AutoScaleConnection(AWSQueryConnection):
             params['ShouldRespectGracePeriod'] = 'false'
         return self.get_status('SetInstanceHealth', params)
 
-    def set_desired_capacity(self, group_name, desired_capacity, honor_cooldown=False):
+    def set_desired_capacity(
+            self,
+            group_name,
+            desired_capacity,
+            honor_cooldown=False):
         """
         Adjusts the desired size of the AutoScalingGroup by initiating scaling
         activities. When reducing the size of the group, it is not possible to define

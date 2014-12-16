@@ -30,6 +30,7 @@ from boto.exception import SQSError, BotoServerError
 
 
 class SQSConnection(AWSQueryConnection):
+
     """
     A Connection to the SQS Service.
     """
@@ -51,14 +52,14 @@ class SQSConnection(AWSQueryConnection):
                                    self.DefaultRegionEndpoint)
         self.region = region
         super(SQSConnection, self).__init__(aws_access_key_id,
-                                    aws_secret_access_key,
-                                    is_secure, port,
-                                    proxy, proxy_port,
-                                    proxy_user, proxy_pass,
-                                    self.region.endpoint, debug,
-                                    https_connection_factory, path,
-                                    security_token=security_token,
-                                    validate_certs=validate_certs)
+                                            aws_secret_access_key,
+                                            is_secure, port,
+                                            proxy, proxy_port,
+                                            proxy_user, proxy_pass,
+                                            self.region.endpoint, debug,
+                                            https_connection_factory, path,
+                                            security_token=security_token,
+                                            validate_certs=validate_certs)
         self.auth_region_name = self.region.name
 
     def _required_auth_capability(self):
@@ -134,12 +135,12 @@ class SQSConnection(AWSQueryConnection):
         :rtype: :class:`boto.sqs.attributes.Attributes`
         :return: An Attributes object containing request value(s).
         """
-        params = {'AttributeName' : attribute}
+        params = {'AttributeName': attribute}
         return self.get_object('GetQueueAttributes', params,
                                Attributes, queue.id)
 
     def set_queue_attribute(self, queue, attribute, value):
-        params = {'Attribute.Name' : attribute, 'Attribute.Value' : value}
+        params = {'Attribute.Name': attribute, 'Attribute.Value': value}
         return self.get_status('SetQueueAttributes', params, queue.id)
 
     def receive_message(self, queue, number_messages=1,
@@ -181,7 +182,7 @@ class SQSConnection(AWSQueryConnection):
         :return: A list of :class:`boto.sqs.message.Message` objects.
 
         """
-        params = {'MaxNumberOfMessages' : number_messages}
+        params = {'MaxNumberOfMessages': number_messages}
         if visibility_timeout is not None:
             params['VisibilityTimeout'] = visibility_timeout
         if attributes is not None:
@@ -205,7 +206,7 @@ class SQSConnection(AWSQueryConnection):
         :rtype: bool
         :return: True if successful, False otherwise.
         """
-        params = {'ReceiptHandle' : message.receipt_handle}
+        params = {'ReceiptHandle': message.receipt_handle}
         return self.get_status('DeleteMessage', params, queue.id)
 
     def delete_message_batch(self, queue, messages):
@@ -221,9 +222,9 @@ class SQSConnection(AWSQueryConnection):
         params = {}
         for i, msg in enumerate(messages):
             prefix = 'DeleteMessageBatchRequestEntry'
-            p_name = '%s.%i.Id' % (prefix, (i+1))
+            p_name = '%s.%i.Id' % (prefix, (i + 1))
             params[p_name] = msg.id
-            p_name = '%s.%i.ReceiptHandle' % (prefix, (i+1))
+            p_name = '%s.%i.ReceiptHandle' % (prefix, (i + 1))
             params[p_name] = msg.receipt_handle
         return self.get_object('DeleteMessageBatch', params, BatchResults,
                                queue.id, verb='POST')
@@ -241,11 +242,11 @@ class SQSConnection(AWSQueryConnection):
         :rtype: bool
         :return: True if successful, False otherwise.
         """
-        params = {'ReceiptHandle' : receipt_handle}
+        params = {'ReceiptHandle': receipt_handle}
         return self.get_status('DeleteMessage', params, queue.id)
 
     def send_message(self, queue, message_content, delay_seconds=None):
-        params = {'MessageBody' : message_content}
+        params = {'MessageBody': message_content}
         if delay_seconds:
             params['DelaySeconds'] = int(delay_seconds)
         return self.get_object('SendMessage', params, Message,
@@ -270,11 +271,11 @@ class SQSConnection(AWSQueryConnection):
         """
         params = {}
         for i, msg in enumerate(messages):
-            p_name = 'SendMessageBatchRequestEntry.%i.Id' % (i+1)
+            p_name = 'SendMessageBatchRequestEntry.%i.Id' % (i + 1)
             params[p_name] = msg[0]
-            p_name = 'SendMessageBatchRequestEntry.%i.MessageBody' % (i+1)
+            p_name = 'SendMessageBatchRequestEntry.%i.MessageBody' % (i + 1)
             params[p_name] = msg[1]
-            p_name = 'SendMessageBatchRequestEntry.%i.DelaySeconds' % (i+1)
+            p_name = 'SendMessageBatchRequestEntry.%i.DelaySeconds' % (i + 1)
             params[p_name] = msg[2]
         return self.get_object('SendMessageBatch', params, BatchResults,
                                queue.id, verb='POST')
@@ -296,8 +297,8 @@ class SQSConnection(AWSQueryConnection):
         :param visibility_timeout: The new value of the message's visibility
                                    timeout in seconds.
         """
-        params = {'ReceiptHandle' : receipt_handle,
-                  'VisibilityTimeout' : visibility_timeout}
+        params = {'ReceiptHandle': receipt_handle,
+                  'VisibilityTimeout': visibility_timeout}
         return self.get_status('ChangeMessageVisibility', params, queue.id)
 
     def change_message_visibility_batch(self, queue, messages):
@@ -316,11 +317,11 @@ class SQSConnection(AWSQueryConnection):
         params = {}
         for i, t in enumerate(messages):
             prefix = 'ChangeMessageVisibilityBatchRequestEntry'
-            p_name = '%s.%i.Id' % (prefix, (i+1))
+            p_name = '%s.%i.Id' % (prefix, (i + 1))
             params[p_name] = t[0].id
-            p_name = '%s.%i.ReceiptHandle' % (prefix, (i+1))
+            p_name = '%s.%i.ReceiptHandle' % (prefix, (i + 1))
             params[p_name] = t[0].receipt_handle
-            p_name = '%s.%i.VisibilityTimeout' % (prefix, (i+1))
+            p_name = '%s.%i.VisibilityTimeout' % (prefix, (i + 1))
             params[p_name] = t[1]
         return self.get_object('ChangeMessageVisibilityBatch',
                                params, BatchResults,
@@ -352,7 +353,7 @@ class SQSConnection(AWSQueryConnection):
         """
         params = {'QueueName': queue_name}
         if owner_acct_id:
-            params['QueueOwnerAWSAccountId']=owner_acct_id
+            params['QueueOwnerAWSAccountId'] = owner_acct_id
         try:
             return self.get_object('GetQueueUrl', params, Queue)
         except SQSError:
@@ -410,8 +411,8 @@ class SQSConnection(AWSQueryConnection):
 
         """
         params = {'Label': label,
-                  'AWSAccountId' : aws_account_id,
-                  'ActionName' : action_name}
+                  'AWSAccountId': aws_account_id,
+                  'ActionName': action_name}
         return self.get_status('AddPermission', params, queue.id)
 
     def remove_permission(self, queue, label):

@@ -15,20 +15,23 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABIL-
 # ITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
 from identity import OriginAccessIdentity
 
+
 def get_oai_value(origin_access_identity):
     if isinstance(origin_access_identity, OriginAccessIdentity):
         return origin_access_identity.uri()
     else:
         return origin_access_identity
-                
+
+
 class S3Origin(object):
+
     """
     Origin information to associate with the distribution.
     If your distribution will use an Amazon S3 origin,
@@ -41,7 +44,7 @@ class S3Origin(object):
                          associate with the distribution.
                          For example: mybucket.s3.amazonaws.com.
         :type dns_name: str
-        
+
         :param origin_access_identity: The CloudFront origin access
                                        identity to associate with the
                                        distribution. If you want the
@@ -50,7 +53,7 @@ class S3Origin(object):
                                        distribution to serve public content,
                                        remove this element.
         :type origin_access_identity: str
-        
+
         """
         self.dns_name = dns_name
         self.origin_access_identity = origin_access_identity
@@ -77,8 +80,10 @@ class S3Origin(object):
             s += '    <OriginAccessIdentity>%s</OriginAccessIdentity>\n' % val
         s += '  </S3Origin>\n'
         return s
-    
+
+
 class CustomOrigin(object):
+
     """
     Origin information to associate with the distribution.
     If your distribution will use a non-Amazon S3 origin,
@@ -92,13 +97,13 @@ class CustomOrigin(object):
                          associate with the distribution.
                          For example: mybucket.s3.amazonaws.com.
         :type dns_name: str
-        
+
         :param http_port: The HTTP port the custom origin listens on.
         :type http_port: int
-        
+
         :param https_port: The HTTPS port the custom origin listens on.
         :type http_port: int
-        
+
         :param origin_protocol_policy: The origin protocol policy to
                                        apply to your origin. If you
                                        specify http-only, CloudFront
@@ -108,7 +113,7 @@ class CustomOrigin(object):
                                        or HTTPS, based on the protocol of the
                                        viewer request.
         :type origin_protocol_policy: str
-        
+
         """
         self.dns_name = dns_name
         self.http_port = http_port
@@ -147,4 +152,3 @@ class CustomOrigin(object):
         s += '    <OriginProtocolPolicy>%s</OriginProtocolPolicy>\n' % self.origin_protocol_policy
         s += '  </CustomOrigin>\n'
         return s
-    

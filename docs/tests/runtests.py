@@ -60,12 +60,15 @@ from django_nose import NoseTestSuiteRunner
 
 
 class NoseCoverageTestRunner(CoverageRunner, NoseTestSuiteRunner):
+
     """Custom test runner that uses nose and coverage"""
     pass
 
 
 def runtests(*test_args):
-    failures = NoseCoverageTestRunner(verbosity=2, interactive=True).run_tests(test_args)
+    failures = NoseCoverageTestRunner(
+        verbosity=2,
+        interactive=True).run_tests(test_args)
     sys.exit(failures)
 
 

@@ -25,6 +25,7 @@ from boto.ec2.blockdevicemapping import BlockDeviceMapping
 
 
 class ProductCodes(list):
+
     def startElement(self, name, attrs, connection):
         pass
 
@@ -34,6 +35,7 @@ class ProductCodes(list):
 
 
 class BillingProducts(list):
+
     def startElement(self, name, attrs, connection):
         pass
 
@@ -41,7 +43,9 @@ class BillingProducts(list):
         if name == 'billingProduct':
             self.append(value)
 
+
 class Image(TaggedEC2Object):
+
     """
     Represents an EC2 Image
     """
@@ -97,7 +101,7 @@ class Image(TaggedEC2Object):
         elif name == 'imageState':
             self.state = value
         elif name == 'imageOwnerId':
-            self.ownerId = value # for backwards compatibility
+            self.ownerId = value  # for backwards compatibility
             self.owner_id = value
         elif name == 'isPublic':
             if value == 'false':
@@ -106,7 +110,7 @@ class Image(TaggedEC2Object):
                 self.is_public = True
             else:
                 raise Exception(
-                    'Unexpected value of isPublic %s for image %s'%(
+                    'Unexpected value of isPublic %s for image %s' % (
                         value,
                         self.id
                     )
@@ -178,7 +182,6 @@ class Image(TaggedEC2Object):
             placement_group=None, security_group_ids=None,
             additional_info=None, instance_profile_name=None,
             instance_profile_arn=None, tenancy=None, dry_run=False):
-
         """
         Runs this instance.
 
@@ -309,20 +312,31 @@ class Image(TaggedEC2Object):
 
         """
 
-        return self.connection.run_instances(self.id, min_count, max_count,
-                                             key_name, security_groups,
-                                             user_data, addressing_type,
-                                             instance_type, placement,
-                                             kernel_id, ramdisk_id,
-                                             monitoring_enabled, subnet_id,
-                                             block_device_map, disable_api_termination,
-                                             instance_initiated_shutdown_behavior,
-                                             private_ip_address, placement_group,
-                                             security_group_ids=security_group_ids,
-                                             additional_info=additional_info,
-                                             instance_profile_name=instance_profile_name,
-                                             instance_profile_arn=instance_profile_arn,
-                                             tenancy=tenancy, dry_run=dry_run)
+        return self.connection.run_instances(
+            self.id,
+            min_count,
+            max_count,
+            key_name,
+            security_groups,
+            user_data,
+            addressing_type,
+            instance_type,
+            placement,
+            kernel_id,
+            ramdisk_id,
+            monitoring_enabled,
+            subnet_id,
+            block_device_map,
+            disable_api_termination,
+            instance_initiated_shutdown_behavior,
+            private_ip_address,
+            placement_group,
+            security_group_ids=security_group_ids,
+            additional_info=additional_info,
+            instance_profile_name=instance_profile_name,
+            instance_profile_arn=instance_profile_arn,
+            tenancy=tenancy,
+            dry_run=dry_run)
 
     def deregister(self, delete_snapshot=False, dry_run=False):
         return self.connection.deregister_image(
@@ -365,7 +379,7 @@ class Image(TaggedEC2Object):
         )
 
     def get_kernel(self, dry_run=False):
-        img_attrs =self.connection.get_image_attribute(
+        img_attrs = self.connection.get_image_attribute(
             self.id,
             'kernel',
             dry_run=dry_run
@@ -382,6 +396,7 @@ class Image(TaggedEC2Object):
 
 
 class ImageAttribute(object):
+
     def __init__(self, parent=None):
         self.name = None
         self.kernel = None
@@ -424,6 +439,7 @@ class ImageAttribute(object):
 
 
 class CopyImage(object):
+
     def __init__(self, parent=None):
         self._parent = parent
         self.image_id = None

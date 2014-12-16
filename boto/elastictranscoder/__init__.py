@@ -42,4 +42,3 @@ def connect_to_region(region_name, **kw_params):
         if region.name == region_name:
             return region.connect(**kw_params)
     return None
-

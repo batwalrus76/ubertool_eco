@@ -22,7 +22,9 @@ from PIL import EpsImagePlugin
 ##
 # Simple Postscript graphics interface.
 
+
 class PSDraw:
+
     """
     Sets up printing to the given file. If **file** is omitted,
     :py:attr:`sys.stdout` is assumed.
@@ -34,7 +36,7 @@ class PSDraw:
             fp = sys.stdout
         self.fp = fp
 
-    def begin_document(self, id = None):
+    def begin_document(self, id=None):
         """Set up printing of a document. (Write Postscript DSC header.)"""
         # FIXME: incomplete
         self.fp.write("%!PS-Adobe-3.0\n"
@@ -42,7 +44,7 @@ class PSDraw:
                       "/showpage { } def\n"
                       "%%EndComments\n"
                       "%%BeginDocument\n")
-        #self.fp.write(ERROR_PS) # debugging!
+        # self.fp.write(ERROR_PS) # debugging!
         self.fp.write(EDROFF_PS)
         self.fp.write(VDI_PS)
         self.fp.write("%%EndProlog\n")
@@ -65,7 +67,7 @@ class PSDraw:
         """
         if font not in self.isofont:
             # reencode font
-            self.fp.write("/PSDraw-%s ISOLatin1Encoding /%s E\n" %\
+            self.fp.write("/PSDraw-%s ISOLatin1Encoding /%s E\n" %
                           (font, font))
             self.isofont[font] = 1
         # rough
@@ -113,14 +115,14 @@ class PSDraw:
         xy = xy + (text,)
         self.fp.write("%d %d M (%s) S\n" % xy)
 
-    def image(self, box, im, dpi = None):
+    def image(self, box, im, dpi=None):
         """Draw a PIL image, centered in the given box."""
         # default resolution depends on mode
         if not dpi:
             if im.mode == "1":
-                dpi = 200 # fax
+                dpi = 200  # fax
             else:
-                dpi = 100 # greyscale
+                dpi = 100  # greyscale
         # image size (on paper)
         x = float(im.size[0] * 72) / dpi
         y = float(im.size[1] * 72) / dpi
@@ -128,9 +130,11 @@ class PSDraw:
         xmax = float(box[2] - box[0])
         ymax = float(box[3] - box[1])
         if x > xmax:
-            y = y * xmax / x; x = xmax
+            y = y * xmax / x
+            x = xmax
         if y > ymax:
-            x = x * ymax / y; y = ymax
+            x = x * ymax / y
+            y = ymax
         dx = (xmax - x) / 2 + box[0]
         dy = (ymax - y) / 2 + box[1]
         self.fp.write("gsave\n%f %f translate\n" % (dx, dy))

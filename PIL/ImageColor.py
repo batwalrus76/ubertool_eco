@@ -20,6 +20,7 @@
 from PIL import Image
 import re
 
+
 def getrgb(color):
     """
      Convert a color string to an RGB tuple. If the string cannot be parsed,
@@ -48,31 +49,31 @@ def getrgb(color):
     m = re.match("#\w\w\w$", color)
     if m:
         return (
-            int(color[1]*2, 16),
-            int(color[2]*2, 16),
-            int(color[3]*2, 16)
-            )
+            int(color[1] * 2, 16),
+            int(color[2] * 2, 16),
+            int(color[3] * 2, 16)
+        )
     m = re.match("#\w\w\w\w\w\w$", color)
     if m:
         return (
             int(color[1:3], 16),
             int(color[3:5], 16),
             int(color[5:7], 16)
-            )
+        )
     m = re.match("rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$", color)
     if m:
         return (
             int(m.group(1)),
             int(m.group(2)),
             int(m.group(3))
-            )
+        )
     m = re.match("rgb\(\s*(\d+)%\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)$", color)
     if m:
         return (
             int((int(m.group(1)) * 255) / 100.0 + 0.5),
             int((int(m.group(2)) * 255) / 100.0 + 0.5),
             int((int(m.group(3)) * 255) / 100.0 + 0.5)
-            )
+        )
     m = re.match("hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)$", color)
     if m:
         from colorsys import hls_to_rgb
@@ -80,21 +81,24 @@ def getrgb(color):
             float(m.group(1)) / 360.0,
             float(m.group(3)) / 100.0,
             float(m.group(2)) / 100.0,
-            )
+        )
         return (
             int(rgb[0] * 255 + 0.5),
             int(rgb[1] * 255 + 0.5),
             int(rgb[2] * 255 + 0.5)
-            )
-    m = re.match("rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$", color)
+        )
+    m = re.match(
+        "rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$",
+        color)
     if m:
         return (
             int(m.group(1)),
             int(m.group(2)),
             int(m.group(3)),
             int(m.group(4))
-            )
+        )
     raise ValueError("unknown color specifier: %r" % color)
+
 
 def getcolor(color, mode):
     """
@@ -114,7 +118,7 @@ def getcolor(color, mode):
 
     if Image.getmodebase(mode) == "L":
         r, g, b = color
-        color = (r*299 + g*587 + b*114)//1000
+        color = (r * 299 + g * 587 + b * 114) // 1000
         if mode[-1] == 'A':
             return (color, alpha)
     else:

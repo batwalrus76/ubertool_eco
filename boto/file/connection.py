@@ -23,6 +23,7 @@
 
 from bucket import Bucket
 
+
 class FileConnection(object):
 
     def __init__(self, file_storage_uri):

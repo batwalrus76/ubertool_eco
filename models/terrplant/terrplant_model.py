@@ -13,22 +13,58 @@ import requests
 http_headers = auth_s3.setHTTPHeaders()
 url_part1 = os.environ['UBERTOOL_REST_SERVER']
 
+
 class terrplant(object):
-    def __init__(self, set_variables=True, run_methods=True, version_terrplant='1.2.2', 
-            run_type = "single", A=1, I=1, R=1, D=1, nms=1, lms=1, nds=1, lds=1,
-            chemical_name='', pc_code='', use='', application_method='', application_form='', solubility=1, 
-            vars_dict=None,):
+
+    def __init__(
+        self,
+        set_variables=True,
+        run_methods=True,
+        version_terrplant='1.2.2',
+        run_type="single",
+        A=1,
+        I=1,
+        R=1,
+        D=1,
+        nms=1,
+        lms=1,
+        nds=1,
+        lds=1,
+        chemical_name='',
+        pc_code='',
+        use='',
+        application_method='',
+        application_form='',
+        solubility=1,
+        vars_dict=None,
+    ):
         self.set_default_variables()
         self.jid = rest_funcs.gen_jid()
 
         if set_variables:
-            if vars_dict != None:
+            if vars_dict is not None:
                 self.__dict__.update(vars_dict)
             else:
-                self.set_variables(version_terrplant,run_type,A,I,R,D,nms,lms,nds,lds,chemical_name,pc_code,use,application_method,application_form,solubility)
+                self.set_variables(
+                    version_terrplant,
+                    run_type,
+                    A,
+                    I,
+                    R,
+                    D,
+                    nms,
+                    lms,
+                    nds,
+                    lds,
+                    chemical_name,
+                    pc_code,
+                    use,
+                    application_method,
+                    application_form,
+                    solubility)
 
     def set_default_variables(self):
-        #Currently used variables
+        # Currently used variables
         self.I = 1
         self.A = 1
         self.D = 1
@@ -38,7 +74,7 @@ class terrplant(object):
         self.lms = 1
         self.lds = 1
         self.run_type = "single"
-        #Variables in the input page
+        # Variables in the input page
         self.version_terrplant = ''
         self.chemical_name = ''
         self.pc_code = ''
@@ -51,7 +87,24 @@ class terrplant(object):
         self.lmv = 1
         self.ldv = 1
 
-    def set_variables(self,version_terrplant,run_type,A,I,R,D,nms,lms,nds,lds,chemical_name,pc_code,use,application_method,application_form,solubility):
+    def set_variables(
+            self,
+            version_terrplant,
+            run_type,
+            A,
+            I,
+            R,
+            D,
+            nms,
+            lms,
+            nds,
+            lds,
+            chemical_name,
+            pc_code,
+            use,
+            application_method,
+            application_form,
+            solubility):
         self.version_terrplant = version_terrplant
         self.run_type = run_type
         self.A = A
@@ -69,21 +122,39 @@ class terrplant(object):
         self.application_form = application_form
         self.solubility = solubility
 
-        all_dic = {"version_terrplant":self.version_terrplant, "run_type":self.run_type, "A":self.A, "I":self.I, "R":self.R, "D":self.D,
-                   "nms":self.nms, "lms":self.lms, "nds":self.nds, "lds":self.lds, "chemical_name":self.chemical_name,
-                   "pc_code":self.pc_code, "use":self.use, "application_method":self.application_method, "application_form":self.application_form, "solubility":self.solubility}
+        all_dic = {
+            "version_terrplant": self.version_terrplant,
+            "run_type": self.run_type,
+            "A": self.A,
+            "I": self.I,
+            "R": self.R,
+            "D": self.D,
+            "nms": self.nms,
+            "lms": self.lms,
+            "nds": self.nds,
+            "lds": self.lds,
+            "chemical_name": self.chemical_name,
+            "pc_code": self.pc_code,
+            "use": self.use,
+            "application_method": self.application_method,
+            "application_form": self.application_form,
+            "solubility": self.solubility}
         data = json.dumps(all_dic)
 
         self.jid = rest_funcs.gen_jid()
-        url=url_part1 + '/terrplant/' + self.jid
-        # response = urlfetch.fetch(url=url, payload=data, method=urlfetch.POST, headers=http_headers, deadline=60)   
-        response = requests.post(url, data=data, headers=http_headers, timeout=60)
+        url = url_part1 + '/terrplant/' + self.jid
+        # response = urlfetch.fetch(url=url, payload=data, method=urlfetch.POST, headers=http_headers, deadline=60)
+        response = requests.post(
+            url,
+            data=data,
+            headers=http_headers,
+            timeout=60)
         print response
         logging.info(response)
         output_val = json.loads(response.content)['result']
         for key, value in output_val.items():
             setattr(self, key, value)
-            
+
             # self.rundry_results = self.output_val['rundry_results']
             # self.runsemi_results = self.output_val['runsemi_results']
             # self.totaldry_results = self.output_val['totaldry_results']
@@ -135,6 +206,5 @@ class terrplant(object):
         # if run_type == "batch":
         #     response = ""
         #     while response =="":
-        #         response = urlfetch.fetch(url=url, payload=data, method=urlfetch.POST, headers=http_headers, deadline=60)   
+        #         response = urlfetch.fetch(url=url, payload=data, method=urlfetch.POST, headers=http_headers, deadline=60)
         #     self.output_val = json.loads(response.content)['result']
-

@@ -22,6 +22,7 @@
 
 
 class Tag(object):
+
     """
     A name/value tag on an AutoScalingGroup resource.
 

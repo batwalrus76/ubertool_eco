@@ -55,6 +55,7 @@ except ImportError:
 
 
 class HmacKeys(object):
+
     """Key based Auth handler helper."""
 
     def __init__(self, host, config, provider):
@@ -103,6 +104,7 @@ class HmacKeys(object):
 
 
 class AnonAuthHandler(AuthHandler, HmacKeys):
+
     """
     Implements Anonymous requests.
     """
@@ -117,6 +119,7 @@ class AnonAuthHandler(AuthHandler, HmacKeys):
 
 
 class HmacAuthV1Handler(AuthHandler, HmacKeys):
+
     """    Implements the HMAC request signing used by S3 and GS."""
 
     capability = ['hmac-v1', 's3']
@@ -152,6 +155,7 @@ class HmacAuthV1Handler(AuthHandler, HmacKeys):
 
 
 class HmacAuthV2Handler(AuthHandler, HmacKeys):
+
     """
     Implements the simplified HMAC authorization used by CloudFront.
     """
@@ -182,6 +186,7 @@ class HmacAuthV2Handler(AuthHandler, HmacKeys):
 
 
 class HmacAuthV3Handler(AuthHandler, HmacKeys):
+
     """Implements the new Version 3 HMAC authorization used by Route53."""
 
     capability = ['hmac-v3', 'route53', 'ses']
@@ -206,6 +211,7 @@ class HmacAuthV3Handler(AuthHandler, HmacKeys):
 
 
 class HmacAuthV3HTTPHandler(AuthHandler, HmacKeys):
+
     """
     Implements the new Version 3 HMAC authorization used by DynamoDB.
     """
@@ -236,8 +242,8 @@ class HmacAuthV3HTTPHandler(AuthHandler, HmacKeys):
         case, sorting them in alphabetical order and then joining
         them into a string, separated by newlines.
         """
-        l = sorted(['%s:%s' % (n.lower().strip(),
-                    headers_to_sign[n].strip()) for n in headers_to_sign])
+        l = sorted(['%s:%s' % (n.lower().strip(), headers_to_sign[n].strip())
+                    for n in headers_to_sign])
         return '\n'.join(l)
 
     def string_to_sign(self, http_request):
@@ -282,6 +288,7 @@ class HmacAuthV3HTTPHandler(AuthHandler, HmacKeys):
 
 
 class HmacAuthV4Handler(AuthHandler, HmacKeys):
+
     """
     Implements the new Version 4 HMAC authorization.
     """
@@ -373,7 +380,7 @@ class HmacAuthV4Handler(AuthHandler, HmacKeys):
         path = http_request.auth_path
         # Normalize the path
         # in windows normpath('/') will be '\\' so we chane it back to '/'
-        normalized = posixpath.normpath(path).replace('\\','/')
+        normalized = posixpath.normpath(path).replace('\\', '/')
         # Then urlencode whatever's left.
         encoded = urllib.quote(normalized)
         if len(path) > 1 and path.endswith('/'):
@@ -467,7 +474,7 @@ class HmacAuthV4Handler(AuthHandler, HmacKeys):
     def signature(self, http_request, string_to_sign):
         key = self._provider.secret_key
         k_date = self._sign(('AWS4' + key).encode('utf-8'),
-                              http_request.timestamp)
+                            http_request.timestamp)
         k_region = self._sign(k_date, http_request.region_name)
         k_service = self._sign(k_region, http_request.service_name)
         k_signing = self._sign(k_service, 'aws4_request')
@@ -493,7 +500,8 @@ class HmacAuthV4Handler(AuthHandler, HmacKeys):
             # Stash request parameters into post body
             # before we generate the signature.
             req.body = qs
-            req.headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
+            req.headers[
+                'Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
             req.headers['Content-Length'] = str(len(req.body))
         else:
             # Safe to modify req.path here since
@@ -517,6 +525,7 @@ class HmacAuthV4Handler(AuthHandler, HmacKeys):
 
 
 class S3HmacAuthV4Handler(HmacAuthV4Handler, AuthHandler):
+
     """
     Implements a variant of Version 4 HMAC authorization specific to S3.
     """
@@ -538,7 +547,8 @@ class S3HmacAuthV4Handler(HmacAuthV4Handler, AuthHandler):
         # S3 does **NOT** do path normalization that SigV4 typically does.
         # Urlencode the path, **NOT** ``auth_path`` (because vhosting).
         path = urlparse.urlparse(http_request.path)
-        # Because some quoting may have already been applied, let's back it out.
+        # Because some quoting may have already been applied, let's back it
+        # out.
         unquoted = urllib.unquote(path.path)
         # Requote, this time addressing all characters.
         encoded = urllib.quote(unquoted)
@@ -658,7 +668,8 @@ class S3HmacAuthV4Handler(HmacAuthV4Handler, AuthHandler):
     def add_auth(self, req, **kwargs):
         if not 'x-amz-content-sha256' in req.headers:
             if '_sha256' in req.headers:
-                req.headers['x-amz-content-sha256'] = req.headers.pop('_sha256')
+                req.headers[
+                    'x-amz-content-sha256'] = req.headers.pop('_sha256')
             else:
                 req.headers['x-amz-content-sha256'] = self.payload(req)
 
@@ -667,6 +678,7 @@ class S3HmacAuthV4Handler(HmacAuthV4Handler, AuthHandler):
 
 
 class QueryAuthHandler(AuthHandler):
+
     """
     Provides pure query construction (no actual signing).
 
@@ -706,6 +718,7 @@ class QueryAuthHandler(AuthHandler):
 
 
 class QuerySignatureHelper(HmacKeys):
+
     """
     Helper for Query signature based Auth handler.
 
@@ -723,9 +736,12 @@ class QuerySignatureHelper(HmacKeys):
             http_request.auth_path, http_request.host)
         boto.log.debug('query_string: %s Signature: %s' % (qs, signature))
         if http_request.method == 'POST':
-            headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
-            http_request.body = qs + '&Signature=' + urllib.quote_plus(signature)
-            http_request.headers['Content-Length'] = str(len(http_request.body))
+            headers[
+                'Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
+            http_request.body = qs + '&Signature=' + \
+                urllib.quote_plus(signature)
+            http_request.headers[
+                'Content-Length'] = str(len(http_request.body))
         else:
             http_request.body = ''
             # if this is a retried request, the qs from the previous try will
@@ -736,6 +752,7 @@ class QuerySignatureHelper(HmacKeys):
 
 
 class QuerySignatureV0AuthHandler(QuerySignatureHelper, AuthHandler):
+
     """Provides Signature V0 Signing"""
 
     SignatureVersion = 0
@@ -757,6 +774,7 @@ class QuerySignatureV0AuthHandler(QuerySignatureHelper, AuthHandler):
 
 
 class QuerySignatureV1AuthHandler(QuerySignatureHelper, AuthHandler):
+
     """
     Provides Query Signature V1 Authentication.
     """
@@ -785,6 +803,7 @@ class QuerySignatureV1AuthHandler(QuerySignatureHelper, AuthHandler):
 
 
 class QuerySignatureV2AuthHandler(QuerySignatureHelper, AuthHandler):
+
     """Provides Query Signature V2 Authentication."""
 
     SignatureVersion = 2
@@ -816,6 +835,7 @@ class QuerySignatureV2AuthHandler(QuerySignatureHelper, AuthHandler):
 
 
 class POSTPathQSV2AuthHandler(QuerySignatureV2AuthHandler, AuthHandler):
+
     """
     Query Signature V2 Authentication relocating signed query
     into the path and allowing POST requests with Content-Types.
@@ -840,7 +860,7 @@ class POSTPathQSV2AuthHandler(QuerySignatureV2AuthHandler, AuthHandler):
         # already be there, we need to get rid of that and rebuild it
         req.path = req.path.split('?')[0]
         req.path = (req.path + '?' + qs +
-                             '&Signature=' + urllib.quote_plus(signature))
+                    '&Signature=' + urllib.quote_plus(signature))
 
 
 def get_auth_handler(host, config, provider, requested_capability=None):
@@ -877,9 +897,9 @@ def get_auth_handler(host, config, provider, requested_capability=None):
         checked_handlers = auth_handlers
         names = [handler.__name__ for handler in checked_handlers]
         raise boto.exception.NoAuthHandlerFound(
-              'No handler was ready to authenticate. %d handlers were checked.'
-              ' %s '
-              'Check your credentials' % (len(names), str(names)))
+            'No handler was ready to authenticate. %d handlers were checked.'
+            ' %s '
+            'Check your credentials' % (len(names), str(names)))
 
     # We select the last ready auth handler that was loaded, to allow users to
     # customize how auth works in environments where there are shared boto

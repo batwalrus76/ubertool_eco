@@ -9,6 +9,7 @@ class NEWVALUE(object):
 
 
 class Item(object):
+
     """
     An object representing the item data within a DynamoDB table.
 
@@ -23,6 +24,7 @@ class Item(object):
     Empty items, or items that have no data, are considered falsey.
 
     """
+
     def __init__(self, table, data=None, loaded=False):
         """
         Constructs an (unsaved) ``Item`` instance.

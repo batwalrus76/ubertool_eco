@@ -30,6 +30,7 @@ from boto.resultset import ResultSet
 
 
 class Backend(object):
+
     """Backend server description"""
 
     def __init__(self, connection=None):
@@ -52,10 +53,12 @@ class Backend(object):
 
 
 class LoadBalancerZones(object):
+
     """
     Used to collect the zones for a Load Balancer when enable_zones
     or disable_zones are called.
     """
+
     def __init__(self, connection=None):
         self.connection = connection
         self.zones = ListElement()
@@ -67,7 +70,9 @@ class LoadBalancerZones(object):
     def endElement(self, name, value, connection):
         pass
 
+
 class LoadBalancer(object):
+
     """
     Represents an EC2 Load Balancer.
     """
@@ -201,7 +206,9 @@ class LoadBalancer(object):
         """
         if isinstance(zones, basestring):
             zones = [zones]
-        new_zones = self.connection.disable_availability_zones(self.name, zones)
+        new_zones = self.connection.disable_availability_zones(
+            self.name,
+            zones)
         self.availability_zones = new_zones
 
     def get_attributes(self, force=False):
@@ -349,13 +356,15 @@ class LoadBalancer(object):
 
     def set_policies_of_backend_server(self, instance_port, policies):
         return self.connection.set_lb_policies_of_backend_server(self.name,
-                                                           instance_port,
-                                                           policies)
-
+                                                                 instance_port,
+                                                                 policies)
 
     def create_cookie_stickiness_policy(self, cookie_expiration_period,
                                         policy_name):
-        return self.connection.create_lb_cookie_stickiness_policy(cookie_expiration_period, self.name, policy_name)
+        return self.connection.create_lb_cookie_stickiness_policy(
+            cookie_expiration_period,
+            self.name,
+            policy_name)
 
     def create_app_cookie_stickiness_policy(self, name, policy_name):
         return self.connection.create_app_cookie_stickiness_policy(name,
@@ -363,12 +372,17 @@ class LoadBalancer(object):
                                                                    policy_name)
 
     def set_listener_SSL_certificate(self, lb_port, ssl_certificate_id):
-        return self.connection.set_lb_listener_SSL_certificate(self.name,
-                                                               lb_port,
-                                                               ssl_certificate_id)
+        return self.connection.set_lb_listener_SSL_certificate(
+            self.name,
+            lb_port,
+            ssl_certificate_id)
 
     def create_lb_policy(self, policy_name, policy_type, policy_attribute):
-        return self.connection.create_lb_policy(self.name, policy_name, policy_type, policy_attribute)
+        return self.connection.create_lb_policy(
+            self.name,
+            policy_name,
+            policy_type,
+            policy_attribute)
 
     def attach_subnets(self, subnets):
         """
@@ -395,7 +409,9 @@ class LoadBalancer(object):
         """
         if isinstance(subnets, basestring):
             subnets = [subnets]
-        new_subnets = self.connection.detach_lb_from_subnets(self.name, subnets)
+        new_subnets = self.connection.detach_lb_from_subnets(
+            self.name,
+            subnets)
         self.subnets = new_subnets
 
     def apply_security_groups(self, security_groups):
@@ -411,5 +427,5 @@ class LoadBalancer(object):
         if isinstance(security_groups, basestring):
             security_groups = [security_groups]
         new_sgs = self.connection.apply_security_groups_to_lb(
-                                         self.name, security_groups)
+            self.name, security_groups)
         self.security_groups = new_sgs

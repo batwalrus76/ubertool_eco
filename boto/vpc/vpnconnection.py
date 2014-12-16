@@ -28,7 +28,9 @@ Represents a VPN Connectionn
 
 from boto.ec2.ec2object import TaggedEC2Object
 
+
 class VpnConnectionOptions(object):
+
     """
     Represents VPN connection options
 
@@ -37,6 +39,7 @@ class VpnConnectionOptions(object):
         BGP.
 
     """
+
     def __init__(self, static_routes_only=None):
         self.static_routes_only = static_routes_only
 
@@ -52,7 +55,9 @@ class VpnConnectionOptions(object):
         else:
             setattr(self, name, value)
 
+
 class VpnStaticRoute(object):
+
     """
     Represents a static route for a VPN connection.
 
@@ -61,6 +66,7 @@ class VpnStaticRoute(object):
     :ivar source: Indicates how the routes were provided.
     :ivar state: The current state of the static route.
     """
+
     def __init__(self, destination_cidr_block=None, source=None, state=None):
         self.destination_cidr_block = destination_cidr_block
         self.source = source
@@ -82,7 +88,9 @@ class VpnStaticRoute(object):
         else:
             setattr(self, name, value)
 
+
 class VpnTunnel(object):
+
     """
     Represents telemetry for a VPN tunnel
 
@@ -93,8 +101,14 @@ class VpnTunnel(object):
     :ivar status_message: If an error occurs, a description of the error.
     :ivar accepted_route_count: The number of accepted routes.
     """
-    def __init__(self, outside_ip_address=None, status=None, last_status_change=None,
-                 status_message=None, accepted_route_count=None):
+
+    def __init__(
+            self,
+            outside_ip_address=None,
+            status=None,
+            last_status_change=None,
+            status_message=None,
+            accepted_route_count=None):
         self.outside_ip_address = outside_ip_address
         self.status = status
         self.last_status_change = last_status_change
@@ -113,8 +127,9 @@ class VpnTunnel(object):
         elif name == 'status':
             self.status = value
         elif name == 'lastStatusChange':
-            self.last_status_change =  datetime.strptime(value,
-                                        '%Y-%m-%dT%H:%M:%S.%fZ')
+            self.last_status_change = datetime.strptime(
+                value,
+                '%Y-%m-%dT%H:%M:%S.%fZ')
         elif name == 'statusMessage':
             self.status_message = value
         elif name == 'acceptedRouteCount':
@@ -126,7 +141,9 @@ class VpnTunnel(object):
         else:
             setattr(self, name, value)
 
+
 class VpnConnection(TaggedEC2Object):
+
     """
     Represents a VPN Connection
 
@@ -151,6 +168,7 @@ class VpnConnection(TaggedEC2Object):
         connection.
 
     """
+
     def __init__(self, connection=None):
         super(VpnConnection, self).__init__(connection)
         self.id = None
@@ -167,7 +185,12 @@ class VpnConnection(TaggedEC2Object):
         return 'VpnConnection:%s' % self.id
 
     def startElement(self, name, attrs, connection):
-        retval = super(VpnConnection, self).startElement(name, attrs, connection)
+        retval = super(
+            VpnConnection,
+            self).startElement(
+            name,
+            attrs,
+            connection)
         if retval is not None:
             return retval
         if name == 'vgwTelemetry':

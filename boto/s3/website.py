@@ -20,6 +20,7 @@
 # IN THE SOFTWARE.
 #
 
+
 def tag(key, value):
     start = '<%s>' % key
     end = '</%s>' % key
@@ -27,6 +28,7 @@ def tag(key, value):
 
 
 class WebsiteConfiguration(object):
+
     """
     Website configuration for a bucket.
 
@@ -75,8 +77,9 @@ class WebsiteConfiguration(object):
         pass
 
     def to_xml(self):
-        parts = ['<?xml version="1.0" encoding="UTF-8"?>',
-          '<WebsiteConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">']
+        parts = [
+            '<?xml version="1.0" encoding="UTF-8"?>',
+            '<WebsiteConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">']
         if self.suffix is not None:
             parts.append(tag('IndexDocument', tag('Suffix', self.suffix)))
         if self.error_key is not None:
@@ -90,6 +93,7 @@ class WebsiteConfiguration(object):
 
 
 class _XMLKeyValue(object):
+
     def __init__(self, translator, container=None):
         self.translator = translator
         if container:
@@ -115,6 +119,7 @@ class _XMLKeyValue(object):
 
 
 class RedirectLocation(_XMLKeyValue):
+
     """Specify redirect behavior for every request to a bucket's endpoint.
 
     :ivar hostname: Name of the host where requests will be redirected.
@@ -125,7 +130,7 @@ class RedirectLocation(_XMLKeyValue):
     """
     TRANSLATOR = [('HostName', 'hostname'),
                   ('Protocol', 'protocol'),
-                 ]
+                  ]
 
     def __init__(self, hostname=None, protocol=None):
         self.hostname = hostname
@@ -134,7 +139,7 @@ class RedirectLocation(_XMLKeyValue):
 
     def to_xml(self):
         return tag('RedirectAllRequestsTo',
-            super(RedirectLocation, self).to_xml())
+                   super(RedirectLocation, self).to_xml())
 
 
 class RoutingRules(list):
@@ -172,6 +177,7 @@ class RoutingRules(list):
 
 
 class RoutingRule(object):
+
     """Represents a single routing rule.
 
     There are convenience methods to making creating rules
@@ -187,6 +193,7 @@ class RoutingRule(object):
         of an error, you can can specify a different error code to return.
 
     """
+
     def __init__(self, condition=None, redirect=None):
         self.condition = condition
         self.redirect = redirect
@@ -216,14 +223,15 @@ class RoutingRule(object):
     def then_redirect(self, hostname=None, protocol=None, replace_key=None,
                       replace_key_prefix=None, http_redirect_code=None):
         self.redirect = Redirect(
-                hostname=hostname, protocol=protocol,
-                replace_key=replace_key,
-                replace_key_prefix=replace_key_prefix,
-                http_redirect_code=http_redirect_code)
+            hostname=hostname, protocol=protocol,
+            replace_key=replace_key,
+            replace_key_prefix=replace_key_prefix,
+            http_redirect_code=http_redirect_code)
         return self
 
 
 class Condition(_XMLKeyValue):
+
     """
     :ivar key_prefix: The object key name prefix when the redirect is applied.
         For example, to redirect requests for ExamplePage.html, the key prefix
@@ -239,7 +247,7 @@ class Condition(_XMLKeyValue):
     TRANSLATOR = [
         ('KeyPrefixEquals', 'key_prefix'),
         ('HttpErrorCodeReturnedEquals', 'http_error_code'),
-        ]
+    ]
 
     def __init__(self, key_prefix=None, http_error_code=None):
         self.key_prefix = key_prefix
@@ -251,6 +259,7 @@ class Condition(_XMLKeyValue):
 
 
 class Redirect(_XMLKeyValue):
+
     """
     :ivar hostname: The host name to use in the redirect request.
 
@@ -276,7 +285,7 @@ class Redirect(_XMLKeyValue):
         ('ReplaceKeyWith', 'replace_key'),
         ('ReplaceKeyPrefixWith', 'replace_key_prefix'),
         ('HttpRedirectCode', 'http_redirect_code'),
-        ]
+    ]
 
     def __init__(self, hostname=None, protocol=None, replace_key=None,
                  replace_key_prefix=None, http_redirect_code=None):
@@ -289,5 +298,3 @@ class Redirect(_XMLKeyValue):
 
     def to_xml(self):
         return tag('Redirect', super(Redirect, self).to_xml())
-
-

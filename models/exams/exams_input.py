@@ -5,13 +5,14 @@
 
 from django.template.loader import render_to_string
 
+
 def examsInputPage(request, model='', header='', formData=None):
     import exams_parameters
-              
-    html = render_to_string('04uberinput_jquery.html', { 'model': model })
+
+    html = render_to_string('04uberinput_jquery.html', {'model': model})
     html = html + render_to_string('04uberinput_start.html', {
-            'model':'exams', 
-            'model_attributes':'EXAMS Inputs'})
+        'model': 'exams',
+        'model_attributes': 'EXAMS Inputs'})
     html = html + str(exams_parameters.ExamsInp(formData))
     html = html + """
     </table>
@@ -29,8 +30,9 @@ def examsInputPage(request, model='', header='', formData=None):
                 <option value="10">10</option></select>
             </td>
         </tr>
-    """ 
-    html = html + render_to_string('04uberinput_end.html', {'sub_title': 'Submit'})
+    """
+    html = html + \
+        render_to_string('04uberinput_end.html', {'sub_title': 'Submit'})
     # Check if tooltips dictionary exists
     try:
         import exams_tooltips
@@ -38,6 +40,7 @@ def examsInputPage(request, model='', header='', formData=None):
         tooltips = exams_tooltips.tooltips
     except:
         tooltips = {}
-    html = html + render_to_string('05ubertext_tooltips_right.html', {'tooltips':tooltips})
+    html = html + \
+        render_to_string('05ubertext_tooltips_right.html', {'tooltips': tooltips})
 
     return html

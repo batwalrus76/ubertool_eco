@@ -23,13 +23,18 @@
 import boto
 from boto.sdb.db.property import StringProperty, DateTimeProperty, IntegerProperty
 from boto.sdb.db.model import Model
-import datetime, subprocess, StringIO, time
+import datetime
+import subprocess
+import StringIO
+import time
+
 
 def check_hour(val):
     if val == '*':
         return
     if int(val) < 0 or int(val) > 23:
         raise ValueError
+
 
 class Task(Model):
 
@@ -72,7 +77,9 @@ class Task(Model):
         If it's an hourly task and it's never been run, run it now.
         If it's a daily task and it's never been run and the hour is right, run it now.
         """
-        boto.log.info('checking Task[%s]-now=%s, last=%s' % (self.name, self.now, self.last_executed))
+        boto.log.info(
+            'checking Task[%s]-now=%s, last=%s' %
+            (self.name, self.now, self.last_executed))
 
         if self.hourly and not self.last_executed:
             return 0
@@ -81,35 +88,43 @@ class Task(Model):
             if int(self.hour) == self.now.hour:
                 return 0
             else:
-                return max( (int(self.hour)-self.now.hour), (self.now.hour-int(self.hour)) )*60*60
+                return max((int(self.hour) - self.now.hour),
+                           (self.now.hour - int(self.hour))) * 60 * 60
 
         delta = self.now - self.last_executed
         if self.hourly:
-            if delta.seconds >= 60*60:
+            if delta.seconds >= 60 * 60:
                 return 0
             else:
-                return 60*60 - delta.seconds
+                return 60 * 60 - delta.seconds
         else:
             if int(self.hour) == self.now.hour:
                 if delta.days >= 1:
                     return 0
                 else:
-                    return 82800 # 23 hours, just to be safe
+                    return 82800  # 23 hours, just to be safe
             else:
-                return max( (int(self.hour)-self.now.hour), (self.now.hour-int(self.hour)) )*60*60
+                return max((int(self.hour) - self.now.hour),
+                           (self.now.hour - int(self.hour))) * 60 * 60
 
     def _run(self, msg, vtimeout):
         boto.log.info('Task[%s] - running:%s' % (self.name, self.command))
         log_fp = StringIO.StringIO()
-        process = subprocess.Popen(self.command, shell=True, stdin=subprocess.PIPE,
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen(
+            self.command,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
         nsecs = 5
         current_timeout = vtimeout
         while process.poll() is None:
             boto.log.info('nsecs=%s, timeout=%s' % (nsecs, current_timeout))
             if nsecs >= current_timeout:
                 current_timeout += vtimeout
-                boto.log.info('Task[%s] - setting timeout to %d seconds' % (self.name, current_timeout))
+                boto.log.info(
+                    'Task[%s] - setting timeout to %d seconds' %
+                    (self.name, current_timeout))
                 if msg:
                     msg.change_visibility(current_timeout)
             time.sleep(5)
@@ -132,21 +147,28 @@ class Task(Model):
             new_msg = queue.write(new_msg)
             self.message_id = new_msg.id
             self.put()
-            boto.log.info('Task[%s] - new message id=%s' % (self.name, new_msg.id))
+            boto.log.info(
+                'Task[%s] - new message id=%s' %
+                (self.name, new_msg.id))
             msg.delete()
-            boto.log.info('Task[%s] - deleted message %s' % (self.name, msg.id))
+            boto.log.info(
+                'Task[%s] - deleted message %s' %
+                (self.name, msg.id))
         else:
             boto.log.info('new_vtimeout: %d' % delay)
             msg.change_visibility(delay)
 
     def start(self, queue_name):
-        boto.log.info('Task[%s] - starting with queue: %s' % (self.name, queue_name))
+        boto.log.info(
+            'Task[%s] - starting with queue: %s' %
+            (self.name, queue_name))
         queue = boto.lookup('sqs', queue_name)
         msg = queue.new_message(self.id)
         msg = queue.write(msg)
         self.message_id = msg.id
         self.put()
         boto.log.info('Task[%s] - start successful' % self.name)
+
 
 class TaskPoller(object):
 
@@ -161,15 +183,13 @@ class TaskPoller(object):
                 task = Task.get_by_id(m.get_body())
                 if task:
                     if not task.message_id or m.id == task.message_id:
-                        boto.log.info('Task[%s] - read message %s' % (task.name, m.id))
+                        boto.log.info(
+                            'Task[%s] - read message %s' %
+                            (task.name, m.id))
                         task.run(m, vtimeout)
                     else:
-                        boto.log.info('Task[%s] - found extraneous message, ignoring' % task.name)
+                        boto.log.info(
+                            'Task[%s] - found extraneous message, ignoring' %
+                            task.name)
             else:
                 time.sleep(wait)
-
-
-
-
-
-

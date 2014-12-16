@@ -33,6 +33,7 @@ from boto.support import exceptions
 
 
 class SupportConnection(AWSQueryConnection):
+
     """
     AWS Support
     The AWS Support API reference is intended for programmers who need
@@ -100,7 +101,6 @@ class SupportConnection(AWSQueryConnection):
         "CaseCreationLimitExceeded": exceptions.CaseCreationLimitExceeded,
         "InternalServerError": exceptions.InternalServerError,
     }
-
 
     def __init__(self, **kwargs):
         region = kwargs.pop('region', None)
@@ -445,8 +445,9 @@ class SupportConnection(AWSQueryConnection):
 
         """
         params = {'checkIds': check_ids, }
-        return self.make_request(action='DescribeTrustedAdvisorCheckRefreshStatuses',
-                                 body=json.dumps(params))
+        return self.make_request(
+            action='DescribeTrustedAdvisorCheckRefreshStatuses',
+            body=json.dumps(params))
 
     def describe_trusted_advisor_check_result(self, check_id, language=None):
         """
@@ -588,4 +589,3 @@ class SupportConnection(AWSQueryConnection):
             exception_class = self._faults.get(fault_name, self.ResponseError)
             raise exception_class(response.status, response.reason,
                                   body=json_body)
-

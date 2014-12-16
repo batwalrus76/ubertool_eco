@@ -24,12 +24,15 @@ from boto.sdb.db.key import Key
 from boto.sdb.db.query import Query
 import boto
 
+
 class ModelMeta(type):
+
     "Metaclass for all Models"
 
     def __init__(cls, name, bases, dict):
         super(ModelMeta, cls).__init__(name, bases, dict)
-        # Make sure this is a subclass of Model - mainly copied from django ModelBase (thanks!)
+        # Make sure this is a subclass of Model - mainly copied from django
+        # ModelBase (thanks!)
         cls.__sub_classes__ = []
 
         # Do a delayed import to prevent possible circular import errors.
@@ -56,9 +59,10 @@ class ModelMeta(type):
             # Model class, defined below.
             pass
 
+
 class Model(object):
     __metaclass__ = ModelMeta
-    __consistent__ = False # Consistent is set off by default
+    __consistent__ = False  # Consistent is set off by default
     id = None
 
     @classmethod
@@ -128,7 +132,8 @@ class Model(object):
             for key in cls.__dict__.keys():
                 prop = cls.__dict__[key]
                 if isinstance(prop, Property):
-                    if not prop.__class__.__name__.startswith('_') and prop_name == prop.name:
+                    if not prop.__class__.__name__.startswith(
+                            '_') and prop_name == prop.name:
                         property = prop
             if len(cls.__bases__) > 0:
                 cls = cls.__bases__[0]
@@ -166,7 +171,7 @@ class Model(object):
                 # so if it fails we just revert to it's default value
                 try:
                     setattr(self, key, kw[key])
-                except Exception, e:
+                except Exception as e:
                     boto.log.exception(e)
 
     def __repr__(self):
@@ -216,7 +221,9 @@ class Model(object):
         :return: self
         :rtype: :class:`boto.sdb.db.model.Model`
         """
-        assert(isinstance(attrs, dict)), "Argument must be a dict of key->values to save"
+        assert(
+            isinstance(
+                attrs, dict)), "Argument must be a dict of key->values to save"
         for prop_name in attrs:
             value = attrs[prop_name]
             prop = self.find_property(prop_name)
@@ -234,7 +241,9 @@ class Model(object):
         :return: self
         :rtype: :class:`boto.sdb.db.model.Model`
         """
-        assert(isinstance(attrs, list)), "Argument must be a list of names of keys to delete."
+        assert(
+            isinstance(
+                attrs, list)), "Argument must be a list of names of keys to delete."
         self._manager.domain.delete_attributes(self.id, attrs)
         self.reload()
         return self
@@ -254,9 +263,9 @@ class Model(object):
         props = {}
         for prop in self.properties(hidden=False):
             props[prop.name] = getattr(self, prop.name)
-        obj = {'properties' : props,
-               'id' : self.id}
-        return {self.__class__.__name__ : obj}
+        obj = {'properties': props,
+               'id': self.id}
+        return {self.__class__.__name__: obj}
 
     def to_xml(self, doc=None):
         xmlmanager = self.get_xmlmanager()
@@ -272,6 +281,7 @@ class Model(object):
             r = sc.find_subclass(name)
             if r is not None:
                 return r
+
 
 class Expando(Model):
 
@@ -293,5 +303,3 @@ class Expando(Model):
                 object.__setattr__(self, name, value)
                 return value
         raise AttributeError
-
-

@@ -10,12 +10,14 @@ DEFAULT_CREDENTIALS = {
     'aws_secret_access_key': None
 }
 
+
 def set_default_credentials(aws_access_key_id, aws_secret_access_key):
     """Set default credentials."""
     DEFAULT_CREDENTIALS.update({
         'aws_access_key_id': aws_access_key_id,
         'aws_secret_access_key': aws_secret_access_key,
     })
+
 
 class SWFBase(object):
 
@@ -33,8 +35,8 @@ class SWFBase(object):
         for kwarg in kwargs:
             setattr(self, kwarg, kwargs[kwarg])
 
-        self._swf = Layer1(self.aws_access_key_id, 
-                              self.aws_secret_access_key)
+        self._swf = Layer1(self.aws_access_key_id,
+                           self.aws_secret_access_key)
 
     def __repr__(self):
         rep_str = str(self.name)
@@ -42,12 +44,14 @@ class SWFBase(object):
             rep_str += '-' + str(getattr(self, 'version'))
         return '<%s %r at 0x%x>' % (self.__class__.__name__, rep_str, id(self))
 
+
 class Domain(SWFBase):
 
     """Simple Workflow Domain."""
 
     description = None
     retention = 30
+
     @wraps(Layer1.describe_domain)
     def describe(self):
         """DescribeDomain."""
@@ -61,7 +65,7 @@ class Domain(SWFBase):
     @wraps(Layer1.register_domain)
     def register(self):
         """RegisterDomain."""
-        self._swf.register_domain(self.name, str(self.retention), 
+        self._swf.register_domain(self.name, str(self.retention),
                                   self.description)
 
     @wraps(Layer1.list_activity_types)
@@ -95,7 +99,7 @@ class Domain(SWFBase):
                 'aws_secret_access_key': self.aws_secret_access_key,
                 'domain': self.name,
             })
-            
+
             wf_objects.append(WorkflowType(**wf_args))
         return wf_objects
 
@@ -113,7 +117,7 @@ class Domain(SWFBase):
             if 'oldest_date' not in kwargs:
                 # Last 24 hours.
                 kwargs['oldest_date'] = time.time() - (3600 * 24)
-            executions = self._swf.list_open_workflow_executions(self.name, 
+            executions = self._swf.list_open_workflow_executions(self.name,
                                                                  **kwargs)
         exe_objects = []
         for exe_args in executions['executionInfos']:
@@ -121,13 +125,13 @@ class Domain(SWFBase):
                 nested_dict = exe_args[nested_key]
                 del exe_args[nested_key]
                 exe_args.update(nested_dict)
-            
+
             exe_args.update({
                 'aws_access_key_id': self.aws_access_key_id,
                 'aws_secret_access_key': self.aws_secret_access_key,
                 'domain': self.name,
             })
-            
+
             exe_objects.append(WorkflowExecution(**exe_args))
         return exe_objects
 
@@ -140,7 +144,7 @@ class Domain(SWFBase):
     def count_pending_decision_tasks(self, task_list):
         """CountPendingDecisionTasks."""
         return self._swf.count_pending_decision_tasks(self.name, task_list)
- 
+
 
 class Actor(SWFBase):
 
@@ -151,6 +155,7 @@ class Actor(SWFBase):
     def run(self):
         """To be overloaded by subclasses."""
         raise NotImplementedError()
+
 
 class ActivityWorker(Actor):
 
@@ -197,6 +202,7 @@ class ActivityWorker(Actor):
         self.last_tasktoken = task.get('taskToken')
         return task
 
+
 class Decider(Actor):
 
     """Base class for SimpleWorkflow deciders."""
@@ -219,10 +225,13 @@ class Decider(Actor):
         if 'task_list' in kwargs:
             task_list = kwargs.get('task_list')
             del kwargs['task_list']
-        decision_task = self._swf.poll_for_decision_task(self.domain, task_list,
-                                                  **kwargs)
+        decision_task = self._swf.poll_for_decision_task(
+            self.domain,
+            task_list,
+            **kwargs)
         self.last_tasktoken = decision_task.get('taskToken')
         return decision_task
+
 
 class WorkflowType(SWFBase):
 
@@ -237,6 +246,7 @@ class WorkflowType(SWFBase):
         """DescribeWorkflowType."""
         return self._swf.describe_workflow_type(self.domain, self.name,
                                                 self.version)
+
     @wraps(Layer1.register_workflow_type)
     def register(self, **kwargs):
         """RegisterWorkflowType."""
@@ -253,7 +263,7 @@ class WorkflowType(SWFBase):
     def deprecate(self):
         """DeprecateWorkflowType."""
         self._swf.deprecate_workflow_type(self.domain, self.name, self.version)
-    
+
     @wraps(Layer1.start_workflow_execution)
     def start(self, **kwargs):
         """StartWorkflowExecution."""
@@ -265,12 +275,21 @@ class WorkflowType(SWFBase):
 
         for def_attr in ('task_list', 'child_policy'):
             kwargs[def_attr] = kwargs.get(def_attr, getattr(self, def_attr))
-        run_id = self._swf.start_workflow_execution(self.domain, workflow_id, 
-                                    self.name, self.version, **kwargs)['runId']
-        return WorkflowExecution(name=self.name, version=self.version,
-               runId=run_id, domain=self.domain, workflowId=workflow_id,
-               aws_access_key_id=self.aws_access_key_id,
-               aws_secret_access_key=self.aws_secret_access_key)
+        run_id = self._swf.start_workflow_execution(
+            self.domain,
+            workflow_id,
+            self.name,
+            self.version,
+            **kwargs)['runId']
+        return WorkflowExecution(
+            name=self.name,
+            version=self.version,
+            runId=run_id,
+            domain=self.domain,
+            workflowId=workflow_id,
+            aws_access_key_id=self.aws_access_key_id,
+            aws_secret_access_key=self.aws_secret_access_key)
+
 
 class WorkflowExecution(SWFBase):
 
@@ -282,32 +301,39 @@ class WorkflowExecution(SWFBase):
     @wraps(Layer1.signal_workflow_execution)
     def signal(self, signame, **kwargs):
         """SignalWorkflowExecution."""
-        self._swf.signal_workflow_execution(self.domain, signame, 
+        self._swf.signal_workflow_execution(self.domain, signame,
                                             self.workflowId, **kwargs)
 
     @wraps(Layer1.terminate_workflow_execution)
     def terminate(self, **kwargs):
         """TerminateWorkflowExecution (p. 103)."""
-        return self._swf.terminate_workflow_execution(self.domain, 
-                                        self.workflowId, **kwargs)
+        return self._swf.terminate_workflow_execution(
+            self.domain,
+            self.workflowId,
+            **kwargs)
 
     @wraps(Layer1.get_workflow_execution_history)
     def history(self, **kwargs):
         """GetWorkflowExecutionHistory."""
-        return self._swf.get_workflow_execution_history(self.domain, self.runId,
-                                            self.workflowId, **kwargs)['events']
+        return self._swf.get_workflow_execution_history(
+            self.domain,
+            self.runId,
+            self.workflowId,
+            **kwargs)['events']
 
     @wraps(Layer1.describe_workflow_execution)
     def describe(self):
         """DescribeWorkflowExecution."""
         return self._swf.describe_workflow_execution(self.domain, self.runId,
-                                                             self.workflowId)
+                                                     self.workflowId)
 
     @wraps(Layer1.request_cancel_workflow_execution)
     def request_cancel(self):
         """RequestCancelWorkflowExecution."""
-        return self._swf.request_cancel_workflow_execution(self.domain,
-                                                   self.workflowId, self.runId)
+        return self._swf.request_cancel_workflow_execution(
+            self.domain,
+            self.workflowId,
+            self.runId)
 
 
 class ActivityType(SWFBase):

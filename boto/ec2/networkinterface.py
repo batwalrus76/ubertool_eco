@@ -30,6 +30,7 @@ from boto.ec2.group import Group
 
 
 class Attachment(object):
+
     """
     :ivar id: The ID of the attachment.
     :ivar instance_id: The ID of the instance.
@@ -78,6 +79,7 @@ class Attachment(object):
 
 
 class NetworkInterface(TaggedEC2Object):
+
     """
     An Elastic Network Interface.
 
@@ -120,7 +122,7 @@ class NetworkInterface(TaggedEC2Object):
 
     def startElement(self, name, attrs, connection):
         retval = super(NetworkInterface, self).startElement(name, attrs,
-            connection)
+                                                            connection)
         if retval is not None:
             return retval
         if name == 'groupSet':
@@ -175,6 +177,7 @@ class NetworkInterface(TaggedEC2Object):
 
 
 class PrivateIPAddress(object):
+
     def __init__(self, connection=None, private_ip_address=None,
                  primary=None):
         self.connection = connection
@@ -196,6 +199,7 @@ class PrivateIPAddress(object):
 
 
 class NetworkInterfaceCollection(list):
+
     def __init__(self, *interfaces):
         self.extend(interfaces)
 
@@ -204,10 +208,10 @@ class NetworkInterfaceCollection(list):
             full_prefix = '%sNetworkInterface.%s.' % (prefix, i)
             if spec.network_interface_id is not None:
                 params[full_prefix + 'NetworkInterfaceId'] = \
-                        str(spec.network_interface_id)
+                    str(spec.network_interface_id)
             if spec.device_index is not None:
                 params[full_prefix + 'DeviceIndex'] = \
-                        str(spec.device_index)
+                    str(spec.device_index)
             else:
                 params[full_prefix + 'DeviceIndex'] = 0
             if spec.subnet_id is not None:
@@ -216,13 +220,13 @@ class NetworkInterfaceCollection(list):
                 params[full_prefix + 'Description'] = str(spec.description)
             if spec.delete_on_termination is not None:
                 params[full_prefix + 'DeleteOnTermination'] = \
-                        'true' if spec.delete_on_termination else 'false'
+                    'true' if spec.delete_on_termination else 'false'
             if spec.secondary_private_ip_address_count is not None:
                 params[full_prefix + 'SecondaryPrivateIpAddressCount'] = \
-                        str(spec.secondary_private_ip_address_count)
+                    str(spec.secondary_private_ip_address_count)
             if spec.private_ip_address is not None:
                 params[full_prefix + 'PrivateIpAddress'] = \
-                        str(spec.private_ip_address)
+                    str(spec.private_ip_address)
             if spec.groups is not None:
                 for j, group_id in enumerate(spec.groups):
                     query_param_key = '%sSecurityGroupId.%s' % (full_prefix, j)
@@ -232,10 +236,10 @@ class NetworkInterfaceCollection(list):
                     query_param_key_prefix = (
                         '%sPrivateIpAddresses.%s' % (full_prefix, k))
                     params[query_param_key_prefix + '.PrivateIpAddress'] = \
-                            str(ip_addr.private_ip_address)
+                        str(ip_addr.private_ip_address)
                     if ip_addr.primary is not None:
                         params[query_param_key_prefix + '.Primary'] = \
-                                'true' if ip_addr.primary else 'false'
+                            'true' if ip_addr.primary else 'false'
 
             # Associating Public IPs have special logic around them:
             #
@@ -245,18 +249,19 @@ class NetworkInterfaceCollection(list):
             # * Only if it's a new interface (which we can't really guard
             #   against)
             #
-            # More details on http://docs.aws.amazon.com/AWSEC2/latest/APIReference/ApiReference-query-RunInstances.html
+            # More details on
+            # http://docs.aws.amazon.com/AWSEC2/latest/APIReference/ApiReference-query-RunInstances.html
             if spec.associate_public_ip_address is not None:
                 if not params[full_prefix + 'DeviceIndex'] in (0, '0'):
                     raise BotoClientError(
-                            "Only the interface with device index of 0 can " + \
-                            "be provided when using " + \
-                            "'associate_public_ip_address'."
-                        )
+                        "Only the interface with device index of 0 can " +
+                        "be provided when using " +
+                        "'associate_public_ip_address'."
+                    )
 
                 if len(self) > 1:
                     raise BotoClientError(
-                        "Only one interface can be provided when using " + \
+                        "Only one interface can be provided when using " +
                         "'associate_public_ip_address'."
                     )
 
@@ -269,6 +274,7 @@ class NetworkInterfaceCollection(list):
 
 
 class NetworkInterfaceSpecification(object):
+
     def __init__(self, network_interface_id=None, device_index=None,
                  subnet_id=None, description=None, private_ip_address=None,
                  groups=None, delete_on_termination=None,
@@ -284,5 +290,5 @@ class NetworkInterfaceSpecification(object):
         self.delete_on_termination = delete_on_termination
         self.private_ip_addresses = private_ip_addresses
         self.secondary_private_ip_address_count = \
-                secondary_private_ip_address_count
+            secondary_private_ip_address_count
         self.associate_public_ip_address = associate_public_ip_address

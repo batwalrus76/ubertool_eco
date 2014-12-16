@@ -27,6 +27,7 @@ from boto.regioninfo import RegionInfo
 
 
 class ElastiCacheConnection(AWSQueryConnection):
+
     """
     Amazon ElastiCache
     Amazon ElastiCache is a web service that makes it easier to set
@@ -57,7 +58,6 @@ class ElastiCacheConnection(AWSQueryConnection):
         kwargs['host'] = region.endpoint
         super(ElastiCacheConnection, self).__init__(**kwargs)
         self.region = region
-
 
     def _required_auth_capability(self):
         return ['hmac-v4']
@@ -1069,7 +1069,8 @@ class ElastiCacheConnection(AWSQueryConnection):
         if reserved_cache_node_id is not None:
             params['ReservedCacheNodeId'] = reserved_cache_node_id
         if reserved_cache_nodes_offering_id is not None:
-            params['ReservedCacheNodesOfferingId'] = reserved_cache_nodes_offering_id
+            params[
+                'ReservedCacheNodesOfferingId'] = reserved_cache_nodes_offering_id
         if cache_node_type is not None:
             params['CacheNodeType'] = cache_node_type
         if duration is not None:
@@ -1087,14 +1088,15 @@ class ElastiCacheConnection(AWSQueryConnection):
             verb='POST',
             path='/', params=params)
 
-    def describe_reserved_cache_nodes_offerings(self,
-                                                reserved_cache_nodes_offering_id=None,
-                                                cache_node_type=None,
-                                                duration=None,
-                                                product_description=None,
-                                                offering_type=None,
-                                                max_records=None,
-                                                marker=None):
+    def describe_reserved_cache_nodes_offerings(
+            self,
+            reserved_cache_nodes_offering_id=None,
+            cache_node_type=None,
+            duration=None,
+            product_description=None,
+            offering_type=None,
+            max_records=None,
+            marker=None):
         """
         The DescribeReservedCacheNodesOfferings operation lists
         available reserved cache node offerings.
@@ -1145,7 +1147,8 @@ class ElastiCacheConnection(AWSQueryConnection):
         """
         params = {}
         if reserved_cache_nodes_offering_id is not None:
-            params['ReservedCacheNodesOfferingId'] = reserved_cache_nodes_offering_id
+            params[
+                'ReservedCacheNodesOfferingId'] = reserved_cache_nodes_offering_id
         if cache_node_type is not None:
             params['CacheNodeType'] = cache_node_type
         if duration is not None:
@@ -1363,7 +1366,8 @@ class ElastiCacheConnection(AWSQueryConnection):
         """
         params = {'CacheSubnetGroupName': cache_subnet_group_name, }
         if cache_subnet_group_description is not None:
-            params['CacheSubnetGroupDescription'] = cache_subnet_group_description
+            params[
+                'CacheSubnetGroupDescription'] = cache_subnet_group_description
         if subnet_ids is not None:
             self.build_list_params(params,
                                    subnet_ids,
@@ -1474,7 +1478,8 @@ class ElastiCacheConnection(AWSQueryConnection):
         """
         params = {'ReplicationGroupId': replication_group_id, }
         if replication_group_description is not None:
-            params['ReplicationGroupDescription'] = replication_group_description
+            params[
+                'ReplicationGroupDescription'] = replication_group_description
         if cache_security_group_names is not None:
             self.build_list_params(params,
                                    cache_security_group_names,
@@ -1506,10 +1511,11 @@ class ElastiCacheConnection(AWSQueryConnection):
             verb='POST',
             path='/', params=params)
 
-    def purchase_reserved_cache_nodes_offering(self,
-                                               reserved_cache_nodes_offering_id,
-                                               reserved_cache_node_id=None,
-                                               cache_node_count=None):
+    def purchase_reserved_cache_nodes_offering(
+            self,
+            reserved_cache_nodes_offering_id,
+            reserved_cache_node_id=None,
+            cache_node_count=None):
         """
         The PurchaseReservedCacheNodesOffering operation allows you to
         purchase a reserved cache node offering.

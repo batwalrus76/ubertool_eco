@@ -14,7 +14,7 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABIL-
 # ITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
@@ -34,15 +34,15 @@ def get(prop, choices=None):
         if choices:
             min = 1
             max = len(choices)
-            for i in range(min, max+1):
-                value = choices[i-1]
+            for i in range(min, max + 1):
+                value = choices[i - 1]
                 if isinstance(value, tuple):
                     value = value[0]
                 print '[%d] %s' % (i, value)
             value = raw_input('%s [%d-%d]: ' % (prompt, min, max))
             try:
                 int_value = int(value)
-                value = choices[int_value-1]
+                value = choices[int_value - 1]
                 if isinstance(value, tuple):
                     value = value[1]
                 valid = True
@@ -61,4 +61,3 @@ def get(prop, choices=None):
             except:
                 print 'Invalid value: %s' % value
     return value
-        

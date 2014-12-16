@@ -26,12 +26,12 @@ from PIL import FontFile
 # --------------------------------------------------------------------
 
 bdf_slant = {
-   "R": "Roman",
-   "I": "Italic",
-   "O": "Oblique",
-   "RI": "Reverse Italic",
-   "RO": "Reverse Oblique",
-   "OT": "Other"
+    "R": "Roman",
+    "I": "Italic",
+    "O": "Oblique",
+    "RI": "Reverse Italic",
+    "RO": "Reverse Oblique",
+    "OT": "Other"
 }
 
 bdf_spacing = {
@@ -39,6 +39,7 @@ bdf_spacing = {
     "M": "Monospaced",
     "C": "Cell"
 }
+
 
 def bdf_char(f):
 
@@ -58,7 +59,7 @@ def bdf_char(f):
         if not s or s[:6] == b"BITMAP":
             break
         i = s.find(b" ")
-        props[s[:i].decode('ascii')] = s[i+1:-1].decode('ascii')
+        props[s[:i].decode('ascii')] = s[i + 1:-1].decode('ascii')
 
     # load bitmap
     bitmap = []
@@ -72,7 +73,7 @@ def bdf_char(f):
     [x, y, l, d] = [int(s) for s in props["BBX"].split()]
     [dx, dy] = [int(s) for s in props["DWIDTH"].split()]
 
-    bbox = (dx, dy), (l, -d-y, x+l, -d), (0, 0, x, y)
+    bbox = (dx, dy), (l, -d - y, x + l, -d), (0, 0, x, y)
 
     try:
         im = Image.frombytes("1", (x, y), bitmap, "hex", "1")
@@ -84,6 +85,7 @@ def bdf_char(f):
 
 ##
 # Font file plugin for the X11 BDF format.
+
 
 class BdfFontFile(FontFile.FontFile):
 
@@ -103,10 +105,10 @@ class BdfFontFile(FontFile.FontFile):
             if not s or s[:13] == b"ENDPROPERTIES":
                 break
             i = s.find(b" ")
-            props[s[:i].decode('ascii')] = s[i+1:-1].decode('ascii')
+            props[s[:i].decode('ascii')] = s[i + 1:-1].decode('ascii')
             if s[:i] in [b"COMMENT", b"COPYRIGHT"]:
                 if s.find(b"LogicalFontDescription") < 0:
-                    comments.append(s[i+1:-1].decode('ascii'))
+                    comments.append(s[i + 1:-1].decode('ascii'))
 
         font = props["FONT"].split("-")
 

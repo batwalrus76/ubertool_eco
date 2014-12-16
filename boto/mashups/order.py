@@ -14,7 +14,7 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABIL-
 # ITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
@@ -29,12 +29,14 @@ from boto.mashups.server import Server, ServerSet
 from boto.mashups.iobject import IObject
 from boto.pyami.config import Config
 from boto.sdb.persist import get_domain, set_domain
-import time, StringIO
+import time
+import StringIO
 
 InstanceTypes = ['m1.small', 'm1.large', 'm1.xlarge', 'c1.medium', 'c1.xlarge']
 
+
 class Item(IObject):
-    
+
     def __init__(self):
         self.region = None
         self.name = None
@@ -70,7 +72,9 @@ class Item(IObject):
         if instance_type:
             self.instance_type = instance_type
         else:
-            self.instance_type = self.choose_from_list(InstanceTypes, 'Instance Type')
+            self.instance_type = self.choose_from_list(
+                InstanceTypes,
+                'Instance Type')
 
     def set_quantity(self, n=0):
         if n > 0:
@@ -83,8 +87,10 @@ class Item(IObject):
             self.zone = zone
         else:
             l = [(z, z.name, z.state) for z in self.ec2.get_all_zones()]
-            self.zone = self.choose_from_list(l, prompt='Choose Availability Zone')
-            
+            self.zone = self.choose_from_list(
+                l,
+                prompt='Choose Availability Zone')
+
     def set_ami(self, ami=None):
         if ami:
             self.ami = ami
@@ -96,8 +102,12 @@ class Item(IObject):
         if group:
             self.groups.append(group)
         else:
-            l = [(s, s.name, s.description) for s in self.ec2.get_all_security_groups()]
-            self.groups.append(self.choose_from_list(l, prompt='Choose Security Group'))
+            l = [(s, s.name, s.description)
+                 for s in self.ec2.get_all_security_groups()]
+            self.groups.append(
+                self.choose_from_list(
+                    l,
+                    prompt='Choose Security Group'))
 
     def set_key(self, key=None):
         if key:
@@ -109,8 +119,14 @@ class Item(IObject):
     def update_config(self):
         if not self.config.has_section('Credentials'):
             self.config.add_section('Credentials')
-            self.config.set('Credentials', 'aws_access_key_id', self.ec2.aws_access_key_id)
-            self.config.set('Credentials', 'aws_secret_access_key', self.ec2.aws_secret_access_key)
+            self.config.set(
+                'Credentials',
+                'aws_access_key_id',
+                self.ec2.aws_access_key_id)
+            self.config.set(
+                'Credentials',
+                'aws_secret_access_key',
+                self.ec2.aws_secret_access_key)
         if not self.config.has_section('Pyami'):
             self.config.add_section('Pyami')
         sdb_domain = get_domain()
@@ -159,6 +175,7 @@ class Item(IObject):
             self.set_config()
         self.update_config()
 
+
 class Order(IObject):
 
     def __init__(self):
@@ -172,7 +189,7 @@ class Order(IObject):
 
     def display(self):
         print 'This Order consists of the following items'
-        print 
+        print
         print 'QTY\tNAME\tTYPE\nAMI\t\tGroups\t\t\tKeyPair'
         for item in self.items:
             print '%s\t%s\t%s\t%s\t%s\t%s' % (item.quantity, item.name, item.instance_type,
@@ -185,10 +202,14 @@ class Order(IObject):
             set_domain(domain_name)
         s = ServerSet()
         for item in self.items:
-            r = item.ami.run(min_count=1, max_count=item.quantity,
-                             key_name=item.key.name, user_data=item.get_userdata_string(),
-                             security_groups=item.groups, instance_type=item.instance_type,
-                             placement=item.zone.name)
+            r = item.ami.run(
+                min_count=1,
+                max_count=item.quantity,
+                key_name=item.key.name,
+                user_data=item.get_userdata_string(),
+                security_groups=item.groups,
+                instance_type=item.instance_type,
+                placement=item.zone.name)
             if block:
                 states = [i.state for i in r.instances]
                 if states.count('running') != len(states):
@@ -206,6 +227,3 @@ class Order(IObject):
             return s[0]
         else:
             return s
-        
-
-    

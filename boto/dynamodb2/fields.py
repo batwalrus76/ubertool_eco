@@ -2,6 +2,7 @@ from boto.dynamodb2.types import STRING
 
 
 class BaseSchemaField(object):
+
     """
     An abstract class for defining schema fields.
 
@@ -62,6 +63,7 @@ class BaseSchemaField(object):
 
 
 class HashKey(BaseSchemaField):
+
     """
     An field representing a hash key.
 
@@ -76,6 +78,7 @@ class HashKey(BaseSchemaField):
 
 
 class RangeKey(BaseSchemaField):
+
     """
     An field representing a range key.
 
@@ -90,12 +93,14 @@ class RangeKey(BaseSchemaField):
 
 
 class BaseIndexField(object):
+
     """
     An abstract class for defining schema indexes.
 
     Contains most of the core functionality for the index. Subclasses must
     define a ``projection_type`` to pass to DynamoDB.
     """
+
     def __init__(self, name, parts):
         self.name = name
         self.parts = parts
@@ -159,6 +164,7 @@ class BaseIndexField(object):
 
 
 class AllIndex(BaseIndexField):
+
     """
     An index signifying all fields should be in the index.
 
@@ -174,6 +180,7 @@ class AllIndex(BaseIndexField):
 
 
 class KeysOnlyIndex(BaseIndexField):
+
     """
     An index signifying only key fields should be in the index.
 
@@ -189,6 +196,7 @@ class KeysOnlyIndex(BaseIndexField):
 
 
 class IncludeIndex(BaseIndexField):
+
     """
     An index signifying only certain fields should be in the index.
 
@@ -213,6 +221,7 @@ class IncludeIndex(BaseIndexField):
 
 
 class GlobalBaseIndexField(BaseIndexField):
+
     """
     An abstract class for defining global indexes.
 
@@ -266,6 +275,7 @@ class GlobalBaseIndexField(BaseIndexField):
 
 
 class GlobalAllIndex(GlobalBaseIndexField):
+
     """
     An index signifying all fields should be in the index.
 
@@ -285,6 +295,7 @@ class GlobalAllIndex(GlobalBaseIndexField):
 
 
 class GlobalKeysOnlyIndex(GlobalBaseIndexField):
+
     """
     An index signifying only key fields should be in the index.
 
@@ -304,6 +315,7 @@ class GlobalKeysOnlyIndex(GlobalBaseIndexField):
 
 
 class GlobalIncludeIndex(GlobalBaseIndexField, IncludeIndex):
+
     """
     An index signifying only certain fields should be in the index.
 

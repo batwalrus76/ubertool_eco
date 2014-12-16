@@ -14,12 +14,13 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABIL-
 # ITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
 import os
+
 
 def int_val_fn(v):
     try:
@@ -27,9 +28,10 @@ def int_val_fn(v):
         return True
     except:
         return False
-    
+
+
 class IObject(object):
-    
+
     def choose_from_list(self, item_list, search_str='',
                          prompt='Enter Selection'):
         if not item_list:
@@ -65,7 +67,7 @@ class IObject(object):
                         int_val = int(val)
                         if int_val == 0:
                             return None
-                        choice = choices[int_val-1]
+                        choice = choices[int_val - 1]
                     except ValueError:
                         print '%s is not a valid choice' % val
                     except IndexError:
@@ -112,4 +114,3 @@ class IObject(object):
     def get_int(self, prompt):
         s = self.get_string(prompt, int_val_fn)
         return int(s)
-

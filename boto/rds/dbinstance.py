@@ -28,6 +28,7 @@ from boto.resultset import ResultSet
 
 
 class DBInstance(object):
+
     """
     Represents a RDS DBInstance
 
@@ -40,7 +41,7 @@ class DBInstance(object):
     :ivar engine: The database engine being used
     :ivar status: The status of the database in a string. e.g. "available"
     :ivar allocated_storage: The size of the disk in gigabytes (int).
-    :ivar auto_minor_version_upgrade: Indicates that minor version patches 
+    :ivar auto_minor_version_upgrade: Indicates that minor version patches
         are applied automatically.
     :ivar endpoint: A tuple that describes the hostname and port of
         the instance. This is only available when the database is
@@ -79,10 +80,10 @@ class DBInstance(object):
         associated with this DB instance.
     :ivar status_infos: The status of a Read Replica. If the instance is not a
         for a read replica, this will be blank.
-    :ivar character_set_name: If present, specifies the name of the character 
+    :ivar character_set_name: If present, specifies the name of the character
         set that this instance is associated with.
-    :ivar subnet_group: Specifies information on the subnet group associated 
-        with the DB instance, including the name, description, and subnets 
+    :ivar subnet_group: Specifies information on the subnet group associated
+        with the DB instance, including the name, description, and subnets
         in the subnet group.
     :ivar engine_version: Indicates the database engine version.
     :ivar license_model: License model information for this DB instance.
@@ -135,15 +136,15 @@ class DBInstance(object):
                                                DBSecurityGroup)])
             return self.security_groups
         elif name == 'VpcSecurityGroups':
-            self.vpc_security_groups = ResultSet([('VpcSecurityGroupMembership',
-                                               VPCSecurityGroupMembership)])
+            self.vpc_security_groups = ResultSet(
+                [('VpcSecurityGroupMembership', VPCSecurityGroupMembership)])
             return self.vpc_security_groups
         elif name == 'PendingModifiedValues':
             self.pending_modified_values = PendingModifiedValues()
             return self.pending_modified_values
         elif name == 'ReadReplicaDBInstanceIdentifiers':
             self.read_replica_dbinstance_identifiers = \
-                    ReadReplicaDBInstanceIdentifiers()
+                ReadReplicaDBInstanceIdentifiers()
             return self.read_replica_dbinstance_identifiers
         elif name == 'StatusInfos':
             self.status_infos = ResultSet([
@@ -203,7 +204,7 @@ class DBInstance(object):
         elif name == 'EngineVersion':
             self.engine_version = value
         elif name == 'LicenseModel':
-            self.license_model = value        
+            self.license_model = value
         else:
             setattr(self, name, value)
 
@@ -344,7 +345,7 @@ class DBInstance(object):
         :param apply_immediately: If true, the modifications will be
             applied as soon as possible rather than waiting for the
             next preferred maintenance window.
-            
+
         :type new_instance_id: str
         :param new_instance_id: The new DB instance identifier.
 
@@ -399,6 +400,7 @@ class DBInstance(object):
 
 
 class PendingModifiedValues(dict):
+
     def startElement(self, name, attrs, connection):
         return None
 
@@ -408,6 +410,7 @@ class PendingModifiedValues(dict):
 
 
 class ReadReplicaDBInstanceIdentifiers(list):
+
     def startElement(self, name, attrs, connection):
         return None
 

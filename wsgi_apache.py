@@ -6,7 +6,8 @@ It exposes the WSGI callable as a module-level variable named ``application``.
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
 """
-import os, sys
+import os
+import sys
 
 # Add Django project & parent directory to Python PATH
 sys.path.insert(0, '/var/www/ubertool/ubertool_eco')

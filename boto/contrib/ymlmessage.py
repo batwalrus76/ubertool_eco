@@ -28,7 +28,9 @@ This module requires the yaml module.
 from boto.sqs.message import Message
 import yaml
 
+
 class YAMLMessage(Message):
+
     """
     The YAMLMessage class provides a YAML compatible message. Encoding and
     decoding are handled automaticaly.

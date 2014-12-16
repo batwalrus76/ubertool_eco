@@ -24,7 +24,9 @@ import xml.sax
 import cgi
 from StringIO import StringIO
 
+
 class ResponseGroup(xml.sax.ContentHandler):
+
     """A Generic "Response Group", which can
     be anything from the entire list of Items to
     specific response elements within an item"""
@@ -50,7 +52,9 @@ class ResponseGroup(xml.sax.ContentHandler):
         self.__dict__[name] = value
 
     def to_xml(self):
-        return "<%s>%s</%s>" % (self._nodename, self._xml.getvalue(), self._nodename)
+        return "<%s>%s</%s>" % (self._nodename,
+                                self._xml.getvalue(),
+                                self._nodename)
 
     #
     # XML Parser functions
@@ -67,7 +71,12 @@ class ResponseGroup(xml.sax.ContentHandler):
         return None
 
     def endElement(self, name, value, connection):
-        self._xml.write("%s</%s>" % (cgi.escape(value).replace("&amp;amp;", "&amp;"), name))
+        self._xml.write(
+            "%s</%s>" %
+            (cgi.escape(value).replace(
+                "&amp;amp;",
+                "&amp;"),
+                name))
         if len(self._nodepath) == 0:
             return
         obj = None
@@ -77,7 +86,7 @@ class ResponseGroup(xml.sax.ContentHandler):
                 self.set(name, value)
             if self._curobj:
                 self._curobj = None
-        #elif len(self._nodepath) == 2:
+        # elif len(self._nodepath) == 2:
             #self._curobj = None
         elif self._curobj:
             self._curobj.endElement(name, value, connection)
@@ -86,13 +95,16 @@ class ResponseGroup(xml.sax.ContentHandler):
 
 
 class Item(ResponseGroup):
+
     """A single Item"""
 
     def __init__(self, connection=None):
         """Initialize this Item"""
         super(Item, self).__init__(connection, "Item")
 
+
 class ItemSet(ResponseGroup):
+
     """A special ResponseGroup that has built-in paging, and
     only creates new Items on the "Item" tag"""
 
@@ -138,7 +150,11 @@ class ItemSet(ResponseGroup):
             self.objs = []
             if int(self.page) < int(self.total_pages):
                 self.page += 1
-                self._connection.get_response(self.action, self.params, self.page, self)
+                self._connection.get_response(
+                    self.action,
+                    self.params,
+                    self.page,
+                    self)
                 return self.next()
             else:
                 raise

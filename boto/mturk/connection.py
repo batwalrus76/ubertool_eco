@@ -34,6 +34,7 @@ from boto.mturk.question import QuestionForm, ExternalQuestion, HTMLQuestion
 
 
 class MTurkRequestError(EC2ResponseError):
+
     "Error for MTurk Requests"
     # todo: subclass from an abstract parent of EC2ResponseError
 
@@ -49,19 +50,32 @@ class MTurkConnection(AWSQueryConnection):
                  https_connection_factory=None, security_token=None,
                  profile_name=None):
         if not host:
-            if config.has_option('MTurk', 'sandbox') and config.get('MTurk', 'sandbox') == 'True':
+            if config.has_option(
+                    'MTurk',
+                    'sandbox') and config.get(
+                    'MTurk',
+                    'sandbox') == 'True':
                 host = 'mechanicalturk.sandbox.amazonaws.com'
             else:
                 host = 'mechanicalturk.amazonaws.com'
         self.debug = debug
 
-        super(MTurkConnection, self).__init__(aws_access_key_id,
-                                    aws_secret_access_key,
-                                    is_secure, port, proxy, proxy_port,
-                                    proxy_user, proxy_pass, host, debug,
-                                    https_connection_factory,
-                                    security_token=security_token,
-                                    profile_name=profile_name)
+        super(
+            MTurkConnection,
+            self).__init__(
+            aws_access_key_id,
+            aws_secret_access_key,
+            is_secure,
+            port,
+            proxy,
+            proxy_port,
+            proxy_user,
+            proxy_pass,
+            host,
+            debug,
+            https_connection_factory,
+            security_token=security_token,
+            profile_name=profile_name)
 
     def _required_auth_capability(self):
         return ['mturk']
@@ -86,8 +100,9 @@ class MTurkConnection(AWSQueryConnection):
             Title=title,
             Description=description,
             AssignmentDurationInSeconds=self.duration_as_seconds(duration),
-            )
-        params.update(MTurkConnection.get_price_as_price(reward).get_as_params('Reward'))
+        )
+        params.update(
+            MTurkConnection.get_price_as_price(reward).get_as_params('Reward'))
 
         if keywords:
             params['Keywords'] = self.get_keywords_as_string(keywords)
@@ -151,12 +166,14 @@ class MTurkConnection(AWSQueryConnection):
         # from the Developer Guide:
         # The 'Active' parameter is optional. If omitted, the active status of
         # the HIT type's notification specification is unchanged. All HIT types
-        # begin with their notification specifications in the "inactive" status.
-        notification_params = {'Destination': destination,
-                               'Transport': transport,
-                               'Version': boto.mturk.notification.NotificationMessage.NOTIFICATION_VERSION,
-                               'Active': True,
-                               }
+        # begin with their notification specifications in the "inactive"
+        # status.
+        notification_params = {
+            'Destination': destination,
+            'Transport': transport,
+            'Version': boto.mturk.notification.NotificationMessage.NOTIFICATION_VERSION,
+            'Active': True,
+        }
 
         # add specific event types if required
         if event_types:
@@ -167,7 +184,9 @@ class MTurkConnection(AWSQueryConnection):
         notification_rest_params = {}
         num = 1
         for key in notification_params:
-            notification_rest_params['Notification.%d.%s' % (num, key)] = notification_params[key]
+            notification_rest_params[
+                'Notification.%d.%s' %
+                (num, key)] = notification_params[key]
 
         # Update main params dict
         params.update(notification_rest_params)
@@ -195,16 +214,17 @@ class MTurkConnection(AWSQueryConnection):
 
         # Handle basic required arguments and set up params dict
         params = {'LifetimeInSeconds':
-                      self.duration_as_seconds(lifetime),
+                  self.duration_as_seconds(lifetime),
                   'MaxAssignments': max_assignments,
-                 }
+                  }
 
         # handle single or multiple questions or layouts
         neither = question is None and questions is None
         if hit_layout is None:
             both = question is not None and questions is not None
             if neither or both:
-                raise ValueError("Must specify question (single Question instance) or questions (list or QuestionForm instance), but not both")
+                raise ValueError(
+                    "Must specify question (single Question instance) or questions (list or QuestionForm instance), but not both")
             if question:
                 questions = [question]
             question_param = QuestionForm(questions)
@@ -217,7 +237,8 @@ class MTurkConnection(AWSQueryConnection):
             params['Question'] = question_param.get_as_xml()
         else:
             if not neither:
-                raise ValueError("Must not specify question (single Question instance) or questions (list or QuestionForm instance) when specifying hit_layout")
+                raise ValueError(
+                    "Must not specify question (single Question instance) or questions (list or QuestionForm instance) when specifying hit_layout")
             params['HITLayoutId'] = hit_layout
             if layout_params:
                 params.update(layout_params.get_as_params())
@@ -240,7 +261,7 @@ class MTurkConnection(AWSQueryConnection):
                 Description=description,
                 Keywords=final_keywords,
                 AssignmentDurationInSeconds=final_duration,
-                )
+            )
             additional_params.update(final_price.get_as_params('Reward'))
 
             if approval_delay is not None:
@@ -321,7 +342,9 @@ class MTurkConnection(AWSQueryConnection):
         page_size = 100
         search_rs = self.search_hits(page_size=page_size)
         total_records = int(search_rs.TotalNumResults)
-        get_page_hits = lambda page: self.search_hits(page_size=page_size, page_number=page)
+        get_page_hits = lambda page: self.search_hits(
+            page_size=page_size,
+            page_number=page)
         page_nums = self._get_pages(page_size, total_records)
         hit_sets = itertools.imap(get_page_hits, page_nums)
         return itertools.chain.from_iterable(hit_sets)
@@ -376,8 +399,8 @@ class MTurkConnection(AWSQueryConnection):
                                       ('HIT', HIT)])
 
     def get_assignments(self, hit_id, status=None,
-                            sort_by='SubmitTime', sort_direction='Ascending',
-                            page_size=10, page_number=1, response_groups=None):
+                        sort_by='SubmitTime', sort_direction='Ascending',
+                        page_size=10, page_number=1, response_groups=None):
         """
         Retrieves completed assignments for a HIT.
         Use this operation to retrieve the results for a HIT.
@@ -503,7 +526,6 @@ class MTurkConnection(AWSQueryConnection):
         return self._process_request('DisposeHIT', params)
 
     def expire_hit(self, hit_id):
-
         """
         Expire a HIT that is no longer needed.
 
@@ -535,9 +557,10 @@ class MTurkConnection(AWSQueryConnection):
         before extending the HIT, if so desired.
         """
         # must provide assignment *or* expiration increment
-        if (assignments_increment is None and expiration_increment is None) or \
-           (assignments_increment is not None and expiration_increment is not None):
-            raise ValueError("Must specify either assignments_increment or expiration_increment, but not both")
+        if (assignments_increment is None and expiration_increment is None) or (
+                assignments_increment is not None and expiration_increment is not None):
+            raise ValueError(
+                "Must specify either assignments_increment or expiration_increment, but not both")
 
         params = {'HITId': hit_id}
         if assignments_increment:
@@ -681,25 +704,35 @@ class MTurkConnection(AWSQueryConnection):
                                        QualificationType)])
 
     def get_qualification_type(self, qualification_type_id):
-        params = {'QualificationTypeId': qualification_type_id }
-        return self._process_request('GetQualificationType', params,
-                                     [('QualificationType', QualificationType)])
+        params = {'QualificationTypeId': qualification_type_id}
+        return self._process_request(
+            'GetQualificationType', params, [
+                ('QualificationType', QualificationType)])
 
     def get_all_qualifications_for_qual_type(self, qualification_type_id):
         page_size = 100
-        search_qual = self.get_qualifications_for_qualification_type(qualification_type_id)
+        search_qual = self.get_qualifications_for_qualification_type(
+            qualification_type_id)
         total_records = int(search_qual.TotalNumResults)
-        get_page_quals = lambda page: self.get_qualifications_for_qualification_type(qualification_type_id = qualification_type_id, page_size=page_size, page_number = page)
+        get_page_quals = lambda page: self.get_qualifications_for_qualification_type(
+            qualification_type_id=qualification_type_id,
+            page_size=page_size,
+            page_number=page)
         page_nums = self._get_pages(page_size, total_records)
         qual_sets = itertools.imap(get_page_quals, page_nums)
         return itertools.chain.from_iterable(qual_sets)
 
-    def get_qualifications_for_qualification_type(self, qualification_type_id, page_size=100, page_number = 1):
+    def get_qualifications_for_qualification_type(
+            self,
+            qualification_type_id,
+            page_size=100,
+            page_number=1):
         params = {'QualificationTypeId': qualification_type_id,
                   'PageSize': page_size,
                   'PageNumber': page_number}
-        return self._process_request('GetQualificationsForQualificationType', params,
-                                     [('Qualification', Qualification)])
+        return self._process_request(
+            'GetQualificationsForQualificationType', params, [
+                ('Qualification', Qualification)])
 
     def update_qualification_type(self, qualification_type_id,
                                   description=None,
@@ -742,8 +775,9 @@ class MTurkConnection(AWSQueryConnection):
         if auto_granted_value is not None:
             params['AutoGrantedValue'] = auto_granted_value
 
-        return self._process_request('UpdateQualificationType', params,
-                                     [('QualificationType', QualificationType)])
+        return self._process_request(
+            'UpdateQualificationType', params, [
+                ('QualificationType', QualificationType)])
 
     def dispose_qualification_type(self, qualification_type_id):
         """TODO: Document."""
@@ -762,8 +796,9 @@ class MTurkConnection(AWSQueryConnection):
                   'PageNumber': page_number,
                   'MustBeRequestable': must_be_requestable,
                   'MustBeOwnedByCaller': must_be_owned_by_caller}
-        return self._process_request('SearchQualificationTypes', params,
-                    [('QualificationType', QualificationType)])
+        return self._process_request(
+            'SearchQualificationTypes', params, [
+                ('QualificationType', QualificationType)])
 
     def get_qualification_requests(self, qualification_type_id,
                                    sort_by='Expiration',
@@ -775,8 +810,9 @@ class MTurkConnection(AWSQueryConnection):
                   'SortDirection': sort_direction,
                   'PageSize': page_size,
                   'PageNumber': page_number}
-        return self._process_request('GetQualificationRequests', params,
-                    [('QualificationRequest', QualificationRequest)])
+        return self._process_request(
+            'GetQualificationRequests', params, [
+                ('QualificationRequest', QualificationRequest)])
 
     def grant_qualification(self, qualification_request_id, integer_value=1):
         """TODO: Document."""
@@ -795,24 +831,24 @@ class MTurkConnection(AWSQueryConnection):
     def assign_qualification(self, qualification_type_id, worker_id,
                              value=1, send_notification=True):
         params = {'QualificationTypeId': qualification_type_id,
-                  'WorkerId' : worker_id,
-                  'IntegerValue' : value,
-                  'SendNotification' : send_notification}
+                  'WorkerId': worker_id,
+                  'IntegerValue': value,
+                  'SendNotification': send_notification}
         return self._process_request('AssignQualification', params)
 
     def get_qualification_score(self, qualification_type_id, worker_id):
         """TODO: Document."""
-        params = {'QualificationTypeId' : qualification_type_id,
-                  'SubjectId' : worker_id}
+        params = {'QualificationTypeId': qualification_type_id,
+                  'SubjectId': worker_id}
         return self._process_request('GetQualificationScore', params,
-                    [('Qualification', Qualification)])
+                                     [('Qualification', Qualification)])
 
     def update_qualification_score(self, qualification_type_id, worker_id,
                                    value):
         """TODO: Document."""
-        params = {'QualificationTypeId' : qualification_type_id,
-                  'SubjectId' : worker_id,
-                  'IntegerValue' : value}
+        params = {'QualificationTypeId': qualification_type_id,
+                  'SubjectId': worker_id,
+                  'IntegerValue': value}
         return self._process_request('UpdateQualificationScore', params)
 
     def _process_request(self, request_type, params, marker_elems=None):
@@ -853,7 +889,9 @@ class MTurkConnection(AWSQueryConnection):
         elif keywords is None:
             final_keywords = ""
         else:
-            raise TypeError("keywords argument must be a string or a list of strings; got a %s" % type(keywords))
+            raise TypeError(
+                "keywords argument must be a string or a list of strings; got a %s" %
+                type(keywords))
         return final_keywords
 
     @staticmethod
@@ -874,14 +912,18 @@ class MTurkConnection(AWSQueryConnection):
         try:
             duration = int(duration)
         except TypeError:
-            raise TypeError("Duration must be a timedelta or int-castable, got %s" % type(duration))
+            raise TypeError(
+                "Duration must be a timedelta or int-castable, got %s" %
+                type(duration))
         return duration
 
 
 class BaseAutoResultElement(object):
+
     """
     Base class to automatically add attributes when parsing XML
     """
+
     def __init__(self, connection):
         pass
 
@@ -893,6 +935,7 @@ class BaseAutoResultElement(object):
 
 
 class HIT(BaseAutoResultElement):
+
     """
     Class to extract a HIT structure from a response (used in ResultSet)
 
@@ -906,10 +949,13 @@ class HIT(BaseAutoResultElement):
         expired = False
         if hasattr(self, 'Expiration'):
             now = datetime.datetime.utcnow()
-            expiration = datetime.datetime.strptime(self.Expiration, '%Y-%m-%dT%H:%M:%SZ')
+            expiration = datetime.datetime.strptime(
+                self.Expiration,
+                '%Y-%m-%dT%H:%M:%SZ')
             expired = (now >= expiration)
         else:
-            raise ValueError("ERROR: Request for expired property, but no Expiration in HIT!")
+            raise ValueError(
+                "ERROR: Request for expired property, but no Expiration in HIT!")
         return expired
 
     # are we there yet?
@@ -917,6 +963,7 @@ class HIT(BaseAutoResultElement):
 
 
 class HITTypeId(BaseAutoResultElement):
+
     """
     Class to extract an HITTypeId structure from a response
     """
@@ -925,6 +972,7 @@ class HITTypeId(BaseAutoResultElement):
 
 
 class Qualification(BaseAutoResultElement):
+
     """
     Class to extract an Qualification structure from a response (used in
     ResultSet)
@@ -937,6 +985,7 @@ class Qualification(BaseAutoResultElement):
 
 
 class QualificationType(BaseAutoResultElement):
+
     """
     Class to extract an QualificationType structure from a response (used in
     ResultSet)
@@ -949,6 +998,7 @@ class QualificationType(BaseAutoResultElement):
 
 
 class QualificationRequest(BaseAutoResultElement):
+
     """
     Class to extract an QualificationRequest structure from a response (used in
     ResultSet)
@@ -962,7 +1012,8 @@ class QualificationRequest(BaseAutoResultElement):
         self.answers = []
 
     def endElement(self, name, value, connection):
-        # the answer consists of embedded XML, so it needs to be parsed independantly
+        # the answer consists of embedded XML, so it needs to be parsed
+        # independantly
         if name == 'Answer':
             answer_rs = ResultSet([('Answer', QuestionFormAnswer)])
             h = handler.XmlHandler(answer_rs, connection)
@@ -970,10 +1021,16 @@ class QualificationRequest(BaseAutoResultElement):
             xml.sax.parseString(value, h)
             self.answers.append(answer_rs)
         else:
-            super(QualificationRequest, self).endElement(name, value, connection)
+            super(
+                QualificationRequest,
+                self).endElement(
+                name,
+                value,
+                connection)
 
 
 class Assignment(BaseAutoResultElement):
+
     """
     Class to extract an Assignment structure from a response (used in
     ResultSet)
@@ -987,7 +1044,8 @@ class Assignment(BaseAutoResultElement):
         self.answers = []
 
     def endElement(self, name, value, connection):
-        # the answer consists of embedded XML, so it needs to be parsed independantly
+        # the answer consists of embedded XML, so it needs to be parsed
+        # independantly
         if name == 'Answer':
             answer_rs = ResultSet([('Answer', QuestionFormAnswer)])
             h = handler.XmlHandler(answer_rs, connection)
@@ -999,6 +1057,7 @@ class Assignment(BaseAutoResultElement):
 
 
 class QuestionFormAnswer(BaseAutoResultElement):
+
     """
     Class to extract Answers from inside the embedded XML
     QuestionFormAnswers element inside the Answer element which is

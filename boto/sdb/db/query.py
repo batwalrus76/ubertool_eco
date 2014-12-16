@@ -14,13 +14,15 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABIL-
 # ITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
+
 class Query(object):
     __local_iter__ = None
+
     def __init__(self, model_class, limit=None, next_token=None, manager=None):
         self.model_class = model_class
         self.limit = limit
@@ -55,15 +57,24 @@ class Query(object):
         return self
 
     def count(self, quick=True):
-        return self.manager.count(self.model_class, self.filters, quick, self.sort_by, self.select)
+        return self.manager.count(
+            self.model_class,
+            self.filters,
+            quick,
+            self.sort_by,
+            self.select)
 
     def get_query(self):
-        return self.manager._build_filter_part(self.model_class, self.filters, self.sort_by, self.select)
+        return self.manager._build_filter_part(
+            self.model_class,
+            self.filters,
+            self.sort_by,
+            self.select)
 
     def order(self, key):
         self.sort_by = key
         return self
-    
+
     def to_xml(self, doc=None):
         if not doc:
             xmlmanager = self.model_class.get_xmlmanager()

@@ -21,6 +21,7 @@ from PIL._binary import i8
 #
 # Bitstream parser
 
+
 class BitStream:
 
     def __init__(self, fp):
@@ -55,6 +56,7 @@ class BitStream:
 ##
 # Image plugin for MPEG streams.  This plugin can identify a stream,
 # but it cannot read it.
+
 
 class MpegImageFile(ImageFile.ImageFile):
 

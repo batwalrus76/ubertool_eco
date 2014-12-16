@@ -4,6 +4,7 @@ from collections import Mapping
 
 
 class Trie(Mapping):
+
     """Abstract base class for tries"""
 
     def keys(self, prefix=None):

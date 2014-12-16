@@ -4,6 +4,7 @@ from . import _base
 
 
 class Filter(_base.Filter):
+
     def slider(self):
         previous1 = previous2 = None
         for token in self.source:
@@ -17,8 +18,8 @@ class Filter(_base.Filter):
         for previous, token, next in self.slider():
             type = token["type"]
             if type == "StartTag":
-                if (token["data"] or
-                        not self.is_optional_start(token["name"], previous, next)):
+                if (token["data"] or not self.is_optional_start(
+                        token["name"], previous, next)):
                     yield token
             elif type == "EndTag":
                 if not self.is_optional_end(token["name"], next):
@@ -123,12 +124,35 @@ class Filter(_base.Filter):
             # nav, ol, p, pre, section, table, or ul, element, or if
             # there is no more content in the parent element.
             if type in ("StartTag", "EmptyTag"):
-                return next["name"] in ('address', 'article', 'aside',
-                                        'blockquote', 'datagrid', 'dialog',
-                                        'dir', 'div', 'dl', 'fieldset', 'footer',
-                                        'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-                                        'header', 'hr', 'menu', 'nav', 'ol',
-                                        'p', 'pre', 'section', 'table', 'ul')
+                return next["name"] in (
+                    'address',
+                    'article',
+                    'aside',
+                    'blockquote',
+                    'datagrid',
+                    'dialog',
+                    'dir',
+                    'div',
+                    'dl',
+                    'fieldset',
+                    'footer',
+                    'form',
+                    'h1',
+                    'h2',
+                    'h3',
+                    'h4',
+                    'h5',
+                    'h6',
+                    'header',
+                    'hr',
+                    'menu',
+                    'nav',
+                    'ol',
+                    'p',
+                    'pre',
+                    'section',
+                    'table',
+                    'ul')
             else:
                 return type == "EndTag" or type is None
         elif tagname == 'option':

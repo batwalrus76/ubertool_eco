@@ -23,23 +23,23 @@ from PIL import _binary
 # --------------------------------------------------------------------
 # declarations
 
-PCF_MAGIC = 0x70636601 # "\x01fcp"
+PCF_MAGIC = 0x70636601  # "\x01fcp"
 
-PCF_PROPERTIES = (1<<0)
-PCF_ACCELERATORS = (1<<1)
-PCF_METRICS = (1<<2)
-PCF_BITMAPS = (1<<3)
-PCF_INK_METRICS = (1<<4)
-PCF_BDF_ENCODINGS = (1<<5)
-PCF_SWIDTHS = (1<<6)
-PCF_GLYPH_NAMES = (1<<7)
-PCF_BDF_ACCELERATORS = (1<<8)
+PCF_PROPERTIES = (1 << 0)
+PCF_ACCELERATORS = (1 << 1)
+PCF_METRICS = (1 << 2)
+PCF_BITMAPS = (1 << 3)
+PCF_INK_METRICS = (1 << 4)
+PCF_BDF_ENCODINGS = (1 << 5)
+PCF_SWIDTHS = (1 << 6)
+PCF_GLYPH_NAMES = (1 << 7)
+PCF_BDF_ACCELERATORS = (1 << 8)
 
 BYTES_PER_ROW = [
-    lambda bits: ((bits+7)  >> 3),
-    lambda bits: ((bits+15) >> 3) & ~1,
-    lambda bits: ((bits+31) >> 3) & ~3,
-    lambda bits: ((bits+63) >> 3) & ~7,
+    lambda bits: ((bits + 7) >> 3),
+    lambda bits: ((bits + 15) >> 3) & ~1,
+    lambda bits: ((bits + 31) >> 3) & ~3,
+    lambda bits: ((bits + 63) >> 3) & ~7,
 ]
 
 i8 = _binary.i8
@@ -48,11 +48,13 @@ l32 = _binary.i32le
 b16 = _binary.i16be
 b32 = _binary.i32be
 
+
 def sz(s, o):
     return s[o:s.index(b"\0", o)]
 
 ##
 # Font file plugin for the X11 PCF format.
+
 
 class PcfFontFile(FontFile.FontFile):
 
@@ -87,7 +89,7 @@ class PcfFontFile(FontFile.FontFile):
             ix = encoding[ch]
             if ix is not None:
                 x, y, l, r, w, a, d, f = metrics[ix]
-                glyph = (w, 0), (l, d-y, x+l, d), (0, 0, x, y), bitmaps[ix]
+                glyph = (w, 0), (l, d - y, x + l, d), (0, 0, x, y), bitmaps[ix]
                 self.glyph[ch] = glyph
 
     def _getformat(self, tag):
@@ -122,7 +124,7 @@ class PcfFontFile(FontFile.FontFile):
         for i in range(nprops):
             p.append((i32(fp.read(4)), i8(fp.read(1)), i32(fp.read(4))))
         if nprops & 3:
-            fp.seek(4 - (nprops & 3), 1) # pad
+            fp.seek(4 - (nprops & 3), 1)  # pad
 
         data = fp.read(i32(fp.read(4)))
 
@@ -159,7 +161,7 @@ class PcfFontFile(FontFile.FontFile):
                 append(
                     (xsize, ysize, left, right, width,
                      ascent, descent, 0)
-                    )
+                )
 
         else:
 
@@ -176,7 +178,7 @@ class PcfFontFile(FontFile.FontFile):
                 append(
                     (xsize, ysize, left, right, width,
                      ascent, descent, attributes)
-                    )
+                )
 
         return metrics
 
@@ -202,26 +204,26 @@ class PcfFontFile(FontFile.FontFile):
         for i in range(4):
             bitmapSizes.append(i32(fp.read(4)))
 
-        byteorder = format & 4 # non-zero => MSB
-        bitorder  = format & 8 # non-zero => MSB
-        padindex  = format & 3
+        byteorder = format & 4  # non-zero => MSB
+        bitorder = format & 8  # non-zero => MSB
+        padindex = format & 3
 
         bitmapsize = bitmapSizes[padindex]
         offsets.append(bitmapsize)
 
         data = fp.read(bitmapsize)
 
-        pad  = BYTES_PER_ROW[padindex]
+        pad = BYTES_PER_ROW[padindex]
         mode = "1;R"
         if bitorder:
             mode = "1"
 
         for i in range(nbitmaps):
             x, y, l, r, w, a, d, f = metrics[i]
-            b, e = offsets[i], offsets[i+1]
+            b, e = offsets[i], offsets[i + 1]
             bitmaps.append(
                 Image.frombytes("1", (x, y), data[b:e], "raw", mode, pad(x))
-                )
+            )
 
         return bitmaps
 
@@ -243,8 +245,8 @@ class PcfFontFile(FontFile.FontFile):
             encodingOffset = i16(fp.read(2))
             if encodingOffset != 0xFFFF:
                 try:
-                    encoding[i+firstCol] = encodingOffset
+                    encoding[i + firstCol] = encodingOffset
                 except IndexError:
-                    break # only load ISO-8859-1 glyphs
+                    break  # only load ISO-8859-1 glyphs
 
         return encoding

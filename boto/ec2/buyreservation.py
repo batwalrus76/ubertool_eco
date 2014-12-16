@@ -14,7 +14,7 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABIL-
 # ITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
@@ -28,6 +28,7 @@ InstanceTypes = ['m1.small', 'm1.large', 'm1.xlarge',
                  'm2.2xlarge', 'm2.4xlarge', 'cc1.4xlarge',
                  't1.micro']
 
+
 class BuyReservation(object):
 
     def get_region(self, params):
@@ -38,21 +39,27 @@ class BuyReservation(object):
 
     def get_instance_type(self, params):
         if not params.get('instance_type', None):
-            prop = StringProperty(name='instance_type', verbose_name='Instance Type',
-                                  choices=InstanceTypes)
+            prop = StringProperty(
+                name='instance_type',
+                verbose_name='Instance Type',
+                choices=InstanceTypes)
             params['instance_type'] = propget.get(prop)
 
     def get_quantity(self, params):
         if not params.get('quantity', None):
-            prop = IntegerProperty(name='quantity', verbose_name='Number of Instances')
+            prop = IntegerProperty(
+                name='quantity',
+                verbose_name='Number of Instances')
             params['quantity'] = propget.get(prop)
 
     def get_zone(self, params):
         if not params.get('zone', None):
-            prop = StringProperty(name='zone', verbose_name='EC2 Availability Zone',
-                                  choices=self.ec2.get_all_zones)
+            prop = StringProperty(
+                name='zone',
+                verbose_name='EC2 Availability Zone',
+                choices=self.ec2.get_all_zones)
             params['zone'] = propget.get(prop)
-            
+
     def get(self, params):
         self.get_region(params)
         self.ec2 = params['region'].connect()
@@ -64,8 +71,9 @@ if __name__ == "__main__":
     obj = BuyReservation()
     params = {}
     obj.get(params)
-    offerings = obj.ec2.get_all_reserved_instances_offerings(instance_type=params['instance_type'],
-                                                             availability_zone=params['zone'].name)
+    offerings = obj.ec2.get_all_reserved_instances_offerings(
+        instance_type=params['instance_type'],
+        availability_zone=params['zone'].name)
     print '\nThe following Reserved Instances Offerings are available:\n'
     for offering in offerings:
         offering.describe()

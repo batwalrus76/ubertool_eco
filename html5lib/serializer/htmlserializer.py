@@ -49,8 +49,12 @@ else:
                     skip = False
                     continue
                 index = i + exc.start
-                if utils.isSurrogatePair(exc.object[index:min([exc.end, index + 2])]):
-                    codepoint = utils.surrogatePairToCodepoint(exc.object[index:index + 2])
+                if utils.isSurrogatePair(
+                        exc.object[index:min([exc.end, index + 2])]):
+                    codepoint = utils.surrogatePairToCodepoint(
+                        exc.object[
+                            index:index +
+                            2])
                     skip = True
                 else:
                     codepoint = ord(c)
@@ -208,11 +212,14 @@ class HTMLSerializer(object):
                 if token["systemId"]:
                     if token["systemId"].find('"') >= 0:
                         if token["systemId"].find("'") >= 0:
-                            self.serializeError(_("System identifer contains both single and double quote characters"))
+                            self.serializeError(
+                                _("System identifer contains both single and double quote characters"))
                         quote_char = "'"
                     else:
                         quote_char = '"'
-                    doctype += " %s%s%s" % (quote_char, token["systemId"], quote_char)
+                    doctype += " %s%s%s" % (quote_char,
+                                            token["systemId"],
+                                            quote_char)
 
                 doctype += ">"
                 yield self.encodeStrict(doctype)
@@ -231,8 +238,10 @@ class HTMLSerializer(object):
                 if name in rcdataElements and not self.escape_rcdata:
                     in_cdata = True
                 elif in_cdata:
-                    self.serializeError(_("Unexpected child element of a CDATA element"))
-                for (attr_namespace, attr_name), attr_value in token["data"].items():
+                    self.serializeError(
+                        _("Unexpected child element of a CDATA element"))
+                for (attr_namespace, attr_name), attr_value in token[
+                        "data"].items():
                     # TODO: Add namespace support here
                     k = attr_name
                     v = attr_value
@@ -246,8 +255,13 @@ class HTMLSerializer(object):
                         if self.quote_attr_values or not v:
                             quote_attr = True
                         else:
-                            quote_attr = reduce(lambda x, y: x or (y in v),
-                                                spaceCharacters + ">\"'=", False)
+                            quote_attr = reduce(
+                                lambda x,
+                                y: x or (
+                                    y in v),
+                                spaceCharacters +
+                                ">\"'=",
+                                False)
                         v = v.replace("&", "&amp;")
                         if self.escape_lt_in_attrs:
                             v = v.replace("<", "&lt;")
@@ -279,7 +293,8 @@ class HTMLSerializer(object):
                 if name in rcdataElements:
                     in_cdata = False
                 elif in_cdata:
-                    self.serializeError(_("Unexpected child element of a CDATA element"))
+                    self.serializeError(
+                        _("Unexpected child element of a CDATA element"))
                 yield self.encodeStrict("</%s>" % name)
 
             elif type == "Comment":
@@ -291,7 +306,7 @@ class HTMLSerializer(object):
             elif type == "Entity":
                 name = token["name"]
                 key = name + ";"
-                if not key in entities:
+                if key not in entities:
                     self.serializeError(_("Entity %s not recognized" % name))
                 if self.resolve_entities and key not in xmlEntities:
                     data = entities[key]

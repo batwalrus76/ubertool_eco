@@ -1,8 +1,8 @@
-#Copyright ReportLab Europe Ltd. 2000-2013
-#see license.txt for license details
-__version__=''' $Id$ '''
-__doc__="""A Sequencer class counts things. It aids numbering and formatting lists."""
-__all__='''Sequencer getSequencer setSequencer'''.split()
+# Copyright ReportLab Europe Ltd. 2000-2013
+# see license.txt for license details
+__version__ = ''' $Id$ '''
+__doc__ = """A Sequencer class counts things. It aids numbering and formatting lists."""
+__all__ = '''Sequencer getSequencer setSequencer'''.split()
 #
 # roman numbers conversion thanks to
 #
@@ -11,9 +11,10 @@ __all__='''Sequencer getSequencer setSequencer'''.split()
 # fredrik@pythonware.com
 # http://www.pythonware.com
 
-_RN_TEMPLATES = [ 0, 0o1, 0o11, 0o111, 0o12, 0o2, 0o21, 0o211, 0o2111, 0o13 ]
+_RN_TEMPLATES = [0, 0o1, 0o11, 0o111, 0o12, 0o2, 0o21, 0o211, 0o2111, 0o13]
 _RN_LETTERS = "IVXLCDM"
 from reportlab import isPy3
+
 
 def _format_I(value):
     if value < 0 or value > 3999:
@@ -25,36 +26,42 @@ def _format_I(value):
         tmp = _RN_TEMPLATES[index]
         while tmp:
             tmp, index = divmod(tmp, 8)
-            str = _RN_LETTERS[index+base] + str
+            str = _RN_LETTERS[index + base] + str
         base += 2
     return str
 
+
 def _format_i(num):
     return _format_I(num).lower()
+
 
 def _format_123(num):
     """The simplest formatter"""
     return str(num)
 
+
 def _format_ABC(num):
     """Uppercase.  Wraps around at 26."""
-    n = (num -1) % 26
-    return chr(n+65)
+    n = (num - 1) % 26
+    return chr(n + 65)
+
 
 def _format_abc(num):
     """Lowercase.  Wraps around at 26."""
-    n = (num -1) % 26
-    return chr(n+97)
+    n = (num - 1) % 26
+    return chr(n + 97)
 
 _type2formatter = {
-        'I':_format_I,
-        'i':_format_i,
-        '1':_format_123,
-        'A':_format_ABC,
-        'a':_format_abc,
-        }
+    'I': _format_I,
+    'i': _format_i,
+    '1': _format_123,
+    'A': _format_ABC,
+    'a': _format_abc,
+}
+
 
 class _Counter:
+
     """Private class used by Sequencer.  Each counter
     knows its format, and the IDs of anything it
     resets, as well as its value. Starts at zero
@@ -104,7 +111,9 @@ class _Counter:
         if not otherCounter in self._resets:
             self._resets.append(otherCounter)
 
+
 class Sequencer:
+
     """Something to make it easy to number paragraphs, sections,
     images and anything else.  The features include registering
     new string formats for sequences, and 'chains' whereby
@@ -112,7 +121,7 @@ class Sequencer:
     It keeps track of a number of
     'counters', which are created on request:
     Usage::
-    
+
         >>> seq = layout.Sequencer()
         >>> seq.next('Bullets')
         1
@@ -129,7 +138,7 @@ class Sequencer:
     """
 
     def __init__(self):
-        self._counters = {}  #map key to current number
+        self._counters = {}  # map key to current number
         self._formatters = {}
         self._reset()
 
@@ -138,13 +147,13 @@ class Sequencer:
         self._formatters.clear()
         self._formatters.update({
             # the formats it knows initially
-            '1':_format_123,
-            'A':_format_ABC,
-            'a':_format_abc,
-            'I':_format_I,
-            'i':_format_i,
-            })
-        d = dict(_counters=self._counters,_formatters=self._formatters)
+            '1': _format_123,
+            'A': _format_ABC,
+            'a': _format_abc,
+            'I': _format_I,
+            'i': _format_i,
+        })
+        d = dict(_counters=self._counters, _formatters=self._formatters)
         self.__dict__.clear()
         self.__dict__.update(d)
         self._defaultCounter = None
@@ -171,7 +180,7 @@ class Sequencer:
             increments it by one.  New counters start at one."""
             return next(self._getCounter(self._defaultCounter))
 
-        def next(self,counter=None):
+        def next(self, counter=None):
             if not counter:
                 return next(self)
             else:
@@ -242,8 +251,7 @@ class Sequencer:
 
     def dump(self):
         """Write current state to stdout for diagnostics"""
-        counters = list(self._counters.items())
-        counters.sort()
+        counters = sorted(self._counters.items())
         print('Sequencer dump:')
         for (key, counter) in counters:
             print('    %s: value = %d, base = %d, format example = %s' % (
@@ -252,17 +260,20 @@ class Sequencer:
 """Your story builder needs to set this to"""
 _sequencer = None
 
+
 def getSequencer():
     global _sequencer
     if _sequencer is None:
         _sequencer = Sequencer()
-    return  _sequencer
+    return _sequencer
+
 
 def setSequencer(seq):
     global _sequencer
     s = _sequencer
     _sequencer = seq
     return s
+
 
 def _reset():
     global _sequencer
@@ -273,32 +284,35 @@ from reportlab.rl_config import register_reset
 register_reset(_reset)
 del register_reset
 
+
 def test():
     s = Sequencer()
-    print('Counting using default sequence: %d %d %d' % (next(s),next(s), next(s)))
+    print(
+        'Counting using default sequence: %d %d %d' %
+        (next(s), next(s), next(s)))
     print('Counting Figures: Figure %d, Figure %d, Figure %d' % (
         s.next('figure'), s.next('figure'), s.next('figure')))
     print('Back to default again: %d' % next(s))
     s.setDefaultCounter('list1')
-    print('Set default to list1: %d %d %d' % (next(s),next(s), next(s)))
+    print('Set default to list1: %d %d %d' % (next(s), next(s), next(s)))
     s.setDefaultCounter()
-    print('Set default to None again: %d %d %d' % (next(s),next(s), next(s)))
+    print('Set default to None again: %d %d %d' % (next(s), next(s), next(s)))
     print()
     print('Creating Appendix counter with format A, B, C...')
     s.setFormat('Appendix', 'A')
     print('    Appendix %s, Appendix %s, Appendix %s' % (
-        s.nextf('Appendix'),    s.nextf('Appendix'),s.nextf('Appendix')))
+        s.nextf('Appendix'), s.nextf('Appendix'), s.nextf('Appendix')))
 
     def format_french(num):
-        return ('un','deux','trois','quatre','cinq')[(num-1)%5]
+        return ('un', 'deux', 'trois', 'quatre', 'cinq')[(num - 1) % 5]
     print()
     print('Defining a custom format with french words:')
     s.registerFormat('french', format_french)
     s.setFormat('FrenchList', 'french')
-    print('   ' +(' '.join(str(s.nextf('FrenchList')) for i in range(1,6))))
+    print('   ' + (' '.join(str(s.nextf('FrenchList')) for i in range(1, 6))))
     print()
     print('Chaining H1 and H2 - H2 goes back to one when H1 increases')
-    s.chain('H1','H2')
+    s.chain('H1', 'H2')
     print('    H1 = %d' % s.next('H1'))
     print('      H2 = %d' % s.next('H2'))
     print('      H2 = %d' % s.next('H2'))
@@ -321,5 +335,5 @@ def test():
     print('    Figure %(Chapter)s.%(Figure+)s' % s)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     test()

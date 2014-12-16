@@ -31,12 +31,14 @@ from boto.route53.status import Status
 
 
 class Zone(object):
+
     """
     A Route53 Zone.
 
     :ivar route53connection: A :class:`boto.route53.connection.Route53Connection` connection
     :ivar id: The ID of the hosted zone
     """
+
     def __init__(self, route53connection, zone_dict):
         self.route53connection = route53connection
         for key in zone_dict:
@@ -60,7 +62,7 @@ class Zone(object):
         return response['ChangeResourceRecordSetsResponse']['ChangeInfo']
 
     def _new_record(self, changes, resource_type, name, value, ttl, identifier,
-                   comment=""):
+                    comment=""):
         """
         Add a CREATE change record to an existing ResourceRecordSets
 

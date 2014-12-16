@@ -41,8 +41,10 @@ class CommandLineGetter(object):
 
     def get_zone(self, params):
         if not params.get('zone', None):
-            prop = StringProperty(name='zone', verbose_name='EC2 Availability Zone',
-                                  choices=self.ec2.get_all_zones)
+            prop = StringProperty(
+                name='zone',
+                verbose_name='EC2 Availability Zone',
+                choices=self.ec2.get_all_zones)
             params['zone'] = propget.get(prop)
 
     def get_name(self, params):
@@ -74,6 +76,7 @@ class CommandLineGetter(object):
         self.get_size(params)
         self.get_mount_point(params)
         self.get_device(params)
+
 
 class Volume(Model):
 
@@ -137,7 +140,8 @@ class Volume(Model):
             size = self.size
         ec2 = self.get_ec2_connection()
         if self.zone_name is None or self.zone_name == '':
-            # deal with the migration case where the zone is not set in the logical volume:
+            # deal with the migration case where the zone is not set in the
+            # logical volume:
             current_volume = ec2.get_all_volumes([self.volume_id])[0]
             self.zone_name = current_volume.zone
         ebs_volume = ec2.create_volume(size, self.zone_name, snapshot)
@@ -213,13 +217,18 @@ class Volume(Model):
             print 'already detached'
             return None
         ec2 = self.get_ec2_connection()
-        ec2.detach_volume(self.volume_id, self.server.instance_id, self.device, force)
+        ec2.detach_volume(
+            self.volume_id,
+            self.server.instance_id,
+            self.device,
+            force)
         self.server = None
         self.put()
 
     def checkfs(self, use_cmd=None):
         if self.server is None:
-            raise ValueError('server attribute must be set to run this command')
+            raise ValueError(
+                'server attribute must be set to run this command')
         # detemine state of file system on volume, only works if attached
         if use_cmd:
             cmd = use_cmd
@@ -234,17 +243,21 @@ class Volume(Model):
 
     def wait(self):
         if self.server is None:
-            raise ValueError('server attribute must be set to run this command')
+            raise ValueError(
+                'server attribute must be set to run this command')
         with closing(self.server.get_cmdshell()) as cmd:
             # wait for the volume device to appear
             cmd = self.server.get_cmdshell()
             while not cmd.exists(self.device):
-                boto.log.info('%s still does not exist, waiting 10 seconds' % self.device)
+                boto.log.info(
+                    '%s still does not exist, waiting 10 seconds' %
+                    self.device)
                 time.sleep(10)
 
     def format(self):
         if self.server is None:
-            raise ValueError('server attribute must be set to run this command')
+            raise ValueError(
+                'server attribute must be set to run this command')
         status = None
         with closing(self.server.get_cmdshell()) as cmd:
             if not self.checkfs(cmd):
@@ -254,7 +267,8 @@ class Volume(Model):
 
     def mount(self):
         if self.server is None:
-            raise ValueError('server attribute must be set to run this command')
+            raise ValueError(
+                'server attribute must be set to run this command')
         boto.log.info('handle_mount_point')
         with closing(self.server.get_cmdshell()) as cmd:
             cmd = self.server.get_cmdshell()
@@ -291,11 +305,15 @@ class Volume(Model):
 
     def freeze(self):
         if self.server:
-            return self.server.run("/usr/sbin/xfs_freeze -f %s" % self.mount_point)
+            return self.server.run(
+                "/usr/sbin/xfs_freeze -f %s" %
+                self.mount_point)
 
     def unfreeze(self):
         if self.server:
-            return self.server.run("/usr/sbin/xfs_freeze -u %s" % self.mount_point)
+            return self.server.run(
+                "/usr/sbin/xfs_freeze -u %s" %
+                self.mount_point)
 
     def snapshot(self):
         # if this volume is attached to a server
@@ -303,10 +321,13 @@ class Volume(Model):
         try:
             self.freeze()
             if self.server is None:
-                snapshot = self.get_ec2_connection().create_snapshot(self.volume_id)
+                snapshot = self.get_ec2_connection().create_snapshot(
+                    self.volume_id)
             else:
                 snapshot = self.server.ec2.create_snapshot(self.volume_id)
-            boto.log.info('Snapshot of Volume %s created: %s' %  (self.name, snapshot))
+            boto.log.info(
+                'Snapshot of Volume %s created: %s' %
+                (self.name, snapshot))
         except Exception:
             boto.log.info('Snapshot error')
             boto.log.info(traceback.format_exc())
@@ -352,9 +373,13 @@ class Volume(Model):
         midnight = datetime.datetime(year=now.year, month=now.month,
                                      day=now.day, tzinfo=now.tzinfo)
         # Keep the first snapshot from each day of the previous week
-        one_week = datetime.timedelta(days=7, seconds=60*60)
-        print midnight-one_week, midnight
-        previous_week = self.get_snapshot_range(snaps, midnight-one_week, midnight)
+        one_week = datetime.timedelta(days=7, seconds=60 * 60)
+        print midnight - one_week, midnight
+        previous_week = self.get_snapshot_range(
+            snaps,
+            midnight -
+            one_week,
+            midnight)
         print previous_week
         if not previous_week:
             return snaps
@@ -371,13 +396,20 @@ class Volume(Model):
                 delta = datetime.timedelta(days=week_boundary.weekday())
                 week_boundary = week_boundary - delta
         # Keep one within this partial week
-        partial_week = self.get_snapshot_range(snaps, week_boundary, previous_week[0].date)
+        partial_week = self.get_snapshot_range(
+            snaps,
+            week_boundary,
+            previous_week[0].date)
         if len(partial_week) > 1:
             for snap in partial_week[1:]:
                 snap.keep = False
         # Keep the first snapshot of each week for the previous 4 weeks
         for i in range(0, 4):
-            weeks_worth = self.get_snapshot_range(snaps, week_boundary-one_week, week_boundary)
+            weeks_worth = self.get_snapshot_range(
+                snaps,
+                week_boundary -
+                one_week,
+                week_boundary)
             if len(weeks_worth) > 1:
                 for snap in weeks_worth[1:]:
                     snap.keep = False
@@ -393,7 +425,9 @@ class Volume(Model):
         if delete:
             for snap in snaps:
                 if not snap.keep:
-                    boto.log.info('Deleting %s(%s) for %s' % (snap, snap.date, self.name))
+                    boto.log.info(
+                        'Deleting %s(%s) for %s' %
+                        (snap, snap.date, self.name))
                     snap.delete()
         return snaps
 
@@ -416,5 +450,3 @@ class Volume(Model):
     def archive(self):
         # snapshot volume, trim snaps, delete volume-id
         pass
-
-

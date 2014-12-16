@@ -14,7 +14,7 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABIL-
 # ITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
@@ -131,7 +131,8 @@ class Entries(object):
     def __init__(self, parent=None):
         self.parent = parent
         # Entries is the class that represents the same-named XML
-        # element. entry_list is the list within this class that holds the data.
+        # element. entry_list is the list within this class that holds the
+        # data.
         self.entry_list = []
 
     def __repr__(self):
@@ -156,7 +157,7 @@ class Entries(object):
 
     def to_xml(self):
         if not self.entry_list:
-          return ''
+            return ''
         s = '<%s>' % ENTRIES
         for entry in self.entry_list:
             s += entry.to_xml()
@@ -179,20 +180,20 @@ class Entry(object):
 
     def startElement(self, name, attrs, connection):
         if name.lower() == SCOPE.lower():
-            # The following if statement used to look like this: 
+            # The following if statement used to look like this:
             #   if not TYPE in attrs:
-            # which caused problems because older versions of the 
-            # AttributesImpl class in the xml.sax library neglected to include 
-            # a __contains__() method (which Python calls to implement the 
+            # which caused problems because older versions of the
+            # AttributesImpl class in the xml.sax library neglected to include
+            # a __contains__() method (which Python calls to implement the
             # 'in' operator). So when you use the in operator, like the if
             # statement above, Python invokes the __getiter__() method with
-            # index 0, which raises an exception. More recent versions of 
-            # xml.sax include the __contains__() method, rendering the in 
+            # index 0, which raises an exception. More recent versions of
+            # xml.sax include the __contains__() method, rendering the in
             # operator functional. The work-around here is to formulate the
-            # if statement as below, which is the legal way to query 
+            # if statement as below, which is the legal way to query
             # AttributesImpl for containment (and is also how the added
             # __contains__() method works). At one time gsutil disallowed
-            # xmlplus-based parsers, until this more specific problem was 
+            # xmlplus-based parsers, until this more specific problem was
             # determined.
             if TYPE not in attrs:
                 raise InvalidAclError('Missing "%s" in "%s" part of ACL' %
@@ -209,7 +210,7 @@ class Entry(object):
             pass
         elif name.lower() == PERMISSION.lower():
             value = value.strip()
-            if not value in SupportedPermissions:
+            if value not in SupportedPermissions:
                 raise InvalidAclError('Invalid Permission "%s"' % value)
             self.permission = value
         else:
@@ -227,15 +228,15 @@ class Scope(object):
 
     # Map from Scope type.lower() to lower-cased list of allowed sub-elems.
     ALLOWED_SCOPE_TYPE_SUB_ELEMS = {
-        ALL_AUTHENTICATED_USERS.lower() : [],
-        ALL_USERS.lower() : [],
-        GROUP_BY_DOMAIN.lower() : [DOMAIN.lower()],
-        GROUP_BY_EMAIL.lower() : [
+        ALL_AUTHENTICATED_USERS.lower(): [],
+        ALL_USERS.lower(): [],
+        GROUP_BY_DOMAIN.lower(): [DOMAIN.lower()],
+        GROUP_BY_EMAIL.lower(): [
             DISPLAY_NAME.lower(), EMAIL_ADDRESS.lower(), NAME.lower()],
-        GROUP_BY_ID.lower() : [DISPLAY_NAME.lower(), ID.lower(), NAME.lower()],
-        USER_BY_EMAIL.lower() : [
+        GROUP_BY_ID.lower(): [DISPLAY_NAME.lower(), ID.lower(), NAME.lower()],
+        USER_BY_EMAIL.lower(): [
             DISPLAY_NAME.lower(), EMAIL_ADDRESS.lower(), NAME.lower()],
-        USER_BY_ID.lower() : [DISPLAY_NAME.lower(), ID.lower(), NAME.lower()]
+        USER_BY_ID.lower(): [DISPLAY_NAME.lower(), ID.lower(), NAME.lower()]
     }
 
     def __init__(self, parent, type=None, id=None, name=None,
@@ -265,9 +266,9 @@ class Scope(object):
 
     def startElement(self, name, attrs, connection):
         if (not name.lower() in
-            self.ALLOWED_SCOPE_TYPE_SUB_ELEMS[self.type.lower()]):
+                self.ALLOWED_SCOPE_TYPE_SUB_ELEMS[self.type.lower()]):
             raise InvalidAclError('Element "%s" not allowed in %s %s "%s" ' %
-                                   (name, SCOPE, TYPE, self.type))
+                                  (name, SCOPE, TYPE, self.type))
         return None
 
     def endElement(self, name, value, connection):
@@ -286,7 +287,7 @@ class Scope(object):
     def to_xml(self):
         s = '<%s type="%s">' % (SCOPE, self.type)
         if (self.type.lower() == ALL_AUTHENTICATED_USERS.lower()
-            or self.type.lower() == ALL_USERS.lower()):
+                or self.type.lower() == ALL_USERS.lower()):
             pass
         elif self.type.lower() == GROUP_BY_DOMAIN.lower():
             s += '<%s>%s</%s>' % (DOMAIN, self.domain, DOMAIN)
@@ -295,12 +296,12 @@ class Scope(object):
             s += '<%s>%s</%s>' % (EMAIL_ADDRESS, self.email_address,
                                   EMAIL_ADDRESS)
             if self.name:
-              s += '<%s>%s</%s>' % (NAME, self.name, NAME)
+                s += '<%s>%s</%s>' % (NAME, self.name, NAME)
         elif (self.type.lower() == GROUP_BY_ID.lower()
               or self.type.lower() == USER_BY_ID.lower()):
             s += '<%s>%s</%s>' % (ID, self.id, ID)
             if self.name:
-              s += '<%s>%s</%s>' % (NAME, self.name, NAME)
+                s += '<%s>%s</%s>' % (NAME, self.name, NAME)
         else:
             raise InvalidAclError('Invalid scope type "%s" ', self.type)
 

@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
+
 def versioned_bucket_lister(bucket, prefix='', delimiter='',
                             marker='', generation_marker='', headers=None):
     """
@@ -36,9 +37,11 @@ def versioned_bucket_lister(bucket, prefix='', delimiter='',
             yield k
         marker = rs.next_marker
         generation_marker = rs.next_generation_marker
-        more_results= rs.is_truncated
+        more_results = rs.is_truncated
+
 
 class VersionedBucketListResultSet(object):
+
     """
     A resultset for listing versions within a bucket.  Uses the bucket_lister
     generator function and implements the iterator interface.  This
@@ -57,8 +60,10 @@ class VersionedBucketListResultSet(object):
         self.headers = headers
 
     def __iter__(self):
-        return versioned_bucket_lister(self.bucket, prefix=self.prefix,
-                                       delimiter=self.delimiter,
-                                       marker=self.marker,
-                                       generation_marker=self.generation_marker,
-                                       headers=self.headers)
+        return versioned_bucket_lister(
+            self.bucket,
+            prefix=self.prefix,
+            delimiter=self.delimiter,
+            marker=self.marker,
+            generation_marker=self.generation_marker,
+            headers=self.headers)

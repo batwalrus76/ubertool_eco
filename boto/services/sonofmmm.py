@@ -25,6 +25,7 @@ from boto.services.message import ServiceMessage
 import os
 import mimetypes
 
+
 class SonOfMMM(Service):
 
     def __init__(self, config_file=None):
@@ -33,7 +34,8 @@ class SonOfMMM(Service):
         self.log_path = os.path.join(self.working_dir, self.log_file)
         boto.set_file_logger(self.name, self.log_path)
         if self.sd.has_option('ffmpeg_args'):
-            self.command = '/usr/local/bin/ffmpeg ' + self.sd.get('ffmpeg_args')
+            self.command = '/usr/local/bin/ffmpeg ' + \
+                self.sd.get('ffmpeg_args')
         else:
             self.command = '/usr/local/bin/ffmpeg -y -i %s %s'
         self.output_mimetype = self.sd.get('output_mimetype')
@@ -55,7 +57,7 @@ class SonOfMMM(Service):
             boto.log.info('Queueing %s' % key.name)
             m = ServiceMessage()
             if self.output_bucket:
-                d = {'OutputBucket' : self.output_bucket.name}
+                d = {'OutputBucket': self.output_bucket.name}
             else:
                 d = None
             m.for_key(key, d)
@@ -64,7 +66,7 @@ class SonOfMMM(Service):
     def process_file(self, in_file_name, msg):
         base, ext = os.path.splitext(in_file_name)
         out_file_name = os.path.join(self.working_dir,
-                                     base+self.output_ext)
+                                     base + self.output_ext)
         command = self.command % (in_file_name, out_file_name)
         boto.log.info('running:\n%s' % command)
         status = self.run(command)

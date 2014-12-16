@@ -32,13 +32,16 @@ from boto.sdb.db.property import StringProperty, IntegerProperty, BooleanPropert
 from boto.manage import propget
 from boto.ec2.zone import Zone
 from boto.ec2.keypair import KeyPair
-import os, time, StringIO
+import os
+import time
+import StringIO
 from contextlib import closing
 from boto.exception import EC2ResponseError
 
 InstanceTypes = ['m1.small', 'm1.large', 'm1.xlarge',
                  'c1.medium', 'c1.xlarge',
                  'm2.2xlarge', 'm2.4xlarge']
+
 
 class Bundler(object):
 
@@ -64,7 +67,8 @@ class Bundler(object):
         if self.uname != 'root':
             command = "sudo "
         command += 'ec2-bundle-vol '
-        command += '-c %s -k %s ' % (self.remote_cert_file, self.remote_key_file)
+        command += '-c %s -k %s ' % (self.remote_cert_file,
+                                     self.remote_key_file)
         command += '-u %s ' % self.server._reservation.owner_id
         command += '-p %s ' % prefix
         command += '-s %d ' % size
@@ -122,8 +126,11 @@ class Bundler(object):
         print '\t%s' % t[1]
         print '...complete!'
         print 'registering image...'
-        self.image_id = self.server.ec2.register_image(name=prefix, image_location='%s/%s.manifest.xml' % (bucket, prefix))
+        self.image_id = self.server.ec2.register_image(
+            name=prefix, image_location='%s/%s.manifest.xml' %
+            (bucket, prefix))
         return self.image_id
+
 
 class CommandLineGetter(object):
 
@@ -157,19 +164,25 @@ class CommandLineGetter(object):
 
     def get_instance_type(self, params):
         if not params.get('instance_type', None):
-            prop = StringProperty(name='instance_type', verbose_name='Instance Type',
-                                  choices=InstanceTypes)
+            prop = StringProperty(
+                name='instance_type',
+                verbose_name='Instance Type',
+                choices=InstanceTypes)
             params['instance_type'] = propget.get(prop)
 
     def get_quantity(self, params):
         if not params.get('quantity', None):
-            prop = IntegerProperty(name='quantity', verbose_name='Number of Instances')
+            prop = IntegerProperty(
+                name='quantity',
+                verbose_name='Number of Instances')
             params['quantity'] = propget.get(prop)
 
     def get_zone(self, params):
         if not params.get('zone', None):
-            prop = StringProperty(name='zone', verbose_name='EC2 Availability Zone',
-                                  choices=self.ec2.get_all_zones)
+            prop = StringProperty(
+                name='zone',
+                verbose_name='EC2 Availability Zone',
+                choices=self.ec2.get_all_zones)
             params['zone'] = propget.get(prop)
 
     def get_ami_id(self, params):
@@ -196,8 +209,10 @@ class CommandLineGetter(object):
                     group = g
                     params['group'] = g
         if not group:
-            prop = StringProperty(name='group', verbose_name='EC2 Security Group',
-                                  choices=self.ec2.get_all_security_groups)
+            prop = StringProperty(
+                name='group',
+                verbose_name='EC2 Security Group',
+                choices=self.ec2.get_all_security_groups)
             params['group'] = propget.get(prop)
 
     def get_key(self, params):
@@ -226,6 +241,7 @@ class CommandLineGetter(object):
         self.get_group(params)
         self.get_key(params)
 
+
 class Server(Model):
 
     #
@@ -239,18 +255,53 @@ class Server(Model):
     region_name = StringProperty(verbose_name="EC2 Region Name")
     instance_id = StringProperty(verbose_name="EC2 Instance ID")
     elastic_ip = StringProperty(verbose_name="EC2 Elastic IP Address")
-    production = BooleanProperty(verbose_name="Is This Server Production", default=False)
-    ami_id = CalculatedProperty(verbose_name="AMI ID", calculated_type=str, use_method=True)
-    zone = CalculatedProperty(verbose_name="Availability Zone Name", calculated_type=str, use_method=True)
-    hostname = CalculatedProperty(verbose_name="Public DNS Name", calculated_type=str, use_method=True)
-    private_hostname = CalculatedProperty(verbose_name="Private DNS Name", calculated_type=str, use_method=True)
-    groups = CalculatedProperty(verbose_name="Security Groups", calculated_type=list, use_method=True)
-    security_group = CalculatedProperty(verbose_name="Primary Security Group Name", calculated_type=str, use_method=True)
-    key_name = CalculatedProperty(verbose_name="Key Name", calculated_type=str, use_method=True)
-    instance_type = CalculatedProperty(verbose_name="Instance Type", calculated_type=str, use_method=True)
-    status = CalculatedProperty(verbose_name="Current Status", calculated_type=str, use_method=True)
-    launch_time = CalculatedProperty(verbose_name="Server Launch Time", calculated_type=str, use_method=True)
-    console_output = CalculatedProperty(verbose_name="Console Output", calculated_type=file, use_method=True)
+    production = BooleanProperty(
+        verbose_name="Is This Server Production",
+        default=False)
+    ami_id = CalculatedProperty(
+        verbose_name="AMI ID",
+        calculated_type=str,
+        use_method=True)
+    zone = CalculatedProperty(
+        verbose_name="Availability Zone Name",
+        calculated_type=str,
+        use_method=True)
+    hostname = CalculatedProperty(
+        verbose_name="Public DNS Name",
+        calculated_type=str,
+        use_method=True)
+    private_hostname = CalculatedProperty(
+        verbose_name="Private DNS Name",
+        calculated_type=str,
+        use_method=True)
+    groups = CalculatedProperty(
+        verbose_name="Security Groups",
+        calculated_type=list,
+        use_method=True)
+    security_group = CalculatedProperty(
+        verbose_name="Primary Security Group Name",
+        calculated_type=str,
+        use_method=True)
+    key_name = CalculatedProperty(
+        verbose_name="Key Name",
+        calculated_type=str,
+        use_method=True)
+    instance_type = CalculatedProperty(
+        verbose_name="Instance Type",
+        calculated_type=str,
+        use_method=True)
+    status = CalculatedProperty(
+        verbose_name="Current Status",
+        calculated_type=str,
+        use_method=True)
+    launch_time = CalculatedProperty(
+        verbose_name="Server Launch Time",
+        calculated_type=str,
+        use_method=True)
+    console_output = CalculatedProperty(
+        verbose_name="Console Output",
+        calculated_type=file,
+        use_method=True)
 
     packages = []
     plugins = []
@@ -267,7 +318,7 @@ class Server(Model):
         cfg.set('DB_Server', 'db_name', cls._manager.domain.name)
 
     @classmethod
-    def create(cls, config_file=None, logical_volume = None, cfg = None, **params):
+    def create(cls, config_file=None, logical_volume=None, cfg=None, **params):
         """
         Create a new instance based on the specified configuration file or the specified
         configuration and the passed in parameters.
@@ -289,7 +340,8 @@ class Server(Model):
         if config_file:
             cfg = Config(path=config_file)
         if cfg.has_section('EC2'):
-            # include any EC2 configuration values that aren't specified in params:
+            # include any EC2 configuration values that aren't specified in
+            # params:
             for option in cfg.options('EC2'):
                 if option not in params:
                     params[option] = cfg.get('EC2', option)
@@ -297,17 +349,21 @@ class Server(Model):
         getter.get(cls, params)
         region = params.get('region')
         ec2 = region.connect()
-        cls.add_credentials(cfg, ec2.aws_access_key_id, ec2.aws_secret_access_key)
+        cls.add_credentials(
+            cfg,
+            ec2.aws_access_key_id,
+            ec2.aws_secret_access_key)
         ami = params.get('ami')
         kp = params.get('keypair')
         group = params.get('group')
         zone = params.get('zone')
         # deal with possibly passed in logical volume:
-        if logical_volume != None:
-           cfg.set('EBS', 'logical_volume_name', logical_volume.name)
+        if logical_volume is not None:
+            cfg.set('EBS', 'logical_volume_name', logical_volume.name)
         cfg_fp = StringIO.StringIO()
         cfg.write(cfg_fp)
-        # deal with the possibility that zone and/or keypair are strings read from the config file:
+        # deal with the possibility that zone and/or keypair are strings read
+        # from the config file:
         if isinstance(zone, Zone):
             zone = zone.name
         if isinstance(kp, KeyPair):
@@ -317,8 +373,8 @@ class Server(Model):
                               key_name=kp,
                               security_groups=[group],
                               instance_type=params.get('instance_type'),
-                              placement = zone,
-                              user_data = cfg_fp.getvalue())
+                              placement=zone,
+                              user_data=cfg_fp.getvalue())
         l = []
         i = 0
         elastic_ip = params.get('elastic_ip')
@@ -327,7 +383,8 @@ class Server(Model):
             instance = instances[0]
             print 'Waiting for instance to start so we can set its elastic IP address...'
             # Sometimes we get a message from ec2 that says that the instance does not exist.
-            # Hopefully the following delay will giv eec2 enough time to get to a stable state:
+            # Hopefully the following delay will giv eec2 enough time to get to
+            # a stable state:
             time.sleep(5)
             while instance.update() != 'running':
                 time.sleep(1)
@@ -336,7 +393,7 @@ class Server(Model):
         for instance in instances:
             s = cls()
             s.ec2 = ec2
-            s.name = params.get('name') + '' if i==0 else str(i)
+            s.name = params.get('name') + '' if i == 0 else str(i)
             s.description = params.get('description')
             s.region_name = region.name
             s.instance_id = instance.id
@@ -382,7 +439,9 @@ class Server(Model):
                 for instance in reservation.instances:
                     try:
                         Server.find(instance_id=instance.id).next()
-                        boto.log.info('Server for %s already exists' % instance.id)
+                        boto.log.info(
+                            'Server for %s already exists' %
+                            instance.id)
                     except StopIteration:
                         s = cls()
                         s.ec2 = ec2
@@ -413,7 +472,8 @@ class Server(Model):
                         self.ec2 = region.connect()
                         if self.instance_id and not self._instance:
                             try:
-                                rs = self.ec2.get_all_reservations([self.instance_id])
+                                rs = self.ec2.get_all_reservations(
+                                    [self.instance_id])
                                 if len(rs) >= 1:
                                     for instance in rs[0].instances:
                                         if instance.id == self.instance_id:
@@ -490,7 +550,7 @@ class Server(Model):
     def delete(self):
         if self.production:
             raise ValueError("Can't delete a production server")
-        #self.stop()
+        # self.stop()
         super(Server, self).delete()
 
     def stop(self):
@@ -522,7 +582,8 @@ class Server(Model):
                     self.ssh_key_file = ssh_file
             if not self.ssh_key_file:
                 iobject = IObject()
-                self.ssh_key_file = iobject.get_filename('Path to OpenSSH Key file')
+                self.ssh_key_file = iobject.get_filename(
+                    'Path to OpenSSH Key file')
         return self.ssh_key_file
 
     def get_cmdshell(self):
@@ -551,6 +612,3 @@ class Server(Model):
 
     def install(self, pkg):
         return self.run('apt-get -y install %s' % pkg)
-
-
-

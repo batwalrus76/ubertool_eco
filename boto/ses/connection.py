@@ -47,14 +47,24 @@ class SESConnection(AWSAuthConnection):
             region = RegionInfo(self, self.DefaultRegionName,
                                 self.DefaultRegionEndpoint)
         self.region = region
-        super(SESConnection, self).__init__(self.region.endpoint,
-                                   aws_access_key_id, aws_secret_access_key,
-                                   is_secure, port, proxy, proxy_port,
-                                   proxy_user, proxy_pass, debug,
-                                   https_connection_factory, path,
-                                   security_token=security_token,
-                                   validate_certs=validate_certs,
-                                   profile_name=profile_name)
+        super(
+            SESConnection,
+            self).__init__(
+            self.region.endpoint,
+            aws_access_key_id,
+            aws_secret_access_key,
+            is_secure,
+            port,
+            proxy,
+            proxy_port,
+            proxy_user,
+            proxy_pass,
+            debug,
+            https_connection_factory,
+            path,
+            security_token=security_token,
+            validate_certs=validate_certs,
+            profile_name=profile_name)
 
     def _required_auth_capability(self):
         return ['ses']
@@ -260,18 +270,18 @@ class SESConnection(AWSAuthConnection):
             raise ValueError("No text or html body found for mail")
 
         self._build_list_params(params, to_addresses,
-                               'Destination.ToAddresses.member')
+                                'Destination.ToAddresses.member')
         if cc_addresses:
             self._build_list_params(params, cc_addresses,
-                                   'Destination.CcAddresses.member')
+                                    'Destination.CcAddresses.member')
 
         if bcc_addresses:
             self._build_list_params(params, bcc_addresses,
-                                   'Destination.BccAddresses.member')
+                                    'Destination.BccAddresses.member')
 
         if reply_addresses:
             self._build_list_params(params, reply_addresses,
-                                   'ReplyToAddresses.member')
+                                    'ReplyToAddresses.member')
 
         return self._make_request('SendEmail', params)
 
@@ -318,7 +328,7 @@ class SESConnection(AWSAuthConnection):
 
         if destinations:
             self._build_list_params(params, destinations,
-                                   'Destinations.member')
+                                    'Destinations.member')
 
         return self._make_request('SendRawEmail', params)
 
@@ -475,7 +485,7 @@ class SESConnection(AWSAuthConnection):
         """
         params = {}
         self._build_list_params(params, identities,
-                               'Identities.member')
+                                'Identities.member')
         return self._make_request('GetIdentityVerificationAttributes', params)
 
     def verify_domain_identity(self, domain):

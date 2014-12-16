@@ -25,6 +25,7 @@ Represents an EC2 Object
 """
 from boto.ec2.tag import TagSet
 
+
 class EC2Object(object):
 
     def __init__(self, connection=None):
@@ -42,6 +43,7 @@ class EC2Object(object):
 
 
 class TaggedEC2Object(EC2Object):
+
     """
     Any EC2 resource that can be tagged should be represented
     by a Python object that subclasses this class.  This class
@@ -78,7 +80,7 @@ class TaggedEC2Object(EC2Object):
         """
         status = self.connection.create_tags(
             [self.id],
-            {key : value},
+            {key: value},
             dry_run=dry_run
         )
         if self.tags is None:
@@ -103,7 +105,7 @@ class TaggedEC2Object(EC2Object):
                       a value of '' and a value of None.
         """
         if value:
-            tags = {key : value}
+            tags = {key: value}
         else:
             tags = [key]
         status = self.connection.delete_tags(

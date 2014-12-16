@@ -27,6 +27,7 @@ from boto.compat import json
 
 
 class OptionStatus(dict):
+
     """
     Presents a combination of status field (defined below) which are
     accessed as attributes and option values which are stored in the
@@ -135,6 +136,7 @@ class RankExpressionStatus(IndexFieldStatus):
 
     pass
 
+
 class ServicePoliciesStatus(OptionStatus):
 
     def new_statement(self, arn, ip):
@@ -153,15 +155,15 @@ class ServicePoliciesStatus(OptionStatus):
             to.
         """
         return {
-                    "Effect":"Allow",
-                    "Action":"*",  # Docs say use GET, but denies unless *
-                    "Resource": arn,
-                    "Condition": {
-                        "IpAddress": {
+            "Effect": "Allow",
+            "Action": "*",  # Docs say use GET, but denies unless *
+            "Resource": arn,
+            "Condition": {
+                "IpAddress": {
                             "aws:SourceIp": [ip]
-                            }
-                        }
-                    }
+                }
+            }
+        }
 
     def _allow_ip(self, arn, ip):
         if 'Statement' not in self:

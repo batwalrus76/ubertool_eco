@@ -1,6 +1,8 @@
 from boto.resultset import ResultSet
 
+
 class Template(object):
+
     def __init__(self, connection=None):
         self.connection = connection
         self.description = None
@@ -8,7 +10,8 @@ class Template(object):
 
     def startElement(self, name, attrs, connection):
         if name == "Parameters":
-            self.template_parameters = ResultSet([('member', TemplateParameter)])
+            self.template_parameters = ResultSet(
+                [('member', TemplateParameter)])
             return self.template_parameters
         else:
             return None
@@ -19,7 +22,9 @@ class Template(object):
         else:
             setattr(self, name, value)
 
+
 class TemplateParameter(object):
+
     def __init__(self, parent):
         self.parent = parent
         self.default_value = None

@@ -1,6 +1,8 @@
 #!/usr/pkg/bin/python
 
-import os, sys, time
+import os
+import sys
+import time
 
 from reportlab.graphics.barcode.common import *
 from reportlab.graphics.barcode.code39 import *
@@ -22,19 +24,21 @@ from reportlab.platypus.flowables import XBox, KeepTogether
 from reportlab.graphics.shapes import Drawing
 
 from reportlab.graphics.barcode import getCodes, getCodeNames, createBarcodeDrawing, createBarcodeImageInMemory
+
+
 def run():
     styles = getSampleStyleSheet()
     styleN = styles['Normal']
     styleH = styles['Heading1']
     story = []
 
-    #for codeNames in code
+    # for codeNames in code
     story.append(Paragraph('I2of5', styleN))
-    story.append(I2of5(1234, barWidth = inch*0.02, checksum=0))
+    story.append(I2of5(1234, barWidth=inch * 0.02, checksum=0))
     story.append(Paragraph('MSI', styleN))
     story.append(MSI(1234))
     story.append(Paragraph('Codabar', styleN))
-    story.append(Codabar("A012345B", barWidth = inch*0.02))
+    story.append(Codabar("A012345B", barWidth=inch * 0.02))
     story.append(Paragraph('Code 11', styleN))
     story.append(Code11("01234545634563"))
     story.append(Paragraph('Code 39', styleN))
@@ -44,18 +48,18 @@ def run():
     story.append(Paragraph('Code93', styleN))
     story.append(Standard93("CODE 93"))
     story.append(Paragraph('Extended Code93', styleN))
-    story.append(Extended93("L@@K! Code 93 :-)")) #, barWidth=0.005 * inch))
+    story.append(Extended93("L@@K! Code 93 :-)"))  # , barWidth=0.005 * inch))
     story.append(Paragraph('Code 128', styleN))
-    c=Code128("AB-12345678") #, barWidth=0.005 * inch)
-    #print 'WIDTH =', (c.width / inch), 'barWidth =', (c.barWidth / inch)
-    #print 'LQ =', (c.lquiet / inch), 'RQ =', (c.rquiet / inch)
+    c = Code128("AB-12345678")  # , barWidth=0.005 * inch)
+    # print 'WIDTH =', (c.width / inch), 'barWidth =', (c.barWidth / inch)
+    # print 'LQ =', (c.lquiet / inch), 'RQ =', (c.rquiet / inch)
     story.append(c)
     story.append(Paragraph('USPS FIM', styleN))
     story.append(FIM("A"))
     story.append(Paragraph('USPS POSTNET', styleN))
     story.append(POSTNET('78247-1043'))
     story.append(Paragraph('USPS 4 State', styleN))
-    story.append(USPS_4State('01234567094987654321','01234567891'))
+    story.append(USPS_4State('01234567094987654321', '01234567891'))
 
     from reportlab.graphics.barcode import createBarcodeDrawing
     story.append(Paragraph('EAN13', styleN))
@@ -68,18 +72,22 @@ def run():
     bcd = createBarcodeDrawing('UPCA', value='03600029145')
     story.append(bcd)
     story.append(Paragraph('USPS_4State', styleN))
-    bcd = createBarcodeDrawing('USPS_4State', value='01234567094987654321',routing='01234567891')
+    bcd = createBarcodeDrawing(
+        'USPS_4State',
+        value='01234567094987654321',
+        routing='01234567891')
     story.append(bcd)
 
     story.append(Paragraph('Label Size', styleN))
-    story.append(XBox((2.0 + 5.0/8.0)*inch, 1 * inch, '1x2-5/8"'))
+    story.append(XBox((2.0 + 5.0 / 8.0) * inch, 1 * inch, '1x2-5/8"'))
     story.append(Paragraph('Label Size', styleN))
-    story.append(XBox((1.75)*inch, .5 * inch, '1/2x1-3/4"'))
+    story.append(XBox((1.75) * inch, .5 * inch, '1/2x1-3/4"'))
     c = Canvas('out.pdf')
-    f = Frame(inch, inch, 6*inch, 9*inch, showBoundary=1)
+    f = Frame(inch, inch, 6 * inch, 9 * inch, showBoundary=1)
     f.addFromList(story, c)
     c.save()
     print('saved out.pdf')
+
 
 def fullTest(fileName="test_full.pdf"):
     """Creates large-ish test document with a variety of parameters"""
@@ -92,17 +100,25 @@ def fullTest(fileName="test_full.pdf"):
     styleH2 = styles['Heading2']
     story = []
 
-    story.append(Paragraph('ReportLab Barcode Test Suite - full output', styleH))
-    story.append(Paragraph('Generated on %s' % time.ctime(time.time()), styleN))
+    story.append(
+        Paragraph(
+            'ReportLab Barcode Test Suite - full output',
+            styleH))
+    story.append(
+        Paragraph(
+            'Generated on %s' %
+            time.ctime(
+                time.time()),
+            styleN))
 
     story.append(Paragraph('', styleN))
     story.append(Paragraph('Repository information for this build:', styleN))
-    #see if we can figure out where it was built, if we're running in source
+    # see if we can figure out where it was built, if we're running in source
     if os.path.split(os.getcwd())[-1] == 'barcode' and os.path.isdir('.svn'):
-        #runnning in a filesystem svn copy
+        # runnning in a filesystem svn copy
         infoLines = os.popen('svn info').read()
         story.append(Preformatted(infoLines, styles["Code"]))
-        
+
     story.append(Paragraph('About this document', styleH2))
     story.append(Paragraph('History and Status', styleH2))
 
@@ -130,7 +146,7 @@ def fullTest(fileName="test_full.pdf"):
         A major licensee of our technology has kindly agreed to part-fund proper productisation
         of this code on an open source basis in Q1 2006.  This has involved addition of EAN codes
         as well as a proper testing program.  Henceforth we intend to publicise the code more widely,
-        gather feedback, accept contributions of code and treat it as "supported".  
+        gather feedback, accept contributions of code and treat it as "supported".
         """, styleN))
 
     story.append(Paragraph("""
@@ -163,21 +179,27 @@ def fullTest(fileName="test_full.pdf"):
     height = [float(x[9:]) for x in sys.argv if x.startswith('--height=')]
     isoScale = [int(x[11:]) for x in sys.argv if x.startswith('--isoscale=')]
     options = {}
-    if width: options['width'] = width[0]
-    if height: options['height'] = height[0]
-    if isoScale: options['isoScale'] = isoScale[0]
+    if width:
+        options['width'] = width[0]
+    if height:
+        options['height'] = height[0]
+    if isoScale:
+        options['isoScale'] = isoScale[0]
     scales = [x[8:].split(',') for x in sys.argv if x.startswith('--scale=')]
-    scales = list(map(float,scales and flatten(scales) or [1]))
-    scales = list(map(float,scales and flatten(scales) or [1]))
+    scales = list(map(float, scales and flatten(scales) or [1]))
+    scales = list(map(float, scales and flatten(scales) or [1]))
     for scale in scales:
         story.append(PageBreak())
-        story.append(Paragraph('Scale = %.1f'%scale, styleH2))
+        story.append(Paragraph('Scale = %.1f' % scale, styleH2))
         story.append(Spacer(36, 12))
         for codeName in codeNames:
             s = [Paragraph('Code: ' + codeName, styleH2)]
-            for hr in (0,1):
+            for hr in (0, 1):
                 s.append(Spacer(36, 12))
-                dr = createBarcodeDrawing(codeName, humanReadable=hr,**options)
+                dr = createBarcodeDrawing(
+                    codeName,
+                    humanReadable=hr,
+                    **options)
                 dr.renderScale = scale
                 s.append(dr)
                 s.append(Spacer(36, 12))
@@ -187,14 +209,35 @@ def fullTest(fileName="test_full.pdf"):
     SimpleDocTemplate(fileName).build(story)
     print('created', fileName)
 
-if __name__=='__main__':
+if __name__ == '__main__':
     run()
     fullTest()
-    def createSample(name,memory):
-        f = open(name,'wb')
+
+    def createSample(name, memory):
+        f = open(name, 'wb')
         f.write(memory)
         f.close()
-    createSample('test_cbcim.png',createBarcodeImageInMemory('EAN13', value='123456789012'))
-    createSample('test_cbcim.gif',createBarcodeImageInMemory('EAN8', value='1234567', format='gif'))
-    createSample('test_cbcim.pdf',createBarcodeImageInMemory('UPCA', value='03600029145',format='pdf'))
-    createSample('test_cbcim.tiff',createBarcodeImageInMemory('USPS_4State', value='01234567094987654321',routing='01234567891',format='tiff'))
+    createSample(
+        'test_cbcim.png',
+        createBarcodeImageInMemory(
+            'EAN13',
+            value='123456789012'))
+    createSample(
+        'test_cbcim.gif',
+        createBarcodeImageInMemory(
+            'EAN8',
+            value='1234567',
+            format='gif'))
+    createSample(
+        'test_cbcim.pdf',
+        createBarcodeImageInMemory(
+            'UPCA',
+            value='03600029145',
+            format='pdf'))
+    createSample(
+        'test_cbcim.tiff',
+        createBarcodeImageInMemory(
+            'USPS_4State',
+            value='01234567094987654321',
+            routing='01234567891',
+            format='tiff'))

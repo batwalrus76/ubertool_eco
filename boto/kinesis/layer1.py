@@ -35,6 +35,7 @@ from boto.kinesis import exceptions
 
 
 class KinesisConnection(AWSQueryConnection):
+
     """
     Amazon Kinesis Service API Reference
     Amazon Kinesis is a managed service that scales elastically for
@@ -54,9 +55,7 @@ class KinesisConnection(AWSQueryConnection):
         "ResourceInUseException": exceptions.ResourceInUseException,
         "ResourceNotFoundException": exceptions.ResourceNotFoundException,
         "InvalidArgumentException": exceptions.InvalidArgumentException,
-        "SubscriptionRequiredException": exceptions.SubscriptionRequiredException
-    }
-
+        "SubscriptionRequiredException": exceptions.SubscriptionRequiredException}
 
     def __init__(self, **kwargs):
         region = kwargs.pop('region', None)
@@ -704,4 +703,3 @@ class KinesisConnection(AWSQueryConnection):
             exception_class = self._faults.get(fault_name, self.ResponseError)
             raise exception_class(response.status, response.reason,
                                   body=json_body)
-

@@ -25,6 +25,7 @@ from boto.dynamodb.exceptions import DynamoDBItemError
 
 
 class Item(dict):
+
     """
     An item in Amazon DynamoDB.
 
@@ -35,7 +36,7 @@ class Item(dict):
     :ivar range_key_name: The name of the RangeKey associated with this item.
     :ivar table: The Table this item belongs to.
     """
-    
+
     def __init__(self, table, hash_key=None, range_key=None, attrs=None):
         self.table = table
         self._updates = None
@@ -198,5 +199,6 @@ class Item(dict):
     # Allow this item to still be pickled
     def __getstate__(self):
         return self.__dict__
+
     def __setstate__(self, d):
         self.__dict__.update(d)

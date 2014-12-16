@@ -15,11 +15,15 @@
 
 from PIL import Image
 
+
 class Transform(Image.ImageTransformHandler):
+
     def __init__(self, data):
         self.data = data
+
     def getdata(self):
         return self.method, self.data
+
     def transform(self, size, image, **options):
         # can be overridden
         method, data = self.getdata()
@@ -43,6 +47,7 @@ class Transform(Image.ImageTransformHandler):
 #    the first two rows from an affine transform matrix.
 # @see Image#Image.transform
 
+
 class AffineTransform(Transform):
     method = Image.AFFINE
 
@@ -65,6 +70,7 @@ class AffineTransform(Transform):
 #    two points in the input image's coordinate system.
 # @see Image#Image.transform
 
+
 class ExtentTransform(Transform):
     method = Image.EXTENT
 
@@ -80,6 +86,7 @@ class ExtentTransform(Transform):
 #   corner of the source quadrilateral.
 # @see Image#Image.transform
 
+
 class QuadTransform(Transform):
     method = Image.QUAD
 
@@ -90,6 +97,7 @@ class QuadTransform(Transform):
 # @def MeshTransform(data)
 # @param data A list of (bbox, quad) tuples.
 # @see Image#Image.transform
+
 
 class MeshTransform(Transform):
     method = Image.MESH

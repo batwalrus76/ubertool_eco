@@ -1,4 +1,5 @@
 class ResultSet(object):
+
     """
     A class used to lazily handle page-to-page navigation through a set of
     results.
@@ -20,6 +21,7 @@ class ResultSet(object):
         ...     print res['username']
 
     """
+
     def __init__(self, max_page_size=None):
         super(ResultSet, self).__init__()
         self.the_callable = None
@@ -103,7 +105,8 @@ class ResultSet(object):
 
         # We pop the ``limit``, if present, to track how many we should return
         # to the user. This isn't the same as the ``limit`` that the low-level
-        # DDB api calls use (which limit page size, not the overall result set).
+        # DDB api calls use (which limit page size, not the overall result
+        # set).
         self._limit = kwargs.pop('limit', None)
 
         if self._limit < 0:
@@ -163,6 +166,7 @@ class ResultSet(object):
 
 
 class BatchGetResultSet(ResultSet):
+
     def __init__(self, *args, **kwargs):
         self._keys_left = kwargs.pop('keys', [])
         self._max_batch_get = kwargs.pop('max_batch_get', 100)

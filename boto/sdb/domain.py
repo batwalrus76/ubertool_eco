@@ -24,6 +24,7 @@ Represents an SDB Domain
 """
 from boto.sdb.queryresultset import SelectResultSet
 
+
 class Domain(object):
 
     def __init__(self, connection=None, name=None):
@@ -189,7 +190,12 @@ class Domain(object):
         """
         return self.connection.batch_delete_attributes(self, items)
 
-    def select(self, query='', next_token=None, consistent_read=False, max_items=None):
+    def select(
+            self,
+            query='',
+            next_token=None,
+            consistent_read=False,
+            max_items=None):
         """
         Returns a set of Attributes for item names within domain_name that match the query.
         The query must be expressed in using the SELECT style syntax rather than the
@@ -203,8 +209,12 @@ class Domain(object):
                  function that will iterate across all search results, not just the
                  first page.
         """
-        return SelectResultSet(self, query, max_items=max_items, next_token=next_token,
-                               consistent_read=consistent_read)
+        return SelectResultSet(
+            self,
+            query,
+            max_items=max_items,
+            next_token=next_token,
+            consistent_read=consistent_read)
 
     def get_item(self, item_name, consistent_read=False):
         """
@@ -254,7 +264,11 @@ class Domain(object):
                     if isinstance(value, unicode):
                         value = value.encode('utf-8', 'replace')
                     else:
-                        value = unicode(value, errors='replace').encode('utf-8', 'replace')
+                        value = unicode(
+                            value,
+                            errors='replace').encode(
+                            'utf-8',
+                            'replace')
                     f.write(value)
                     print >> f, ']]></value>'
                 print >> f, '\t\t</attribute>'
@@ -263,7 +277,6 @@ class Domain(object):
         f.flush()
         f.seek(0)
         return f
-
 
     def from_xml(self, doc):
         """Load this domain based on an XML document"""
@@ -313,7 +326,10 @@ class DomainMetaData(object):
 
 import sys
 from xml.sax.handler import ContentHandler
+
+
 class DomainDumpParser(ContentHandler):
+
     """
     SAX parser for a domain that has been dumped
     """
@@ -358,7 +374,10 @@ class DomainDumpParser(ContentHandler):
             self.uploader.start()
 
 from threading import Thread
+
+
 class UploaderThread(Thread):
+
     """Uploader Thread"""
 
     def __init__(self, domain):

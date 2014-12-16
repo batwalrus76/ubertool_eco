@@ -70,6 +70,7 @@ def init_logging():
 
 
 class NullHandler(logging.Handler):
+
     def emit(self, record):
         pass
 
@@ -742,8 +743,8 @@ def connect_support(aws_access_key_id=None,
 
 
 def connect_cloudtrail(aws_access_key_id=None,
-                    aws_secret_access_key=None,
-                    **kwargs):
+                       aws_secret_access_key=None,
+                       **kwargs):
     """
     Connect to AWS CloudTrail
 
@@ -786,6 +787,7 @@ def connect_directconnect(aws_access_key_id=None,
         **kwargs
     )
 
+
 def connect_kinesis(aws_access_key_id=None,
                     aws_secret_access_key=None,
                     **kwargs):
@@ -807,6 +809,7 @@ def connect_kinesis(aws_access_key_id=None,
         aws_secret_access_key=aws_secret_access_key,
         **kwargs
     )
+
 
 def storage_uri(uri_str, default_scheme='file', debug=0, validate=True,
                 bucket_storage_uri_class=BucketStorageUri,

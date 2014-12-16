@@ -26,10 +26,11 @@ from boto.dynamodb.schema import Schema
 from boto.dynamodb.item import Item
 from boto.dynamodb.batch import BatchList, BatchWriteList
 from boto.dynamodb.types import get_dynamodb_type, Dynamizer, \
-        LossyFloatDynamizer
+    LossyFloatDynamizer
 
 
 class TableGenerator(object):
+
     """
     This is an object that wraps up the table_generator function.
     The only real reason to have this is that we want to be able
@@ -89,7 +90,8 @@ class TableGenerator(object):
         """
         The current response to the call from DynamoDB.
         """
-        return self.next_response() if self._response is None else self._response
+        return self.next_response(
+        ) if self._response is None else self._response
 
     def next_response(self):
         """
@@ -103,7 +105,9 @@ class TableGenerator(object):
             self.kwargs['limit'] = self.remaining
         self._response = self.callable(**self.kwargs)
         self.kwargs['limit'] = limit
-        self._consumed_units += self._response.get('ConsumedCapacityUnits', 0.0)
+        self._consumed_units += self._response.get(
+            'ConsumedCapacityUnits',
+            0.0)
         self._count += self._response.get('Count', 0)
         self._scanned_count += self._response.get('ScannedCount', 0)
         # at the expense of a possibly gratuitous dynamize, ensure that
@@ -305,7 +309,9 @@ class Layer2(object):
             if limit:
                 this_round_limit = limit - len(tables)
                 this_round_limit = min(this_round_limit, 100)
-            result = self.layer1.list_tables(limit=this_round_limit, start_table=start_table)
+            result = self.layer1.list_tables(
+                limit=this_round_limit,
+                start_table=start_table)
             tables.extend(result.get('TableNames', []))
             start_table = result.get('LastEvaluatedTableName', None)
             if not start_table:
@@ -384,10 +390,10 @@ class Layer2(object):
         :rtype: :class:`boto.dynamodb.table.Table`
         :return: A Table object representing the new Amazon DynamoDB table.
         """
-        response = self.layer1.create_table(name, schema.dict,
-                                            {'ReadCapacityUnits': read_units,
-                                             'WriteCapacityUnits': write_units})
-        return Table(self,  response)
+        response = self.layer1.create_table(
+            name, schema.dict, {
+                'ReadCapacityUnits': read_units, 'WriteCapacityUnits': write_units})
+        return Table(self, response)
 
     def update_throughput(self, table, read_units, write_units):
         """
@@ -402,9 +408,9 @@ class Layer2(object):
         :type write_units: int
         :param write_units: The new value for WriteCapacityUnits.
         """
-        response = self.layer1.update_table(table.name,
-                                            {'ReadCapacityUnits': read_units,
-                                             'WriteCapacityUnits': write_units})
+        response = self.layer1.update_table(
+            table.name, {
+                'ReadCapacityUnits': read_units, 'WriteCapacityUnits': write_units})
         table.update_from_response(response)
 
     def delete_table(self, table):

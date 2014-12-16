@@ -34,6 +34,7 @@ _session_token_cache = {}
 
 
 class STSConnection(AWSQueryConnection):
+
     """
     AWS Security Token Service
     The AWS Security Token Service is a web service that enables you
@@ -79,14 +80,14 @@ class STSConnection(AWSQueryConnection):
         self.anon = anon
         self._mutex = threading.Semaphore()
         super(STSConnection, self).__init__(aws_access_key_id,
-                                    aws_secret_access_key,
-                                    is_secure, port, proxy, proxy_port,
-                                    proxy_user, proxy_pass,
-                                    self.region.endpoint, debug,
-                                    https_connection_factory, path,
-                                    validate_certs=validate_certs,
-                                    security_token=security_token,
-                                    profile_name=profile_name)
+                                            aws_secret_access_key,
+                                            is_secure, port, proxy, proxy_port,
+                                            proxy_user, proxy_pass,
+                                            self.region.endpoint, debug,
+                                            https_connection_factory, path,
+                                            validate_certs=validate_certs,
+                                            security_token=security_token,
+                                            profile_name=profile_name)
 
     def _required_auth_capability(self):
         if self.anon:
@@ -116,7 +117,7 @@ class STSConnection(AWSQueryConnection):
         if mfa_token:
             params['TokenCode'] = mfa_token
         return self.get_object('GetSessionToken', params,
-                                Credentials, verb='POST')
+                               Credentials, verb='POST')
 
     def get_session_token(self, duration=None, force_new=False,
                           mfa_serial_number=None, mfa_token=None):
@@ -235,7 +236,7 @@ class STSConnection(AWSQueryConnection):
         if policy:
             params['Policy'] = policy
         return self.get_object('GetFederationToken', params,
-                                FederationToken, verb='POST')
+                               FederationToken, verb='POST')
 
     def assume_role(self, role_arn, role_session_name, policy=None,
                     duration_seconds=None, external_id=None):

@@ -21,6 +21,7 @@
 
 
 class Instance(object):
+
     def __init__(self, connection=None):
         self.connection = connection
         self.instance_id = None
@@ -57,4 +58,3 @@ class Instance(object):
             self.group_name = value
         else:
             setattr(self, name, value)
-

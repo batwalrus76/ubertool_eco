@@ -31,9 +31,9 @@ from Queue import Queue, Empty
 import binascii
 
 from .utils import DEFAULT_PART_SIZE, minimum_part_size, chunk_hashes, \
-        tree_hash, bytes_to_hex
+    tree_hash, bytes_to_hex
 from .exceptions import UploadArchiveError, DownloadArchiveError, \
-        TreeHashDoesNotMatchError
+    TreeHashDoesNotMatchError
 
 
 _END_SENTINEL = object()
@@ -41,6 +41,7 @@ log = logging.getLogger('boto.glacier.concurrent')
 
 
 class ConcurrentTransferer(object):
+
     def __init__(self, part_size=DEFAULT_PART_SIZE, num_threads=10):
         self._part_size = part_size
         self._num_threads = num_threads
@@ -75,6 +76,7 @@ class ConcurrentTransferer(object):
 
 
 class ConcurrentUploader(ConcurrentTransferer):
+
     """Concurrently upload an archive to glacier.
 
     This class uses a thread pool to concurrently upload an archive
@@ -84,6 +86,7 @@ class ConcurrentUploader(ConcurrentTransferer):
     transparent to the users of this class.
 
     """
+
     def __init__(self, api, vault_name, part_size=DEFAULT_PART_SIZE,
                  num_threads=10):
         """
@@ -146,7 +149,7 @@ class ConcurrentUploader(ConcurrentTransferer):
         try:
             self._wait_for_upload_threads(hash_chunks, result_queue,
                                           total_parts)
-        except UploadArchiveError, e:
+        except UploadArchiveError as e:
             log.debug("An error occurred while uploading an archive, "
                       "aborting multipart upload.")
             self._api.abort_multipart_upload(self._vault_name, upload_id)
@@ -162,8 +165,10 @@ class ConcurrentUploader(ConcurrentTransferer):
         for _ in xrange(total_parts):
             result = result_queue.get()
             if isinstance(result, Exception):
-                log.debug("An error was found in the result queue, terminating "
-                          "threads: %s", result)
+                log.debug(
+                    "An error was found in the result queue, terminating "
+                    "threads: %s",
+                    result)
                 self._shutdown_threads()
                 raise UploadArchiveError("An error occurred while uploading "
                                          "an archive: %s" % result)
@@ -186,6 +191,7 @@ class ConcurrentUploader(ConcurrentTransferer):
 
 
 class TransferThread(threading.Thread):
+
     def __init__(self, worker_queue, result_queue):
         super(TransferThread, self).__init__()
         self._worker_queue = worker_queue
@@ -215,6 +221,7 @@ class TransferThread(threading.Thread):
 
 
 class UploadWorkerThread(TransferThread):
+
     def __init__(self, api, vault_name, filename, upload_id,
                  worker_queue, result_queue, num_retries=5,
                  time_between_retries=5,
@@ -235,12 +242,18 @@ class UploadWorkerThread(TransferThread):
             try:
                 result = self._upload_chunk(work)
                 break
-            except self._retry_exceptions, e:
-                log.error("Exception caught uploading part number %s for "
-                          "vault %s, attempt: (%s / %s), filename: %s, "
-                          "exception: %s, msg: %s",
-                          work[0], self._vault_name, i + 1, self._num_retries + 1,
-                          self._filename, e.__class__, e)
+            except self._retry_exceptions as e:
+                log.error(
+                    "Exception caught uploading part number %s for "
+                    "vault %s, attempt: (%s / %s), filename: %s, "
+                    "exception: %s, msg: %s",
+                    work[0],
+                    self._vault_name,
+                    i + 1,
+                    self._num_retries + 1,
+                    self._filename,
+                    e.__class__,
+                    e)
                 time.sleep(self._time_between_retries)
                 result = e
         return result
@@ -267,6 +280,7 @@ class UploadWorkerThread(TransferThread):
 
 
 class ConcurrentDownloader(ConcurrentTransferer):
+
     """
     Concurrently download an archive from glacier.
 
@@ -277,6 +291,7 @@ class ConcurrentDownloader(ConcurrentTransferer):
     transparent to the users of this class.
 
     """
+
     def __init__(self, job, part_size=DEFAULT_PART_SIZE,
                  num_threads=10):
         """
@@ -305,8 +320,11 @@ class ConcurrentDownloader(ConcurrentTransferer):
         self._add_work_items_to_queue(total_parts, worker_queue, part_size)
         self._start_download_threads(result_queue, worker_queue)
         try:
-            self._wait_for_download_threads(filename, result_queue, total_parts)
-        except DownloadArchiveError, e:
+            self._wait_for_download_threads(
+                filename,
+                result_queue,
+                total_parts)
+        except DownloadArchiveError as e:
             log.debug("An error occurred while downloading an archive: %s", e)
             raise e
         log.debug("Download completed.")
@@ -353,13 +371,17 @@ class ConcurrentDownloader(ConcurrentTransferer):
     def _start_download_threads(self, result_queue, worker_queue):
         log.debug("Starting threads.")
         for _ in xrange(self._num_threads):
-            thread = DownloadWorkerThread(self._job, worker_queue, result_queue)
+            thread = DownloadWorkerThread(
+                self._job,
+                worker_queue,
+                result_queue)
             time.sleep(0.2)
             thread.start()
             self._threads.append(thread)
 
 
 class DownloadWorkerThread(TransferThread):
+
     def __init__(self, job,
                  worker_queue, result_queue,
                  num_retries=5,
@@ -397,7 +419,7 @@ class DownloadWorkerThread(TransferThread):
             try:
                 result = self._download_chunk(work)
                 break
-            except self._retry_exceptions, e:
+            except self._retry_exceptions as e:
                 log.error("Exception caught downloading part number %s for "
                           "job %s", work[0], self._job,)
                 time.sleep(self._time_between_retries)

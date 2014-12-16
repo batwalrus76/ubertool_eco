@@ -1,6 +1,6 @@
-#Copyright ReportLab Europe Ltd. 2000-2012
-#see license.txt for license details
-#history http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/lib/yaml.py
+# Copyright ReportLab Europe Ltd. 2000-2012
+# see license.txt for license details
+# history http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/lib/yaml.py
 # parses "Yet Another Markup Language" into a list of tuples.
 # Each tuple says what the data is e.g.
 # ('Paragraph', 'Heading1', 'Why Reportlab Rules')
@@ -37,17 +37,19 @@ dot beginPre Code
 dot endPre
 - ends a preformatted object.
 """
-__version__=''' $Id$ '''
+__version__ = ''' $Id$ '''
 
 import sys
 
-#modes:
+# modes:
 PLAIN = 1
 PREFORMATTED = 2
 
 BULLETCHAR = '\267'  # assumes font Symbol, but works on all platforms
 
+
 class BaseParser:
+
     """"Simplest possible parser with only the most basic options.
 
     This defines the line-handling abilities and basic mechanism.
@@ -65,11 +67,11 @@ class BaseParser:
         self._mode = PLAIN
 
     def parseFile(self, filename):
-        #returns list of objects
+        # returns list of objects
         data = open(filename, 'r').readlines()
 
         for line in data:
-            #strip trailing newlines
+            # strip trailing newlines
             self.readLine(line[:-1])
         self.endPara()
         return self._results
@@ -83,51 +85,54 @@ class BaseParser:
         return self._results
 
     def readLine(self, line):
-        #this is the inner loop
+        # this is the inner loop
         self._lineNo = self._lineNo + 1
         stripped = line.lstrip()
         if len(stripped) == 0:
             if self._mode == PLAIN:
                 self.endPara()
-            else:  #preformatted, append it
+            else:  # preformatted, append it
                 self._buf.append(line)
-        elif line[0]=='.':
+        elif line[0] == '.':
             # we have a command of some kind
             self.endPara()
             words = stripped[1:].split()
             cmd, args = words[0], words[1:]
 
-            #is it a parser method?
+            # is it a parser method?
             if hasattr(self.__class__, cmd):
-                #this was very bad; any type error in the method was hidden
-                #we have to hack the traceback
+                # this was very bad; any type error in the method was hidden
+                # we have to hack the traceback
                 try:
-                    getattr(self,cmd)(*args)
+                    getattr(self, cmd)(*args)
                 except TypeError as err:
-                    sys.stderr.write("Parser method: %s(*%s) %s at line %d\n" % (cmd, args, err, self._lineNo))
+                    sys.stderr.write(
+                        "Parser method: %s(*%s) %s at line %d\n" %
+                        (cmd, args, err, self._lineNo))
                     raise
             else:
                 # assume it is a paragraph style -
                 # becomes the formatter's problem
-                self.endPara()  #end the last one
+                self.endPara()  # end the last one
                 words = stripped.split(' ', 1)
-                assert len(words)==2, "Style %s but no data at line %d" % (words[0], self._lineNo)
+                assert len(words) == 2, "Style %s but no data at line %d" % (
+                    words[0], self._lineNo)
                 (styletag, data) = words
                 self._style = styletag[1:]
                 self._buf.append(data)
         else:
-            #we have data, add to para
+            # we have data, add to para
             self._buf.append(line)
 
     def endPara(self):
-        #ends the current paragraph, or preformatted block
+        # ends the current paragraph, or preformatted block
 
         text = ' '.join(self._buf)
         if text:
             if self._mode == PREFORMATTED:
-                #item 3 is list of lines
+                # item 3 is list of lines
                 self._results.append(('PREFORMATTED', self._style,
-                                 '\n'.join(self._buf)))
+                                      '\n'.join(self._buf)))
             else:
                 self._results.append(('PARAGRAPH', self._style, text))
         self._buf = []
@@ -147,6 +152,7 @@ class BaseParser:
 
 
 class Parser(BaseParser):
+
     """This adds a basic set of "story" components compatible with HTML & PDF.
 
     Images, spaces"""
@@ -157,26 +163,28 @@ class Parser(BaseParser):
 
     def pageBreak(self):
         """Inserts a frame break"""
-        self._results.append(('PageBreak','blah'))  # must be a tuple
+        self._results.append(('PageBreak', 'blah'))  # must be a tuple
 
     def custom(self, moduleName, funcName):
         """Goes and gets the Python object and adds it to the story"""
         self.endPara()
-        self._results.append(('Custom',moduleName, funcName))
+        self._results.append(('Custom', moduleName, funcName))
 
     def nextPageTemplate(self, templateName):
-        self._results.append(('NextPageTemplate',templateName))
+        self._results.append(('NextPageTemplate', templateName))
+
 
 def parseFile(filename):
     p = Parser()
     return p.parseFile(filename)
+
 
 def parseText(textBlock):
     p = Parser()
     return p.parseText(textBlock)
 
 
-if __name__=='__main__': #NORUNTESTS
+if __name__ == '__main__':  # NORUNTESTS
     if len(sys.argv) != 2:
         results = parseText(__doc__)
     else:

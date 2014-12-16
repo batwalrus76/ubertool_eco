@@ -19,7 +19,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
+
 class AccountLimits(object):
+
     def __init__(self, connection=None):
         self.connection = connection
         self.max_autoscaling_groups = None
@@ -27,7 +29,7 @@ class AccountLimits(object):
 
     def __repr__(self):
         return 'AccountLimits: [%s, %s]' % (self.max_autoscaling_groups,
-            self.max_launch_configurations)
+                                            self.max_launch_configurations)
 
     def startElement(self, name, attrs, connection):
         return None
@@ -41,4 +43,3 @@ class AccountLimits(object):
             self.max_launch_configurations = int(value)
         else:
             setattr(self, name, value)
-

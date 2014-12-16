@@ -17,7 +17,11 @@ http_headers = auth_s3.setHTTPHeaders()
 url_part1 = os.environ['UBERTOOL_REST_SERVER']
 
 
-# def get_jid(run_type, chemical_name, koc, soil_metabolism_hl, crop, crop_number, noa, app_method, application_rate, refine, refine_time_window, refine_percent_applied, region, sim_type, sim_date_start, sim_date_end, sim_date_1stapp, output_type, output_tox, output_tox_value, output_format):
+# def get_jid(run_type, chemical_name, koc, soil_metabolism_hl, crop,
+# crop_number, noa, app_method, application_rate, refine,
+# refine_time_window, refine_percent_applied, region, sim_type,
+# sim_date_start, sim_date_end, sim_date_1stapp, output_type, output_tox,
+# output_tox_value, output_format):
 def get_jid(run_type):
     """
     Generate job ID and send inputs to JSON-RPC model server
@@ -48,11 +52,16 @@ def get_jid(run_type):
     data = json.dumps(all_dic)
     logger.info(data)
     jid = rest_funcs.gen_jid()
-    url=url_part1 + '/sam/' + jid 
+    url = url_part1 + '/sam/' + jid
 
-    response = requests.post(url=url, data=data, headers=http_headers, timeout=60)
+    response = requests.post(
+        url=url,
+        data=data,
+        headers=http_headers,
+        timeout=60)
     output_val = json.loads(response.content)['result']
     return(jid, output_val)
+
 
 def convert_dict_key(key):
     try:
@@ -60,8 +69,13 @@ def convert_dict_key(key):
     except:
         return key
 
+
 class SAM(object):
-    # def __init__(self, run_type, chemical_name, koc, soil_metabolism_hl, crop, crop_number, noa, app_method, application_rate, refine, refine_time_window, refine_percent_applied, region, sim_type, sim_date_start, sim_date_end, sim_date_1stapp, output_type, output_tox, output_tox_value, output_format):
+    # def __init__(self, run_type, chemical_name, koc, soil_metabolism_hl,
+    # crop, crop_number, noa, app_method, application_rate, refine,
+    # refine_time_window, refine_percent_applied, region, sim_type,
+    # sim_date_start, sim_date_end, sim_date_1stapp, output_type, output_tox,
+    # output_tox_value, output_format):
 
     #     # Create class lists for input variables
     #     self.run_type = run_type

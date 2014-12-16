@@ -47,12 +47,12 @@ import math
 import struct
 import sys
 from sys import version_info
-if version_info < ( 3, 0 ):
+if version_info < (3, 0):
     from cStringIO import StringIO
 else:
     from io import StringIO
 
-if version_info < ( 3, 0 ):
+if version_info < (3, 0):
     BytesIO = StringIO
 else:
     from io import BytesIO
@@ -65,20 +65,23 @@ from .generic import *
 from .utils import readNonWhitespace, readUntilWhitespace, ConvertFunctionsToVirtualList
 from .utils import Str, b_, u_, ord_, chr_, str_, string_type, formatWarning
 
-if version_info < ( 2, 4 ):
-   from sets import ImmutableSet as frozenset
+if version_info < (2, 4):
+    from sets import ImmutableSet as frozenset
 
-if version_info < ( 2, 5 ):
+if version_info < (2, 5):
     from md5 import md5
 else:
     from hashlib import md5
 import uuid
 
+
 class PdfFileWriter(object):
+
     """
     This class supports writing PDF files out, given pages produced by another
     class (typically :class:`PdfFileReader<PdfFileReader>`).
     """
+
     def __init__(self):
         self._header = b_("%PDF-1.3")
         self._objects = []  # array of indirect objects
@@ -86,17 +89,16 @@ class PdfFileWriter(object):
         # The root of our page tree node.
         pages = DictionaryObject()
         pages.update({
-                NameObject("/Type"): NameObject("/Pages"),
-                NameObject("/Count"): NumberObject(0),
-                NameObject("/Kids"): ArrayObject(),
-                })
+            NameObject("/Type"): NameObject("/Pages"),
+            NameObject("/Count"): NumberObject(0),
+            NameObject("/Kids"): ArrayObject(),
+        })
         self._pages = self._addObject(pages)
 
         # info object
         info = DictionaryObject()
-        info.update({
-                NameObject("/Producer"): createStringObject(codecs.BOM_UTF16_BE + u_("PyPDF2").encode('utf-16be'))
-                })
+        info.update({NameObject(
+            "/Producer"): createStringObject(codecs.BOM_UTF16_BE + u_("PyPDF2").encode('utf-16be'))})
         self._info = self._addObject(info)
 
         # root object
@@ -104,7 +106,7 @@ class PdfFileWriter(object):
         root.update({
             NameObject("/Type"): NameObject("/Catalog"),
             NameObject("/Pages"): self._pages,
-            })
+        })
         self._root = None
         self._root_object = root
 
@@ -220,15 +222,15 @@ class PdfFileWriter(object):
         """
         js = DictionaryObject()
         js.update({
-                NameObject("/Type"): NameObject("/Action"),
-                NameObject("/S"): NameObject("/JavaScript"),
-                NameObject("/JS"): NameObject("(%s)" % javascript)
-                })
+            NameObject("/Type"): NameObject("/Action"),
+            NameObject("/S"): NameObject("/JavaScript"),
+            NameObject("/JS"): NameObject("(%s)" % javascript)
+        })
         self._root_object.update({
-                NameObject("/OpenAction"): self._addObject(js)
-                })
+            NameObject("/OpenAction"): self._addObject(js)
+        })
 
-    def encrypt(self, user_pwd, owner_pwd = None, use_128bit = True):
+    def encrypt(self, user_pwd, owner_pwd=None, use_128bit=True):
         """
         Encrypt this PDF file with the PDF Standard encryption handler.
 
@@ -241,8 +243,9 @@ class PdfFileWriter(object):
             encryption.  When false, 40bit encryption will be used.  By default,
             this flag is on.
         """
-        import time, random
-        if owner_pwd == None:
+        import time
+        import random
+        if owner_pwd is None:
             owner_pwd = user_pwd
         if use_128bit:
             V = 2
@@ -283,7 +286,9 @@ class PdfFileWriter(object):
             the write method and the tell method, similar to a file object.
         """
         if hasattr(stream, 'mode') and 'b' not in stream.mode:
-            warnings.warn("File <%s> to write to is not in binary mode. It may not be written to correctly." % stream.name)
+            warnings.warn(
+                "File <%s> to write to is not in binary mode. It may not be written to correctly." %
+                stream.name)
         debug = False
         import struct
 
@@ -302,16 +307,24 @@ class PdfFileWriter(object):
         # copying in a new copy of the page object.
         for objIndex in range(len(self._objects)):
             obj = self._objects[objIndex]
-            if isinstance(obj, PageObject) and obj.indirectRef != None:
+            if isinstance(obj, PageObject) and obj.indirectRef is not None:
                 data = obj.indirectRef
                 if data.pdf not in externalReferenceMap:
                     externalReferenceMap[data.pdf] = {}
                 if data.generation not in externalReferenceMap[data.pdf]:
                     externalReferenceMap[data.pdf][data.generation] = {}
-                externalReferenceMap[data.pdf][data.generation][data.idnum] = IndirectObject(objIndex + 1, 0, self)
+                externalReferenceMap[
+                    data.pdf][
+                    data.generation][
+                    data.idnum] = IndirectObject(
+                    objIndex +
+                    1,
+                    0,
+                    self)
 
         self.stack = []
-        if debug: print(("ERM:", externalReferenceMap, "root:", self._root))
+        if debug:
+            print(("ERM:", externalReferenceMap, "root:", self._root))
         self._sweepIndirectReferences(externalReferenceMap, self._root)
         del self.stack
 
@@ -346,10 +359,10 @@ class PdfFileWriter(object):
         stream.write(b_("trailer\n"))
         trailer = DictionaryObject()
         trailer.update({
-                NameObject("/Size"): NumberObject(len(self._objects) + 1),
-                NameObject("/Root"): self._root,
-                NameObject("/Info"): self._info,
-                })
+            NameObject("/Size"): NumberObject(len(self._objects) + 1),
+            NameObject("/Root"): self._root,
+            NameObject("/Info"): self._info,
+        })
         if hasattr(self, "_ID"):
             trailer[NameObject("/ID")] = self._ID
         if hasattr(self, "_encrypt"):
@@ -373,7 +386,8 @@ class PdfFileWriter(object):
 
     def _sweepIndirectReferences(self, externMap, data):
         debug = False
-        if debug: print((data, "TYPE", data.__class__.__name__))
+        if debug:
+            print((data, "TYPE", data.__class__.__name__))
         if isinstance(data, DictionaryObject):
             for key, value in list(data.items()):
                 origvalue = value
@@ -404,19 +418,28 @@ class PdfFileWriter(object):
                     self._sweepIndirectReferences(externMap, realdata)
                     return data
             else:
-                newobj = externMap.get(data.pdf, {}).get(data.generation, {}).get(data.idnum, None)
-                if newobj == None:
+                newobj = externMap.get(
+                    data.pdf,
+                    {}).get(
+                    data.generation,
+                    {}).get(
+                    data.idnum,
+                    None)
+                if newobj is None:
                     newobj = data.pdf.getObject(data)
-                    self._objects.append(None) # placeholder
+                    self._objects.append(None)  # placeholder
                     idnum = len(self._objects)
                     newobj_ido = IndirectObject(idnum, 0, self)
                     if data.pdf not in externMap:
                         externMap[data.pdf] = {}
                     if data.generation not in externMap[data.pdf]:
                         externMap[data.pdf][data.generation] = {}
-                    externMap[data.pdf][data.generation][data.idnum] = newobj_ido
+                    externMap[
+                        data.pdf][
+                        data.generation][
+                        data.idnum] = newobj_ido
                     newobj = self._sweepIndirectReferences(externMap, newobj)
-                    self._objects[idnum-1] = newobj
+                    self._objects[idnum - 1] = newobj
                     return newobj_ido
                 return newobj
         else:
@@ -436,19 +459,23 @@ class PdfFileWriter(object):
             assert outlineRef.getObject() == outline
         else:
             outline = TreeObject()
-            outline.update({ })
+            outline.update({})
             outlineRef = self._addObject(outline)
             self._root_object[NameObject('/Outlines')] = outlineRef
 
         return outline
 
     def getNamedDestRoot(self):
-        if '/Names' in self._root_object and isinstance(self._root_object['/Names'], DictionaryObject):
+        if '/Names' in self._root_object and isinstance(
+                self._root_object['/Names'],
+                DictionaryObject):
             names = self._root_object['/Names']
             idnum = self._objects.index(names) + 1
             namesRef = IndirectObject(idnum, 0, self)
             assert namesRef.getObject() == names
-            if '/Dests' in names and isinstance(names['/Dests'], DictionaryObject):
+            if '/Dests' in names and isinstance(
+                    names['/Dests'],
+                    DictionaryObject):
                 dests = names['/Dests']
                 idnum = self._objects.index(dests) + 1
                 destsRef = IndirectObject(idnum, 0, self)
@@ -482,11 +509,11 @@ class PdfFileWriter(object):
 
         outlineRef = self.getOutlineRoot()
 
-        if parent == None:
+        if parent is None:
             parent = outlineRef
 
         parent = parent.getObject()
-        #print parent.__class__.__name__
+        # print parent.__class__.__name__
         parent.addChild(destRef, self)
 
         return destRef
@@ -508,7 +535,7 @@ class PdfFileWriter(object):
 
         outlineRef = self.getOutlineRoot()
 
-        if parent == None:
+        if parent is None:
             parent = outlineRef
 
         parent = parent.getObject()
@@ -516,8 +543,16 @@ class PdfFileWriter(object):
 
         return bookmarkRef
 
-
-    def addBookmark(self, title, pagenum, parent=None, color=None, bold=False, italic=False, fit='/Fit', *args):
+    def addBookmark(
+            self,
+            title,
+            pagenum,
+            parent=None,
+            color=None,
+            bold=False,
+            italic=False,
+            fit='/Fit',
+            *args):
         """
         Add a bookmark to this PDF file.
 
@@ -540,19 +575,26 @@ class PdfFileWriter(object):
                 zoomArgs.append(NumberObject(a))
             else:
                 zoomArgs.append(NullObject())
-        dest = Destination(NameObject("/"+title + " bookmark"), pageRef, NameObject(fit), *zoomArgs)
+        dest = Destination(
+            NameObject(
+                "/" +
+                title +
+                " bookmark"),
+            pageRef,
+            NameObject(fit),
+            *
+            zoomArgs)
         destArray = dest.getDestArray()
         action.update({
-            NameObject('/D') : destArray,
-            NameObject('/S') : NameObject('/GoTo')
+            NameObject('/D'): destArray,
+            NameObject('/S'): NameObject('/GoTo')
         })
         actionRef = self._addObject(action)
 
         outlineRef = self.getOutlineRoot()
 
-        if parent == None:
+        if parent is None:
             parent = outlineRef
-
 
         bookmark = TreeObject()
 
@@ -562,7 +604,8 @@ class PdfFileWriter(object):
         })
 
         if color is not None:
-            bookmark.update({NameObject('/C'): ArrayObject([FloatObject(c) for c in color])})
+            bookmark.update(
+                {NameObject('/C'): ArrayObject([FloatObject(c) for c in color])})
 
         format = 0
         if italic:
@@ -591,8 +634,8 @@ class PdfFileWriter(object):
         pageRef = self.getObject(self._pages)['/Kids'][pagenum]
         dest = DictionaryObject()
         dest.update({
-            NameObject('/D') : ArrayObject([pageRef, NameObject('/FitH'), NumberObject(826)]),
-            NameObject('/S') : NameObject('/GoTo')
+            NameObject('/D'): ArrayObject([pageRef, NameObject('/FitH'), NumberObject(826)]),
+            NameObject('/S'): NameObject('/GoTo')
         })
 
         destRef = self._addObject(dest)
@@ -648,7 +691,9 @@ class PdfFileWriter(object):
                 elif operator == b_("TJ"):
                     for i in range(len(operands[0])):
                         if ignoreByteStringObject:
-                            if not isinstance(operands[0][i], TextStringObject):
+                            if not isinstance(
+                                    operands[0][i],
+                                    TextStringObject):
                                 operands[0][i] = TextStringObject()
 
                 if operator == b_('q'):
@@ -656,9 +701,32 @@ class PdfFileWriter(object):
                 if operator == b_('Q'):
                     seq_graphics = False
                 if seq_graphics:
-                    if operator in [b_('cm'), b_('w'), b_('J'), b_('j'), b_('M'), b_('d'), b_('ri'), b_('i'),
-                            b_('gs'), b_('W'), b_('b'), b_('s'), b_('S'), b_('f'), b_('F'), b_('n'), b_('m'), b_('l'),
-                            b_('c'), b_('v'), b_('y'), b_('h'), b_('B'), b_('Do'), b_('sh')]:
+                    if operator in [
+                            b_('cm'),
+                            b_('w'),
+                            b_('J'),
+                            b_('j'),
+                            b_('M'),
+                            b_('d'),
+                            b_('ri'),
+                            b_('i'),
+                            b_('gs'),
+                            b_('W'),
+                            b_('b'),
+                            b_('s'),
+                            b_('S'),
+                            b_('f'),
+                            b_('F'),
+                            b_('n'),
+                            b_('m'),
+                            b_('l'),
+                            b_('c'),
+                            b_('v'),
+                            b_('y'),
+                            b_('h'),
+                            b_('B'),
+                            b_('Do'),
+                            b_('sh')]:
                         continue
                 if operator == b_('re'):
                     continue
@@ -681,7 +749,7 @@ class PdfFileWriter(object):
             content = pageRef['/Contents'].getObject()
             if not isinstance(content, ContentStream):
                 content = ContentStream(content, pageRef)
-            for operands,operator in content.operations:
+            for operands, operator in content.operations:
                 if operator == b_('Tj'):
                     text = operands[0]
                     if not ignoreByteStringObject:
@@ -715,8 +783,11 @@ class PdfFileWriter(object):
                             if isinstance(operands[0][i], TextStringObject):
                                 operands[0][i] = TextStringObject()
                         else:
-                            if isinstance(operands[0][i], TextStringObject) or \
-                                    isinstance(operands[0][i], ByteStringObject):
+                            if isinstance(
+                                    operands[0][i],
+                                    TextStringObject) or isinstance(
+                                    operands[0][i],
+                                    ByteStringObject):
                                 operands[0][i] = TextStringObject()
 
             pageRef.__setitem__(NameObject('/Contents'), content)
@@ -748,7 +819,8 @@ class PdfFileWriter(object):
         """
 
         pageLink = self.getObject(self._pages)['/Kids'][pagenum]
-        pageDest = self.getObject(self._pages)['/Kids'][pagedest] #TODO: switch for external link
+        # TODO: switch for external link
+        pageDest = self.getObject(self._pages)['/Kids'][pagedest]
         pageRef = self.getObject(pageLink)
 
         if border is not None:
@@ -772,7 +844,12 @@ class PdfFileWriter(object):
                 zoomArgs.append(NumberObject(a))
             else:
                 zoomArgs.append(NullObject())
-        dest = Destination(NameObject("/LinkName"), pageDest, NameObject(fit), *zoomArgs) #TODO: create a better name for the link
+        dest = Destination(
+            NameObject("/LinkName"),
+            pageDest,
+            NameObject(fit),
+            *
+            zoomArgs)  # TODO: create a better name for the link
         destArray = dest.getDestArray()
 
         lnk = DictionaryObject()
@@ -791,7 +868,14 @@ class PdfFileWriter(object):
         else:
             pageRef[NameObject('/Annots')] = ArrayObject([lnkRef])
 
-    _valid_layouts = ['/NoLayout', '/SinglePage', '/OneColumn', '/TwoColumnLeft', '/TwoColumnRight', '/TwoPageLeft', '/TwoPageRight']
+    _valid_layouts = [
+        '/NoLayout',
+        '/SinglePage',
+        '/OneColumn',
+        '/TwoColumnLeft',
+        '/TwoColumnRight',
+        '/TwoPageLeft',
+        '/TwoPageRight']
 
     def getPageLayout(self):
         """
@@ -823,7 +907,10 @@ class PdfFileWriter(object):
         """
         if not isinstance(layout, NameObject):
             if layout not in self._valid_layouts:
-                warnings.warn("Layout should be one of: {}".format(', '.join(self._valid_layouts)))
+                warnings.warn(
+                    "Layout should be one of: {}".format(
+                        ', '.join(
+                            self._valid_layouts)))
             layout = NameObject(layout)
         self._root_object.update({NameObject('/PageLayout'): layout})
 
@@ -831,7 +918,13 @@ class PdfFileWriter(object):
     """Read and write property accessing the :meth:`getPageLayout()<PdfFileWriter.getPageLayout>`
     and :meth:`setPageLayout()<PdfFileWriter.setPageLayout>` methods."""
 
-    _valid_modes = ['/UseNone', '/UseOutlines', '/UseThumbs', '/FullScreen', '/UseOC', '/UseAttachments']
+    _valid_modes = [
+        '/UseNone',
+        '/UseOutlines',
+        '/UseThumbs',
+        '/FullScreen',
+        '/UseOC',
+        '/UseAttachments']
 
     def getPageMode(self):
         """
@@ -863,7 +956,10 @@ class PdfFileWriter(object):
         """
         if not isinstance(mode, NameObject):
             if mode not in self._valid_modes:
-                warnings.warn("Mode should be one of: {}".format(', '.join(self._valid_modes)))
+                warnings.warn(
+                    "Mode should be one of: {}".format(
+                        ', '.join(
+                            self._valid_modes)))
             mode = NameObject(mode)
         self._root_object.update({NameObject('/PageMode'): mode})
 
@@ -871,7 +967,9 @@ class PdfFileWriter(object):
     """Read and write property accessing the :meth:`getPageMode()<PdfFileWriter.getPageMode>`
     and :meth:`setPageMode()<PdfFileWriter.setPageMode>` methods."""
 
+
 class PdfFileReader(object):
+
     """
     Initializes a PdfFileReader object.  This operation can take some time, as
     the PDF stream's cross-reference tables are read into memory.
@@ -888,15 +986,33 @@ class PdfFileReader(object):
         ``warnings.py`` module with a custom implementation (defaults to
         ``True``).
     """
-    def __init__(self, stream, strict=True, warndest = None, overwriteWarnings = True):
+
+    def __init__(
+            self,
+            stream,
+            strict=True,
+            warndest=None,
+            overwriteWarnings=True):
         if overwriteWarnings:
             # have to dynamically override the default showwarning since there are no
             # public methods that specify the 'file' parameter
-            def _showwarning(message, category, filename, lineno, file=warndest, line=None):
+            def _showwarning(
+                    message,
+                    category,
+                    filename,
+                    lineno,
+                    file=warndest,
+                    line=None):
                 if file is None:
                     file = sys.stderr
                 try:
-                    file.write(formatWarning(message, category, filename, lineno, line))
+                    file.write(
+                        formatWarning(
+                            message,
+                            category,
+                            filename,
+                            lineno,
+                            line))
                 except IOError:
                     pass
             warnings.showwarning = _showwarning
@@ -905,7 +1021,9 @@ class PdfFileReader(object):
         self.resolvedObjects = {}
         self.xrefIndex = 0
         if hasattr(stream, 'mode') and 'b' not in stream.mode:
-            warnings.warn("PdfFileReader stream/file object is not in binary mode. It may not be read correctly.", utils.PdfReadWarning)
+            warnings.warn(
+                "PdfFileReader stream/file object is not in binary mode. It may not be read correctly.",
+                utils.PdfReadWarning)
         if type(stream) in (string_type, str):
             fileobj = open(stream, 'rb')
             stream = BytesIO(b_(fileobj.read()))
@@ -979,7 +1097,7 @@ class PdfFileReader(object):
             finally:
                 self._override_encryption = False
         else:
-            if self.flattenedPages == None:
+            if self.flattenedPages is None:
                 self._flatten()
             return len(self.flattenedPages)
 
@@ -998,14 +1116,14 @@ class PdfFileReader(object):
         :return: a :class:`PageObject<pdf.PageObject>` instance.
         :rtype: :class:`PageObject<pdf.PageObject>`
         """
-        ## ensure that we're not trying to access an encrypted PDF
+        # ensure that we're not trying to access an encrypted PDF
         #assert not self.trailer.has_key("/Encrypt")
-        if self.flattenedPages == None:
+        if self.flattenedPages is None:
             self._flatten()
         return self.flattenedPages[pageNumber]
 
     namedDestinations = property(lambda self:
-                                  self.getNamedDestinations(), None, None)
+                                 self.getNamedDestinations(), None, None)
     """
     Read-only property that accesses the
     :meth:`getNamedDestinations()<PdfFileReader.getNamedDestinations>` function.
@@ -1014,7 +1132,7 @@ class PdfFileReader(object):
     # A select group of relevant field attributes. For the complete list,
     # see section 8.6.2 of the PDF 1.7 reference.
 
-    def getFields(self, tree = None, retval = None, fileobj = None):
+    def getFields(self, tree=None, retval=None, fileobj=None):
         """
         Extracts field data if this PDF contains interactive form fields.
         The *tree* and *retval* parameters are for recursive use.
@@ -1026,11 +1144,11 @@ class PdfFileReader(object):
             default, the mapping name is used for keys.
         :rtype: dict, or ``None`` if form data could not be located.
         """
-        fieldAttributes = {"/FT" : "Field Type", "/Parent" : "Parent",
-                       "/T" : "Field Name", "/TU" : "Alternate Field Name",
-                       "/TM" : "Mapping Name", "/Ff" : "Field Flags",
-                       "/V" : "Value", "/DV" : "Default Value"}
-        if retval == None:
+        fieldAttributes = {"/FT": "Field Type", "/Parent": "Parent",
+                           "/T": "Field Name", "/TU": "Alternate Field Name",
+                           "/TM": "Mapping Name", "/Ff": "Field Flags",
+                           "/V": "Value", "/DV": "Default Value"}
+        if retval is None:
             retval = {}
             catalog = self.trailer["/Root"]
             # get the AcroForm tree
@@ -1038,7 +1156,7 @@ class PdfFileReader(object):
                 tree = catalog["/AcroForm"]
             else:
                 return None
-        if tree == None:
+        if tree is None:
             return retval
 
         self._checkKids(tree, retval, fileobj)
@@ -1084,10 +1202,15 @@ class PdfFileReader(object):
             try:
                 if attr == "/FT":
                     # Make the field type value more clear
-                    types = {"/Btn":"Button", "/Tx":"Text", "/Ch": "Choice",
-                             "/Sig":"Signature"}
+                    types = {"/Btn": "Button", "/Tx": "Text", "/Ch": "Choice",
+                             "/Sig": "Signature"}
                     if field[attr] in types:
-                        fileobj.write(attrName + ": " + types[field[attr]] + "\n")
+                        fileobj.write(
+                            attrName +
+                            ": " +
+                            types[
+                                field[attr]] +
+                            "\n")
                 elif attr == "/Parent":
                     # Let's just write the name of the parent
                     try:
@@ -1109,7 +1232,7 @@ class PdfFileReader(object):
             :class:`Destinations<PyPDF2.generic.Destination>`.
         :rtype: dict
         """
-        if retval == None:
+        if retval is None:
             retval = {}
             catalog = self.trailer["/Root"]
 
@@ -1121,7 +1244,7 @@ class PdfFileReader(object):
                 if "/Dests" in names:
                     tree = names['/Dests']
 
-        if tree == None:
+        if tree is None:
             return retval
 
         if "/Kids" in tree:
@@ -1133,11 +1256,11 @@ class PdfFileReader(object):
             names = tree["/Names"]
             for i in range(0, len(names), 2):
                 key = names[i].getObject()
-                val = names[i+1].getObject()
+                val = names[i + 1].getObject()
                 if isinstance(val, DictionaryObject) and '/D' in val:
                     val = val['/D']
                 dest = self._buildDestination(key, val)
-                if dest != None:
+                if dest is not None:
                     retval[key] = dest
 
         return retval
@@ -1154,7 +1277,7 @@ class PdfFileReader(object):
 
         :return: a nested list of :class:`Destinations<PyPDF2.generic.Destination>`.
         """
-        if outlines == None:
+        if outlines is None:
             outlines = []
             catalog = self.trailer["/Root"]
 
@@ -1165,8 +1288,8 @@ class PdfFileReader(object):
                     node = lines["/First"]
             self._namedDests = self.getNamedDestinations()
 
-        if node == None:
-          return outlines
+        if node is None:
+            return outlines
 
         # see if there are any more outlines
         while True:
@@ -1197,14 +1320,14 @@ class PdfFileReader(object):
 
         if "/A" in node and "/Title" in node:
             # Action, section 8.5 (only type GoTo supported)
-            title  = node["/Title"]
+            title = node["/Title"]
             action = node["/A"]
             if action["/S"] == "/GoTo":
                 dest = action["/D"]
         elif "/Dest" in node and "/Title" in node:
             # Destination, section 8.2.1
             title = node["/Title"]
-            dest  = node["/Dest"]
+            dest = node["/Dest"]
 
         # if destination found, then create outline
         if dest:
@@ -1217,8 +1340,12 @@ class PdfFileReader(object):
                 raise utils.PdfReadError("Unexpected destination %r" % dest)
         return outline
 
-    pages = property(lambda self: ConvertFunctionsToVirtualList(self.getNumPages, self.getPage),
-        None, None)
+    pages = property(
+        lambda self: ConvertFunctionsToVirtualList(
+            self.getNumPages,
+            self.getPage),
+        None,
+        None)
     """
     Read-only property that emulates a list based upon the
     :meth:`getNumPages()<PdfFileReader.getNumPages>` and
@@ -1265,10 +1392,10 @@ class PdfFileReader(object):
         inheritablePageAttributes = (
             NameObject("/Resources"), NameObject("/MediaBox"),
             NameObject("/CropBox"), NameObject("/Rotate")
-            )
-        if inherit == None:
+        )
+        if inherit is None:
             inherit = dict()
-        if pages == None:
+        if pages is None:
             self.flattenedPages = []
             catalog = self.trailer["/Root"].getObject()
             pages = catalog["/Pages"].getObject()
@@ -1301,9 +1428,12 @@ class PdfFileReader(object):
         # read the entire object stream into memory
         debug = False
         stmnum, idx = self.xref_objStm[indirectReference.idnum]
-        if debug: print(("Here1: %s %s"%(stmnum, idx)))
+        if debug:
+            print(("Here1: %s %s" % (stmnum, idx)))
         objStm = IndirectObject(stmnum, 0, self).getObject()
-        if debug: print(("Here2: objStm=%s.. stmnum=%s data=%s"%(objStm, stmnum, objStm.getData())))
+        if debug:
+            print(("Here2: objStm=%s.. stmnum=%s data=%s" %
+                   (objStm, stmnum, objStm.getData())))
         # This is an xref to a stream, so its type better be a stream
         assert objStm['/Type'] == '/ObjStm'
         # /N is the number of indirect objects in the stream
@@ -1321,7 +1451,7 @@ class PdfFileReader(object):
                 continue
             if self.strict and idx != i:
                 raise utils.PdfReadError("Object is in wrong index.")
-            streamData.seek(objStm['/First']+offset, 0)
+            streamData.seek(objStm['/First'] + offset, 0)
             if debug:
                 pos = streamData.tell()
                 streamData.seek(0, 0)
@@ -1335,45 +1465,66 @@ class PdfFileReader(object):
                 # Stream object cannot be read. Normally, a critical error, but
                 # Adobe Reader doesn't complain, so continue (in strict mode?)
                 e = sys.exc_info()[1]
-                warnings.warn("Invalid stream (index %d) within object %d %d: %s" % \
-                      (i, indirectReference.idnum, indirectReference.generation, e), utils.PdfReadWarning)
+                warnings.warn(
+                    "Invalid stream (index %d) within object %d %d: %s" %
+                    (i,
+                     indirectReference.idnum,
+                     indirectReference.generation,
+                     e),
+                    utils.PdfReadWarning)
 
                 if self.strict:
-                    raise utils.PdfReadError("Can't read object stream: %s"%e)
+                    raise utils.PdfReadError(
+                        "Can't read object stream: %s" %
+                        e)
                 # Replace with null. Hopefully it's nothing important.
                 obj = NullObject()
             return obj
 
-        if self.strict: raise utils.PdfReadError("This is a fatal error in strict mode.")
+        if self.strict:
+            raise utils.PdfReadError("This is a fatal error in strict mode.")
         return NullObject()
-
 
     def getObject(self, indirectReference):
         debug = False
-        if debug: print(("looking at:", indirectReference.idnum, indirectReference.generation))
+        if debug:
+            print(("looking at:",
+                   indirectReference.idnum,
+                   indirectReference.generation))
         retval = self.cacheGetIndirectObject(indirectReference.generation,
-                                                indirectReference.idnum)
-        if retval != None:
+                                             indirectReference.idnum)
+        if retval is not None:
             return retval
         if indirectReference.generation == 0 and \
-                        indirectReference.idnum in self.xref_objStm:
+                indirectReference.idnum in self.xref_objStm:
             retval = self._getObjectFromStream(indirectReference)
         elif indirectReference.generation in self.xref and \
                 indirectReference.idnum in self.xref[indirectReference.generation]:
-            start = self.xref[indirectReference.generation][indirectReference.idnum]
-            if debug: print(("  Uncompressed Object", indirectReference.idnum, indirectReference.generation, ":", start))
+            start = self.xref[
+                indirectReference.generation][
+                indirectReference.idnum]
+            if debug:
+                print(("  Uncompressed Object",
+                       indirectReference.idnum,
+                       indirectReference.generation,
+                       ":",
+                       start))
             self.stream.seek(start, 0)
             idnum, generation = self.readObjectHeader(self.stream)
             if idnum != indirectReference.idnum and self.xrefIndex:
-                # Xref table probably had bad indexes due to not being zero-indexed
+                # Xref table probably had bad indexes due to not being
+                # zero-indexed
                 if self.strict:
-                    raise utils.PdfReadError("Expected object ID (%d %d) does not match actual (%d %d); xref table not zero-indexed." \
-                                     % (indirectReference.idnum, indirectReference.generation, idnum, generation))
-                else: pass # xref table is corrected in non-strict mode
+                    raise utils.PdfReadError(
+                        "Expected object ID (%d %d) does not match actual (%d %d); xref table not zero-indexed." %
+                        (indirectReference.idnum, indirectReference.generation, idnum, generation))
+                else:
+                    pass  # xref table is corrected in non-strict mode
             elif idnum != indirectReference.idnum:
                 # some other problem
-                raise utils.PdfReadError("Expected object ID (%d %d) does not match actual (%d %d)." \
-                                         % (indirectReference.idnum, indirectReference.generation, idnum, generation))
+                raise utils.PdfReadError(
+                    "Expected object ID (%d %d) does not match actual (%d %d)." %
+                    (indirectReference.idnum, indirectReference.generation, idnum, generation))
             assert generation == indirectReference.generation
             retval = readObject(self.stream, self)
 
@@ -1392,17 +1543,27 @@ class PdfFileReader(object):
                 key = md5_hash[:min(16, len(self._decryption_key) + 5)]
                 retval = self._decryptObject(retval, key)
         else:
-            warnings.warn("Object %d %d not defined."%(indirectReference.idnum,
-                        indirectReference.generation), utils.PdfReadWarning)
-            #if self.strict:
+            warnings.warn(
+                "Object %d %d not defined." %
+                (indirectReference.idnum,
+                 indirectReference.generation),
+                utils.PdfReadWarning)
+            # if self.strict:
             raise utils.PdfReadError("Could not find object.")
         self.cacheIndirectObject(indirectReference.generation,
-                    indirectReference.idnum, retval)
+                                 indirectReference.idnum, retval)
         return retval
 
     def _decryptObject(self, obj, key):
-        if isinstance(obj, ByteStringObject) or isinstance(obj, TextStringObject):
-            obj = createStringObject(utils.RC4_encrypt(key, obj.original_bytes))
+        if isinstance(
+                obj,
+                ByteStringObject) or isinstance(
+                obj,
+                TextStringObject):
+            obj = createStringObject(
+                utils.RC4_encrypt(
+                    key,
+                    obj.original_bytes))
         elif isinstance(obj, StreamObject):
             obj._data = utils.RC4_encrypt(key, obj._data)
         elif isinstance(obj, DictionaryObject):
@@ -1420,49 +1581,59 @@ class PdfFileReader(object):
         # tables that are off by whitespace bytes.
         extra = False
         utils.skipOverComment(stream)
-        extra |= utils.skipOverWhitespace(stream); stream.seek(-1, 1)
+        extra |= utils.skipOverWhitespace(stream)
+        stream.seek(-1, 1)
         idnum = readUntilWhitespace(stream)
-        extra |= utils.skipOverWhitespace(stream); stream.seek(-1, 1)
+        extra |= utils.skipOverWhitespace(stream)
+        stream.seek(-1, 1)
         generation = readUntilWhitespace(stream)
         obj = stream.read(3)
         readNonWhitespace(stream)
         stream.seek(-1, 1)
         if (extra and self.strict):
-            #not a fatal error
-            warnings.warn("Superfluous whitespace found in object header %s %s" % \
-                          (idnum, generation), utils.PdfReadWarning)
+            # not a fatal error
+            warnings.warn(
+                "Superfluous whitespace found in object header %s %s" %
+                (idnum, generation), utils.PdfReadWarning)
         return int(idnum), int(generation)
 
     def cacheGetIndirectObject(self, generation, idnum):
         debug = False
         out = self.resolvedObjects.get((generation, idnum))
-        if debug and out: print(("cache hit: %d %d"%(idnum, generation)))
-        elif debug: print(("cache miss: %d %d"%(idnum, generation)))
+        if debug and out:
+            print(("cache hit: %d %d" % (idnum, generation)))
+        elif debug:
+            print(("cache miss: %d %d" % (idnum, generation)))
         return out
 
     def cacheIndirectObject(self, generation, idnum, obj):
         # return None # Sometimes we want to turn off cache for debugging.
         if (generation, idnum) in self.resolvedObjects:
-            msg = "Overwriting cache for %s %s"%(generation, idnum)
-            if self.strict: raise utils.PdfReadError(msg)
-            else:           warnings.warn(msg)
+            msg = "Overwriting cache for %s %s" % (generation, idnum)
+            if self.strict:
+                raise utils.PdfReadError(msg)
+            else:
+                warnings.warn(msg)
         self.resolvedObjects[(generation, idnum)] = obj
         return obj
 
     def read(self, stream):
         debug = False
-        if debug: print(">>read", stream)
+        if debug:
+            print(">>read", stream)
         # start at the end:
         stream.seek(-1, 2)
         if not stream.tell():
             raise utils.PdfReadError('Cannot read an empty file')
-        last1K = stream.tell() - 1024 + 1 # offset of last 1024 bytes of stream
+        # offset of last 1024 bytes of stream
+        last1K = stream.tell() - 1024 + 1
         line = b_('')
         while line[:5] != b_("%%EOF"):
             if stream.tell() < last1K:
                 raise utils.PdfReadError("EOF marker not found")
             line = self.readNextEndLine(stream)
-            if debug: print("  line:",line)
+            if debug:
+                print("  line:", line)
 
         # find startxref entry - the location of the xref table
         line = self.readNextEndLine(stream)
@@ -1494,15 +1665,18 @@ class PdfFileReader(object):
                     raise utils.PdfReadError("xref table read error")
                 readNonWhitespace(stream)
                 stream.seek(-1, 1)
-                firsttime = True; # check if the first time looking at the xref table
+                # check if the first time looking at the xref table
+                firsttime = True
                 while True:
                     num = readObject(stream, self)
                     if firsttime and num != 0:
-                         self.xrefIndex = num
-                         warnings.warn("Xref table not zero-indexed. ID numbers for objects will %sbe corrected." % \
-                                       ("" if not self.strict else "not "), utils.PdfReadWarning)
-                         #if table not zero indexed, could be due to error from when PDF was created
-                         #which will lead to mismatched indices later on
+                        self.xrefIndex = num
+                        warnings.warn(
+                            "Xref table not zero-indexed. ID numbers for objects will %sbe corrected." %
+                            ("" if not self.strict else "not "),
+                            utils.PdfReadWarning)
+                        # if table not zero indexed, could be due to error from when PDF was created
+                        # which will lead to mismatched indices later on
                     firsttime = False
                     readNonWhitespace(stream)
                     stream.seek(-1, 1)
@@ -1574,12 +1748,17 @@ class PdfFileReader(object):
                 streamData = BytesIO(b_(xrefstream.getData()))
                 # Index pairs specify the subsections in the dictionary. If
                 # none create one subsection that spans everything.
-                idx_pairs = xrefstream.get("/Index", [0, xrefstream.get("/Size")])
-                if debug: print(("read idx_pairs=%s"%list(self._pairs(idx_pairs))))
+                idx_pairs = xrefstream.get(
+                    "/Index", [0, xrefstream.get("/Size")])
+                if debug:
+                    print(("read idx_pairs=%s" % list(self._pairs(idx_pairs))))
                 entrySizes = xrefstream.get("/W")
                 assert len(entrySizes) >= 3
                 if self.strict and len(entrySizes) > 3:
-                    raise utils.PdfReadError("Too many entry sizes: %s" %entrySizes)
+                    raise utils.PdfReadError(
+                        "Too many entry sizes: %s" %
+                        entrySizes)
+
                 def getEntry(i):
                     # Reads the correct number of bytes for each entry. See the
                     # discussion of the W parameter in PDF spec table 17.
@@ -1589,13 +1768,15 @@ class PdfFileReader(object):
 
                     # PDF Spec Table 17: A value of zero for an element in the
                     # W array indicates...the default value shall be used
-                    if i == 0:  return 1 # First value defaults to 1
-                    else:       return 0
+                    if i == 0:
+                        return 1  # First value defaults to 1
+                    else:
+                        return 0
 
                 def used_before(num, generation):
                     # We move backwards through the xrefs, don't replace any.
                     return num in self.xref.get(generation, []) or \
-                            num in self.xref_objStm
+                        num in self.xref_objStm
 
                 # Iterate through each subsection
                 last_end = 0
@@ -1603,7 +1784,7 @@ class PdfFileReader(object):
                     # The subsections must increase
                     assert start >= last_end
                     last_end = start + size
-                    for num in range(start, start+size):
+                    for num in range(start, start + size):
                         # The first entry is the type
                         xref_type = getEntry(0)
                         # The rest of the elements depend on the xref_type
@@ -1619,20 +1800,23 @@ class PdfFileReader(object):
                                 self.xref[generation] = {}
                             if not used_before(num, generation):
                                 self.xref[generation][num] = byte_offset
-                                if debug: print(("XREF Uncompressed: %s %s"%(
-                                                num, generation)))
+                                if debug:
+                                    print(("XREF Uncompressed: %s %s" % (
+                                        num, generation)))
                         elif xref_type == 2:
                             # compressed objects
                             objstr_num = getEntry(1)
                             obstr_idx = getEntry(2)
-                            generation = 0 # PDF spec table 18, generation is 0
+                            # PDF spec table 18, generation is 0
+                            generation = 0
                             if not used_before(num, generation):
-                                if debug: print(("XREF Compressed: %s %s %s"%(
+                                if debug:
+                                    print(("XREF Compressed: %s %s %s" % (
                                         num, objstr_num, obstr_idx)))
                                 self.xref_objStm[num] = (objstr_num, obstr_idx)
                         elif self.strict:
-                            raise utils.PdfReadError("Unknown xref type: %s"%
-                                                        xref_type)
+                            raise utils.PdfReadError("Unknown xref type: %s" %
+                                                     xref_type)
 
                 trailerKeys = "/Root", "/Encrypt", "/Info", "/ID"
                 for key in trailerKeys:
@@ -1666,11 +1850,13 @@ class PdfFileReader(object):
                 # no xref table found at specified location
                 assert False
                 break
-        #if not zero-indexed, verify that the table is correct; change it if necessary
+        # if not zero-indexed, verify that the table is correct; change it if
+        # necessary
         if self.xrefIndex and not self.strict:
             loc = stream.tell()
             for gen in self.xref:
-                if gen == 65535: continue
+                if gen == 65535:
+                    continue
                 for id in self.xref[gen]:
                     stream.seek(self.xref[gen][id], 0)
                     try:
@@ -1680,47 +1866,61 @@ class PdfFileReader(object):
                     if pid == id - self.xrefIndex:
                         self._zeroXref(gen)
                         break
-                    #if not, then either it's just plain wrong, or the non-zero-index is actually correct
-            stream.seek(loc, 0) #return to where it was
-
+                    # if not, then either it's just plain wrong, or the
+                    # non-zero-index is actually correct
+            stream.seek(loc, 0)  # return to where it was
 
     def _zeroXref(self, generation):
-        self.xref[generation] = dict( (k-self.xrefIndex, v) for (k, v) in list(self.xref[generation].items()) )
+        self.xref[generation] = dict(
+            (k - self.xrefIndex,
+             v) for (
+                k,
+                v) in list(
+                self.xref[generation].items()))
 
     def _pairs(self, array):
         i = 0
         while True:
-            yield array[i], array[i+1]
+            yield array[i], array[i + 1]
             i += 2
-            if (i+1) >= len(array):
+            if (i + 1) >= len(array):
                 break
 
     def readNextEndLine(self, stream):
         debug = False
-        if debug: print(">>readNextEndLine")
+        if debug:
+            print(">>readNextEndLine")
         line = b_("")
         while True:
             x = stream.read(1)
-            if debug: print(("  x:", x, "%x"%ord(x)))
+            if debug:
+                print(("  x:", x, "%x" % ord(x)))
             stream.seek(-2, 1)
-            if x == b_('\n') or x == b_('\r'): ## \n = LF; \r = CR
+            if x == b_('\n') or x == b_('\r'):  # \n = LF; \r = CR
                 crlf = False
                 while x == b_('\n') or x == b_('\r'):
                     if debug:
-                        if ord(x) == 0x0D: print("  x is CR 0D")
-                        elif ord(x) == 0x0A: print("  x is LF 0A")
+                        if ord(x) == 0x0D:
+                            print("  x is CR 0D")
+                        elif ord(x) == 0x0A:
+                            print("  x is LF 0A")
                     x = stream.read(1)
-                    if x == b_('\n') or x == b_('\r'): # account for CR+LF
+                    if x == b_('\n') or x == b_('\r'):  # account for CR+LF
                         stream.seek(-1, 1)
                         crlf = True
                     stream.seek(-2, 1)
-                stream.seek(2 if crlf else 1, 1) #if using CR+LF, go back 2 bytes, else 1
+                stream.seek(
+                    2 if crlf else 1,
+                    1)  # if using CR+LF, go back 2 bytes, else 1
                 break
             else:
-                if debug: print("  x is neither")
+                if debug:
+                    print("  x is neither")
                 line = x + line
-                if debug: print(("  RNEL line:", line))
-        if debug: print("leaving RNEL")
+                if debug:
+                    print(("  RNEL line:", line))
+        if debug:
+            print("leaving RNEL")
         return line
 
     def decrypt(self, password):
@@ -1752,9 +1952,11 @@ class PdfFileReader(object):
     def _decrypt(self, password):
         encrypt = self.trailer['/Encrypt'].getObject()
         if encrypt['/Filter'] != '/Standard':
-            raise NotImplementedError("only Standard PDF encryption handler is available")
+            raise NotImplementedError(
+                "only Standard PDF encryption handler is available")
         if not (encrypt['/V'] in (1, 2)):
-            raise NotImplementedError("only algorithm code 1 and 2 are supported")
+            raise NotImplementedError(
+                "only algorithm code 1 and 2 are supported")
         user_password, key = self._authenticateUserPassword(password)
         if user_password:
             self._decryption_key = key
@@ -1795,9 +1997,9 @@ class PdfFileReader(object):
             U, key = _alg34(password, owner_entry, p_entry, id1_entry)
         elif rev >= 3:
             U, key = _alg35(password, rev,
-                    encrypt["/Length"].getObject() // 8, owner_entry,
-                    p_entry, id1_entry,
-                    encrypt.get("/EncryptMetadata", BooleanObject(False)).getObject())
+                            encrypt["/Length"].getObject() // 8, owner_entry,
+                            p_entry, id1_entry,
+                            encrypt.get("/EncryptMetadata", BooleanObject(False)).getObject())
             U, real_U = U[:16], real_U[:16]
         return U == real_U, key
 
@@ -1816,10 +2018,10 @@ def getRectangle(self, name, defaults):
     retval = self.get(name)
     if isinstance(retval, RectangleObject):
         return retval
-    if retval == None:
+    if retval is None:
         for d in defaults:
             retval = self.get(d)
-            if retval != None:
+            if retval is not None:
                 break
     if isinstance(retval, IndirectObject):
         retval = self.pdf.getObject(retval)
@@ -1827,13 +2029,16 @@ def getRectangle(self, name, defaults):
     setRectangle(self, name, retval)
     return retval
 
+
 def setRectangle(self, name, value):
     if not isinstance(name, NameObject):
         name = NameObject(name)
     self[name] = value
 
+
 def deleteRectangle(self, name):
     del self[name]
+
 
 def createRectangleAccessor(name, fallback):
     return \
@@ -1841,9 +2046,11 @@ def createRectangleAccessor(name, fallback):
             lambda self: getRectangle(self, name, fallback),
             lambda self, value: setRectangle(self, name, value),
             lambda self: deleteRectangle(self, name)
-            )
+        )
+
 
 class PageObject(DictionaryObject):
+
     """
     This class represents a single page within a PDF file.  Typically this
     object will be created by accessing the
@@ -1856,6 +2063,7 @@ class PageObject(DictionaryObject):
     :param indirectRef: Stores the original indirect reference to
         this object in its source PDF
     """
+
     def __init__(self, pdf=None, indirectRef=None):
         DictionaryObject.__init__(self)
         self.pdf = pdf
@@ -1891,7 +2099,7 @@ class PageObject(DictionaryObject):
             else:
                 raise utils.PageSizeNotDefinedError()
         page.__setitem__(NameObject('/MediaBox'),
-            RectangleObject([0, 0, width, height]))
+                         RectangleObject([0, 0, width, height]))
 
         return page
     createBlankPage = staticmethod(createBlankPage)
@@ -1945,7 +2153,7 @@ class PageObject(DictionaryObject):
             for i in range(len(operands)):
                 op = operands[i]
                 if isinstance(op, NameObject):
-                    operands[i] = rename.get(op,op)
+                    operands[i] = rename.get(op, op)
         return stream
     _contentStreamRename = staticmethod(_contentStreamRename)
 
@@ -1964,9 +2172,14 @@ class PageObject(DictionaryObject):
         # contents stream.
         a, b, c, d, e, f = ctm
         contents = ContentStream(contents, pdf)
-        contents.operations.insert(0, [[FloatObject(a), FloatObject(b),
-            FloatObject(c), FloatObject(d), FloatObject(e),
-            FloatObject(f)], " cm"])
+        contents.operations.insert(0,
+                                   [[FloatObject(a),
+                                     FloatObject(b),
+                                       FloatObject(c),
+                                       FloatObject(d),
+                                       FloatObject(e),
+                                       FloatObject(f)],
+                                       " cm"])
         return contents
     _addTransformationMatrix = staticmethod(_addTransformationMatrix)
 
@@ -1995,7 +2208,12 @@ class PageObject(DictionaryObject):
         """
         self._mergePage(page2)
 
-    def _mergePage(self, page2, page2transformation=None, ctm=None, expand=False):
+    def _mergePage(
+            self,
+            page2,
+            page2transformation=None,
+            ctm=None,
+            expand=False):
         # First we work on merging the resource dictionaries.  This allows us
         # to find out what symbols in the content streams we might need to
         # rename.
@@ -2014,24 +2232,30 @@ class PageObject(DictionaryObject):
                         newAnnots.append(ref)
 
         for res in "/ExtGState", "/Font", "/XObject", "/ColorSpace", "/Pattern", "/Shading", "/Properties":
-            new, newrename = PageObject._mergeResources(originalResources, page2Resources, res)
+            new, newrename = PageObject._mergeResources(
+                originalResources, page2Resources, res)
             if new:
                 newResources[NameObject(res)] = new
                 rename.update(newrename)
 
         # Combine /ProcSet sets.
-        newResources[NameObject("/ProcSet")] = ArrayObject(
-            frozenset(originalResources.get("/ProcSet", ArrayObject()).getObject()).union(
-                frozenset(page2Resources.get("/ProcSet", ArrayObject()).getObject())
-            )
-        )
+        newResources[
+            NameObject("/ProcSet")] = ArrayObject(
+            frozenset(
+                originalResources.get(
+                    "/ProcSet",
+                    ArrayObject()).getObject()).union(
+                frozenset(
+                    page2Resources.get(
+                        "/ProcSet",
+                        ArrayObject()).getObject())))
 
         newContentArray = ArrayObject()
 
         originalContent = self.getContents()
         if originalContent is not None:
             newContentArray.append(PageObject._pushPopGS(
-                  originalContent, self.pdf))
+                originalContent, self.pdf))
 
         page2Content = page2.getContents()
         if page2Content is not None:
@@ -2042,30 +2266,62 @@ class PageObject(DictionaryObject):
             page2Content = PageObject._pushPopGS(page2Content, self.pdf)
             newContentArray.append(page2Content)
 
-        # if expanding the page to fit a new page, calculate the new media box size
+        # if expanding the page to fit a new page, calculate the new media box
+        # size
         if expand:
-            corners1 = [self.mediaBox.getLowerLeft_x().as_numeric(), self.mediaBox.getLowerLeft_y().as_numeric(),
-                        self.mediaBox.getUpperRight_x().as_numeric(), self.mediaBox.getUpperRight_y().as_numeric()]
-            corners2 = [page2.mediaBox.getLowerLeft_x().as_numeric(), page2.mediaBox.getLowerLeft_y().as_numeric(),
-                        page2.mediaBox.getUpperLeft_x().as_numeric(), page2.mediaBox.getUpperLeft_y().as_numeric(),
-                        page2.mediaBox.getUpperRight_x().as_numeric(), page2.mediaBox.getUpperRight_y().as_numeric(),
-                        page2.mediaBox.getLowerRight_x().as_numeric(), page2.mediaBox.getLowerRight_y().as_numeric()]
+            corners1 = [
+                self.mediaBox.getLowerLeft_x().as_numeric(),
+                self.mediaBox.getLowerLeft_y().as_numeric(),
+                self.mediaBox.getUpperRight_x().as_numeric(),
+                self.mediaBox.getUpperRight_y().as_numeric()]
+            corners2 = [
+                page2.mediaBox.getLowerLeft_x().as_numeric(),
+                page2.mediaBox.getLowerLeft_y().as_numeric(),
+                page2.mediaBox.getUpperLeft_x().as_numeric(),
+                page2.mediaBox.getUpperLeft_y().as_numeric(),
+                page2.mediaBox.getUpperRight_x().as_numeric(),
+                page2.mediaBox.getUpperRight_y().as_numeric(),
+                page2.mediaBox.getLowerRight_x().as_numeric(),
+                page2.mediaBox.getLowerRight_y().as_numeric()]
             if ctm is not None:
                 ctm = [float(x) for x in ctm]
-                new_x = [ctm[0]*corners2[i] + ctm[2]*corners2[i+1] + ctm[4] for i in range(0, 8, 2)]
-                new_y = [ctm[1]*corners2[i] + ctm[3]*corners2[i+1] + ctm[5] for i in range(0, 8, 2)]
+                new_x = [
+                    ctm[0] *
+                    corners2[i] +
+                    ctm[2] *
+                    corners2[
+                        i +
+                        1] +
+                    ctm[4] for i in range(
+                        0,
+                        8,
+                        2)]
+                new_y = [
+                    ctm[1] *
+                    corners2[i] +
+                    ctm[3] *
+                    corners2[
+                        i +
+                        1] +
+                    ctm[5] for i in range(
+                        0,
+                        8,
+                        2)]
             else:
                 new_x = corners2[0:8:2]
                 new_y = corners2[1:8:2]
             lowerleft = [min(new_x), min(new_y)]
             upperright = [max(new_x), max(new_y)]
-            lowerleft = [min(corners1[0], lowerleft[0]), min(corners1[1], lowerleft[1])]
-            upperright = [max(corners1[2], upperright[0]), max(corners1[3], upperright[1])]
+            lowerleft = [
+                min(corners1[0], lowerleft[0]), min(corners1[1], lowerleft[1])]
+            upperright = [
+                max(corners1[2], upperright[0]), max(corners1[3], upperright[1])]
 
             self.mediaBox.setLowerLeft(lowerleft)
             self.mediaBox.setUpperRight(upperright)
 
-        self[NameObject('/Contents')] = ContentStream(newContentArray, self.pdf)
+        self[
+            NameObject('/Contents')] = ContentStream(newContentArray, self.pdf)
         self[NameObject('/Resources')] = newResources
         self[NameObject('/Annots')] = newAnnots
 
@@ -2081,8 +2337,14 @@ class PageObject(DictionaryObject):
         :param bool expand: Whether the page should be expanded to fit the dimensions
             of the page to be merged.
         """
-        self._mergePage(page2, lambda page2Content:
-            PageObject._addTransformationMatrix(page2Content, page2.pdf, ctm), ctm, expand)
+        self._mergePage(
+            page2,
+            lambda page2Content: PageObject._addTransformationMatrix(
+                page2Content,
+                page2.pdf,
+                ctm),
+            ctm,
+            expand)
 
     def mergeScaledPage(self, page2, scale, expand=False):
         """
@@ -2097,8 +2359,8 @@ class PageObject(DictionaryObject):
         """
         # CTM to scale : [ sx 0 0 sy 0 0 ]
         return self.mergeTransformedPage(page2, [scale, 0,
-                                                 0,      scale,
-                                                 0,      0], expand)
+                                                 0, scale,
+                                                 0, 0], expand)
 
     def mergeRotatedPage(self, page2, rotation, expand=False):
         """
@@ -2112,10 +2374,8 @@ class PageObject(DictionaryObject):
             dimensions of the page to be merged.
         """
         rotation = math.radians(rotation)
-        return self.mergeTransformedPage(page2,
-            [math.cos(rotation),  math.sin(rotation),
-             -math.sin(rotation), math.cos(rotation),
-             0,                   0], expand)
+        return self.mergeTransformedPage(page2, [math.cos(rotation), math.sin(
+            rotation), -math.sin(rotation), math.cos(rotation), 0, 0], expand)
 
     def mergeTranslatedPage(self, page2, tx, ty, expand=False):
         """
@@ -2129,11 +2389,17 @@ class PageObject(DictionaryObject):
         :param bool expand: Whether the page should be expanded to fit the
             dimensions of the page to be merged.
         """
-        return self.mergeTransformedPage(page2, [1,  0,
-                                                 0,  1,
+        return self.mergeTransformedPage(page2, [1, 0,
+                                                 0, 1,
                                                  tx, ty], expand)
 
-    def mergeRotatedTranslatedPage(self, page2, rotation, tx, ty, expand=False):
+    def mergeRotatedTranslatedPage(
+            self,
+            page2,
+            rotation,
+            tx,
+            ty,
+            expand=False):
         """
         This is similar to mergePage, but the stream to be merged is rotated
         and translated by appling a transformation matrix.
@@ -2153,10 +2419,10 @@ class PageObject(DictionaryObject):
         rotation = math.radians(rotation)
         rotating = [[math.cos(rotation), math.sin(rotation), 0],
                     [-math.sin(rotation), math.cos(rotation), 0],
-                    [0,                  0,                  1]]
+                    [0, 0, 1]]
         rtranslation = [[1, 0, 0],
-                       [0, 1, 0],
-                       [tx, ty, 1]]
+                        [0, 1, 0],
+                        [tx, ty, 1]]
         ctm = utils.matrixMultiply(translation, rotating)
         ctm = utils.matrixMultiply(ctm, rtranslation)
 
@@ -2179,10 +2445,10 @@ class PageObject(DictionaryObject):
         rotation = math.radians(rotation)
         rotating = [[math.cos(rotation), math.sin(rotation), 0],
                     [-math.sin(rotation), math.cos(rotation), 0],
-                    [0,                  0,                  1]]
-        scaling = [[scale, 0,    0],
-                   [0,    scale, 0],
-                   [0,    0,    1]]
+                    [0, 0, 1]]
+        scaling = [[scale, 0, 0],
+                   [0, scale, 0],
+                   [0, 0, 1]]
         ctm = utils.matrixMultiply(rotating, scaling)
 
         return self.mergeTransformedPage(page2,
@@ -2207,16 +2473,23 @@ class PageObject(DictionaryObject):
         translation = [[1, 0, 0],
                        [0, 1, 0],
                        [tx, ty, 1]]
-        scaling = [[scale, 0,    0],
-                   [0,    scale, 0],
-                   [0,    0,    1]]
+        scaling = [[scale, 0, 0],
+                   [0, scale, 0],
+                   [0, 0, 1]]
         ctm = utils.matrixMultiply(scaling, translation)
 
         return self.mergeTransformedPage(page2, [ctm[0][0], ctm[0][1],
                                                  ctm[1][0], ctm[1][1],
                                                  ctm[2][0], ctm[2][1]], expand)
 
-    def mergeRotatedScaledTranslatedPage(self, page2, rotation, scale, tx, ty, expand=False):
+    def mergeRotatedScaledTranslatedPage(
+            self,
+            page2,
+            rotation,
+            scale,
+            tx,
+            ty,
+            expand=False):
         """
         This is similar to mergePage, but the stream to be merged is translated,
         rotated and scaled by appling a transformation matrix.
@@ -2236,10 +2509,10 @@ class PageObject(DictionaryObject):
         rotation = math.radians(rotation)
         rotating = [[math.cos(rotation), math.sin(rotation), 0],
                     [-math.sin(rotation), math.cos(rotation), 0],
-                    [0,                  0,                  1]]
-        scaling = [[scale, 0,    0],
-                   [0,    scale, 0],
-                   [0,    0,    1]]
+                    [0, 0, 1]]
+        scaling = [[scale, 0, 0],
+                   [0, scale, 0],
+                   [0, 0, 1]]
         ctm = utils.matrixMultiply(rotating, scaling)
         ctm = utils.matrixMultiply(ctm, translation)
 
@@ -2275,8 +2548,8 @@ class PageObject(DictionaryObject):
         :param float sy: The scaling factor on vertical axis.
         """
         self.addTransformation([sx, 0,
-                                0,  sy,
-                                0,  0])
+                                0, sy,
+                                0, 0])
         self.mediaBox = RectangleObject([
             float(self.mediaBox.getLowerLeft_x()) * sx,
             float(self.mediaBox.getLowerLeft_y()) * sy,
@@ -2294,7 +2567,8 @@ class PageObject(DictionaryObject):
                 float(bbox[2]) * sx,
                 float(bbox[3]) * sy])
             if isinstance(viewport, ArrayObject):
-                self[NameObject("/VP")][NumberObject(0)][NameObject("/BBox")] = scaled_bbox
+                self[
+                    NameObject("/VP")][NumberObject(0)][NameObject("/BBox")] = scaled_bbox
             else:
                 self[NameObject("/VP")][NameObject("/BBox")] = scaled_bbox
 
@@ -2316,9 +2590,9 @@ class PageObject(DictionaryObject):
         :param float height: The new heigth.
         """
         sx = width / float(self.mediaBox.getUpperRight_x() -
-                      self.mediaBox.getLowerLeft_x ())
+                           self.mediaBox.getLowerLeft_x())
         sy = height / float(self.mediaBox.getUpperRight_y() -
-                       self.mediaBox.getLowerLeft_y ())
+                            self.mediaBox.getLowerLeft_y())
         self.scale(sx, sy)
 
     def compressContentStreams(self):
@@ -2412,7 +2686,9 @@ class PageObject(DictionaryObject):
     page's creator.
     """
 
+
 class ContentStream(DecodedStreamObject):
+
     def __init__(self, stream, pdf):
         self.pdf = pdf
         self.operations = []
@@ -2438,8 +2714,10 @@ class ContentStream(DecodedStreamObject):
                 break
             stream.seek(-1, 1)
             if peek.isalpha() or peek == "'" or peek == '"':
-                operator = utils.readUntilRegex(stream,
-                        NameObject.delimiterPattern, True)
+                operator = utils.readUntilRegex(
+                    stream,
+                    NameObject.delimiterPattern,
+                    True)
                 if operator == "BI":
                     # begin inline image - a completely different parsing
                     # mechanism is required, of course... thanks buddy...
@@ -2525,7 +2803,9 @@ class ContentStream(DecodedStreamObject):
 
     _data = property(_getData, _setData)
 
+
 class DocumentInformation(DictionaryObject):
+
     """
     A class representing the basic document metadata provided in a PDF File.
     This class is accessible through
@@ -2588,6 +2868,7 @@ class DocumentInformation(DictionaryObject):
     producer_raw = property(lambda self: self.get("/Producer"))
     """The "raw" version of producer; can return a ``ByteStringObject``."""
 
+
 def convertToInt(d, size):
     if size > 8:
         raise utils.PdfReadError("invalid size in convertToInt")
@@ -2597,12 +2878,21 @@ def convertToInt(d, size):
 
 # ref: pdf1.8 spec section 3.5.2 algorithm 3.2
 _encryption_padding = b_('\x28\xbf\x4e\x5e\x4e\x75\x8a\x41\x64\x00\x4e\x56') + \
-        b_('\xff\xfa\x01\x08\x2e\x2e\x00\xb6\xd0\x68\x3e\x80\x2f\x0c') + \
-        b_('\xa9\xfe\x64\x53\x69\x7a')
+    b_('\xff\xfa\x01\x08\x2e\x2e\x00\xb6\xd0\x68\x3e\x80\x2f\x0c') + \
+    b_('\xa9\xfe\x64\x53\x69\x7a')
 
 # Implementation of algorithm 3.2 of the PDF standard security handler,
 # section 3.5.2 of the PDF 1.6 reference.
-def _alg32(password, rev, keylen, owner_entry, p_entry, id1_entry, metadata_encrypt=True):
+
+
+def _alg32(
+        password,
+        rev,
+        keylen,
+        owner_entry,
+        p_entry,
+        id1_entry,
+        metadata_encrypt=True):
     # 1. Pad or truncate the password string to exactly 32 bytes.  If the
     # password string is more than 32 bytes long, use only its first 32 bytes;
     # if it is less than 32 bytes long, pad it by appending the required number
@@ -2645,6 +2935,8 @@ def _alg32(password, rev, keylen, owner_entry, p_entry, id1_entry, metadata_encr
 
 # Implementation of algorithm 3.3 of the PDF standard security handler,
 # section 3.5.2 of the PDF 1.6 reference.
+
+
 def _alg33(owner_pwd, user_pwd, rev, keylen):
     # steps 1 - 4
     key = _alg33_1(owner_pwd, rev, keylen)
@@ -2671,6 +2963,8 @@ def _alg33(owner_pwd, user_pwd, rev, keylen):
     return val
 
 # Steps 1-4 of algorithm 3.3
+
+
 def _alg33_1(password, rev, keylen):
     # 1. Pad or truncate the owner password string as described in step 1 of
     # algorithm 3.2.  If there is no owner password, use the user password
@@ -2694,6 +2988,8 @@ def _alg33_1(password, rev, keylen):
 
 # Implementation of algorithm 3.4 of the PDF standard security handler,
 # section 3.5.2 of the PDF 1.6 reference.
+
+
 def _alg34(password, owner_entry, p_entry, id1_entry):
     # 1. Create an encryption key based on the user password string, as
     # described in algorithm 3.2.
@@ -2708,7 +3004,16 @@ def _alg34(password, owner_entry, p_entry, id1_entry):
 
 # Implementation of algorithm 3.4 of the PDF standard security handler,
 # section 3.5.2 of the PDF 1.6 reference.
-def _alg35(password, rev, keylen, owner_entry, p_entry, id1_entry, metadata_encrypt):
+
+
+def _alg35(
+        password,
+        rev,
+        keylen,
+        owner_entry,
+        p_entry,
+        id1_entry,
+        metadata_encrypt):
     # 1. Create an encryption key based on the user password string, as
     # described in Algorithm 3.2.
     key = _alg32(password, rev, keylen, owner_entry, p_entry, id1_entry)

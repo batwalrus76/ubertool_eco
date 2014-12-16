@@ -37,6 +37,7 @@ def is_text_or_none(string):
 
 
 class TreeWalker(object):
+
     def __init__(self, tree):
         self.tree = tree
 
@@ -47,12 +48,20 @@ class TreeWalker(object):
         return {"type": "SerializeError", "data": msg}
 
     def emptyTag(self, namespace, name, attrs, hasChildren=False):
-        assert namespace is None or isinstance(namespace, string_types), type(namespace)
+        assert namespace is None or isinstance(
+            namespace, string_types), type(namespace)
         assert isinstance(name, string_types), type(name)
-        assert all((namespace is None or isinstance(namespace, string_types)) and
-                   isinstance(name, string_types) and
-                   isinstance(value, string_types)
-                   for (namespace, name), value in attrs.items())
+        assert all(
+            (namespace is None or isinstance(
+                namespace,
+                string_types)) and isinstance(
+                name,
+                string_types) and isinstance(
+                value,
+                string_types) for (
+                    namespace,
+                    name),
+            value in attrs.items())
 
         yield {"type": "EmptyTag", "name": to_text(name, False),
                "namespace": to_text(namespace),
@@ -61,12 +70,20 @@ class TreeWalker(object):
             yield self.error(_("Void element has children"))
 
     def startTag(self, namespace, name, attrs):
-        assert namespace is None or isinstance(namespace, string_types), type(namespace)
+        assert namespace is None or isinstance(
+            namespace, string_types), type(namespace)
         assert isinstance(name, string_types), type(name)
-        assert all((namespace is None or isinstance(namespace, string_types)) and
-                   isinstance(name, string_types) and
-                   isinstance(value, string_types)
-                   for (namespace, name), value in attrs.items())
+        assert all(
+            (namespace is None or isinstance(
+                namespace,
+                string_types)) and isinstance(
+                name,
+                string_types) and isinstance(
+                value,
+                string_types) for (
+                    namespace,
+                    name),
+            value in attrs.items())
 
         return {"type": "StartTag",
                 "name": text_type(name),
@@ -76,7 +93,8 @@ class TreeWalker(object):
                              for (namespace, name), value in attrs.items())}
 
     def endTag(self, namespace, name):
-        assert namespace is None or isinstance(namespace, string_types), type(namespace)
+        assert namespace is None or isinstance(
+            namespace, string_types), type(namespace)
         assert isinstance(name, string_types), type(namespace)
 
         return {"type": "EndTag",
@@ -126,6 +144,7 @@ class TreeWalker(object):
 
 
 class NonRecursiveTreeWalker(TreeWalker):
+
     def getNodeDetails(self, node):
         raise NotImplementedError
 

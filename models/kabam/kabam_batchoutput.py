@@ -5,7 +5,8 @@
 
 from django.views.decorators.http import require_POST
 from StringIO import StringIO
-import kabam_model, kabam_tables
+import kabam_model
+import kabam_tables
 import csv
 from threading import Thread
 import Queue
@@ -16,207 +17,208 @@ import logging
 logger = logging.getLogger('kabamBatchPage')
 
 # Inputs
-chemical_name=[]
-l_kow=[]
-k_oc=[]
-c_wdp=[]
-water_column_EEC=[]
-c_wto=[]
-mineau=[]
-x_poc=[]
-x_doc=[]
-c_ox=[]
-w_t=[]
-c_ss=[]
-oc=[]
-k_ow=[]
-b_species =[]
-bw_quail =[]
-bw_duck =[]
-bwb_other =[]
-avian_ld50=[]
-avian_lc50=[]
-avian_noaec=[]
-m_species =[]
-bw_rat =[]
-bwm_other =[]
-mammalian_ld50=[]
-mammalian_lc50=[]
-mammalian_chronic_endpoint=[]
-lf_p_sediment=[]
-lf_p_phytoplankton=[]
-lf_p_zooplankton=[]
-lf_p_benthic_invertebrates=[]
-lf_p_filter_feeders=[]
-lf_p_small_fish=[]
-lf_p_medium_fish=[]
-mf_p_sediment=[]
-mf_p_phytoplankton=[]
-mf_p_zooplankton=[]
-mf_p_benthic_invertebrates=[]
-mf_p_filter_feeders=[]
-mf_p_small_fish=[]
-sf_p_sediment=[]
-sf_p_phytoplankton=[]
-sf_p_zooplankton=[]
-sf_p_benthic_invertebrates=[]
-sf_p_filter_feeders=[]
-ff_p_sediment=[]
-ff_p_phytoplankton=[]
-ff_p_zooplankton=[]
-ff_p_benthic_invertebrates=[]
-beninv_p_sediment=[]
-beninv_p_phytoplankton=[]
-beninv_p_zooplankton=[]
-zoo_p_sediment=[]
-zoo_p_phyto=[]
-s_lipid=[]
-s_NLOM=[]
-s_water=[]
-v_lb_phytoplankton=[]
-v_nb_phytoplankton=[]
-v_wb_phytoplankton=[]
-wb_zoo=[]
-v_lb_zoo=[]
-v_nb_zoo=[]
-v_wb_zoo=[]
-wb_beninv=[]
-v_lb_beninv=[]
-v_nb_beninv=[]
-v_wb_beninv=[]
-wb_ff=[]
-v_lb_ff=[]
-v_nb_ff=[]
-v_wb_ff=[]
-wb_sf=[]
-v_lb_sf=[]
-v_nb_sf=[]
-v_wb_sf=[]
-wb_mf=[]
-v_lb_mf=[]
-v_nb_mf=[]
-v_wb_mf=[]
-wb_lf=[]
-v_lb_lf=[]
-v_nb_lf=[]
-v_wb_lf=[]
-kg_phytoplankton=[]
-kd_phytoplankton=[]
-ke_phytoplankton=[]
-mo_phytoplankton=[]
-mp_phytoplankton=[]
-km_phytoplankton=[]
-km_zoo=[]
-k1_phytoplankton=[]
-k2_phytoplankton=[]
-k1_zoo=[]
-k2_zoo=[]
-kd_zoo=[]
-ke_zoo=[]
-k1_beninv=[]
-k2_beninv=[]
-kd_beninv=[]
-ke_beninv=[]
-km_beninv=[]
-k1_ff=[]
-k2_ff=[]
-kd_ff=[]
-ke_ff=[]
-km_ff=[]
-k1_sf=[]
-k2_sf=[]
-kd_sf=[]
-ke_sf=[]
-km_sf=[]
-k1_mf=[]
-k2_mf=[]
-kd_mf=[]
-ke_mf=[]
-km_mf=[]
-k1_lf=[]
-k2_lf=[]
-kd_lf=[]
-ke_lf=[]
-km_lf=[]
-rate_constants=[]
+chemical_name = []
+l_kow = []
+k_oc = []
+c_wdp = []
+water_column_EEC = []
+c_wto = []
+mineau = []
+x_poc = []
+x_doc = []
+c_ox = []
+w_t = []
+c_ss = []
+oc = []
+k_ow = []
+b_species = []
+bw_quail = []
+bw_duck = []
+bwb_other = []
+avian_ld50 = []
+avian_lc50 = []
+avian_noaec = []
+m_species = []
+bw_rat = []
+bwm_other = []
+mammalian_ld50 = []
+mammalian_lc50 = []
+mammalian_chronic_endpoint = []
+lf_p_sediment = []
+lf_p_phytoplankton = []
+lf_p_zooplankton = []
+lf_p_benthic_invertebrates = []
+lf_p_filter_feeders = []
+lf_p_small_fish = []
+lf_p_medium_fish = []
+mf_p_sediment = []
+mf_p_phytoplankton = []
+mf_p_zooplankton = []
+mf_p_benthic_invertebrates = []
+mf_p_filter_feeders = []
+mf_p_small_fish = []
+sf_p_sediment = []
+sf_p_phytoplankton = []
+sf_p_zooplankton = []
+sf_p_benthic_invertebrates = []
+sf_p_filter_feeders = []
+ff_p_sediment = []
+ff_p_phytoplankton = []
+ff_p_zooplankton = []
+ff_p_benthic_invertebrates = []
+beninv_p_sediment = []
+beninv_p_phytoplankton = []
+beninv_p_zooplankton = []
+zoo_p_sediment = []
+zoo_p_phyto = []
+s_lipid = []
+s_NLOM = []
+s_water = []
+v_lb_phytoplankton = []
+v_nb_phytoplankton = []
+v_wb_phytoplankton = []
+wb_zoo = []
+v_lb_zoo = []
+v_nb_zoo = []
+v_wb_zoo = []
+wb_beninv = []
+v_lb_beninv = []
+v_nb_beninv = []
+v_wb_beninv = []
+wb_ff = []
+v_lb_ff = []
+v_nb_ff = []
+v_wb_ff = []
+wb_sf = []
+v_lb_sf = []
+v_nb_sf = []
+v_wb_sf = []
+wb_mf = []
+v_lb_mf = []
+v_nb_mf = []
+v_wb_mf = []
+wb_lf = []
+v_lb_lf = []
+v_nb_lf = []
+v_wb_lf = []
+kg_phytoplankton = []
+kd_phytoplankton = []
+ke_phytoplankton = []
+mo_phytoplankton = []
+mp_phytoplankton = []
+km_phytoplankton = []
+km_zoo = []
+k1_phytoplankton = []
+k2_phytoplankton = []
+k1_zoo = []
+k2_zoo = []
+kd_zoo = []
+ke_zoo = []
+k1_beninv = []
+k2_beninv = []
+kd_beninv = []
+ke_beninv = []
+km_beninv = []
+k1_ff = []
+k2_ff = []
+kd_ff = []
+ke_ff = []
+km_ff = []
+k1_sf = []
+k2_sf = []
+kd_sf = []
+ke_sf = []
+km_sf = []
+k1_mf = []
+k2_mf = []
+kd_mf = []
+ke_mf = []
+km_mf = []
+k1_lf = []
+k2_lf = []
+kd_lf = []
+ke_lf = []
+km_lf = []
+rate_constants = []
 
 # Outputs
-cb_phytoplankton=[]
-cb_zoo=[]
-cb_beninv=[]
-cb_ff=[]
-cb_sf=[]
-cb_mf=[]
-cb_lf=[]
-cbl_phytoplankton=[]
-cbl_zoo=[]
-cbl_beninv=[]
-cbl_ff=[]
-cbl_sf=[]
-cbl_mf=[]
-cbl_lf=[]
-cbd_zoo=[]
-cbd_beninv=[]
-cbd_ff=[]
-cbd_sf=[]
-cbd_mf=[]
-cbd_lf=[]
-cbr_phytoplankton=[]
-cbr_zoo=[]
-cbr_beninv=[]
-cbr_ff=[]
-cbr_sf=[]
-cbr_mf=[]
-cbr_lf=[]
-cbf_phytoplankton=[]
-cbf_zoo=[]
-cbf_beninv=[]
-cbf_ff=[]
-cbf_sf=[]
-cbf_mf=[]
-cbf_lf=[]
-cbaf_phytoplankton=[]
-cbaf_zoo=[]
-cbaf_beninv=[]
-cbaf_ff=[]
-cbaf_sf=[]
-cbaf_mf=[]
-cbaf_lf=[]
-cbfl_phytoplankton=[]
-cbfl_zoo=[]
-cbfl_beninv=[]
-cbfl_ff=[]
-cbfl_sf=[]
-cbfl_mf=[]
-cbfl_lf=[]
-cbafl_phytoplankton=[]
-cbafl_zoo=[]
-cbafl_beninv=[]
-cbafl_ff=[]
-cbafl_sf=[]
-cbafl_mf=[]
-cbafl_lf=[]
-bmf_zoo=[]
-bmf_beninv=[]
-bmf_ff=[]
-bmf_sf=[]
-cbmf_mf=[]
-cbmf_lf=[]
-cbsafl_phytoplankton=[]
-cbsafl_zoo=[]
-cbsafl_beninv=[]
-cbsafl_ff=[]
-cbsafl_sf=[]
-cbsafl_mf=[]
-cbsafl_lf=[]
+cb_phytoplankton = []
+cb_zoo = []
+cb_beninv = []
+cb_ff = []
+cb_sf = []
+cb_mf = []
+cb_lf = []
+cbl_phytoplankton = []
+cbl_zoo = []
+cbl_beninv = []
+cbl_ff = []
+cbl_sf = []
+cbl_mf = []
+cbl_lf = []
+cbd_zoo = []
+cbd_beninv = []
+cbd_ff = []
+cbd_sf = []
+cbd_mf = []
+cbd_lf = []
+cbr_phytoplankton = []
+cbr_zoo = []
+cbr_beninv = []
+cbr_ff = []
+cbr_sf = []
+cbr_mf = []
+cbr_lf = []
+cbf_phytoplankton = []
+cbf_zoo = []
+cbf_beninv = []
+cbf_ff = []
+cbf_sf = []
+cbf_mf = []
+cbf_lf = []
+cbaf_phytoplankton = []
+cbaf_zoo = []
+cbaf_beninv = []
+cbaf_ff = []
+cbaf_sf = []
+cbaf_mf = []
+cbaf_lf = []
+cbfl_phytoplankton = []
+cbfl_zoo = []
+cbfl_beninv = []
+cbfl_ff = []
+cbfl_sf = []
+cbfl_mf = []
+cbfl_lf = []
+cbafl_phytoplankton = []
+cbafl_zoo = []
+cbafl_beninv = []
+cbafl_ff = []
+cbafl_sf = []
+cbafl_mf = []
+cbafl_lf = []
+bmf_zoo = []
+bmf_beninv = []
+bmf_ff = []
+bmf_sf = []
+cbmf_mf = []
+cbmf_lf = []
+cbsafl_phytoplankton = []
+cbsafl_zoo = []
+cbsafl_beninv = []
+cbsafl_ff = []
+cbsafl_sf = []
+cbsafl_mf = []
+cbsafl_lf = []
 jid_all = []
 jid_batch = []
-kabam_obj =[]
-kabam_obj_all =[]
+kabam_obj = []
+kabam_obj_all = []
 
 logger = logging.getLogger("kabamBatchOutput")
 
-def html_table(row_inp,iter):
+
+def html_table(row_inp, iter):
     logger.info("iteration: " + str(iter))
     chemical_name.append(row_inp[0])
     l_kow.append(float(row_inp[1]))
@@ -231,7 +233,7 @@ def html_table(row_inp,iter):
     w_t.append(float(row_inp[9]))
     c_ss.append(float(row_inp[10]))
     oc.append(float(row_inp[11]) / 100)
-    k_ow.append(10**(float(row_inp[1])))
+    k_ow.append(10 ** (float(row_inp[1])))
     b_species.append(row_inp[12])
     bw_quail.append(float(row_inp[13]))
     bw_duck.append(float(row_inp[14]))
@@ -342,24 +344,133 @@ def html_table(row_inp,iter):
     km_lf.append(float(row_inp[119]))
     rate_constants.append(row_inp[120])
 
-
     kabam_obj = kabam_model.kabam(
-            True,True,'batch', chemical_name[iter],l_kow[iter],k_oc[iter],c_wdp[iter],water_column_EEC[iter],c_wto[iter],mineau[iter],x_poc[iter],x_doc[iter],c_ox[iter],w_t[iter],c_ss[iter],oc[iter],k_ow[iter],
-            b_species[iter],bw_quail[iter],bw_duck[iter],bwb_other[iter],avian_ld50[iter],avian_lc50[iter],avian_noaec[iter],m_species[iter],bw_rat[iter],bwm_other[iter],mammalian_ld50[iter],mammalian_lc50[iter],mammalian_chronic_endpoint[iter],
-            lf_p_sediment[iter],lf_p_phytoplankton[iter],lf_p_zooplankton[iter],lf_p_benthic_invertebrates[iter],lf_p_filter_feeders[iter],lf_p_small_fish[iter],lf_p_medium_fish[iter],
-            mf_p_sediment[iter],mf_p_phytoplankton[iter],mf_p_zooplankton[iter],mf_p_benthic_invertebrates[iter],mf_p_filter_feeders[iter],mf_p_small_fish[iter],
-            sf_p_sediment[iter],sf_p_phytoplankton[iter],sf_p_zooplankton[iter],sf_p_benthic_invertebrates[iter],sf_p_filter_feeders[iter],
-            ff_p_sediment[iter],ff_p_phytoplankton[iter],ff_p_zooplankton[iter],ff_p_benthic_invertebrates[iter],
-            beninv_p_sediment[iter],beninv_p_phytoplankton[iter],beninv_p_zooplankton[iter],
-            zoo_p_sediment[iter],zoo_p_phyto[iter],
-            s_lipid[iter],s_NLOM[iter],s_water[iter],
-            v_lb_phytoplankton[iter],v_nb_phytoplankton[iter],v_wb_phytoplankton[iter],wb_zoo[iter],v_lb_zoo[iter],v_nb_zoo[iter],v_wb_zoo[iter],wb_beninv[iter],v_lb_beninv[iter],v_nb_beninv[iter],v_wb_beninv[iter],wb_ff[iter],v_lb_ff[iter],v_nb_ff[iter],v_wb_ff[iter],wb_sf[iter],v_lb_sf[iter],v_nb_sf[iter],v_wb_sf[iter],wb_mf[iter],v_lb_mf[iter],v_nb_mf[iter],v_wb_mf[iter],wb_lf[iter],v_lb_lf[iter],v_nb_lf[iter],v_wb_lf[iter],
-            kg_phytoplankton[iter],kd_phytoplankton[iter],ke_phytoplankton[iter],mo_phytoplankton[iter],mp_phytoplankton[iter],km_phytoplankton[iter],km_zoo[iter],
-            k1_phytoplankton[iter],k2_phytoplankton[iter],
-            k1_zoo[iter],k2_zoo[iter],kd_zoo[iter],ke_zoo[iter],k1_beninv[iter],k2_beninv[iter],kd_beninv[iter],ke_beninv[iter],km_beninv[iter],
-            k1_ff[iter],k2_ff[iter],kd_ff[iter],ke_ff[iter],km_ff[iter],k1_sf[iter],k2_sf[iter],kd_sf[iter],ke_sf[iter],km_sf[iter],k1_mf[iter],k2_mf[iter],kd_mf[iter],ke_mf[iter],km_mf[iter],k1_lf[iter],k2_lf[iter],kd_lf[iter],ke_lf[iter],km_lf[iter],
-            rate_constants[iter]
-            )
+        True,
+        True,
+        'batch',
+        chemical_name[iter],
+        l_kow[iter],
+        k_oc[iter],
+        c_wdp[iter],
+        water_column_EEC[iter],
+        c_wto[iter],
+        mineau[iter],
+        x_poc[iter],
+        x_doc[iter],
+        c_ox[iter],
+        w_t[iter],
+        c_ss[iter],
+        oc[iter],
+        k_ow[iter],
+        b_species[iter],
+        bw_quail[iter],
+        bw_duck[iter],
+        bwb_other[iter],
+        avian_ld50[iter],
+        avian_lc50[iter],
+        avian_noaec[iter],
+        m_species[iter],
+        bw_rat[iter],
+        bwm_other[iter],
+        mammalian_ld50[iter],
+        mammalian_lc50[iter],
+        mammalian_chronic_endpoint[iter],
+        lf_p_sediment[iter],
+        lf_p_phytoplankton[iter],
+        lf_p_zooplankton[iter],
+        lf_p_benthic_invertebrates[iter],
+        lf_p_filter_feeders[iter],
+        lf_p_small_fish[iter],
+        lf_p_medium_fish[iter],
+        mf_p_sediment[iter],
+        mf_p_phytoplankton[iter],
+        mf_p_zooplankton[iter],
+        mf_p_benthic_invertebrates[iter],
+        mf_p_filter_feeders[iter],
+        mf_p_small_fish[iter],
+        sf_p_sediment[iter],
+        sf_p_phytoplankton[iter],
+        sf_p_zooplankton[iter],
+        sf_p_benthic_invertebrates[iter],
+        sf_p_filter_feeders[iter],
+        ff_p_sediment[iter],
+        ff_p_phytoplankton[iter],
+        ff_p_zooplankton[iter],
+        ff_p_benthic_invertebrates[iter],
+        beninv_p_sediment[iter],
+        beninv_p_phytoplankton[iter],
+        beninv_p_zooplankton[iter],
+        zoo_p_sediment[iter],
+        zoo_p_phyto[iter],
+        s_lipid[iter],
+        s_NLOM[iter],
+        s_water[iter],
+        v_lb_phytoplankton[iter],
+        v_nb_phytoplankton[iter],
+        v_wb_phytoplankton[iter],
+        wb_zoo[iter],
+        v_lb_zoo[iter],
+        v_nb_zoo[iter],
+        v_wb_zoo[iter],
+        wb_beninv[iter],
+        v_lb_beninv[iter],
+        v_nb_beninv[iter],
+        v_wb_beninv[iter],
+        wb_ff[iter],
+        v_lb_ff[iter],
+        v_nb_ff[iter],
+        v_wb_ff[iter],
+        wb_sf[iter],
+        v_lb_sf[iter],
+        v_nb_sf[iter],
+        v_wb_sf[iter],
+        wb_mf[iter],
+        v_lb_mf[iter],
+        v_nb_mf[iter],
+        v_wb_mf[iter],
+        wb_lf[iter],
+        v_lb_lf[iter],
+        v_nb_lf[iter],
+        v_wb_lf[iter],
+        kg_phytoplankton[iter],
+        kd_phytoplankton[iter],
+        ke_phytoplankton[iter],
+        mo_phytoplankton[iter],
+        mp_phytoplankton[iter],
+        km_phytoplankton[iter],
+        km_zoo[iter],
+        k1_phytoplankton[iter],
+        k2_phytoplankton[iter],
+        k1_zoo[iter],
+        k2_zoo[iter],
+        kd_zoo[iter],
+        ke_zoo[iter],
+        k1_beninv[iter],
+        k2_beninv[iter],
+        kd_beninv[iter],
+        ke_beninv[iter],
+        km_beninv[iter],
+        k1_ff[iter],
+        k2_ff[iter],
+        kd_ff[iter],
+        ke_ff[iter],
+        km_ff[iter],
+        k1_sf[iter],
+        k2_sf[iter],
+        kd_sf[iter],
+        ke_sf[iter],
+        km_sf[iter],
+        k1_mf[iter],
+        k2_mf[iter],
+        kd_mf[iter],
+        ke_mf[iter],
+        km_mf[iter],
+        k1_lf[iter],
+        k2_lf[iter],
+        kd_lf[iter],
+        ke_lf[iter],
+        km_lf[iter],
+        rate_constants[iter])
 
     # kabam_obj = kabam_model.kabam(
     #         True,True,'batch', chemical_name[iter-1],l_kow[iter-1],k_oc[iter-1],c_wdp[iter-1],water_column_EEC[iter-1],c_wto[iter-1],mineau[iter-1],x_poc[iter-1],x_doc[iter-1],c_ox[iter-1],w_t[iter-1],c_ss[iter-1],oc[iter-1],k_ow[iter-1],
@@ -378,7 +489,6 @@ def html_table(row_inp,iter):
     #         k1_ff[iter-1],k2_ff[iter-1],kd_ff[iter-1],ke_ff[iter-1],km_ff[iter-1],k1_sf[iter-1],k2_sf[iter-1],kd_sf[iter-1],ke_sf[iter-1],km_sf[iter-1],k1_mf[iter-1],k2_mf[iter-1],kd_mf[iter-1],ke_mf[iter-1],km_mf[iter-1],k1_lf[iter-1],k2_lf[iter-1],kd_lf[iter-1],ke_lf[iter-1],km_lf[iter-1],
     #         rate_constants[iter-1]
     #         )
-
 
     cb_phytoplankton.append(kabam_obj.cb_phytoplankton)
     cb_zoo.append(kabam_obj.cb_zoo)
@@ -449,7 +559,7 @@ def html_table(row_inp,iter):
     cbsafl_mf.append(kabam_obj.cbsafl_mf)
     cbsafl_lf.append(kabam_obj.cbsafl_lf)
 
-    if iter==0:
+    if iter == 0:
         acute_dose_based_m_array = np.array((kabam_obj.acute_dose_based_m))
         global acute_dose_based_m_array
         acute_dose_based_a_array = np.array((kabam_obj.acute_dose_based_a))
@@ -469,51 +579,61 @@ def html_table(row_inp,iter):
         chronic_rq_diet_a_array = np.array((kabam_obj.chronic_rq_diet_a))
         global chronic_rq_diet_a_array
     else:
-        acute_dose_based_m_array = np.vstack((acute_dose_based_m_array,kabam_obj.acute_dose_based_m))
-        acute_dose_based_a_array = np.vstack((acute_dose_based_a_array,kabam_obj.acute_dose_based_a))
-        chronic_dose_based_m_array = np.vstack((chronic_dose_based_m_array,kabam_obj.chronic_dose_based_m))
-        acute_rq_dose_m_array = np.vstack((acute_rq_dose_m_array,kabam_obj.acute_rq_dose_m))
-        acute_rq_dose_a_array = np.vstack((acute_rq_dose_a_array,kabam_obj.acute_rq_dose_a))
-        acute_rq_diet_a_array = np.vstack((acute_rq_diet_a_array,kabam_obj.acute_rq_diet_a))
-        chronic_rq_dose_m_array = np.vstack((chronic_rq_dose_m_array,kabam_obj.chronic_rq_dose_m))
-        chronic_rq_diet_m_array = np.vstack((chronic_rq_diet_m_array,kabam_obj.chronic_rq_diet_m))
-        chronic_rq_diet_a_array = np.vstack((chronic_rq_diet_a_array,kabam_obj.chronic_rq_diet_a))
+        acute_dose_based_m_array = np.vstack(
+            (acute_dose_based_m_array, kabam_obj.acute_dose_based_m))
+        acute_dose_based_a_array = np.vstack(
+            (acute_dose_based_a_array, kabam_obj.acute_dose_based_a))
+        chronic_dose_based_m_array = np.vstack(
+            (chronic_dose_based_m_array, kabam_obj.chronic_dose_based_m))
+        acute_rq_dose_m_array = np.vstack(
+            (acute_rq_dose_m_array, kabam_obj.acute_rq_dose_m))
+        acute_rq_dose_a_array = np.vstack(
+            (acute_rq_dose_a_array, kabam_obj.acute_rq_dose_a))
+        acute_rq_diet_a_array = np.vstack(
+            (acute_rq_diet_a_array, kabam_obj.acute_rq_diet_a))
+        chronic_rq_dose_m_array = np.vstack(
+            (chronic_rq_dose_m_array, kabam_obj.chronic_rq_dose_m))
+        chronic_rq_diet_m_array = np.vstack(
+            (chronic_rq_diet_m_array, kabam_obj.chronic_rq_diet_m))
+        chronic_rq_diet_a_array = np.vstack(
+            (chronic_rq_diet_a_array, kabam_obj.chronic_rq_diet_a))
 
     batch_header = """
         <div class="out_">
             <br><H3>Batch Calculation of Iteration %s:</H3>
         </div>
-        """%(iter)
+        """ % (iter)
 
     kabam_obj.loop_indx = str(iter)
 
     jid_all.append(kabam_obj.jid)
-    kabam_obj_all.append(kabam_obj)    
+    kabam_obj_all.append(kabam_obj)
     if iter == 0:
         jid_batch.append(kabam_obj.jid)
     html = batch_header + kabam_tables.table_all(kabam_obj)
-    
+
     return html
+
 
 def loop_html(thefile):
     reader = csv.reader(thefile.file.read().splitlines())
     header = reader.next()
     logger.info(header)
-    i=0
-    iter_html=""
+    i = 0
+    iter_html = ""
     for row in reader:
-        iter_html = iter_html +html_table(row,i)
-        i=i+1
-    sum_html = kabam_tables.table_all_sum(kabam_tables.sumheadings,kabam_tables.tmpl,l_kow,k_oc,c_wdp,water_column_EEC,mineau,x_poc,x_doc,c_ox,w_t,c_ss,oc,k_ow,
-                bw_quail,bw_duck,bwb_other,avian_ld50,avian_lc50,avian_noaec,bw_rat,bwm_other,mammalian_ld50,mammalian_lc50,mammalian_chronic_endpoint,
-                #Outputs
-                kabam_tables.sumheadings_out,acute_dose_based_m_array,acute_dose_based_a_array,chronic_dose_based_m_array,acute_rq_dose_m_array,acute_rq_dose_a_array,acute_rq_diet_a_array,chronic_rq_dose_m_array,chronic_rq_diet_m_array,chronic_rq_diet_a_array)
-    return sum_html+iter_html
+        iter_html = iter_html + html_table(row, i)
+        i = i + 1
+    sum_html = kabam_tables.table_all_sum(kabam_tables.sumheadings, kabam_tables.tmpl, l_kow, k_oc, c_wdp, water_column_EEC, mineau, x_poc, x_doc, c_ox, w_t, c_ss, oc, k_ow,
+                                          bw_quail, bw_duck, bwb_other, avian_ld50, avian_lc50, avian_noaec, bw_rat, bwm_other, mammalian_ld50, mammalian_lc50, mammalian_chronic_endpoint,
+                                          # Outputs
+                                          kabam_tables.sumheadings_out, acute_dose_based_m_array, acute_dose_based_a_array, chronic_dose_based_m_array, acute_rq_dose_m_array, acute_rq_dose_a_array, acute_rq_diet_a_array, chronic_rq_dose_m_array, chronic_rq_diet_m_array, chronic_rq_diet_a_array)
+    return sum_html + iter_html
 
-              
+
 @require_POST
 def kabamBatchOutputPage(request):
     thefile = request.FILES['upfile']
-    iter_html=loop_html(thefile)
- 
+    iter_html = loop_html(thefile)
+
     return iter_html, kabam_obj_all, jid_batch

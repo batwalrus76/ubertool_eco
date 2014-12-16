@@ -28,6 +28,7 @@ from boto.compat import json
 
 
 class Credentials(object):
+
     """
     :ivar access_key: The AccessKeyID.
     :ivar secret_key: The SecretAccessKey.
@@ -116,7 +117,7 @@ class Credentials(object):
         fp = open(file_path, 'wb')
         json.dump(self.to_dict(), fp)
         fp.close()
-        os.chmod(file_path, 0600)
+        os.chmod(file_path, 0o600)
 
     def is_expired(self, time_offset_seconds=0):
         """
@@ -141,6 +142,7 @@ class Credentials(object):
 
 
 class FederationToken(object):
+
     """
     :ivar credentials: A Credentials object containing the credentials.
     :ivar federated_user_arn: ARN specifying federated user using credentials.
@@ -178,10 +180,12 @@ class FederationToken(object):
 
 
 class AssumedRole(object):
+
     """
     :ivar user: The assumed role user.
     :ivar credentials: A Credentials object containing the credentials.
     """
+
     def __init__(self, connection=None, credentials=None, user=None):
         self._connection = connection
         self.credentials = credentials
@@ -200,10 +204,12 @@ class AssumedRole(object):
 
 
 class User(object):
+
     """
     :ivar arn: The arn of the user assuming the role.
     :ivar assume_role_id: The identifier of the assumed role.
     """
+
     def __init__(self, arn=None, assume_role_id=None):
         self.arn = arn
         self.assume_role_id = assume_role_id
@@ -219,10 +225,12 @@ class User(object):
 
 
 class DecodeAuthorizationMessage(object):
+
     """
     :ivar request_id: The request ID.
     :ivar decoded_message: The decoded authorization message (may be JSON).
     """
+
     def __init__(self, request_id=None, decoded_message=None):
         self.request_id = request_id
         self.decoded_message = decoded_message

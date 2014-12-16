@@ -29,6 +29,7 @@ from boto.resultset import ResultSet
 
 
 class OptionGroup(object):
+
     """
     Represents an RDS option group
 
@@ -55,6 +56,7 @@ class OptionGroup(object):
     :ivar options: The list of :py:class:`boto.rds.optiongroup.Option` objects
                    associated with the group
     """
+
     def __init__(self, connection=None, name=None, engine_name=None,
                  major_engine_version=None, description=None,
                  allow_both_vpc_and_nonvpc=False, vpc_id=None):
@@ -101,6 +103,7 @@ class OptionGroup(object):
 
 
 class Option(object):
+
     """
     Describes a Option for use in an OptionGroup
 
@@ -116,6 +119,7 @@ class Option(object):
                                this VPC Security Group allows access to the
                                port.
     """
+
     def __init__(self, name=None, description=None, permanent=False,
                  persistent=False, port=None, settings=None,
                  db_security_groups=None, vpc_security_groups=None):
@@ -178,6 +182,7 @@ class Option(object):
 
 
 class OptionSetting(object):
+
     """
     Describes a OptionSetting for use in an Option
 
@@ -243,9 +248,11 @@ class OptionSetting(object):
 
 
 class VpcSecurityGroup(object):
+
     """
     Describes a VPC security group for use in a OptionGroup
     """
+
     def __init__(self, vpc_id=None, status=None):
         self.vpc_id = vpc_id
         self.status = status
@@ -266,6 +273,7 @@ class VpcSecurityGroup(object):
 
 
 class OptionGroupOption(object):
+
     """
     Describes a OptionGroupOption for use in an OptionGroup
 
@@ -285,6 +293,7 @@ class OptionGroupOption(object):
     :ivar depends_on: List of all options that are prerequisites for this
                       option.
     """
+
     def __init__(self, name=None, description=None, engine_name=None,
                  major_engine_version=None, min_minor_engine_version=None,
                  permanent=False, persistent=False, port_required=False,
@@ -353,6 +362,7 @@ class OptionGroupOption(object):
 
 
 class OptionGroupOptionSetting(object):
+
     """
     Describes a OptionGroupOptionSetting for use in an OptionGroupOption.
 

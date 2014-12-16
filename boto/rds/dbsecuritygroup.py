@@ -24,7 +24,9 @@ Represents an DBSecurityGroup
 """
 from boto.ec2.securitygroup import SecurityGroup
 
+
 class DBSecurityGroup(object):
+
     """
     Represents an RDS database security group
 
@@ -43,6 +45,7 @@ class DBSecurityGroup(object):
     :ivar name: Name of the security group
     :ivar owner_id: ID of the owner of the security group. Can be 'None'
     """
+
     def __init__(self, connection=None, owner_id=None,
                  name=None, description=None):
         self.connection = connection
@@ -135,7 +138,9 @@ class DBSecurityGroup(object):
         return self.connection.revoke_dbsecurity_group(
             self.name, cidr_ip=cidr_ip)
 
+
 class IPRange(object):
+
     """
     Describes a CIDR address range for use in a DBSecurityGroup
 
@@ -161,7 +166,9 @@ class IPRange(object):
         else:
             setattr(self, name, value)
 
+
 class EC2SecurityGroup(object):
+
     """
     Describes an EC2 security group for use in a DBSecurityGroup
     """

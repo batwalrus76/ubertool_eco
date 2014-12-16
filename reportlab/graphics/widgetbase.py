@@ -1,8 +1,9 @@
-#Copyright ReportLab Europe Ltd. 2000-2012
-#see license.txt for license details
-#history http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/graphics/widgetbase.py
-__version__=''' $Id$ '''
-__doc__='''Base class for user-defined graphical widgets'''
+# Copyright ReportLab Europe Ltd. 2000-2012
+# see license.txt for license details
+# history
+# http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/graphics/widgetbase.py
+__version__ = ''' $Id$ '''
+__doc__ = '''Base class for user-defined graphical widgets'''
 
 from reportlab.graphics import shapes
 from reportlab import rl_config
@@ -10,7 +11,9 @@ from reportlab.lib import colors
 from reportlab.lib.validators import *
 from reportlab.lib.attrmap import *
 
+
 class PropHolder:
+
     '''Base for property holders'''
 
     _attrMap = None
@@ -34,7 +37,8 @@ class PropHolder:
                 assert hasattr(self, attr), msg
                 value = getattr(self, attr)
                 args = (value, attr, self.__class__.__name__)
-                assert metavalue.validate(value), "Invalid value %s for attribute %s in class %s" % args
+                assert metavalue.validate(
+                    value), "Invalid value %s for attribute %s in class %s" % args
 
     if rl_config.shapeChecking:
         """This adds the ability to check every attribute assignment
@@ -45,10 +49,9 @@ class PropHolder:
         def __setattr__(self, name, value):
             """By default we verify.  This could be off
             in some parallel base classes."""
-            validateSetattr(self,name,value)
+            validateSetattr(self, name, value)
 
-
-    def getProperties(self,recur=1):
+    def getProperties(self, recur=1):
         """Returns a list of all properties which can be edited and
         which are not marked as private. This may include 'child
         widgets' or 'primitive shapes'.  You are free to override
@@ -70,9 +73,9 @@ class PropHolder:
                     # child object, get its properties too
                     childProps = component.getProperties(recur=recur)
                     for childKey, childValue in childProps.items():
-                        #key might be something indexed like '[2].fillColor'
-                        #or simple like 'fillColor'; in the former case we
-                        #don't need a '.' between me and my child.
+                        # key might be something indexed like '[2].fillColor'
+                        # or simple like 'fillColor'; in the former case we
+                        # don't need a '.' between me and my child.
                         if childKey[0] == '[':
                             props['%s%s' % (name, childKey)] = childValue
                         else:
@@ -81,7 +84,6 @@ class PropHolder:
                     props[name] = component
 
         return props
-
 
     def setProperties(self, propDict):
         """Permits bulk setting of properties.  These may include
@@ -99,7 +101,7 @@ class PropHolder:
         for name, value in propDict.items():
             parts = name.split('.', 1)
             if len(parts) == 1:
-                #simple attribute, set it now
+                # simple attribute, set it now
                 setattr(self, name, value)
             else:
                 (childName, remains) = parts
@@ -113,15 +115,13 @@ class PropHolder:
             child = getattr(self, childName)
             child.setProperties(childPropDict)
 
-
     def dumpProperties(self, prefix=""):
         """Convenience. Lists them on standard output.  You
         may provide a prefix - mostly helps to generate code
         samples for documentation.
         """
 
-        propList = list(self.getProperties().items())
-        propList.sort()
+        propList = sorted(self.getProperties().items())
         if prefix:
             prefix = prefix + '.'
         for (name, value) in propList:
@@ -129,14 +129,15 @@ class PropHolder:
 
 
 class Widget(PropHolder, shapes.UserNode):
+
     """Base for all user-defined widgets.  Keep as simple as possible. Does
     not inherit from Shape so that we can rewrite shapes without breaking
     widgets and vice versa."""
 
-    def _setKeywords(self,**kw):
-        for k,v in kw.items():
+    def _setKeywords(self, **kw):
+        for k, v in kw.items():
             if k not in self.__dict__:
-                setattr(self,k,v)
+                setattr(self, k, v)
 
     def draw(self):
         msg = "draw() must be implemented for each Widget!"
@@ -153,37 +154,54 @@ class Widget(PropHolder, shapes.UserNode):
         "Return outer boundary as x1,y1,x2,y2.  Can be overridden for efficiency"
         return self.draw().getBounds()
 
+
 class ScaleWidget(Widget):
-    '''Contents with a scale and offset''' 
+
+    '''Contents with a scale and offset'''
     _attrMap = AttrMap(
-        x = AttrMapValue(isNumber,desc="x offset"),
-        y = AttrMapValue(isNumber,desc="y offset"),
-        scale = AttrMapValue(isNumber,desc="scale"),
-        contents = AttrMapValue(None,desc="Contained drawable elements"),
-        )
-    def __init__(self,x=0,y=0,scale=1.0,contents=None):
+        x=AttrMapValue(isNumber, desc="x offset"),
+        y=AttrMapValue(isNumber, desc="y offset"),
+        scale=AttrMapValue(isNumber, desc="scale"),
+        contents=AttrMapValue(None, desc="Contained drawable elements"),
+    )
+
+    def __init__(self, x=0, y=0, scale=1.0, contents=None):
         self.x = x
         self.y = y
-        if not contents: contents=[]
-        elif not isinstance(contents,(tuple,list)):
+        if not contents:
+            contents = []
+        elif not isinstance(contents, (tuple, list)):
             contents = (contents,)
         self.contents = list(contents)
         self.scale = scale
-    
-    def draw(self):
-        return shapes.Group(transform=(self.scale,0,0,self.scale,self.x,self.y),*self.contents)
 
-_ItemWrapper={}
+    def draw(self):
+        return shapes.Group(
+            transform=(
+                self.scale,
+                0,
+                0,
+                self.scale,
+                self.x,
+                self.y),
+            *self.contents)
+
+_ItemWrapper = {}
+
 
 class CloneMixin:
-    def clone(self,**kwds):
+
+    def clone(self, **kwds):
         n = self.__class__()
         n.__dict__.clear()
         n.__dict__.update(self.__dict__)
-        if kwds: n.__dict__.update(kwds)
+        if kwds:
+            n.__dict__.update(kwds)
         return n
 
+
 class TypedPropertyCollection(PropHolder):
+
     """A container with properties for objects of the same kind.
 
     This makes it easy to create lists of objects. You initialize
@@ -207,26 +225,27 @@ class TypedPropertyCollection(PropHolder):
     """
 
     def __init__(self, exampleClass):
-        #give it same validation rules as what it holds
+        # give it same validation rules as what it holds
         self.__dict__['_value'] = exampleClass()
         self.__dict__['_children'] = {}
 
-    def wKlassFactory(self,Klass):
-        class WKlass(Klass,CloneMixin):
-            def __getattr__(self,name):
+    def wKlassFactory(self, Klass):
+        class WKlass(Klass, CloneMixin):
+
+            def __getattr__(self, name):
                 try:
-                    return self.__class__.__bases__[0].__getattr__(self,name)
+                    return self.__class__.__bases__[0].__getattr__(self, name)
                 except:
                     i = self._index
                     if i:
                         c = self._parent._children
                         if i in c and name in c[i].__dict__:
-                            return getattr(c[i],name)
-                        elif len(i)==1:
+                            return getattr(c[i], name)
+                        elif len(i) == 1:
                             i = i[0]
                             if i in c and name in c[i].__dict__:
-                                return getattr(c[i],name)
-                    return getattr(self._parent,name)
+                                return getattr(c[i], name)
+                    return getattr(self._parent, name)
         return WKlass
 
     def __getitem__(self, index):
@@ -241,22 +260,28 @@ class TypedPropertyCollection(PropHolder):
 
             child = WKlass()
             child._parent = self
-            if type(index) in (type(()),type([])):
+            if type(index) in (type(()), type([])):
                 index = tuple(index)
-                if len(index)>1:
+                if len(index) > 1:
                     child._index = tuple(index[:-1])
                 else:
                     child._index = None
             else:
                 child._index = None
-            for i in filter(lambda x,K=list(child.__dict__.keys()): x in K,list(child._attrMap.keys())):
+            for i in filter(
+                lambda x,
+                K=list(
+                    child.__dict__.keys()): x in K,
+                list(
+                    child._attrMap.keys())):
                 del child.__dict__[i]
 
             self._children[index] = child
             return child
 
-    def __contains__(self,key):
-        if type(key) in (type(()),type([])): key = tuple(key)
+    def __contains__(self, key):
+        if type(key) in (type(()), type([])):
+            key = tuple(key)
         return key in self._children
 
     def __setitem__(self, key, value):
@@ -266,7 +291,7 @@ class TypedPropertyCollection(PropHolder):
     def __len__(self):
         return len(list(self._children.keys()))
 
-    def getProperties(self,recur=1):
+    def getProperties(self, recur=1):
         # return any children which are defined and whatever
         # differs from the parent
         props = {}
@@ -277,24 +302,27 @@ class TypedPropertyCollection(PropHolder):
         for idx in self._children.keys():
             childProps = self._children[idx].getProperties(recur=recur)
             for key, value in childProps.items():
-                if not hasattr(self,key) or getattr(self, key)!=value:
+                if not hasattr(self, key) or getattr(self, key) != value:
                     newKey = '[%s].%s' % (idx, key)
                     props[newKey] = value
         return props
 
-    def setVector(self,**kw):
+    def setVector(self, **kw):
         for name, value in kw.items():
             for i in range(len(value)):
-                setattr(self[i],name,value[i])
+                setattr(self[i], name, value[i])
 
-    def __getattr__(self,name):
-        return getattr(self._value,name)
+    def __getattr__(self, name):
+        return getattr(self._value, name)
 
-    def __setattr__(self,name,value):
-        return setattr(self._value,name,value)
+    def __setattr__(self, name, value):
+        return setattr(self._value, name, value)
 
-## No longer needed!
+# No longer needed!
+
+
 class StyleProperties(PropHolder):
+
     """A container class for attributes used in charts and legends.
 
     Attributes contained can be those for any graphical element
@@ -317,16 +345,36 @@ class StyleProperties(PropHolder):
     """
 
     _attrMap = AttrMap(
-        strokeWidth = AttrMapValue(isNumber,desc='width of the stroke line'),
-        strokeLineCap = AttrMapValue(isNumber,desc='Line cap 0=butt, 1=round & 2=square',advancedUsage=1),
-        strokeLineJoin = AttrMapValue(isNumber,desc='Line join 0=miter, 1=round & 2=bevel',advancedUsage=1),
-        strokeMiterLimit = AttrMapValue(None,desc='miter limit control miter line joins',advancedUsage=1),
-        strokeDashArray = AttrMapValue(isListOfNumbersOrNone,desc='dashing patterns e.g. (1,3)'),
-        strokeOpacity = AttrMapValue(isNumber,desc='level of transparency (alpha) accepts values between 0..1',advancedUsage=1),
-        strokeColor = AttrMapValue(isColorOrNone,desc='the color of the stroke'),
-        fillColor = AttrMapValue(isColorOrNone,desc='the filling color'),
-        desc = AttrMapValue(isString),
-        )
+        strokeWidth=AttrMapValue(
+            isNumber,
+            desc='width of the stroke line'),
+        strokeLineCap=AttrMapValue(
+            isNumber,
+            desc='Line cap 0=butt, 1=round & 2=square',
+            advancedUsage=1),
+        strokeLineJoin=AttrMapValue(
+            isNumber,
+            desc='Line join 0=miter, 1=round & 2=bevel',
+            advancedUsage=1),
+        strokeMiterLimit=AttrMapValue(
+            None,
+            desc='miter limit control miter line joins',
+            advancedUsage=1),
+        strokeDashArray=AttrMapValue(
+            isListOfNumbersOrNone,
+            desc='dashing patterns e.g. (1,3)'),
+        strokeOpacity=AttrMapValue(
+            isNumber,
+            desc='level of transparency (alpha) accepts values between 0..1',
+            advancedUsage=1),
+        strokeColor=AttrMapValue(
+            isColorOrNone,
+            desc='the color of the stroke'),
+        fillColor=AttrMapValue(
+            isColorOrNone,
+            desc='the filling color'),
+        desc=AttrMapValue(isString),
+    )
 
     def __init__(self, **kwargs):
         "Initialize with attributes if any."
@@ -334,22 +382,23 @@ class StyleProperties(PropHolder):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-
     def __setattr__(self, name, value):
         "Verify attribute name and value, before setting it."
-        validateSetattr(self,name,value)
+        validateSetattr(self, name, value)
 
 
 class TwoCircles(Widget):
+
     def __init__(self):
-        self.leftCircle = shapes.Circle(100,100,20, fillColor=colors.red)
-        self.rightCircle = shapes.Circle(300,100,20, fillColor=colors.red)
+        self.leftCircle = shapes.Circle(100, 100, 20, fillColor=colors.red)
+        self.rightCircle = shapes.Circle(300, 100, 20, fillColor=colors.red)
 
     def draw(self):
         return shapes.Group(self.leftCircle, self.rightCircle)
 
 
 class Face(Widget):
+
     """This draws a face with two eyes.
 
     It exposes a couple of properties
@@ -357,13 +406,13 @@ class Face(Widget):
     """
 
     _attrMap = AttrMap(
-        x = AttrMapValue(isNumber),
-        y = AttrMapValue(isNumber),
-        size = AttrMapValue(isNumber),
-        skinColor = AttrMapValue(isColorOrNone),
-        eyeColor = AttrMapValue(isColorOrNone),
-        mood = AttrMapValue(OneOf('happy','sad','ok')),
-        )
+        x=AttrMapValue(isNumber),
+        y=AttrMapValue(isNumber),
+        size=AttrMapValue(isNumber),
+        skinColor=AttrMapValue(isColorOrNone),
+        eyeColor=AttrMapValue(isColorOrNone),
+        mood=AttrMapValue(OneOf('happy', 'sad', 'ok')),
+    )
 
     def __init__(self):
         self.x = 10
@@ -379,18 +428,43 @@ class Face(Widget):
     def draw(self):
         s = self.size  # abbreviate as we will use this a lot
         g = shapes.Group()
-        g.transform = [1,0,0,1,self.x, self.y]
+        g.transform = [1, 0, 0, 1, self.x, self.y]
 
         # background
-        g.add(shapes.Circle(s * 0.5, s * 0.5, s * 0.5, fillColor=self.skinColor))
+        g.add(
+            shapes.Circle(
+                s * 0.5,
+                s * 0.5,
+                s * 0.5,
+                fillColor=self.skinColor))
 
         # left eye
-        g.add(shapes.Circle(s * 0.35, s * 0.65, s * 0.1, fillColor=colors.white))
-        g.add(shapes.Circle(s * 0.35, s * 0.65, s * 0.05, fillColor=self.eyeColor))
+        g.add(
+            shapes.Circle(
+                s * 0.35,
+                s * 0.65,
+                s * 0.1,
+                fillColor=colors.white))
+        g.add(
+            shapes.Circle(
+                s * 0.35,
+                s * 0.65,
+                s * 0.05,
+                fillColor=self.eyeColor))
 
         # right eye
-        g.add(shapes.Circle(s * 0.65, s * 0.65, s * 0.1, fillColor=colors.white))
-        g.add(shapes.Circle(s * 0.65, s * 0.65, s * 0.05, fillColor=self.eyeColor))
+        g.add(
+            shapes.Circle(
+                s * 0.65,
+                s * 0.65,
+                s * 0.1,
+                fillColor=colors.white))
+        g.add(
+            shapes.Circle(
+                s * 0.65,
+                s * 0.65,
+                s * 0.05,
+                fillColor=self.eyeColor))
 
         # nose
         g.add(shapes.Polygon(
@@ -406,21 +480,22 @@ class Face(Widget):
             offset = 0
 
         g.add(shapes.Polygon(
-            points = [
-                s * 0.3, s * 0.2, #left of mouth
-                s * 0.7, s * 0.2, #right of mouth
-                s * 0.6, s * (0.2 + offset), # the bit going up or down
-                s * 0.4, s * (0.2 + offset) # the bit going up or down
-                ],
-            fillColor = colors.pink,
-            strokeColor = colors.red,
-            strokeWidth = s * 0.03
-            ))
+            points=[
+                s * 0.3, s * 0.2,  # left of mouth
+                s * 0.7, s * 0.2,  # right of mouth
+                s * 0.6, s * (0.2 + offset),  # the bit going up or down
+                s * 0.4, s * (0.2 + offset)  # the bit going up or down
+            ],
+            fillColor=colors.pink,
+            strokeColor=colors.red,
+            strokeWidth=s * 0.03
+        ))
 
         return g
 
 
 class TwoFaces(Widget):
+
     def __init__(self):
         self.faceOne = Face()
         self.faceOne.mood = "happy"
@@ -437,12 +512,18 @@ class TwoFaces(Widget):
         no implementation needed here"""
         pass
 
+
 class Sizer(Widget):
+
     "Container to show size of all enclosed objects"
 
-    _attrMap = AttrMap(BASE=shapes.SolidShape,
-        contents = AttrMapValue(isListOfShapes,desc="Contained drawable elements"),
-        )
+    _attrMap = AttrMap(
+        BASE=shapes.SolidShape,
+        contents=AttrMapValue(
+            isListOfShapes,
+            desc="Contained drawable elements"),
+    )
+
     def __init__(self, *elements):
         self.contents = []
         self.fillColor = colors.cyan
@@ -451,7 +532,7 @@ class Sizer(Widget):
         for elem in elements:
             self.add(elem)
 
-    def _addNamedNode(self,name,node):
+    def _addNamedNode(self, name, node):
         'if name is not None add an attribute pointing to node and add to the attrMap'
         if name:
             if name not in list(self._attrMap.keys()):
@@ -464,9 +545,10 @@ class Sizer(Widget):
         """
         # propagates properties down
         if node is not None:
-            assert isValidChild(node), "Can only add Shape or UserNode objects to a Group"
+            assert isValidChild(
+                node), "Can only add Shape or UserNode objects to a Group"
             self.contents.append(node)
-            self._addNamedNode(name,node)
+            self._addNamedNode(name, node)
 
     def getBounds(self):
         # get bounds of each object
@@ -476,29 +558,30 @@ class Sizer(Widget):
                 b.append(elem.getBounds())
             return shapes.getRectsBounds(b)
         else:
-            return (0,0,0,0)
+            return (0, 0, 0, 0)
 
     def draw(self):
         g = shapes.Group()
         (x1, y1, x2, y2) = self.getBounds()
         r = shapes.Rect(
-            x = x1,
-            y = y1,
-            width = x2-x1,
-            height = y2-y1,
-            fillColor = self.fillColor,
-            strokeColor = self.strokeColor
-            )
+            x=x1,
+            y=y1,
+            width=x2 - x1,
+            height=y2 - y1,
+            fillColor=self.fillColor,
+            strokeColor=self.strokeColor
+        )
         g.add(r)
         for elem in self.contents:
             g.add(elem)
         return g
 
+
 def test():
     from reportlab.graphics.charts.piecharts import WedgeProperties
     wedges = TypedPropertyCollection(WedgeProperties)
     wedges.fillColor = colors.red
-    wedges.setVector(fillColor=(colors.blue,colors.green,colors.white))
+    wedges.setVector(fillColor=(colors.blue, colors.green, colors.white))
     print(len(_ItemWrapper))
 
     d = shapes.Drawing(400, 200)
@@ -525,5 +608,5 @@ def test():
     d2.dumpProperties()
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     test()

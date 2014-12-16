@@ -28,6 +28,7 @@ from boto.exception import SQSDecodeError
 
 
 class BigMessage(RawMessage):
+
     """
     The BigMessage class provides large payloads (up to 5GB)
     by storing the payload itself in S3 and then placing a reference
@@ -116,4 +117,3 @@ class BigMessage(RawMessage):
             key = self._get_s3_object(self.s3_url)
             key.delete()
         super(BigMessage, self).delete()
-

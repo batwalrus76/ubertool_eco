@@ -5,20 +5,22 @@
 
 from django.template.loader import render_to_string
 
+
 def trex2InputPage(request, model='', header='', formData=None):
     import trex2_parameters
 
-    html = render_to_string('04uberinput_jquery.html', { 'model': model })
+    html = render_to_string('04uberinput_jquery.html', {'model': model})
     html = html + render_to_string('04uberinput_start_tabbed.html', {
-            'model':model, 
-            'model_attributes': header+' Inputs'})
-    html = html + """<a href="../trex" class="TREX1"> Want to Use TREX 1.4.1?</a>"""
+        'model': model,
+        'model_attributes': header + ' Inputs'})
+    html = html + \
+        """<a href="../trex" class="TREX1"> Want to Use TREX 1.4.1?</a>"""
     html = html + render_to_string('04uberinput_tabbed_nav.html', {
-            'nav_dict': {
-                'class_name': ['Chemical', 'Avian', 'Mammal'],
-                'tab_label': ['Chemical', 'Avian', 'Mammal']
-                }
-            })
+        'nav_dict': {
+            'class_name': ['Chemical', 'Avian', 'Mammal'],
+            'tab_label': ['Chemical', 'Avian', 'Mammal']
+        }
+    })
     html = html + """<br><table class="input_table tab tab_Chemical">"""
     html = html + str(trex2_parameters.trexInp_chem(formData))
     html = html + """</table><table class="input_table tab tab_Application tab_Chemical">
@@ -36,12 +38,15 @@ def trex2InputPage(request, model='', header='', formData=None):
                                     <td><input name="jm1" type="text" size="5" value="1"/></td>
                                     <td><input type="text" size="5" name="rate1" id="id_rate1" value="4"/></td>
                                     <td><input type="text" size="5" name="day1" id="id_day1" value="0" /></td>
-                                </tr>""" 
-    html = html + """</table><table class="input_table tab tab_Avian" style="display:none">"""
+                                </tr>"""
+    html = html + \
+        """</table><table class="input_table tab tab_Avian" style="display:none">"""
     html = html + str(trex2_parameters.trexInp_bird(formData))
-    html = html + """</table><table class="input_table tab tab_Mammal" style="display:none">"""
+    html = html + \
+        """</table><table class="input_table tab tab_Mammal" style="display:none">"""
     html = html + str(trex2_parameters.trexInp_mammal(formData))
-    html = html + render_to_string('04uberinput_tabbed_end.html', {'sub_title': 'Submit'})
+    html = html + \
+        render_to_string('04uberinput_tabbed_end.html', {'sub_title': 'Submit'})
     # Check if tooltips dictionary exists
     try:
         import trex2_tooltips
@@ -49,6 +54,7 @@ def trex2InputPage(request, model='', header='', formData=None):
         tooltips = trex2_tooltips.tooltips
     except:
         tooltips = {}
-    html = html + render_to_string('05ubertext_tooltips_right.html', {'tooltips':tooltips})
+    html = html + \
+        render_to_string('05ubertext_tooltips_right.html', {'tooltips': tooltips})
 
     return html

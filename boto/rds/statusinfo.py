@@ -21,12 +21,19 @@
 # IN THE SOFTWARE.
 #
 
+
 class StatusInfo(object):
+
     """
     Describes a status message.
     """
 
-    def __init__(self, status_type=None, normal=None, status=None, message=None):
+    def __init__(
+            self,
+            status_type=None,
+            normal=None,
+            status=None,
+            message=None):
         self.status_type = status_type
         self.normal = normal
         self.status = status

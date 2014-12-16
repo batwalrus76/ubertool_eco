@@ -21,6 +21,7 @@
 
 
 class AccountAttribute(object):
+
     def __init__(self, connection=None):
         self.connection = connection
         self.attribute_name = None
@@ -37,6 +38,7 @@ class AccountAttribute(object):
 
 
 class AttributeValues(list):
+
     def startElement(self, name, attrs, connection):
         pass
 
@@ -46,6 +48,7 @@ class AttributeValues(list):
 
 
 class VPCAttribute(object):
+
     def __init__(self, connection=None):
         self.connection = connection
         self.vpc_id = None

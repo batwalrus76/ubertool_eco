@@ -22,6 +22,7 @@
 
 
 class Rule(object):
+
     """
     A Lifecycle rule for an S3 bucket.
 
@@ -43,6 +44,7 @@ class Rule(object):
         when to transition to a different storage class.
 
     """
+
     def __init__(self, id=None, prefix=None, status=None, expiration=None,
                  transition=None):
         self.id = id
@@ -91,7 +93,9 @@ class Rule(object):
         s += '</Rule>'
         return s
 
+
 class Expiration(object):
+
     """
     When an object will expire.
 
@@ -100,6 +104,7 @@ class Expiration(object):
     :ivar date: The date when the object will expire. Must be
         in ISO 8601 format.
     """
+
     def __init__(self, days=None, date=None):
         self.days = days
         self.date = date
@@ -129,7 +134,9 @@ class Expiration(object):
         s += '</Expiration>'
         return s
 
+
 class Transition(object):
+
     """
     A transition to a different storage class.
 
@@ -142,6 +149,7 @@ class Transition(object):
         values are GLACIER.
 
     """
+
     def __init__(self, days=None, date=None, storage_class=None):
         self.days = days
         self.date = date
@@ -175,7 +183,9 @@ class Transition(object):
         s += '</Transition>'
         return s
 
+
 class Lifecycle(list):
+
     """
     A container for the rules associated with a Lifecycle configuration.
     """
@@ -230,7 +240,7 @@ class Lifecycle(list):
 
         :type transition: Transition
         :param transition: Indicates when an object transitions to a
-            different storage class. 
+            different storage class.
         """
         rule = Rule(id, prefix, status, expiration, transition)
         self.append(rule)

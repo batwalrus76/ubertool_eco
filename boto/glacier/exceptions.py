@@ -24,6 +24,7 @@ from boto.compat import json
 
 
 class UnexpectedHTTPResponseError(Exception):
+
     def __init__(self, expected_responses, response):
         self.status = response.status
         self.body = response.read()

@@ -44,12 +44,20 @@ class CloudFrontConnection(AWSAuthConnection):
                  port=None, proxy=None, proxy_port=None,
                  host=DefaultHost, debug=0, security_token=None,
                  validate_certs=True, profile_name=None):
-        super(CloudFrontConnection, self).__init__(host,
-                                   aws_access_key_id, aws_secret_access_key,
-                                   True, port, proxy, proxy_port, debug=debug,
-                                   security_token=security_token,
-                                   validate_certs=validate_certs, 
-                                   profile_name=profile_name)
+        super(
+            CloudFrontConnection,
+            self).__init__(
+            host,
+            aws_access_key_id,
+            aws_secret_access_key,
+            True,
+            port,
+            proxy,
+            proxy_port,
+            debug=debug,
+            security_token=security_token,
+            validate_certs=validate_certs,
+            profile_name=profile_name)
 
     def get_etag(self, response):
         response_headers = response.msg
@@ -210,7 +218,7 @@ class CloudFrontConnection(AWSAuthConnection):
 
     def get_all_origin_access_identity(self):
         tags = [('CloudFrontOriginAccessIdentitySummary',
-               OriginAccessIdentitySummary)]
+                 OriginAccessIdentitySummary)]
         return self._get_all_objects('origin-access-identity/cloudfront', tags)
 
     def get_origin_access_identity_info(self, access_id):
@@ -262,7 +270,7 @@ class CloudFrontConnection(AWSAuthConnection):
             raise CloudFrontServerError(response.status, response.reason, body)
 
     def invalidation_request_status(self, distribution_id,
-                                     request_id, caller_reference=None):
+                                    request_id, caller_reference=None):
         uri = '/%s/distribution/%s/invalidation/%s' % (self.Version,
                                                        distribution_id,
                                                        request_id)
@@ -317,7 +325,7 @@ class CloudFrontConnection(AWSAuthConnection):
             uri += '?%s=%s' % params.popitem()
             for k, v in params.items():
                 uri += '&%s=%s' % (k, v)
-        tags=[('InvalidationSummary', InvalidationSummary)]
+        tags = [('InvalidationSummary', InvalidationSummary)]
         rs_class = InvalidationListResultSet
         rs_kwargs = dict(connection=self, distribution_id=distribution_id,
                          max_items=max_items, marker=marker)

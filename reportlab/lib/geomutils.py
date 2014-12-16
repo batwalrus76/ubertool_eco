@@ -1,7 +1,8 @@
-#Copyright ReportLab Europe Ltd. 2000-2012
-#see license.txt for license details
-__version__=''' $Id$ '''
-__doc__='''Utility functions for geometrical operations.'''
+# Copyright ReportLab Europe Ltd. 2000-2012
+# see license.txt for license details
+__version__ = ''' $Id$ '''
+__doc__ = '''Utility functions for geometrical operations.'''
+
 
 def normalizeTRBL(p):
     '''
@@ -22,8 +23,10 @@ def normalizeTRBL(p):
     (1, 1.2, 0, 8)
     '''
     if not isinstance(p, (tuple, list)):
-        return (p,)*4
+        return (p,) * 4
     l = len(p)
     if l < 2 or l > 4:
-        raise ValueError('A padding must have between 2 and 4 values but got %d.' % l)
-    return tuple(p) + tuple([ p[i-2] for i in range(l, 4) ])
+        raise ValueError(
+            'A padding must have between 2 and 4 values but got %d.' %
+            l)
+    return tuple(p) + tuple([p[i - 2] for i in range(l, 4)])

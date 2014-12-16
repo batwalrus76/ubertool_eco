@@ -32,6 +32,7 @@ class ComplexType(dict):
 
 
 class DeclarativeType(object):
+
     def __init__(self, _hint=None, **kw):
         self._value = None
         if _hint is not None:
@@ -72,6 +73,7 @@ class DeclarativeType(object):
 
 
 class Element(DeclarativeType):
+
     def start(self, *args, **kw):
         self._value = self._hint(parent=self._parent, **kw)
         return self._value
@@ -81,6 +83,7 @@ class Element(DeclarativeType):
 
 
 class SimpleList(DeclarativeType):
+
     def __init__(self, *args, **kw):
         super(SimpleList, self).__init__(*args, **kw)
         self._value = []
@@ -93,6 +96,7 @@ class SimpleList(DeclarativeType):
 
 
 class ElementList(SimpleList):
+
     def start(self, *args, **kw):
         value = self._hint(parent=self._parent, **kw)
         self._value.append(value)
@@ -103,12 +107,19 @@ class ElementList(SimpleList):
 
 
 class MemberList(Element):
+
     def __init__(self, _member=None, _hint=None, *args, **kw):
-        message = 'Invalid `member` specification in {0}'.format(self.__class__.__name__)
+        message = 'Invalid `member` specification in {0}'.format(
+            self.__class__.__name__)
         assert 'member' not in kw, message
         if _member is None:
             if _hint is None:
-                super(MemberList, self).__init__(*args, member=ElementList(**kw))
+                super(
+                    MemberList,
+                    self).__init__(
+                    *args,
+                    member=ElementList(
+                        **kw))
             else:
                 super(MemberList, self).__init__(_hint=_hint)
         else:
@@ -119,8 +130,9 @@ class MemberList(Element):
                     member = ElementList(_member, **kw)
                 super(MemberList, self).__init__(*args, member=member)
             else:
-                message = 'Nonsensical {0} hint {1!r}'.format(self.__class__.__name__,
-                                                              _hint)
+                message = 'Nonsensical {0} hint {1!r}'.format(
+                    self.__class__.__name__,
+                    _hint)
                 raise AssertionError(message)
 
     def teardown(self, *args, **kw):
@@ -339,7 +351,8 @@ class ListInboundShipmentItemsResult(ResponseElement):
     ItemData = MemberList()
 
 
-class ListInboundShipmentItemsByNextTokenResult(ListInboundShipmentItemsResult):
+class ListInboundShipmentItemsByNextTokenResult(
+        ListInboundShipmentItemsResult):
     pass
 
 
@@ -388,6 +401,7 @@ class ComplexMoney(ComplexAmount):
 
 
 class ComplexWeight(ResponseElement):
+
     def __repr__(self):
         return '{0} {1}'.format(self.Value, self.Unit)
 
@@ -472,7 +486,8 @@ class ListAllFulfillmentOrdersResult(ResponseElement):
     FulfillmentOrders = MemberList(FulfillmentOrder)
 
 
-class ListAllFulfillmentOrdersByNextTokenResult(ListAllFulfillmentOrdersResult):
+class ListAllFulfillmentOrdersByNextTokenResult(
+        ListAllFulfillmentOrdersResult):
     pass
 
 
@@ -667,5 +682,6 @@ class ListMarketplaceParticipationsResult(ResponseElement):
     ListMarketplaces = Element(Marketplace=ElementList())
 
 
-class ListMarketplaceParticipationsByNextTokenResult(ListMarketplaceParticipationsResult):
+class ListMarketplaceParticipationsByNextTokenResult(
+        ListMarketplaceParticipationsResult):
     pass

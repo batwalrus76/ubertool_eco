@@ -1,7 +1,7 @@
-#Copyright ReportLab Europe Ltd. 2000-2012
-#see license.txt for license details
-__version__=''' $Id$ '''
-__doc__="""
+# Copyright ReportLab Europe Ltd. 2000-2012
+# see license.txt for license details
+__version__ = ''' $Id$ '''
+__doc__ = """
 Module to analyze Python source code; for syntax coloring tools.
 
 Interface::
@@ -37,6 +37,8 @@ __version__ = "0.4"
 import re
 
 # First a little helper, since I don't like to repeat things. (Tismer speaking)
+
+
 def replace(src, sep, rep):
     return rep.join(src.split(sep))
 
@@ -96,7 +98,7 @@ idKeyPat = "[ \t]*[A-Za-z_][A-Za-z_0-9.]*"  # Ident w. leading whitespace.
 idRE = re.compile(idKeyPat)
 
 
-def fontify(pytext, searchfrom = 0, searchto = None):
+def fontify(pytext, searchfrom=0, searchto=None):
     if searchto is None:
         searchto = len(pytext)
     # Cache a few attributes for quicker reference.
@@ -112,7 +114,7 @@ def fontify(pytext, searchfrom = 0, searchto = None):
 
     start = 0
     end = searchfrom
-    while 1:
+    while True:
         m = search(pytext, end)
         if m is None:
             break   # EXIT LOOP

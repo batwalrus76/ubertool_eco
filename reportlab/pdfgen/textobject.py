@@ -1,8 +1,9 @@
-#Copyright ReportLab Europe Ltd. 2000-2012
-#see license.txt for license details
-#history http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/pdfgen/textobject.py
-__version__=''' $Id$ '''
-__doc__="""
+# Copyright ReportLab Europe Ltd. 2000-2012
+# see license.txt for license details
+# history
+# http://www.reportlab.co.uk/cgi-bin/viewcvs.cgi/public/reportlab/trunk/reportlab/pdfgen/textobject.py
+__version__ = ''' $Id$ '''
+__doc__ = """
 PDFTextObject is an efficient way to add text to a Canvas. Do not
 instantiate directly, obtain one from the Canvas instead.
 
@@ -21,46 +22,49 @@ log2vis = None
 if rtlSupport:
     try:
         from pyfribidi2 import log2vis, ON as DIR_ON, LTR as DIR_LTR, RTL as DIR_RTL
-        directionsMap = dict(LTR=DIR_LTR,RTL=DIR_RTL)
+        directionsMap = dict(LTR=DIR_LTR, RTL=DIR_RTL)
     except:
         import warnings
         warnings.warn('pyfribidi is not installed - RTL not supported')
 
+
 class _PDFColorSetter:
+
     '''Abstracts the color setting operations; used in Canvas and Textobject
     asseumes we have a _code object'''
-    def _checkSeparation(self,cmyk):
-        if isinstance(cmyk,CMYKColorSep):
-            name,sname = self._doc.addColor(cmyk)
+
+    def _checkSeparation(self, cmyk):
+        if isinstance(cmyk, CMYKColorSep):
+            name, sname = self._doc.addColor(cmyk)
             if name not in self._colorsUsed:
                 self._colorsUsed[name] = sname
             return name
 
-    #if this is set to a callable(color) --> color it can be used to check color setting
-    #see eg _enforceCMYK/_enforceRGB
+    # if this is set to a callable(color) --> color it can be used to check color setting
+    # see eg _enforceCMYK/_enforceRGB
     _enforceColorSpace = None
 
     def setFillColorCMYK(self, c, m, y, k, alpha=None):
-         """set the fill color useing negative color values
-         (cyan, magenta, yellow and darkness value).
-         Takes 4 arguments between 0.0 and 1.0"""
-         self.setFillColor((c,m,y,k),alpha=alpha)
+        """set the fill color useing negative color values
+        (cyan, magenta, yellow and darkness value).
+        Takes 4 arguments between 0.0 and 1.0"""
+        self.setFillColor((c, m, y, k), alpha=alpha)
 
     def setStrokeColorCMYK(self, c, m, y, k, alpha=None):
-         """set the stroke color useing negative color values
-            (cyan, magenta, yellow and darkness value).
-            Takes 4 arguments between 0.0 and 1.0"""
-         self.setStrokeColor((c,m,y,k),alpha=alpha)
+        """set the stroke color useing negative color values
+           (cyan, magenta, yellow and darkness value).
+           Takes 4 arguments between 0.0 and 1.0"""
+        self.setStrokeColor((c, m, y, k), alpha=alpha)
 
     def setFillColorRGB(self, r, g, b, alpha=None):
         """Set the fill color using positive color description
            (Red,Green,Blue).  Takes 3 arguments between 0.0 and 1.0"""
-        self.setFillColor((r,g,b),alpha=alpha)
+        self.setFillColor((r, g, b), alpha=alpha)
 
     def setStrokeColorRGB(self, r, g, b, alpha=None):
         """Set the stroke color using positive color description
            (Red,Green,Blue).  Takes 3 arguments between 0.0 and 1.0"""
-        self.setStrokeColor((r,g,b),alpha=alpha)
+        self.setStrokeColor((r, g, b), alpha=alpha)
 
     def setFillColor(self, aColor, alpha=None):
         """Takes a color object, allowing colors to be referred to by name"""
@@ -68,23 +72,27 @@ class _PDFColorSetter:
             aColor = self._enforceColorSpace(aColor)
         if isinstance(aColor, CMYKColor):
             d = aColor.density
-            c,m,y,k = (d*aColor.cyan, d*aColor.magenta, d*aColor.yellow, d*aColor.black)
+            c, m, y, k = (d *
+                          aColor.cyan, d *
+                          aColor.magenta, d *
+                          aColor.yellow, d *
+                          aColor.black)
             self._fillColorObj = aColor
             name = self._checkSeparation(aColor)
             if name:
-                self._code.append('/%s cs %s scn' % (name,fp_str(d)))
+                self._code.append('/%s cs %s scn' % (name, fp_str(d)))
             else:
                 self._code.append('%s k' % fp_str(c, m, y, k))
         elif isinstance(aColor, Color):
             rgb = (aColor.red, aColor.green, aColor.blue)
             self._fillColorObj = aColor
-            self._code.append('%s rg' % fp_str(rgb) )
-        elif isinstance(aColor,(tuple,list)):
+            self._code.append('%s rg' % fp_str(rgb))
+        elif isinstance(aColor, (tuple, list)):
             l = len(aColor)
-            if l==3:
+            if l == 3:
                 self._fillColorObj = aColor
-                self._code.append('%s rg' % fp_str(aColor) )
-            elif l==4:
+                self._code.append('%s rg' % fp_str(aColor))
+            elif l == 4:
                 self._fillColorObj = aColor
                 self._code.append('%s k' % fp_str(aColor))
             else:
@@ -104,23 +112,27 @@ class _PDFColorSetter:
             aColor = self._enforceColorSpace(aColor)
         if isinstance(aColor, CMYKColor):
             d = aColor.density
-            c,m,y,k = (d*aColor.cyan, d*aColor.magenta, d*aColor.yellow, d*aColor.black)
+            c, m, y, k = (d *
+                          aColor.cyan, d *
+                          aColor.magenta, d *
+                          aColor.yellow, d *
+                          aColor.black)
             self._strokeColorObj = aColor
             name = self._checkSeparation(aColor)
             if name:
-                self._code.append('/%s CS %s SCN' % (name,fp_str(d)))
+                self._code.append('/%s CS %s SCN' % (name, fp_str(d)))
             else:
                 self._code.append('%s K' % fp_str(c, m, y, k))
         elif isinstance(aColor, Color):
             rgb = (aColor.red, aColor.green, aColor.blue)
             self._strokeColorObj = aColor
-            self._code.append('%s RG' % fp_str(rgb) )
-        elif isinstance(aColor,(tuple,list)):
+            self._code.append('%s RG' % fp_str(rgb))
+        elif isinstance(aColor, (tuple, list)):
             l = len(aColor)
-            if l==3:
+            if l == 3:
                 self._strokeColorObj = aColor
-                self._code.append('%s RG' % fp_str(aColor) )
-            elif l==4:
+                self._code.append('%s RG' % fp_str(aColor))
+            elif l == 4:
                 self._strokeColorObj = aColor
                 self._code.append('%s K' % fp_str(aColor))
             else:
@@ -148,26 +160,28 @@ class _PDFColorSetter:
         if alpha is not None:
             self.setFillAlpha(alpha)
 
-    def setStrokeAlpha(self,a):
-        if not (isinstance(a,(float,int)) and 0<=a<=1):
+    def setStrokeAlpha(self, a):
+        if not (isinstance(a, (float, int)) and 0 <= a <= 1):
             raise ValueError('setStrokeAlpha invalid value %r' % a)
-        getattr(self,'_setStrokeAlpha',lambda x: None)(a)
+        getattr(self, '_setStrokeAlpha', lambda x: None)(a)
 
-    def setFillAlpha(self,a):
-        if not (isinstance(a,(float,int)) and 0<=a<=1):
+    def setFillAlpha(self, a):
+        if not (isinstance(a, (float, int)) and 0 <= a <= 1):
             raise ValueError('setFillAlpha invalid value %r' % a)
-        getattr(self,'_setFillAlpha',lambda x: None)(a)
+        getattr(self, '_setFillAlpha', lambda x: None)(a)
 
-    def setStrokeOverprint(self,a):
-        getattr(self,'_setStrokeOverprint',lambda x: None)(a)
+    def setStrokeOverprint(self, a):
+        getattr(self, '_setStrokeOverprint', lambda x: None)(a)
 
-    def setFillOverprint(self,a):
-        getattr(self,'_setFillOverprint',lambda x: None)(a)
+    def setFillOverprint(self, a):
+        getattr(self, '_setFillOverprint', lambda x: None)(a)
 
-    def setOverprintMask(self,a):
-        getattr(self,'_setOverprintMask',lambda x: None)(a)
+    def setOverprintMask(self, a):
+        getattr(self, '_setOverprintMask', lambda x: None)(a)
+
 
 class PDFTextObject(_PDFColorSetter):
+
     """PDF logically separates text and graphics drawing; text
     operations need to be bracketed between BT (Begin text) and
     ET operators. This class ensures text operations are
@@ -178,15 +192,15 @@ class PDFTextObject(_PDFColorSetter):
 
     It keeps track of x and y coordinates relative to its origin."""
 
-    def __init__(self, canvas, x=0,y=0, direction=None):
-        self._code = ['BT']    #no point in [] then append RGB
-        self._canvas = canvas  #canvas sets this so it has access to size info
+    def __init__(self, canvas, x=0, y=0, direction=None):
+        self._code = ['BT']  # no point in [] then append RGB
+        self._canvas = canvas  # canvas sets this so it has access to size info
         self._fontname = self._canvas._fontname
         self._fontsize = self._canvas._fontsize
         self._leading = self._canvas._leading
         self._doc = self._canvas._doc
         self._colorsUsed = self._canvas._colorsUsed
-        self._enforceColorSpace = getattr(canvas,'_enforceColorSpace',None)
+        self._enforceColorSpace = getattr(canvas, '_enforceColorSpace', None)
         font = pdfmetrics.getFont(self._fontname)
         self._curSubset = -1
         self.direction = direction
@@ -198,14 +212,14 @@ class PDFTextObject(_PDFColorSetter):
         "pack onto one line; used internally"
         self._code.append('ET')
         if self._clipping:
-            self._code.append('%d Tr' % (self._textRenderMode^4))
+            self._code.append('%d Tr' % (self._textRenderMode ^ 4))
         return ' '.join(self._code)
 
     def setTextOrigin(self, x, y):
         if self._canvas.bottomup:
-            self._code.append('1 0 0 1 %s Tm' % fp_str(x, y)) #bottom up
+            self._code.append('1 0 0 1 %s Tm' % fp_str(x, y))  # bottom up
         else:
-            self._code.append('1 0 0 -1 %s Tm' % fp_str(x, y))  #top down
+            self._code.append('1 0 0 -1 %s Tm' % fp_str(x, y))  # top down
 
         # The current cursor position is at the text origin
         self._x0 = self._x = x
@@ -214,7 +228,7 @@ class PDFTextObject(_PDFColorSetter):
     def setTextTransform(self, a, b, c, d, e, f):
         "Like setTextOrigin, but does rotation, scaling etc."
         if not self._canvas.bottomup:
-            c = -c    #reverse bottom row of the 2D Transform
+            c = -c  # reverse bottom row of the 2D Transform
             d = -d
         self._code.append('%s Tm' % fp_str(a, b, c, d, e, f))
 
@@ -235,9 +249,9 @@ class PDFTextObject(_PDFColorSetter):
 
         # Check if we have a previous move cursor call, and combine
         # them if possible.
-        if self._code and self._code[-1][-3:]==' Td':
+        if self._code and self._code[-1][-3:] == ' Td':
             L = self._code[-1].split()
-            if len(L)==3:
+            if len(L) == 3:
                 del self._code[-1]
             else:
                 self._code[-1] = ''.join(L[:-4])
@@ -269,7 +283,7 @@ class PDFTextObject(_PDFColorSetter):
         """Starts a new line dx away from the start of the
         current line - NOT from the current point! So if
         you call it in mid-sentence, watch out."""
-        self.moveCursor(dx,0)
+        self.moveCursor(dx, 0)
 
     def getCursor(self):
         """Returns current text position relative to the last origin."""
@@ -303,7 +317,7 @@ class PDFTextObject(_PDFColorSetter):
             pdffontname = self._canvas._doc.getInternalFontName(psfontname)
             self._code.append('%s %s Tf' % (pdffontname, fp_str(size)))
 
-    def setFont(self, psfontname, size, leading = None):
+    def setFont(self, psfontname, size, leading=None):
         """Sets the font.  If leading not specified, defaults to 1.2 x
         font size. Raises a readable exception if an illegal font
         is supplied.  Font names are case-sensitive! Keeps track
@@ -318,12 +332,14 @@ class PDFTextObject(_PDFColorSetter):
             self._curSubset = -1
         else:
             pdffontname = self._canvas._doc.getInternalFontName(psfontname)
-            self._code.append('%s %s Tf %s TL' % (pdffontname, fp_str(size), fp_str(leading)))
+            self._code.append(
+                '%s %s Tf %s TL' %
+                (pdffontname, fp_str(size), fp_str(leading)))
 
     def setCharSpace(self, charSpace):
-         """Adjusts inter-character spacing"""
-         self._charSpace = charSpace
-         self._code.append('%s Tc' % fp_str(charSpace))
+        """Adjusts inter-character spacing"""
+        self._charSpace = charSpace
+        self._code.append('%s Tc' % fp_str(charSpace))
 
     def setWordSpace(self, wordSpace):
         """Adjust inter-word spacing.  This can be used
@@ -357,11 +373,12 @@ class PDFTextObject(_PDFColorSetter):
         after we start clipping we mustn't change the mode back until after the ET
         """
 
-        assert mode in (0,1,2,3,4,5,6,7), "mode must be in (0,1,2,3,4,5,6,7)"
-        if (mode & 4)!=self._clipping:
+        assert mode in (
+            0, 1, 2, 3, 4, 5, 6, 7), "mode must be in (0,1,2,3,4,5,6,7)"
+        if (mode & 4) != self._clipping:
             mode |= 4
             self._clipping = mode & 4
-        if self._textRenderMode!=mode:
+        if self._textRenderMode != mode:
             self._textRenderMode = mode
             self._code.append('%d Tr' % mode)
 
@@ -373,54 +390,82 @@ class PDFTextObject(_PDFColorSetter):
 
     def _formatText(self, text):
         "Generates PDF text output operator(s)"
-        if log2vis and self.direction in ('LTR','RTL'):
+        if log2vis and self.direction in ('LTR', 'RTL'):
             # Use pyfribidi to write the text in the correct visual order.
-            text = log2vis(text, directionsMap.get(self.direction.upper(),DIR_ON))
+            text = log2vis(
+                text,
+                directionsMap.get(
+                    self.direction.upper(),
+                    DIR_ON))
         canv = self._canvas
         font = pdfmetrics.getFont(self._fontname)
         R = []
         if font._dynamicFont:
-            #it's a truetype font and should be utf8.  If an error is raised,
+            # it's a truetype font and should be utf8.  If an error is raised,
             for subset, t in font.splitString(text, canv._doc):
-                if subset!=self._curSubset:
+                if subset != self._curSubset:
                     pdffontname = font.getSubsetInternalName(subset, canv._doc)
-                    R.append("%s %s Tf %s TL" % (pdffontname, fp_str(self._fontsize), fp_str(self._leading)))
+                    R.append(
+                        "%s %s Tf %s TL" %
+                        (pdffontname, fp_str(
+                            self._fontsize), fp_str(
+                            self._leading)))
                     self._curSubset = subset
                 R.append("(%s) Tj" % canv._escape(t))
         elif font._multiByte:
-            #all the fonts should really work like this - let them know more about PDF...
+            # all the fonts should really work like this - let them know more
+            # about PDF...
             R.append("%s %s Tf %s TL" % (
                 canv._doc.getInternalFontName(font.fontName),
                 fp_str(self._fontsize),
                 fp_str(self._leading)
-                ))
+            ))
             R.append("(%s) Tj" % font.formatForPdf(text))
         else:
-            #convert to T1  coding
+            # convert to T1  coding
             fc = font
             if isBytes(text):
                 try:
                     text = text.decode('utf8')
                 except UnicodeDecodeError as e:
-                    i,j = e.args[2:4]
-                    raise UnicodeDecodeError(*(e.args[:4]+('%s\n%s-->%s<--%s' % (e.args[4],text[max(i-10,0):i],text[i:j],text[j:j+10]),)))
+                    i, j = e.args[2:4]
+                    raise UnicodeDecodeError(*
+                                             (e.args[:4] +
+                                              ('%s\n%s-->%s<--%s' %
+                                               (e.args[4], text[max(i -
+                                                                    10, 0):i], text[i:j], text[j:j +
+                                                                                               10]),)))
 
-            for f, t in pdfmetrics.unicode2T1(text,[font]+font.substitutionFonts):
-                if f!=fc:
-                    R.append("%s %s Tf %s TL" % (canv._doc.getInternalFontName(f.fontName), fp_str(self._fontsize), fp_str(self._leading)))
+            for f, t in pdfmetrics.unicode2T1(
+                    text, [font] + font.substitutionFonts):
+                if f != fc:
+                    R.append(
+                        "%s %s Tf %s TL" %
+                        (canv._doc.getInternalFontName(
+                            f.fontName), fp_str(
+                            self._fontsize), fp_str(
+                            self._leading)))
                     fc = f
                 R.append("(%s) Tj" % canv._escape(t))
-            if font!=fc:
-                R.append("%s %s Tf %s TL" % (canv._doc.getInternalFontName(self._fontname), fp_str(self._fontsize), fp_str(self._leading)))
+            if font != fc:
+                R.append(
+                    "%s %s Tf %s TL" %
+                    (canv._doc.getInternalFontName(
+                        self._fontname), fp_str(
+                        self._fontsize), fp_str(
+                        self._leading)))
         return ' '.join(R)
 
     def _textOut(self, text, TStar=0):
         "prints string at current point, ignores text cursor"
-        self._code.append('%s%s' % (self._formatText(text), (TStar and ' T*' or '')))
+        self._code.append(
+            '%s%s' %
+            (self._formatText(text), (TStar and ' T*' or '')))
 
     def textOut(self, text):
         """prints string at current point, text cursor moves across."""
-        self._x = self._x + self._canvas.stringWidth(text, self._fontname, self._fontsize)
+        self._x = self._x + \
+            self._canvas.stringWidth(text, self._fontname, self._fontsize)
         self._code.append(self._formatText(text))
 
     def textLine(self, text=''):
@@ -448,12 +493,12 @@ class PDFTextObject(_PDFColorSetter):
         whitespace."""
         if isStr(stuff):
             lines = asUnicode(stuff).strip().split(u'\n')
-            if trim==1:
+            if trim == 1:
                 lines = [s.strip() for s in lines]
-        elif isinstance(stuff,(tuple,list)):
+        elif isinstance(stuff, (tuple, list)):
             lines = stuff
         else:
-            assert 1==0, "argument to textlines must be string,, list or tuple"
+            assert 1 == 0, "argument to textlines must be string,, list or tuple"
 
         # Output each line one at a time. This used to be a long-hand
         # copy of the textLine code, now called as a method.

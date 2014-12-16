@@ -23,7 +23,8 @@
 
 from django.views.decorators.http import require_POST
 import csv
-import geneec_model, geneec_tables
+import geneec_model
+import geneec_tables
 import logging
 from threading import Thread
 import Queue
@@ -62,6 +63,7 @@ out_html_all = {}
 job_q = Queue.Queue()
 thread_count = 10
 
+
 def create_jid(row_inp):
     while True:
         row_inp_temp_all = row_inp.get()
@@ -91,7 +93,28 @@ def create_jid(row_inp):
             hydrolysis_temp = float(row_inp_temp[17])
             photolysis_aquatic_half_life_temp = float(row_inp_temp[18])
 
-            geneec_obj = geneec_model.geneec('batch', chem_name_temp, application_target_temp, application_rate_temp, number_of_applications_temp, interval_between_applications_temp, Koc_temp, aerobic_soil_metabolism_temp, wet_in_temp, application_method_temp, application_method_label, aerial_size_dist_temp, ground_spray_type_temp, airblast_type_temp, spray_quality_temp, no_spray_drift_temp, incorporation_depth_temp, solubility_temp, aerobic_aquatic_metabolism_temp, hydrolysis_temp, photolysis_aquatic_half_life_temp)
+            geneec_obj = geneec_model.geneec(
+                'batch',
+                chem_name_temp,
+                application_target_temp,
+                application_rate_temp,
+                number_of_applications_temp,
+                interval_between_applications_temp,
+                Koc_temp,
+                aerobic_soil_metabolism_temp,
+                wet_in_temp,
+                application_method_temp,
+                application_method_label,
+                aerial_size_dist_temp,
+                ground_spray_type_temp,
+                airblast_type_temp,
+                spray_quality_temp,
+                no_spray_drift_temp,
+                incorporation_depth_temp,
+                solubility_temp,
+                aerobic_aquatic_metabolism_temp,
+                hydrolysis_temp,
+                photolysis_aquatic_half_life_temp)
             # logger.info(genee_obj)
             jid_all.append(geneec_obj.jid)
             geneec_obj_all.append(geneec_obj)
@@ -102,9 +125,9 @@ def create_jid(row_inp):
                 <div class="out_">
                     <br><H3>Batch Calculation of Iteration %s:</H3>
                 </div>
-                """%(iter + 1)
+                """ % (iter + 1)
             out_html_temp = batch_header + geneec_tables.table_all(geneec_obj)
-            out_html_all[iter]=out_html_temp
+            out_html_all[iter] = out_html_temp
             # save_dic(out_html_temp, genee_obj.__dict__, 'geneec')
 
 
@@ -118,7 +141,12 @@ def loop_html(thefile):
     logger.info(job_q.qsize())
 
     # Start all threads
-    all_threads = [Thread(target=create_jid, args=(job_q, )) for j in range(thread_count)]
+    all_threads = [
+        Thread(
+            target=create_jid,
+            args=(
+                job_q,
+            )) for j in range(thread_count)]
     for x in all_threads:
         x.start()
     for x in all_threads:
@@ -133,7 +161,7 @@ def loop_html(thefile):
 @require_POST
 def geneecBatchOutputPage(request):
     thefile = request.FILES['upfile']
-    iter_html=loop_html(thefile)
+    iter_html = loop_html(thefile)
 
     return "".join(iter_html.values()), geneec_obj_all, jid_batch
 

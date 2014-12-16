@@ -8,7 +8,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
-import os, sys
+import os
+import sys
 import secret
 
 
@@ -20,9 +21,9 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 os.environ.update({
     'UBERTOOL_BATCH_SERVER': 'http://uberrest-topknotmeadows.rhcloud.com/',
     'UBERTOOL_MONGO_SERVER': 'http://uberrest-topknotmeadows.rhcloud.com',
-    'UBERTOOL_SECURE_SERVER': 'http://uberrest-topknotmeadows.rhcloud.com',   
+    'UBERTOOL_SECURE_SERVER': 'http://uberrest-topknotmeadows.rhcloud.com',
     #'UBERTOOL_REST_SERVER': 'http://localhost:80',                         # Local REST server
-    #'UBERTOOL_REST_SERVER': 'http://54.83.18.251:80',                      # Tao's EC2 REST server 
+    #'UBERTOOL_REST_SERVER': 'http://54.83.18.251:80',                      # Tao's EC2 REST server
     #'UBERTOOL_REST_SERVER': 'http://54.210.118.56'                         # EB Pilot REST server
     'UBERTOOL_REST_SERVER': 'http://172.20.100.15:7777',                           # CGI Internal
     'PROJECT_PATH': PROJECT_ROOT,
@@ -52,14 +53,14 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_ROOT, 'templates').replace('\\','/'),
+    os.path.join(PROJECT_ROOT, 'templates').replace('\\', '/'),
 )
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    #     'django.template.loaders.eggs.Loader',
 )
 
 # Application definition
@@ -139,7 +140,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 STATIC_URL = '/static/'
@@ -156,17 +157,19 @@ DOCS_ACCESS = 'public'
 
 
 #### APACHE TESTING ####
-#print "PROJECT_PATH", os.environ['PROJECT_PATH']
-#print "__name__ =", __name__
-#print "__file__ =", __file__
-#print "os.getpid() =", os.getpid()
-#print "os.getcwd() =", os.getcwd()
-#print "os.curdir =", os.curdir
-#print "sys.path =", repr(sys.path)
-#print "sys.modules.keys() =", repr(sys.modules.keys())
-#print "sys.modules.has_key('ubertool_eco') =", sys.modules.has_key('ubertool_eco')
+# print "PROJECT_PATH", os.environ['PROJECT_PATH']
+# print "__name__ =", __name__
+# print "__file__ =", __file__
+# print "os.getpid() =", os.getpid()
+# print "os.getcwd() =", os.getcwd()
+# print "os.curdir =", os.curdir
+# print "sys.path =", repr(sys.path)
+# print "sys.modules.keys() =", repr(sys.modules.keys())
+# print "sys.modules.has_key('ubertool_eco') =",
+# sys.modules.has_key('ubertool_eco')
 
-#if sys.modules.has_key('ubertool_eco'):
+# if sys.modules.has_key('ubertool_eco'):
 #    print "sys.modules['ubertool_eco'].__name__ =", sys.modules['ubertool_eco'].__name__
 #    print "sys.modules['ubertool_eco'].__file__ =", sys.modules['ubertool_eco'].__file__
-#    print "os.environ['DJANGO_SETTINGS_MODULE'] =", os.environ.get('DJANGO_SETTINGS_MODULE', None)
+# print "os.environ['DJANGO_SETTINGS_MODULE'] =",
+# os.environ.get('DJANGO_SETTINGS_MODULE', None)

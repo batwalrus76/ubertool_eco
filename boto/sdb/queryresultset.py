@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
+
 def query_lister(domain, query='', max_items=None, attr_names=None):
     more_results = True
     num_results = 0
@@ -35,6 +36,7 @@ def query_lister(domain, query='', max_items=None, attr_names=None):
         next_token = rs.next_token
         more_results = next_token is not None
 
+
 class QueryResultSet(object):
 
     def __init__(self, domain=None, query='', max_items=None, attr_names=None):
@@ -44,7 +46,12 @@ class QueryResultSet(object):
         self.attr_names = attr_names
 
     def __iter__(self):
-        return query_lister(self.domain, self.query, self.max_items, self.attr_names)
+        return query_lister(
+            self.domain,
+            self.query,
+            self.max_items,
+            self.attr_names)
+
 
 def select_lister(domain, query='', max_items=None):
     more_results = True
@@ -61,6 +68,7 @@ def select_lister(domain, query='', max_items=None):
         next_token = rs.next_token
         more_results = next_token is not None
 
+
 class SelectResultSet(object):
 
     def __init__(self, domain=None, query='', max_items=None,
@@ -75,9 +83,11 @@ class SelectResultSet(object):
         more_results = True
         num_results = 0
         while more_results:
-            rs = self.domain.connection.select(self.domain, self.query,
-                                               next_token=self.next_token,
-                                               consistent_read=self.consistent_read)
+            rs = self.domain.connection.select(
+                self.domain,
+                self.query,
+                next_token=self.next_token,
+                consistent_read=self.consistent_read)
             for item in rs:
                 if self.max_items and num_results >= self.max_items:
                     raise StopIteration

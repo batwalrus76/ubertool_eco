@@ -99,6 +99,7 @@ class ReservedInstancesOffering(EC2Object):
 
 
 class RecurringCharge(object):
+
     def __init__(self, connection=None, frequency=None, amount=None):
         self.frequency = frequency
         self.amount = amount
@@ -111,6 +112,7 @@ class RecurringCharge(object):
 
 
 class PricingDetail(object):
+
     def __init__(self, connection=None, price=None, count=None):
         self.price = price
         self.count = count
@@ -129,9 +131,9 @@ class ReservedInstance(ReservedInstancesOffering):
                  usage_price=None, description=None,
                  instance_count=None, state=None):
         super(ReservedInstance, self).__init__(connection, id, instance_type,
-                                           availability_zone, duration,
-                                           fixed_price, usage_price,
-                                           description)
+                                               availability_zone, duration,
+                                               fixed_price, usage_price,
+                                               description)
         self.instance_count = instance_count
         self.state = state
         self.start = None
@@ -153,6 +155,7 @@ class ReservedInstance(ReservedInstancesOffering):
 
 
 class ReservedInstanceListing(EC2Object):
+
     def __init__(self, connection=None, listing_id=None, id=None,
                  create_date=None, update_date=None,
                  status=None, status_message=None, client_token=None):
@@ -192,6 +195,7 @@ class ReservedInstanceListing(EC2Object):
 
 
 class InstanceCount(object):
+
     def __init__(self, connection=None, state=None, instance_count=None):
         self.state = state
         self.instance_count = instance_count
@@ -209,6 +213,7 @@ class InstanceCount(object):
 
 
 class PriceSchedule(object):
+
     def __init__(self, connection=None, term=None, price=None,
                  currency_code=None, active=None):
         self.connection = connection
@@ -234,6 +239,7 @@ class PriceSchedule(object):
 
 
 class ReservedInstancesConfiguration(object):
+
     def __init__(self, connection=None, availability_zone=None, platform=None,
                  instance_count=None, instance_type=None):
         self.connection = connection
@@ -259,6 +265,7 @@ class ReservedInstancesConfiguration(object):
 
 
 class ModifyReservedInstancesResult(object):
+
     def __init__(self, connection=None, modification_id=None):
         self.connection = connection
         self.modification_id = modification_id
@@ -274,6 +281,7 @@ class ModifyReservedInstancesResult(object):
 
 
 class ModificationResult(object):
+
     def __init__(self, connection=None, modification_id=None,
                  availability_zone=None, platform=None, instance_count=None,
                  instance_type=None):
@@ -303,6 +311,7 @@ class ModificationResult(object):
 
 
 class ReservedInstancesModification(object):
+
     def __init__(self, connection=None, modification_id=None,
                  reserved_instances=None, modification_results=None,
                  create_date=None, update_date=None, effective_date=None,

@@ -25,6 +25,7 @@ Represents a VPCSecurityGroupMembership
 
 
 class VPCSecurityGroupMembership(object):
+
     """
     Represents VPC Security Group that this RDS database is a member of
 
@@ -65,6 +66,7 @@ class VPCSecurityGroupMembership(object):
         <boto.ec2.securitygroup.SecurityGroup>` objects that this RDS Instance
         is a member of
     """
+
     def __init__(self, connection=None, status=None, vpc_group=None):
         self.connection = connection
         self.status = status

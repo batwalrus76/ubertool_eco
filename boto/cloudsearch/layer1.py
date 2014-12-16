@@ -26,7 +26,7 @@ import boto.jsonresponse
 from boto.connection import AWSQueryConnection
 from boto.regioninfo import RegionInfo
 
-#boto.set_stream_logger('cloudsearch')
+# boto.set_stream_logger('cloudsearch')
 
 
 def do_bool(val):
@@ -37,8 +37,10 @@ class Layer1(AWSQueryConnection):
 
     APIVersion = '2011-02-01'
     DefaultRegionName = boto.config.get('Boto', 'cs_region_name', 'us-east-1')
-    DefaultRegionEndpoint = boto.config.get('Boto', 'cs_region_endpoint',
-                                            'cloudsearch.us-east-1.amazonaws.com')
+    DefaultRegionEndpoint = boto.config.get(
+        'Boto',
+        'cs_region_endpoint',
+        'cloudsearch.us-east-1.amazonaws.com')
 
     def __init__(self, aws_access_key_id=None, aws_secret_access_key=None,
                  is_secure=True, host=None, port=None,
@@ -207,7 +209,8 @@ class Layer1(AWSQueryConnection):
             params['IndexField.LiteralOptions.DefaultValue'] = default
             params['IndexField.LiteralOptions.FacetEnabled'] = do_bool(facet)
             params['IndexField.LiteralOptions.ResultEnabled'] = do_bool(result)
-            params['IndexField.LiteralOptions.SearchEnabled'] = do_bool(searchable)
+            params['IndexField.LiteralOptions.SearchEnabled'] = do_bool(
+                searchable)
         elif field_type == 'uint':
             params['IndexField.UIntOptions.DefaultValue'] = default
         elif field_type == 'text':
@@ -680,7 +683,7 @@ class Layer1(AWSQueryConnection):
                     'update_stemming_options_result',
                     'stems')
         params = {'DomainName': domain_name,
-                 'Stems': stems}
+                  'Stems': stems}
         return self.get_response(doc_path, 'UpdateStemmingOptions',
                                  params, verb='POST')
 

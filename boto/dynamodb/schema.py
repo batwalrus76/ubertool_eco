@@ -23,6 +23,7 @@
 
 
 class Schema(object):
+
     """
     Represents a DynamoDB schema.
 

@@ -13,26 +13,32 @@ import csv
 logger = logging.getLogger('SIPQaqcPage')
 
 
-data = csv.reader(open(os.path.join(os.environ['PROJECT_PATH'], 'models','sip','sip_qaqc.csv')))
+data = csv.reader(
+    open(
+        os.path.join(
+            os.environ['PROJECT_PATH'],
+            'models',
+            'sip',
+            'sip_qaqc.csv')))
 
-chemical_name=[]
-b_species=[]
-m_species=[]
-bw_quail=[]
-bw_duck=[]
-bwb_other=[]
-bw_rat=[]
-bwm_other=[]
-avian_ld50=[]
-mammalian_ld50=[]
+chemical_name = []
+b_species = []
+m_species = []
+bw_quail = []
+bw_duck = []
+bwb_other = []
+bw_rat = []
+bwm_other = []
+avian_ld50 = []
+mammalian_ld50 = []
 sol = []
-aw_bird=[]
-mineau=[]
-aw_mamm=[]
-noaec_d=[]
-noaec_q=[]
-noaec_o=[]
-noael=[]
+aw_bird = []
+mineau = []
+aw_mamm = []
+noaec_d = []
+noaec_q = []
+noaec_o = []
+noael = []
 Species_of_the_bird_NOAEC_CHOICES = []
 
 ######Pre-defined outputs########
@@ -62,11 +68,11 @@ for row in data:
     m_species.append(row[2])
     bw_quail.append(float(row[3]))
     bw_duck.append(float(row[4]))
-    bwb_other.append(float(row[5])) 
+    bwb_other.append(float(row[5]))
     bw_rat.append(float(row[6]))
     bwm_other.append(float(row[7]))
     sol.append(float(row[8]))
-    avian_ld50.append(float(row[9])) 
+    avian_ld50.append(float(row[9]))
     mammalian_ld50.append(float(row[10]))
     aw_bird.append(float(row[11]))
     mineau.append(float(row[12]))
@@ -76,21 +82,21 @@ for row in data:
     noaec_o.append(float(row[16]))
     noael.append(float(row[17]))
     dose_bird_out.append(float(row[18]))
-    dose_mamm_out.append(float(row[19])) 
+    dose_mamm_out.append(float(row[19]))
     at_bird_out.append(float(row[20]))
     at_mamm_out.append(float(row[21]))
     det_out.append(float(row[22]))
     act_out.append(float(row[23]))
     acute_bird_out.append(float(row[24]))
-    acuconb_out.append(str(row[25])) 
+    acuconb_out.append(str(row[25]))
     acute_mamm_out.append(float(row[26]))
     acuconm_out.append(str(row[27]))
-    chron_bird_out.append(float(row[28])) 
+    chron_bird_out.append(float(row[28]))
     chronconb_out.append(str(row[29]))
     chron_mamm_out.append(float(row[30]))
     chronconm_out.append(str(row[31]))
     Species_of_the_bird_NOAEC_CHOICES.append(str(row[32]))
-    
+
 out_fun_fw_bird = []
 out_fun_fw_mamm = []
 out_fun_dose_bird = []
@@ -109,145 +115,254 @@ out_fun_chronconb = []
 out_fun_chron_mamm = []
 out_fun_chronconm = []
 
+
 def set_globals(**kwargs):
     for argname in kwargs:
         globals()['%s_in' % argname] = kwargs[argname]
 
+
 class TestCase_fw_bird_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testFW_bird_out_in(self):
         out_fun_fw_bird.append(self.sip_obj.fw_bird_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("fw_bird",self.sip_obj.fw_bird_out,fun)
-        self.assertEqual(round(fun,3),round(self.fw_bird_out,3),testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "fw_bird", self.sip_obj.fw_bird_out, fun)
+        self.assertEqual(
+            round(
+                fun, 3), round(
+                self.fw_bird_out, 3), testFailureMessage)
+
 
 class TestCase_fw_mamm_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testFW_mamm_out_in(self):
         out_fun_fw_mamm.append(self.sip_obj.fw_mamm_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("fw_mamm",self.sip_obj.fw_mamm_out,fun)
-        self.assertEqual(round(fun,3),round(self.fw_mamm_out,3),testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "fw_mamm", self.sip_obj.fw_mamm_out, fun)
+        self.assertEqual(
+            round(
+                fun, 3), round(
+                self.fw_mamm_out, 3), testFailureMessage)
+
 
 class TestCase_dose_bird_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testdose_bird_out_in(self):
         out_fun_dose_bird.append(self.sip_obj.dose_bird_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("dose_bird",self.sip_obj.dose_bird_out,fun)
-        self.assertEqual(round(fun,3),round(self.dose_bird_out,3),testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "dose_bird", self.sip_obj.dose_bird_out, fun)
+        self.assertEqual(
+            round(
+                fun, 3), round(
+                self.dose_bird_out, 3), testFailureMessage)
+
 
 class TestCase_dose_mamm_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testdose_mamm_out_in(self):
         out_fun_dose_mamm.append(self.sip_obj.dose_mamm_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("dose_mamm",self.sip_obj.dose_mamm_out,fun)
-        self.assertEqual(round(fun,3),round(self.dose_mamm_out,3),testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "dose_mamm", self.sip_obj.dose_mamm_out, fun)
+        self.assertEqual(
+            round(
+                fun, 3), round(
+                self.dose_mamm_out, 3), testFailureMessage)
+
 
 class TestCase_at_bird_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testat_bird_out_in(self):
         out_fun_at_bird.append(self.sip_obj.at_bird_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("at_bird",self.sip_obj.at_bird_out,fun)
-        self.assertEqual(round(fun,3),round(self.at_bird_out,3),testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "at_bird", self.sip_obj.at_bird_out, fun)
+        self.assertEqual(
+            round(
+                fun, 3), round(
+                self.at_bird_out, 3), testFailureMessage)
+
 
 class TestCase_at_mamm_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testat_mamm_out_in(self):
         out_fun_at_mamm.append(self.sip_obj.at_mamm_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("at_mamm",self.sip_obj.at_mamm_out,fun)
-        self.assertEqual(round(fun,3),round(self.at_mamm_out,3),testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "at_mamm", self.sip_obj.at_mamm_out, fun)
+        self.assertEqual(
+            round(
+                fun, 3), round(
+                self.at_mamm_out, 3), testFailureMessage)
+
 
 class TestCase_fi_bird_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testfi_bird_out_in(self):
         out_fun_fi_bird.append(self.sip_obj.fi_bird_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("fi_bird",self.sip_obj.fi_bird_out,fun)
-        self.assertEqual(round(fun,3),round(self.fi_bird_out,3),testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "fi_bird", self.sip_obj.fi_bird_out, fun)
+        self.assertEqual(
+            round(
+                fun, 3), round(
+                self.fi_bird_out, 3), testFailureMessage)
+
 
 class TestCase_det_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testdet_out_in(self):
         out_fun_det.append(self.sip_obj.det_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("det",self.sip_obj.det_out,fun)
-        self.assertEqual(round(fun,3),round(self.det_out,3),testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "det", self.sip_obj.det_out, fun)
+        self.assertEqual(
+            round(
+                fun, 3), round(
+                self.det_out, 3), testFailureMessage)
+
 
 class TestCase_act_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testact_out_in(self):
         out_fun_act.append(self.sip_obj.act_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("act",self.sip_obj.act_out,fun)
-        self.assertEqual(round(fun,3),round(self.act_out,3),testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "act", self.sip_obj.act_out, fun)
+        self.assertEqual(
+            round(
+                fun, 3), round(
+                self.act_out, 3), testFailureMessage)
+
 
 class TestCase_acute_bird_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testacute_bird_out_in(self):
         out_fun_acute_bird.append(self.sip_obj.acute_bird_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("acute_bird",self.sip_obj.acute_bird_out,fun)
-        self.assertEqual(round(fun,3),round(self.acute_bird_out,3),testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "acute_bird", self.sip_obj.acute_bird_out, fun)
+        self.assertEqual(
+            round(
+                fun, 3), round(
+                self.acute_bird_out, 3), testFailureMessage)
+
 
 class TestCase_acuconb_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testacuconb_out_in(self):
         out_fun_acuconb.append(self.sip_obj.acuconb_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("acuconb",self.sip_obj.acuconb_out,fun)
-        self.assertEqual(fun,self.acuconb_out,testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "acuconb", self.sip_obj.acuconb_out, fun)
+        self.assertEqual(fun, self.acuconb_out, testFailureMessage)
+
 
 class TestCase_acute_mamm_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testacute_mamm_out_in(self):
         out_fun_acute_mamm.append(self.sip_obj.acute_mamm_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("acute_mamm",self.sip_obj.acute_mamm_out,fun)
-        self.assertEqual(round(fun,3),round(self.acute_mamm_out,3),testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "acute_mamm", self.sip_obj.acute_mamm_out, fun)
+        self.assertEqual(
+            round(
+                fun, 3), round(
+                self.acute_mamm_out, 3), testFailureMessage)
+
 
 class TestCase_acuconm_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testacuconm_out_in(self):
         out_fun_acuconm.append(self.sip_obj.acuconm_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("acuconm",self.sip_obj.acuconm_out,fun)
-        self.assertEqual(fun,self.acuconm_out,testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "acuconm", self.sip_obj.acuconm_out, fun)
+        self.assertEqual(fun, self.acuconm_out, testFailureMessage)
+
 
 class TestCase_chron_bird_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testchron_bird_out_in(self):
         out_fun_chron_bird.append(self.sip_obj.chron_bird_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("chron_bird",self.sip_obj.chron_bird_out,fun)
-        self.assertEqual(round(fun,3),round(self.chron_bird_out,3),testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "chron_bird", self.sip_obj.chron_bird_out, fun)
+        self.assertEqual(
+            round(
+                fun, 3), round(
+                self.chron_bird_out, 3), testFailureMessage)
+
 
 class TestCase_chronconb_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testacuconb_out_in(self):
         out_fun_chronconb.append(self.sip_obj.chronconb_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("chronconb",self.sip_obj.chronconb_out,fun)
-        self.assertEqual(fun,self.chronconb_out,testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "chronconb", self.sip_obj.chronconb_out, fun)
+        self.assertEqual(fun, self.chronconb_out, testFailureMessage)
+
 
 class TestCase_chron_mamm_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testchron_mamm_out_in(self):
         out_fun_chron_mamm.append(self.sip_obj.chron_mamm_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("chron_mamm",self.sip_obj.chron_mamm_out,fun)
-        self.assertEqual(round(fun,3),round(self.chron_mamm_out,3),testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "chron_mamm", self.sip_obj.chron_mamm_out, fun)
+        self.assertEqual(
+            round(
+                fun, 3), round(
+                self.chron_mamm_out, 3), testFailureMessage)
+
 
 class TestCase_chronconm_out(unittest.TestCase):
+
     def setUp(self):
         self.sip_obj = sip_object_in
+
     def testchronconm_out_in(self):
         out_fun_chronconm.append(self.sip_obj.chronconm_out)
-        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % ("chronconm",self.sip_obj.chronconm_out,fun)
-        self.assertEqual(fun,self.chronconm_out,testFailureMessage)
+        testFailureMessage = "Test of function name: %s expected: %s != calculated: %s" % (
+            "chronconm", self.sip_obj.chronconm_out, fun)
+        self.assertEqual(fun, self.chronconm_out, testFailureMessage)
+
 
 def suite(TestCaseName, **kwargs):
     suite = unittest.TestSuite()
@@ -257,11 +372,33 @@ def suite(TestCaseName, **kwargs):
     runner = unittest.TextTestRunner(stream=stream, verbosity=2)
     result = runner.run(suite)
     stream.seek(0)
-    test_out=stream.read()
+    test_out = stream.read()
     return test_out
 
 
-sip_obj = sip_model.sip(True,True,'qaqc',chemical_name[0], b_species[0], m_species[0], bw_quail[0], bw_duck[0], bwb_other[0], bw_rat[0], bwm_other[0], sol[0], avian_ld50[0], mammalian_ld50[0], aw_bird[0], mineau[0], aw_mamm[0], noaec_d[0], noaec_q[0], noaec_o[0], Species_of_the_bird_NOAEC_CHOICES[0], noael[0])
+sip_obj = sip_model.sip(
+    True,
+    True,
+    'qaqc',
+    chemical_name[0],
+    b_species[0],
+    m_species[0],
+    bw_quail[0],
+    bw_duck[0],
+    bwb_other[0],
+    bw_rat[0],
+    bwm_other[0],
+    sol[0],
+    avian_ld50[0],
+    mammalian_ld50[0],
+    aw_bird[0],
+    mineau[0],
+    aw_mamm[0],
+    noaec_d[0],
+    noaec_q[0],
+    noaec_o[0],
+    Species_of_the_bird_NOAEC_CHOICES[0],
+    noael[0])
 sip_obj.set_unit_testing_variables()
 
 sip_obj.chemical_name_expected = chemical_name[0]

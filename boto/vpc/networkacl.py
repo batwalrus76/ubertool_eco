@@ -28,15 +28,17 @@ from boto.resultset import ResultSet
 
 
 class Icmp(object):
+
     """
     Defines the ICMP code and type.
     """
+
     def __init__(self, connection=None):
         self.code = None
-        self.type   = None
+        self.type = None
 
     def __repr__(self):
-        return 'Icmp::code:%s, type:%s)' % ( self.code, self.type)
+        return 'Icmp::code:%s, type:%s)' % (self.code, self.type)
 
     def startElement(self, name, attrs, connection):
         pass
@@ -47,6 +49,7 @@ class Icmp(object):
             self.code = value
         elif name == 'type':
             self.type = value
+
 
 class NetworkAcl(TaggedEC2Object):
 
@@ -84,7 +87,9 @@ class NetworkAcl(TaggedEC2Object):
         else:
             setattr(self, name, value)
 
+
 class NetworkAclEntry(object):
+
     def __init__(self, connection=None):
         self.rule_number = None
         self.protocol = None
@@ -120,6 +125,7 @@ class NetworkAclEntry(object):
 
 
 class NetworkAclAssociation(object):
+
     def __init__(self, connection=None):
         self.id = None
         self.subnet_id = None
@@ -139,17 +145,19 @@ class NetworkAclAssociation(object):
         elif name == 'subnetId':
             self.subnet_id = value
 
+
 class PortRange(object):
+
     """
     Define the port range for the ACL entry if it is tcp / udp
     """
 
     def __init__(self, connection=None):
         self.from_port = None
-        self.to_port   = None
+        self.to_port = None
 
     def __repr__(self):
-        return 'PortRange:(%s-%s)' % ( self.from_port, self.to_port)
+        return 'PortRange:(%s-%s)' % (self.from_port, self.to_port)
 
     def startElement(self, name, attrs, connection):
         pass
@@ -160,5 +168,3 @@ class PortRange(object):
             self.from_port = value
         elif name == 'to':
             self.to_port = value
-
-

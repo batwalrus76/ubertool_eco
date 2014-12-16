@@ -14,7 +14,7 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABIL-
 # ITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+# SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
@@ -40,11 +40,15 @@ root_password = <will be used as MySQL root password, default none>
 data_dir = <new data dir for MySQL, default is /mnt>
 """
 
+
 class MySQL(Installer):
 
     def install(self):
         self.run('apt-get update')
-        self.run('apt-get -y install mysql-server', notify=True, exit_on_error=True)
+        self.run(
+            'apt-get -y install mysql-server',
+            notify=True,
+            exit_on_error=True)
 
 #    def set_root_password(self, password=None):
 #        if not password:
@@ -55,18 +59,20 @@ class MySQL(Installer):
 
     def change_data_dir(self, password=None):
         data_dir = boto.config.get('MySQL', 'data_dir', '/mnt')
-        fresh_install = False;
-        is_mysql_running_command = ShellCommand('mysqladmin ping') # exit status 0 if mysql is running
+        fresh_install = False
+        # exit status 0 if mysql is running
+        is_mysql_running_command = ShellCommand('mysqladmin ping')
         is_mysql_running_command.run()
         if is_mysql_running_command.getStatus() == 0:
-            # mysql is running. This is the state apt-get will leave it in. If it isn't running, 
+            # mysql is running. This is the state apt-get will leave it in. If it isn't running,
             # that means mysql was already installed on the AMI and there's no need to stop it,
             # saving 40 seconds on instance startup.
-            time.sleep(10) #trying to stop mysql immediately after installing it fails
+            # trying to stop mysql immediately after installing it fails
+            time.sleep(10)
             # We need to wait until mysql creates the root account before we kill it
             # or bad things will happen
             i = 0
-            while self.run("echo 'quit' | mysql -u root") != 0 and i<5:
+            while self.run("echo 'quit' | mysql -u root") != 0 and i < 5:
                 time.sleep(5)
                 i = i + 1
             self.run('/etc/init.d/mysql stop')
@@ -75,7 +81,7 @@ class MySQL(Installer):
         mysql_path = os.path.join(data_dir, 'mysql')
         if not os.path.exists(mysql_path):
             self.run('mkdir %s' % mysql_path)
-            fresh_install = True;
+            fresh_install = True
         self.run('chown -R mysql:mysql %s' % mysql_path)
         fp = open('/etc/mysql/conf.d/use_mnt.cnf', 'w')
         fp.write('# created by pyami\n')
@@ -88,13 +94,14 @@ class MySQL(Installer):
             self.run('cp -pr /var/lib/mysql/* %s/' % mysql_path)
             self.start('mysql')
         else:
-            #get the password ubuntu expects to use:
+            # get the password ubuntu expects to use:
             config_parser = SafeConfigParser()
             config_parser.read('/etc/mysql/debian.cnf')
             password = config_parser.get('client', 'password')
-            # start the mysql deamon, then mysql with the required grant statement piped into it:
+            # start the mysql deamon, then mysql with the required grant
+            # statement piped into it:
             self.start('mysql')
-            time.sleep(10) #time for mysql to start
+            time.sleep(10)  # time for mysql to start
             grant_command = "echo \"GRANT ALL PRIVILEGES ON *.* TO 'debian-sys-maint'@'localhost' IDENTIFIED BY '%s' WITH GRANT OPTION;\" | mysql" % password
             while self.run(grant_command) != 0:
                 time.sleep(5)
@@ -104,6 +111,5 @@ class MySQL(Installer):
         self.install()
         # change_data_dir runs 'mysql -u root' which assumes there is no mysql password, i
         # and changing that is too ugly to be worth it:
-        #self.set_root_password()
+        # self.set_root_password()
         self.change_data_dir()
-        

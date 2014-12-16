@@ -30,6 +30,7 @@ from boto.ec2.ec2object import TaggedEC2Object
 
 
 class Volume(TaggedEC2Object):
+
     """
     Represents an EBS volume.
 
@@ -251,6 +252,7 @@ class Volume(TaggedEC2Object):
 
 
 class AttachmentSet(object):
+
     """
     Represents an EBS attachmentset.
 
@@ -260,6 +262,7 @@ class AttachmentSet(object):
     :ivar attach_time: Attached since
     :ivar device: The device the instance has mapped
     """
+
     def __init__(self):
         self.id = None
         self.instance_id = None
@@ -289,6 +292,7 @@ class AttachmentSet(object):
 
 
 class VolumeAttribute(object):
+
     def __init__(self, parent=None):
         self.id = None
         self._key_name = None

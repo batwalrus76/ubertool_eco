@@ -38,7 +38,9 @@ class Policy(object):
         grants = []
         for g in self.acl.grants:
             if g.id == self.owner.id:
-                grants.append("%s (owner) = %s" % (g.display_name, g.permission))
+                grants.append(
+                    "%s (owner) = %s" %
+                    (g.display_name, g.permission))
             else:
                 if g.type == 'CanonicalUser':
                     u = g.display_name
@@ -74,6 +76,7 @@ class Policy(object):
         s += '</AccessControlPolicy>'
         return s
 
+
 class ACL(object):
 
     def __init__(self, policy=None):
@@ -89,7 +92,11 @@ class ACL(object):
         self.grants.append(grant)
 
     def add_user_grant(self, permission, user_id, display_name=None):
-        grant = Grant(permission=permission, type='CanonicalUser', id=user_id, display_name=display_name)
+        grant = Grant(
+            permission=permission,
+            type='CanonicalUser',
+            id=user_id,
+            display_name=display_name)
         self.grants.append(grant)
 
     def startElement(self, name, attrs, connection):
@@ -111,6 +118,7 @@ class ACL(object):
             s += grant.to_xml()
         s += '</AccessControlList>'
         return s
+
 
 class Grant(object):
 
@@ -160,5 +168,3 @@ class Grant(object):
         s += '<Permission>%s</Permission>' % self.permission
         s += '</Grant>'
         return s
-
-

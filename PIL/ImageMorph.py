@@ -13,6 +13,7 @@ LUT_SIZE = 1 << 9
 
 
 class LutBuilder:
+
     """A class for building a MorphLut from a descriptive language
 
       The input patterns is a list of a strings sequences like these:
@@ -46,6 +47,7 @@ class LutBuilder:
       lut = lb.build_lut()
 
     """
+
     def __init__(self, patterns=None, op_name=None):
         if patterns is not None:
             self.patterns = patterns
@@ -67,7 +69,7 @@ class LutBuilder:
                          '4:(01. .1. ...)->1']
             }
             if op_name not in known_patterns:
-                raise Exception('Unknown pattern '+op_name+'!')
+                raise Exception('Unknown pattern ' + op_name + '!')
 
             self.patterns = known_patterns[op_name]
 
@@ -121,7 +123,7 @@ class LutBuilder:
                            .replace('0', 'Z')
                            .replace('1', '0')
                            .replace('Z', '1'))
-                res = '%d' % (1-int(res))
+                res = '%d' % (1 - int(res))
                 patterns.append((pattern, res))
 
         return patterns
@@ -139,7 +141,7 @@ class LutBuilder:
             m = re.search(
                 r'(\w*):?\s*\((.+?)\)\s*->\s*(\d)', p.replace('\n', ''))
             if not m:
-                raise Exception('Syntax error in pattern "'+p+'"')
+                raise Exception('Syntax error in pattern "' + p + '"')
             options = m.group(1)
             pattern = m.group(2)
             result = int(m.group(3))
@@ -166,7 +168,7 @@ class LutBuilder:
         for i in range(LUT_SIZE):
             # Build the bit pattern
             bitpattern = bin(i)[2:]
-            bitpattern = ('0'*(9-len(bitpattern)) + bitpattern)[::-1]
+            bitpattern = ('0' * (9 - len(bitpattern)) + bitpattern)[::-1]
 
             for p, r in patterns:
                 if p.match(bitpattern):
@@ -176,6 +178,7 @@ class LutBuilder:
 
 
 class MorphOp:
+
     """A class for binary morphological operators"""
 
     def __init__(self,

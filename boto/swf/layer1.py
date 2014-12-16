@@ -35,11 +35,12 @@ from boto.compat import json
 # To get full debug output, uncomment the following line and set the
 # value of Debug to be 2
 #
-#boto.set_stream_logger('swf')
+# boto.set_stream_logger('swf')
 Debug = 0
 
 
 class Layer1(AWSAuthConnection):
+
     """
     Low-level interface to Simple WorkFlow Service.
     """
@@ -79,10 +80,19 @@ class Layer1(AWSAuthConnection):
                     break
 
         self.region = region
-        super(Layer1, self).__init__(self.region.endpoint,
-                                   aws_access_key_id, aws_secret_access_key,
-                                   is_secure, port, proxy, proxy_port,
-                                   debug, session_token, profile_name=profile_name)
+        super(
+            Layer1,
+            self).__init__(
+            self.region.endpoint,
+            aws_access_key_id,
+            aws_secret_access_key,
+            is_secure,
+            port,
+            proxy,
+            proxy_port,
+            debug,
+            session_token,
+            profile_name=profile_name)
 
     def _required_auth_capability(self):
         return ['hmac-v4']
@@ -577,7 +587,7 @@ class Layer1(AWSAuthConnection):
 
 # Actions related to Administration
 
-## Activity Management
+# Activity Management
 
     def register_activity_type(self, domain, name, version, task_list=None,
                                default_task_heartbeat_timeout=None,
@@ -683,7 +693,7 @@ class Layer1(AWSAuthConnection):
                              'version': activity_version}
         })
 
-## Workflow Management
+# Workflow Management
 
     def register_workflow_type(self, domain, name, version,
                                task_list=None,
@@ -759,7 +769,7 @@ class Layer1(AWSAuthConnection):
             'domain': domain,
             'name': name,
             'version': version,
-            'defaultTaskList':  {'name': task_list},
+            'defaultTaskList': {'name': task_list},
             'defaultChildPolicy': default_child_policy,
             'defaultExecutionStartToCloseTimeout': default_execution_start_to_close_timeout,
             'defaultTaskStartToCloseTimeout': default_task_start_to_close_timeout,
@@ -793,7 +803,7 @@ class Layer1(AWSAuthConnection):
                              'version': workflow_version},
         })
 
-## Domain Management
+# Domain Management
 
     def register_domain(self, name,
                         workflow_execution_retention_period_in_days,
@@ -846,7 +856,7 @@ class Layer1(AWSAuthConnection):
 
 # Visibility Actions
 
-## Activity Visibility
+# Activity Visibility
 
     def list_activity_types(self, domain, registration_status,
                             name=None,
@@ -930,7 +940,7 @@ class Layer1(AWSAuthConnection):
                              'version': activity_version}
         })
 
-## Workflow Visibility
+# Workflow Visibility
 
     def list_workflow_types(self, domain, registration_status,
                             maximum_page_size=None, name=None,
@@ -1008,7 +1018,7 @@ class Layer1(AWSAuthConnection):
                              'version': workflow_version}
         })
 
-## Workflow Execution Visibility
+# Workflow Execution Visibility
 
     def describe_workflow_execution(self, domain, run_id, workflow_id):
         """
@@ -1411,7 +1421,7 @@ class Layer1(AWSAuthConnection):
             'reverseOrder': reverse_order,
         })
 
-## Domain Visibility
+# Domain Visibility
 
     def list_domains(self, registration_status,
                      maximum_page_size=None,
@@ -1467,7 +1477,7 @@ class Layer1(AWSAuthConnection):
         """
         return self.json_request('DescribeDomain', {'name': name})
 
-## Task List Visibility
+# Task List Visibility
 
     def count_pending_decision_tasks(self, domain, task_list):
         """

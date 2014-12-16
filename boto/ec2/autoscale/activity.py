@@ -23,6 +23,7 @@ from datetime import datetime
 
 
 class Activity(object):
+
     def __init__(self, connection=None):
         self.connection = connection
         self.start_time = None
@@ -36,10 +37,8 @@ class Activity(object):
         self.group_name = None
 
     def __repr__(self):
-        return 'Activity<%s>: For group:%s, progress:%s, cause:%s' % (self.activity_id,
-                                                                      self.group_name,
-                                                                      self.status_message,
-                                                                      self.cause)
+        return 'Activity<%s>: For group:%s, progress:%s, cause:%s' % (
+            self.activity_id, self.group_name, self.status_message, self.cause)
 
     def startElement(self, name, attrs, connection):
         return None
@@ -51,12 +50,18 @@ class Activity(object):
             self.group_name = value
         elif name == 'StartTime':
             try:
-                self.start_time = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ')
+                self.start_time = datetime.strptime(
+                    value,
+                    '%Y-%m-%dT%H:%M:%S.%fZ')
             except ValueError:
-                self.start_time = datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ')
+                self.start_time = datetime.strptime(
+                    value,
+                    '%Y-%m-%dT%H:%M:%SZ')
         elif name == 'EndTime':
             try:
-                self.end_time = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ')
+                self.end_time = datetime.strptime(
+                    value,
+                    '%Y-%m-%dT%H:%M:%S.%fZ')
             except ValueError:
                 self.end_time = datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ')
         elif name == 'Progress':
@@ -71,4 +76,3 @@ class Activity(object):
             self.status_code = value
         else:
             setattr(self, name, value)
-

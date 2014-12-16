@@ -5,6 +5,7 @@ from ..sanitizer import HTMLSanitizerMixin
 
 
 class Filter(_base.Filter, HTMLSanitizerMixin):
+
     def __iter__(self):
         for token in _base.Filter.__iter__(self):
             token = self.sanitize_token(token)

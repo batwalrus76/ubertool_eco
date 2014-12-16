@@ -29,6 +29,7 @@ from boto.redshift import exceptions
 
 
 class RedshiftConnection(AWSQueryConnection):
+
     """
     Amazon Redshift **Overview**
     This is an interface reference for Amazon Redshift. It contains
@@ -134,7 +135,6 @@ class RedshiftConnection(AWSQueryConnection):
         "IncompatibleOrderableOptions": exceptions.IncompatibleOrderableOptions,
     }
 
-
     def __init__(self, **kwargs):
         region = kwargs.pop('region', None)
         if not region:
@@ -148,11 +148,12 @@ class RedshiftConnection(AWSQueryConnection):
     def _required_auth_capability(self):
         return ['hmac-v4']
 
-    def authorize_cluster_security_group_ingress(self,
-                                                 cluster_security_group_name,
-                                                 cidrip=None,
-                                                 ec2_security_group_name=None,
-                                                 ec2_security_group_owner_id=None):
+    def authorize_cluster_security_group_ingress(
+            self,
+            cluster_security_group_name,
+            cidrip=None,
+            ec2_security_group_name=None,
+            ec2_security_group_owner_id=None):
         """
         Adds an inbound (ingress) rule to an Amazon Redshift security
         group. Depending on whether the application accessing your
@@ -302,7 +303,8 @@ class RedshiftConnection(AWSQueryConnection):
             'TargetSnapshotIdentifier': target_snapshot_identifier,
         }
         if source_snapshot_cluster_identifier is not None:
-            params['SourceSnapshotClusterIdentifier'] = source_snapshot_cluster_identifier
+            params[
+                'SourceSnapshotClusterIdentifier'] = source_snapshot_cluster_identifier
         return self._make_request(
             action='CopyClusterSnapshot',
             verb='POST',
@@ -589,7 +591,8 @@ class RedshiftConnection(AWSQueryConnection):
         if cluster_parameter_group_name is not None:
             params['ClusterParameterGroupName'] = cluster_parameter_group_name
         if automated_snapshot_retention_period is not None:
-            params['AutomatedSnapshotRetentionPeriod'] = automated_snapshot_retention_period
+            params[
+                'AutomatedSnapshotRetentionPeriod'] = automated_snapshot_retention_period
         if port is not None:
             params['Port'] = port
         if cluster_version is not None:
@@ -606,7 +609,8 @@ class RedshiftConnection(AWSQueryConnection):
             params['Encrypted'] = str(
                 encrypted).lower()
         if hsm_client_certificate_identifier is not None:
-            params['HsmClientCertificateIdentifier'] = hsm_client_certificate_identifier
+            params[
+                'HsmClientCertificateIdentifier'] = hsm_client_certificate_identifier
         if hsm_configuration_identifier is not None:
             params['HsmConfigurationIdentifier'] = hsm_configuration_identifier
         if elastic_ip is not None:
@@ -1050,7 +1054,8 @@ class RedshiftConnection(AWSQueryConnection):
             params['SkipFinalClusterSnapshot'] = str(
                 skip_final_cluster_snapshot).lower()
         if final_cluster_snapshot_identifier is not None:
-            params['FinalClusterSnapshotIdentifier'] = final_cluster_snapshot_identifier
+            params[
+                'FinalClusterSnapshotIdentifier'] = final_cluster_snapshot_identifier
         return self._make_request(
             action='DeleteCluster',
             verb='POST',
@@ -1530,7 +1535,8 @@ class RedshiftConnection(AWSQueryConnection):
         if cluster_version is not None:
             params['ClusterVersion'] = cluster_version
         if cluster_parameter_group_family is not None:
-            params['ClusterParameterGroupFamily'] = cluster_parameter_group_family
+            params[
+                'ClusterParameterGroupFamily'] = cluster_parameter_group_family
         if max_records is not None:
             params['MaxRecords'] = max_records
         if marker is not None:
@@ -1788,9 +1794,11 @@ class RedshiftConnection(AWSQueryConnection):
             verb='POST',
             path='/', params=params)
 
-    def describe_hsm_client_certificates(self,
-                                         hsm_client_certificate_identifier=None,
-                                         max_records=None, marker=None):
+    def describe_hsm_client_certificates(
+            self,
+            hsm_client_certificate_identifier=None,
+            max_records=None,
+            marker=None):
         """
         Returns information about the specified HSM client
         certificate. If no certificate ID is specified, returns
@@ -1822,7 +1830,8 @@ class RedshiftConnection(AWSQueryConnection):
         """
         params = {}
         if hsm_client_certificate_identifier is not None:
-            params['HsmClientCertificateIdentifier'] = hsm_client_certificate_identifier
+            params[
+                'HsmClientCertificateIdentifier'] = hsm_client_certificate_identifier
         if max_records is not None:
             params['MaxRecords'] = max_records
         if marker is not None:
@@ -2397,7 +2406,8 @@ class RedshiftConnection(AWSQueryConnection):
         if cluster_parameter_group_name is not None:
             params['ClusterParameterGroupName'] = cluster_parameter_group_name
         if automated_snapshot_retention_period is not None:
-            params['AutomatedSnapshotRetentionPeriod'] = automated_snapshot_retention_period
+            params[
+                'AutomatedSnapshotRetentionPeriod'] = automated_snapshot_retention_period
         if preferred_maintenance_window is not None:
             params['PreferredMaintenanceWindow'] = preferred_maintenance_window
         if cluster_version is not None:
@@ -2406,7 +2416,8 @@ class RedshiftConnection(AWSQueryConnection):
             params['AllowVersionUpgrade'] = str(
                 allow_version_upgrade).lower()
         if hsm_client_certificate_identifier is not None:
-            params['HsmClientCertificateIdentifier'] = hsm_client_certificate_identifier
+            params[
+                'HsmClientCertificateIdentifier'] = hsm_client_certificate_identifier
         if hsm_configuration_identifier is not None:
             params['HsmConfigurationIdentifier'] = hsm_configuration_identifier
         return self._make_request(
@@ -2437,9 +2448,17 @@ class RedshiftConnection(AWSQueryConnection):
         """
         params = {'ParameterGroupName': parameter_group_name, }
         self.build_complex_list_params(
-            params, parameters,
+            params,
+            parameters,
             'Parameters.member',
-            ('ParameterName', 'ParameterValue', 'Description', 'Source', 'DataType', 'AllowedValues', 'IsModifiable', 'MinimumEngineVersion'))
+            ('ParameterName',
+             'ParameterValue',
+             'Description',
+             'Source',
+             'DataType',
+             'AllowedValues',
+             'IsModifiable',
+             'MinimumEngineVersion'))
         return self._make_request(
             action='ModifyClusterParameterGroup',
             verb='POST',
@@ -2676,9 +2695,17 @@ class RedshiftConnection(AWSQueryConnection):
                 reset_all_parameters).lower()
         if parameters is not None:
             self.build_complex_list_params(
-                params, parameters,
+                params,
+                parameters,
                 'Parameters.member',
-                ('ParameterName', 'ParameterValue', 'Description', 'Source', 'DataType', 'AllowedValues', 'IsModifiable', 'MinimumEngineVersion'))
+                ('ParameterName',
+                 'ParameterValue',
+                 'Description',
+                 'Source',
+                 'DataType',
+                 'AllowedValues',
+                 'IsModifiable',
+                 'MinimumEngineVersion'))
         return self._make_request(
             action='ResetClusterParameterGroup',
             verb='POST',
@@ -2809,7 +2836,8 @@ class RedshiftConnection(AWSQueryConnection):
         if owner_account is not None:
             params['OwnerAccount'] = owner_account
         if hsm_client_certificate_identifier is not None:
-            params['HsmClientCertificateIdentifier'] = hsm_client_certificate_identifier
+            params[
+                'HsmClientCertificateIdentifier'] = hsm_client_certificate_identifier
         if hsm_configuration_identifier is not None:
             params['HsmConfigurationIdentifier'] = hsm_configuration_identifier
         if elastic_ip is not None:
@@ -2819,11 +2847,12 @@ class RedshiftConnection(AWSQueryConnection):
             verb='POST',
             path='/', params=params)
 
-    def revoke_cluster_security_group_ingress(self,
-                                              cluster_security_group_name,
-                                              cidrip=None,
-                                              ec2_security_group_name=None,
-                                              ec2_security_group_owner_id=None):
+    def revoke_cluster_security_group_ingress(
+            self,
+            cluster_security_group_name,
+            cidrip=None,
+            ec2_security_group_name=None,
+            ec2_security_group_owner_id=None):
         """
         Revokes an ingress rule in an Amazon Redshift security group
         for a previously authorized IP range or Amazon EC2 security

@@ -45,7 +45,9 @@ CORS_ARG = 'cors'
 LIFECYCLE_ARG = 'lifecycle'
 ERROR_DETAILS_REGEX = re.compile(r'<Details>(?P<details>.*)</Details>')
 
+
 class Bucket(S3Bucket):
+
     """Represents a Google Cloud Storage bucket."""
 
     VersioningBody = ('<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -105,7 +107,7 @@ class Bucket(S3Bucket):
         try:
             key, resp = self._get_key_internal(key_name, headers,
                                                query_args_l=query_args_l)
-        except GSResponseError, e:
+        except GSResponseError as e:
             if e.status == 403 and 'Forbidden' in e.reason:
                 # If we failed getting an object, let the user know which object
                 # failed rather than just returning a generic 403.
@@ -408,8 +410,8 @@ class Bucket(S3Bucket):
         return self._get_acl_helper('', headers, DEF_OBJ_ACL)
 
     def _set_acl_helper(self, acl_or_str, key_name, headers, query_args,
-                          generation, if_generation, if_metageneration,
-                          canned=False):
+                        generation, if_generation, if_metageneration,
+                        canned=False):
         """Provides common functionality for set_acl, set_xml_acl,
         set_canned_acl, set_def_acl, set_def_xml_acl, and
         set_def_canned_acl()."""
@@ -479,11 +481,14 @@ class Bucket(S3Bucket):
             the acl will only be updated if its current metageneration number is
             this value.
         """
-        return self._set_acl_helper(acl_str, key_name=key_name, headers=headers,
-                                    query_args=query_args,
-                                    generation=generation,
-                                    if_generation=if_generation,
-                                    if_metageneration=if_metageneration)
+        return self._set_acl_helper(
+            acl_str,
+            key_name=key_name,
+            headers=headers,
+            query_args=query_args,
+            generation=generation,
+            if_generation=if_generation,
+            if_metageneration=if_metageneration)
 
     def set_canned_acl(self, acl_str, key_name='', headers=None,
                        version_id=None, generation=None, if_generation=None,
@@ -608,7 +613,6 @@ class Bucket(S3Bucket):
         else:
             raise self.connection.provider.storage_response_error(
                 response.status, response.reason, body)
-
 
     # Method with same signature as boto.s3.bucket.Bucket.add_email_grant(),
     # to allow polymorphic treatment at application layer.
@@ -894,8 +898,11 @@ class Bucket(S3Bucket):
 
             2) Unparsed XML describing the bucket's website configuration.
         """
-        response = self.connection.make_request('GET', self.name,
-                query_args='websiteConfig', headers=headers)
+        response = self.connection.make_request(
+            'GET',
+            self.name,
+            query_args='websiteConfig',
+            headers=headers)
         body = response.read()
         boto.log.debug(body)
 
@@ -927,7 +934,7 @@ class Bucket(S3Bucket):
         boto.log.debug(body)
         if response.status != 200:
             raise self.connection.provider.storage_response_error(
-                    response.status, response.reason, body)
+                response.status, response.reason, body)
         resp_json = boto.jsonresponse.Element()
         boto.jsonresponse.XmlHandler(resp_json, None).parse(body)
         resp_json = resp_json['VersioningConfiguration']
@@ -941,7 +948,7 @@ class Bucket(S3Bucket):
 
         :param dict headers: Additional headers to send with the request.
         """
-        if enabled == True:
+        if enabled:
             req_body = self.VersioningBody % ('Enabled')
         else:
             req_body = self.VersioningBody % ('Suspended')
@@ -955,8 +962,11 @@ class Bucket(S3Bucket):
         :returns: A LifecycleConfig object that describes all current
             lifecycle rules in effect for the bucket.
         """
-        response = self.connection.make_request('GET', self.name,
-                query_args=LIFECYCLE_ARG, headers=headers)
+        response = self.connection.make_request(
+            'GET',
+            self.name,
+            query_args=LIFECYCLE_ARG,
+            headers=headers)
         body = response.read()
         boto.log.debug(body)
         if response.status == 200:

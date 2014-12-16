@@ -22,6 +22,7 @@
 
 import os
 
+
 class Converter(object):
 
     @classmethod
@@ -59,13 +60,14 @@ class Converter(object):
     @classmethod
     def convert(cls, param, value):
         try:
-            if hasattr(cls, 'convert_'+param.ptype):
-                mthd = getattr(cls, 'convert_'+param.ptype)
+            if hasattr(cls, 'convert_' + param.ptype):
+                mthd = getattr(cls, 'convert_' + param.ptype)
             else:
                 mthd = cls.convert_string
             return mthd(param, value)
         except:
             raise ValidationException(param, '')
+
 
 class Param(Converter):
 
@@ -142,6 +144,4 @@ class Param(Converter):
         :param value: The value to convert.  This should always
                       be a string.
         """
-        return super(Param, self).convert(self,value)
-
-
+        return super(Param, self).convert(self, value)

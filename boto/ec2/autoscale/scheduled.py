@@ -24,6 +24,7 @@ from datetime import datetime
 
 
 class ScheduledUpdateGroupAction(object):
+
     def __init__(self, connection=None):
         self.connection = connection
         self.name = None
@@ -65,14 +66,19 @@ class ScheduledUpdateGroupAction(object):
                 self.time = datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ')
         elif name == 'StartTime':
             try:
-                self.start_time = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ')
+                self.start_time = datetime.strptime(
+                    value,
+                    '%Y-%m-%dT%H:%M:%S.%fZ')
             except ValueError:
-                self.start_time = datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ')
+                self.start_time = datetime.strptime(
+                    value,
+                    '%Y-%m-%dT%H:%M:%SZ')
         elif name == 'EndTime':
             try:
-                self.end_time = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ')
+                self.end_time = datetime.strptime(
+                    value,
+                    '%Y-%m-%dT%H:%M:%S.%fZ')
             except ValueError:
                 self.end_time = datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ')
         else:
             setattr(self, name, value)
-

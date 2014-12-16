@@ -23,6 +23,7 @@
 
 
 class Details(dict):
+
     """
     A dict object that contains name/value pairs which provide
     more detailed information about the status of the system
@@ -42,6 +43,7 @@ class Details(dict):
 
 
 class Event(object):
+
     """
     A status event for an instance.
 
@@ -80,6 +82,7 @@ class Event(object):
 
 
 class Status(object):
+
     """
     A generic Status object used for system status and instance status.
 
@@ -124,6 +127,7 @@ class EventSet(list):
 
 
 class InstanceStatus(object):
+
     """
     Represents an EC2 Instance status as reported by
     DescribeInstanceStatus request.
@@ -181,6 +185,7 @@ class InstanceStatus(object):
 
 
 class InstanceStatusSet(list):
+
     """
     A list object that contains the results of a call to
     DescribeInstanceStatus request.  Each element of the

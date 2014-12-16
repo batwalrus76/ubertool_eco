@@ -38,6 +38,7 @@ class _Enhance:
 
 
 class Color(_Enhance):
+
     """Adjust image color balance.
 
     This class can be used to adjust the colour balance of an image, in
@@ -45,18 +46,21 @@ class Color(_Enhance):
     factor of 0.0 gives a black and white image. A factor of 1.0 gives
     the original image.
     """
+
     def __init__(self, image):
         self.image = image
         self.degenerate = image.convert("L").convert(image.mode)
 
 
 class Contrast(_Enhance):
+
     """Adjust image contrast.
 
     This class can be used to control the contrast of an image, similar
     to the contrast control on a TV set. An enhancement factor of 0.0
     gives a solid grey image. A factor of 1.0 gives the original image.
     """
+
     def __init__(self, image):
         self.image = image
         mean = int(ImageStat.Stat(image.convert("L")).mean[0] + 0.5)
@@ -64,24 +68,28 @@ class Contrast(_Enhance):
 
 
 class Brightness(_Enhance):
+
     """Adjust image brightness.
 
     This class can be used to control the brighntess of an image.  An
     enhancement factor of 0.0 gives a black image. A factor of 1.0 gives the
     original image.
     """
+
     def __init__(self, image):
         self.image = image
         self.degenerate = Image.new(image.mode, image.size, 0)
 
 
 class Sharpness(_Enhance):
+
     """Adjust image sharpness.
 
     This class can be used to adjust the sharpness of an image. An
     enhancement factor of 0.0 gives a blurred image, a factor of 1.0 gives the
     original image, and a factor of 2.0 gives a sharpened image.
     """
+
     def __init__(self, image):
         self.image = image
         self.degenerate = image.filter(ImageFilter.SMOOTH)

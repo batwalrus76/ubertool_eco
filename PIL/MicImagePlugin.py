@@ -34,6 +34,7 @@ def _accept(prefix):
 ##
 # Image plugin for Microsoft's Image Composer file format.
 
+
 class MicImageFile(TiffImagePlugin.TiffImageFile):
 
     format = "MIC"
